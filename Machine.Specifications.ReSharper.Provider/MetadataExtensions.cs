@@ -1,13 +1,13 @@
-﻿namespace Machine.Specifications.ReSharperProvider
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.ReSharper.Psi;
-    using Runner.Utility;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.ReSharper.Psi;
+using Machine.Specifications.Sdk;
 
+namespace Machine.Specifications.ReSharperProvider
+{
     internal static partial class MetadataExtensions
     {
         public static bool IsContext(this IMetadataTypeInfo type)
@@ -15,7 +15,7 @@
             return !type.IsAbstract &&
                    !type.IsStruct() &&
                    type.GenericParameters.Length == 0 &&
-                   !type.HasCustomAttribute(FullNames.BehaviorsAttribute) &&
+                   !type.HasCustomAttribute(new BehaviorAttributeFullName()) &&
                    (type.GetSpecifications().Any() || type.GetBehaviors().Any());
         }
 
@@ -30,16 +30,16 @@
 
         public static IEnumerable<IMetadataField> GetSpecifications(this IMetadataTypeInfo type)
         {
-            var privateFieldsOfType = type.GetInstanceFieldsOfType(FullNames.AssertDelegateAttribute);
+            var privateFieldsOfType = type.GetInstanceFieldsOfType(new AssertDelegateAttributeFullName());
             return privateFieldsOfType;
         }
 
         public static IEnumerable<IMetadataField> GetBehaviors(this IMetadataTypeInfo type)
         {
-            IEnumerable<IMetadataField> behaviorFields = type.GetInstanceFieldsOfType(FullNames.BehaviorDelegateAttribute);
+            IEnumerable<IMetadataField> behaviorFields = type.GetInstanceFieldsOfType(new BehaviorDelegateAttributeFullName());
             foreach (IMetadataField field in behaviorFields)
             {
-                if (field.GetFirstGenericArgument().HasCustomAttribute(FullNames.BehaviorsAttribute))
+                if (field.GetFirstGenericArgument().HasCustomAttribute(new BehaviorAttributeFullName()))
                 {
                     yield return field;
                 }
@@ -55,7 +55,7 @@
 
         public static string GetSubjectString(this IMetadataEntity type)
         {
-            var attributes = GetSubjectAttributes(type);
+            var attributes = GetSubjectAttributes(type, new SubjectAttributeFullName());
             if (attributes.Count != 1)
             {
                 var asMember = type as IMetadataTypeMember;
@@ -73,17 +73,17 @@
             return string.Join(" ", parameterNames);
         }
 
-        private static IList<IMetadataCustomAttribute> GetSubjectAttributes(IMetadataEntity metadataEntity)
+        private static IList<IMetadataCustomAttribute> GetSubjectAttributes(IMetadataEntity metadataEntity, SubjectAttributeFullName subjectAttributeFullName)
         {
             return metadataEntity.AndAllBaseTypes()
-                .SelectMany(x => x.GetCustomAttributes(FullNames.SubjectAttribute))
+                .SelectMany(x => x.GetCustomAttributes(new SubjectAttributeFullName()))
                 .ToList();
         }
 
         public static ICollection<string> GetTags(this IMetadataEntity type)
         {
             return type.AndAllBaseTypes()
-                    .SelectMany(x => x.GetCustomAttributes(FullNames.TagsAttribute))
+                    .SelectMany(x => x.GetCustomAttributes(new TagsAttributeFullName()))
                     .Select(x => x.ConstructorArguments)
                     .Flatten(tag => tag.FirstOrDefault().Value as string,
                     tag => tag.Skip(1).FirstOrDefault().ValuesArray.Select(v => v.Value as string))
@@ -136,7 +136,7 @@
 
         public static bool IsIgnored(this IMetadataEntity type)
         {
-            return type.HasCustomAttribute(FullNames.IgnoreAttribute);
+            return type.HasCustomAttribute(new IgnoreAttributeFullName());
         }
 
         private static string GetParameterName(MetadataAttributeValue x)

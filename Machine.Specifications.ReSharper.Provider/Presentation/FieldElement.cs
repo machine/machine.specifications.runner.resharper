@@ -3,11 +3,13 @@
     using System;
     using System.Linq;
     using System.Xml;
+
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Util;
-    using Runner.Utility;
-    using Shims;
+
+    using Machine.Specifications.ReSharperProvider.Shims;
+    using Machine.Specifications.Utility.Internal;
 
     public abstract class FieldElement : Element, ISerializableElement
     {
