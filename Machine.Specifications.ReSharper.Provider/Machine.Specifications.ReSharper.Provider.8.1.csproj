@@ -16,6 +16,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>2b763cf6</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,8 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Machine.Specifications">
-      <HintPath>..\packages\Machine.Specifications.0.9.0-Unstable0027\lib\net20\Machine.Specifications.dll</HintPath>
+    <Reference Include="Machine.Specifications.Runner.Utility, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Machine.Specifications.Runner.Utility.0.2.0-Unstable0005\lib\net20\Machine.Specifications.Runner.Utility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -96,9 +98,6 @@
     <Compile Include="Shims\Psi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Machine.Specifications.ReSharper.Provider.8.0.csproj.user" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Machine.Specifications.ReSharper.Runner\Machine.Specifications.ReSharper.Runner.8.1.csproj">
       <Project>{69c6a07f-2ead-474c-90a6-3f1da5a05460}</Project>
       <Name>Machine.Specifications.ReSharper.Runner.8.1</Name>
@@ -108,6 +107,7 @@
     <None Include="InstallResharperRunner.8.1.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="packages.Machine.Specifications.ReSharper.Provider.8.1.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -118,7 +118,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\JetBrains.ReSharper.SDK.8.1.555\build\JetBrains.ReSharper.SDK.Targets" Condition="Exists('..\packages\JetBrains.ReSharper.SDK.8.1.555\build\JetBrains.ReSharper.SDK.Targets')" />
-  <Import Project="..\packages\GitFlowVersionTask.0.14.0\Build\GitFlowVersionTask.targets" Condition="Exists('..\packages\GitFlowVersionTask.0.14.0\Build\GitFlowVersionTask.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
