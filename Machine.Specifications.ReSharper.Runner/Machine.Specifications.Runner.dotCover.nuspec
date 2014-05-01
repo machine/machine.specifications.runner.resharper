@@ -32,7 +32,9 @@
 		<!-- No settings and annotations support in dotCover -->		
 
 		<!-- Backwards compat -->  
-		<file src="..\Build\Release\Install*" target="tools" exclude="..\Build\Release\*.InstallLog" />
-		<file src="..\Build\Release\Machine.*" target="tools" exclude="..\Build\Release\*.pdb;..\Build\Release\*.InstallLog;..\Build\Release\*.InstallState"/> 
+		<file src="..\Build\Release\InstallDotCover*" target="tools" exclude="..\Build\Release\*.InstallLog" />
+		<file src="..\Build\Release\Machine.Specifications.dotCover*" target="tools" exclude="..\Build\Release\*.pdb;..\Build\Release\*.InstallLog;..\Build\Release\*.InstallState"/> 
+	    <file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="tools" />
+	    <file src="..\Build\Release\Machine.Specifications.dll" target="tools" />
 	</files>
 </package>

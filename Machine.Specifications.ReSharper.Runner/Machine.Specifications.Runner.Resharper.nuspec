@@ -35,10 +35,12 @@
 		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="ReSharper\v8.2\plugins" />
 
 		<!-- Settings and annotations -->
-		<file src="..\Misc\*.dotSettings" target="ReSharper\vAny\settings" />		
+		<file src="..\Misc\*.dotSettings" target="ReSharper\vAny\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>		
 
 		<!-- Backwards compat -->  
-		<file src="..\Build\Release\Install*" target="tools" exclude="..\Build\Release\*.InstallLog" />
-		<file src="..\Build\Release\Machine.*" target="tools" exclude="..\Build\Release\*.pdb;..\Build\Release\*.InstallLog;..\Build\Release\*.InstallState"/> 
+		<file src="..\Build\Release\InstallResharper*" target="tools" exclude="..\Build\Release\*.InstallLog" />
+		<file src="..\Build\Release\Machine.Specifications.Resharper*" target="tools" exclude="..\Build\Release\*.pdb;..\Build\Release\*.InstallLog;..\Build\Release\*.InstallState"/> 
+	    <file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="tools" />
+	    <file src="..\Build\Release\Machine.Specifications.dll" target="tools" />
 	</files>
 </package>
