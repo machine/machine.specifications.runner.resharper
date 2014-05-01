@@ -85,6 +85,9 @@
     <Reference Include="JetBrains.ReSharper.UnitTestFramework">
       <HintPath>..\Libraries\ReSharper\7.1\JetBrains.ReSharper.UnitTestFramework.dll</HintPath>
     </Reference>
+    <Reference Include="Machine.Specifications">
+      <HintPath>..\packages\Machine.Specifications.0.9.0-Unstable0027\lib\net20\Machine.Specifications.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />

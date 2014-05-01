@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Machine.Specifications">
+      <HintPath>..\packages\Machine.Specifications.0.9.0-Unstable0027\lib\net20\Machine.Specifications.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -93,10 +96,6 @@
     <Compile Include="Shims\Psi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Machine.Specifications\Machine.Specifications.csproj">
-      <Project>{ccd02629-1262-4f78-9e9f-ac97b942d0e7}</Project>
-      <Name>Machine.Specifications</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Machine.Specifications.ReSharper.Runner\Machine.Specifications.ReSharper.Runner.8.2.csproj">
       <Project>{349dd3e5-2326-4457-af79-f96be2e0b0a0}</Project>
       <Name>Machine.Specifications.ReSharper.Runner.8.2</Name>
