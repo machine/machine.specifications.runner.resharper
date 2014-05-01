@@ -1,4 +1,6 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿using Machine.Specifications.Runner.Utility;
+
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +14,6 @@
 
     using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperProvider.Shims;
-    using Machine.Specifications.Utility.Internal;
 
     public class ContextElement : Element, ISerializableElement
     {
