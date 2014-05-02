@@ -23,11 +23,13 @@
 		<file src="..\Build\Release\Machine.Specifications.dotCover.Provider.2.6.dll" target="dotCover\v2.6\plugins" />
 		<file src="..\Build\Release\Machine.Specifications.dotCover.Runner.2.6.dll" target="dotCover\v2.6\plugins" />
 		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="dotCover\v2.6\plugins" />
+		<file src="..\Build\Release\Machine.Specifications.dll" target="dotCover\v2.6\plugins" />
 
 		<!-- dotCover 2.7 -->
 		<file src="..\Build\Release\Machine.Specifications.dotCover.Provider.2.7.dll" target="dotCover\v2.7\plugins" />
 		<file src="..\Build\Release\Machine.Specifications.dotCover.Runner.2.7.dll" target="dotCover\v2.7\plugins" />
 		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="dotCover\v2.7\plugins" />
+		<file src="..\Build\Release\Machine.Specifications.dll" target="dotCover\v2.7\plugins" />
 
 		<!-- No settings and annotations support in dotCover -->		
 
