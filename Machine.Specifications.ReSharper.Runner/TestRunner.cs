@@ -27,16 +27,16 @@
             {
                 // Use the assembly in the folder that the user has specified, or, if not, use the assembly location
                 var assemblyFolder = GetAssemblyFolder(this._configuration, assemblyTask);
-                var assemblyPath = new SpecAssemblyPath(Path.Combine(assemblyFolder, GetFileName(assemblyTask.AssemblyLocation)));
+                var assemblyPath = new AssemblyPath(Path.Combine(assemblyFolder, GetFileName(assemblyTask.AssemblyLocation)));
 
                 Environment.CurrentDirectory = assemblyFolder;
 
-                IVersionResilentSpecRunner versionResilentSpecRunner = new VersionResilentSpecRunner();
+                var versionResilentSpecRunner = new SpecificationRunner();
                 var listener = new PerAssemblyRunListener(this._server, taskProvider);
                 var contextList = taskProvider.ContextNames.ToList();
                 var runOptions = RunOptions.Custom.RunOnly(contextList);
 
-                versionResilentSpecRunner.RunSpecAssemblies(new[] { assemblyPath }, listener, runOptions);
+                versionResilentSpecRunner.RunAssemblies(new[] { assemblyPath }, listener, runOptions);
             }
             finally
             {

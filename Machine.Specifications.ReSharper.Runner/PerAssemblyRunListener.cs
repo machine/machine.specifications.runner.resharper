@@ -50,25 +50,9 @@ namespace Machine.Specifications.ReSharperRunner
             this._server = server;
         }
 
-        protected override void OnAssemblyStart(AssemblyInfo remoteAssembly)
-        {
-        }
-
-        protected override void OnAssemblyEnd(AssemblyInfo remoteAssembly)
-        {
-        }
-
-        protected override void OnRunStart()
-        {
-        }
-
-        protected override void OnRunEnd()
-        {
-        }
-
         //Force resharper to start remoteContext task. In the meantime, resharper UI lets rotate a green ball 
         //next to the remoteContext node to signalize that tests has been started
-        protected override void OnContextStart(ContextInfo remoteContext)
+        public override void OnContextStart(ContextInfo remoteContext)
         {
             this._states.Push(new TaskState(this._taskProvider.GetContextTask(remoteContext.TypeName), string.Empty, TaskResult.Success));
             this._server.TaskStarting(this.CurrentState._Task);
@@ -76,7 +60,7 @@ namespace Machine.Specifications.ReSharperRunner
 
         //Context task finished. Resharper UI tree marks remoteContext as green (pass) or red (failed) etc. 
         //Context tasks finishes after all Specifications has been finished first (thats why we use a stack)
-        protected override void OnContextEnd(ContextInfo remoteContext)
+        public override void OnContextEnd(ContextInfo remoteContext)
         {
             var state = this._states.Pop();
             if (this._hasInconclusives)
@@ -88,7 +72,7 @@ namespace Machine.Specifications.ReSharperRunner
         }
 
         //Starts spec task and lets rotate a green ball next to the spec node
-        protected override void OnSpecificationStart(SpecificationInfo remoteSpecification)
+        public override void OnSpecificationStart(SpecificationInfo remoteSpecification)
         {
             var specTask = this._taskProvider.GetSpecificationTask(remoteSpecification.ContainingType, remoteSpecification.FieldName);
             this.FinishPreviousSpecTaskIfStillRunning(specTask);
@@ -97,8 +81,7 @@ namespace Machine.Specifications.ReSharperRunner
         }
 
         //finishes remoteContext task and marks spec in the UI tree
-        //public void OnSpecificationEnd(string remoteSpecification, string remoteResult)
-        protected override void OnSpecificationEnd(SpecificationInfo specification, Result remoteResult)
+        public override void OnSpecificationEnd(SpecificationInfo specification, Result remoteResult)
         {
             var state = this._states.Pop();
 
@@ -142,7 +125,7 @@ namespace Machine.Specifications.ReSharperRunner
             this._server.TaskFinished(state._Task, state._Message, state._Result);
         }
 
-        protected override void OnFatalError(ExceptionResult exception)
+        public override void OnFatalError(ExceptionResult exception)
         {
             string message = "Fatal error: " + exception.Message;
 
