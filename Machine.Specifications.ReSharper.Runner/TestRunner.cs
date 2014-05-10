@@ -31,12 +31,20 @@
 
                 Environment.CurrentDirectory = assemblyFolder;
 
-                var versionResilentSpecRunner = new SpecificationRunner();
+                var specificationRunner = new SpecificationRunner();
                 var listener = new PerAssemblyRunListener(this._server, taskProvider);
                 var contextList = taskProvider.ContextNames.ToList();
                 var runOptions = RunOptions.Custom.RunOnly(contextList);
 
-                versionResilentSpecRunner.RunAssemblies(new[] { assemblyPath }, listener, runOptions);
+                if (this._configuration.ShadowCopy)
+                {
+                    string cachePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+                    runOptions.ShadowCopyTo(cachePath);
+                    this._server.SetTempFolderPath(cachePath);
+                }
+
+                specificationRunner.RunAssemblies(new[] { assemblyPath }, listener, runOptions);
             }
             finally
             {
