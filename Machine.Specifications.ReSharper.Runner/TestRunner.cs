@@ -44,6 +44,11 @@
                     this._server.SetTempFolderPath(cachePath);
                 }
 
+                if (this._configuration.SeparateAppDomain)
+                {
+                    runOptions.SeperateAppDomainPerAssembly();
+                }
+
                 specificationRunner.RunAssemblies(new[] { assemblyPath }, listener, runOptions);
             }
             finally
