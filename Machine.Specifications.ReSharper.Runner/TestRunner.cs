@@ -31,10 +31,10 @@
 
                 Environment.CurrentDirectory = assemblyFolder;
 
-                var specificationRunner = new SpecificationRunner();
                 var listener = new PerAssemblyRunListener(this._server, taskProvider);
                 var contextList = taskProvider.ContextNames.ToList();
                 var runOptions = RunOptions.Custom.RunOnly(contextList);
+                var appDomainRunner = new AppDomainRunner(listener, runOptions);
 
                 if (this._configuration.ShadowCopy)
                 {
@@ -44,12 +44,7 @@
                     this._server.SetTempFolderPath(cachePath);
                 }
 
-                if (this._configuration.SeparateAppDomain)
-                {
-                    runOptions.SeperateAppDomainPerAssembly();
-                }
-
-                specificationRunner.RunAssemblies(new[] { assemblyPath }, listener, runOptions);
+                appDomainRunner.RunAssemblies(new[] { assemblyPath });
             }
             finally
             {
