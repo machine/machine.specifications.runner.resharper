@@ -97,7 +97,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Explorers\AssemblyExplorer.cs" />
     <Compile Include="Explorers\ElementHandlers\BehaviorElementHandler.cs" />
     <Compile Include="Explorers\ElementHandlers\ContextElementHandler.cs" />
@@ -118,7 +117,6 @@
     <Compile Include="MSpecUnitTestElementComparer.cs" />
     <Compile Include="MSpecUnitTestPresenter.cs" />
     <Compile Include="MSpecUnitTestProvider.cs" />
-    <Compile Include="NormalizedTypeName.cs" />
     <Compile Include="Presentation\BehaviorElement.cs" />
     <Compile Include="Presentation\BehaviorSpecificationElement.cs" />
     <Compile Include="Presentation\ContextElement.cs" />

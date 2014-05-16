@@ -1,11 +1,10 @@
-namespace Machine.Specifications.ReSharperProvider
+using System;
+using System.Text.RegularExpressions;
+using JetBrains.ReSharper.Psi;
+
+namespace Machine.Specifications.ReSharperRunner
 {
-    using System;
-    using System.Text.RegularExpressions;
-
-    using JetBrains.ReSharper.Psi;
-
-    class NormalizedTypeName
+    public class NormalizedTypeName
     {
         readonly string _normalized;
         static readonly Regex OpenBracketFollowedByDart = new Regex(@"\[.*->\s", RegexOptions.Compiled);

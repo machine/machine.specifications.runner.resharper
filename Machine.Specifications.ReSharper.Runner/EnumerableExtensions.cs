@@ -1,11 +1,11 @@
-namespace Machine.Specifications.ReSharperProvider
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-    static class EnumerableExtensions
+namespace Machine.Specifications.ReSharperRunner
+{
+    public static class EnumerableExtensions
     {
-        internal static IEnumerable<T> Flatten<T>(this IEnumerable<T> source,
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> source,
                                                   Func<T, IEnumerable<T>> childSelector)
         {
             foreach (var s in source)
@@ -20,7 +20,7 @@ namespace Machine.Specifications.ReSharperProvider
             }
         }
 
-        internal static IEnumerable<T> Flatten<T>(this T source,
+        public static IEnumerable<T> Flatten<T>(this T source,
                                                   Func<T, IEnumerable<T>> childSelector)
         {
             yield return source;

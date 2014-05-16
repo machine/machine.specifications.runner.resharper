@@ -50,11 +50,17 @@
     <Compile Include="..\ProductInfo.ReSharper.8.2.cs">
       <Link>Properties\ProductInfo.ReSharper.8.2.cs</Link>
     </Compile>
+    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="ExceptionResultConverter.cs" />
-    <Compile Include="ISetTempFolderPathStrategy.cs" />
-    <Compile Include="ISimpleClientController.cs" />
-    <Compile Include="ISimpleRemoteTaskServer.cs" />
     <Compile Include="MSpecTestAssemblyTask.cs" />
+    <Compile Include="NormalizedTypeName.cs" />
+    <Compile Include="Notifications\AssemblyRemoteTaskNotification.cs" />
+    <Compile Include="Notifications\BehaviorSpecificationRemoteTaskNotification.cs" />
+    <Compile Include="Notifications\ContextRemoteTaskNotification.cs" />
+    <Compile Include="Notifications\ContextSpecificationRemoteTaskNotification.cs" />
+    <Compile Include="Notifications\RemoteTaskNotification.cs" />
+    <Compile Include="Notifications\RemoteTaskNotificationFactory.cs" />
+    <Compile Include="Notifications\SilentRemoteTaskNotification.cs" />
     <Compile Include="PerAssemblyRunListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>
@@ -66,17 +72,11 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="RecursiveMSpecTaskRunner.cs" />
-    <Compile Include="RemoteTaskServer.cs" />
-    <Compile Include="SimpleClientControllerFactory.cs" />
-    <Compile Include="SimpleRemoteTaskServer.cs" />
-    <Compile Include="SimpleRemoteTaskServerFactory.cs" />
-    <Compile Include="TaskProvider.cs" />
     <Compile Include="Tasks\BehaviorSpecificationTask.cs" />
     <Compile Include="Tasks\ContextSpecificationTask.cs" />
     <Compile Include="Tasks\ContextTask.cs" />
     <Compile Include="Tasks\RunAssemblyTask.cs" />
     <Compile Include="Tasks\Task.cs" />
-    <Compile Include="TestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="InstallResharperRunner.8.2.bat">

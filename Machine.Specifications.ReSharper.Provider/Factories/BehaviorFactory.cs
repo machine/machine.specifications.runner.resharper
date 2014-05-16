@@ -1,3 +1,5 @@
+using Machine.Specifications.ReSharperRunner;
+
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
     using System.Linq;

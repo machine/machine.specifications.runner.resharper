@@ -18,9 +18,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             ContextTypeName = contextTypeName;
         }
 
-        public override string ContextTypeName { get; set; }
-        public override string BehaviorTypeName { get; set; }
-        public override string SpecificationFieldName { get; set; }
+        public string ContextTypeName { get; private set; }
 
         public override bool IsMeaningfulTask
         {

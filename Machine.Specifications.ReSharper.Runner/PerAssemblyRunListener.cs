@@ -1,4 +1,7 @@
+using System.Diagnostics;
+using JetBrains.Reflection;
 using JetBrains.Util;
+using Machine.Specifications.ReSharperRunner.Runners.Notifications;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperRunner
@@ -12,53 +15,29 @@ namespace Machine.Specifications.ReSharperRunner
 
     public class PerAssemblyRunListener : ISpecificationRunListener
     {
-        private readonly RemoteTaskServer _server;
-        private readonly TaskProvider _taskProvider;
+        readonly RunAssemblyTask _runAssemblyTask;
+        readonly IRemoteTaskServer _server;
+        readonly IList<RemoteTaskNotification> _taskNotifications = new List<RemoteTaskNotification>();
+        int _specifications;
+        int _successes;
+        int _errors;
+        ContextInfo _currentContext;
 
-        //using a stack to make sure, that node tree or tasks are finished in reverse order (first in last out)
-        //example: if we pass a contex task and start it, then passing a spec and start it, 
-        //we have to make sure that the spec is finishd first
-        private readonly Stack<TaskState> _states = new Stack<TaskState>();
-        private readonly HashSet<RemoteTask> runTests = new HashSet<RemoteTask>();
-        private bool _hasInconclusives;
-
-        private class TaskState
+        public PerAssemblyRunListener(IRemoteTaskServer server, RunAssemblyTask runAssemblyTask)
         {
-            public readonly RemoteTask _Task;
-            public TaskResult _Result;
-            public string _Message;
-            public TimeSpan _Duration;
-
-            public TaskState(RemoteTask task, string message = "Internal Error (mspec runner): No status reported", TaskResult result = TaskResult.Inconclusive)
-            {
-                this._Task = task;
-                this._Message = message;
-                this._Result = result;
-            }
-
-            public void SetPassed()
-            {
-                this._Result = TaskResult.Success;
-                this._Message = string.Empty;
-            }
+            _server = server;
+            _runAssemblyTask = runAssemblyTask;
         }
 
-        private TaskState CurrentState { get { return this._states.Peek(); } }
-
-        public PerAssemblyRunListener(RemoteTaskServer server, TaskProvider taskProvider)
+        public void OnAssemblyStart(AssemblyInfo assembly)
         {
-            this._taskProvider = taskProvider;
-            this._server = server;
+            _server.TaskStarting(_runAssemblyTask);
         }
 
-        //Force resharper to start remoteContext task. In the meantime, resharper UI lets rotate a green ball 
-        //next to the remoteContext node to signalize that tests has been started
-        public void OnAssemblyStart(AssemblyInfo assemblyInfo)
+        public void OnAssemblyEnd(AssemblyInfo assembly)
         {
-        }
-
-        public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
-        {
+            var notify = CreateTaskNotificationFor(assembly, _runAssemblyTask);
+            NotifyRedirectedOutput(notify, assembly);
         }
 
         public void OnRunStart()
@@ -69,101 +48,146 @@ namespace Machine.Specifications.ReSharperRunner
         {
         }
 
-        public void OnContextStart(ContextInfo remoteContext)
+        public void OnContextStart(ContextInfo context)
         {
-            this._states.Push(new TaskState(this._taskProvider.GetContextTask(remoteContext.TypeName), string.Empty, TaskResult.Success));
-            this._server.TaskStarting(this.CurrentState._Task);
+            _specifications = 0;
+            _errors = 0;
+            _successes = 0;
+
+            // TODO: This sucks, but there's no better way unless we make behaviors first-class citizens.
+            _currentContext = context;
+            var notify = CreateTaskNotificationFor(context, context);
+            notify(task => _server.TaskStarting(task));
         }
 
-        //Context task finished. Resharper UI tree marks remoteContext as green (pass) or red (failed) etc. 
-        //Context tasks finishes after all Specifications has been finished first (thats why we use a stack)
-        public void OnContextEnd(ContextInfo remoteContext)
+        public void OnContextEnd(ContextInfo context)
         {
-            var state = this._states.Pop();
-            if (this._hasInconclusives)
+            var result = TaskResult.Inconclusive;
+            if (_specifications == _successes)
             {
-                state._Result = TaskResult.Inconclusive;
-                this._hasInconclusives = false;
+                result = TaskResult.Success;
             }
-            this._server.TaskFinished(state._Task, state._Message, state._Result, state._Duration);
+            if (_errors > 0)
+            {
+                result = TaskResult.Error;
+            }
+
+            var notify = CreateTaskNotificationFor(context, _currentContext);
+
+            NotifyRedirectedOutput(notify, context);
+            notify(task => _server.TaskFinished(task, null, result));
         }
 
-        //Starts spec task and lets rotate a green ball next to the spec node
-        public void OnSpecificationStart(SpecificationInfo remoteSpecification)
+        public void OnSpecificationStart(SpecificationInfo specification)
         {
-            var specTask = this._taskProvider.GetSpecificationTask(remoteSpecification.ContainingType, remoteSpecification.FieldName);
-            this.FinishPreviousSpecTaskIfStillRunning(specTask);
-            this.StartNewSpecTaskIfNotAlreadyRunning(specTask);
-            //StartNewTheoryTaskIfRequired
+            _specifications += 1;
+
+            var notify = CreateTaskNotificationFor(specification, _currentContext);
+            notify(task => _server.TaskStarting(task));
         }
 
-        //finishes remoteContext task and marks spec in the UI tree
-        public void OnSpecificationEnd(SpecificationInfo specification, Result remoteResult)
+        public void OnSpecificationEnd(SpecificationInfo specification, Result result)
         {
-            var state = this._states.Pop();
+            var notify = CreateTaskNotificationFor(specification, _currentContext);
 
-            switch (remoteResult.Status)
+            NotifyRedirectedOutput(notify, specification);
+
+            var taskResult = TaskResult.Success;
+            string message = null;
+            switch (result.Status)
             {
                 case Status.Failing:
-                    state._Result = TaskResult.Error;
-                    ExceptionResult exception;
-                    if (remoteResult.Exception.InnerExceptionResult != null)
-                    {
-                        state._Message = remoteResult.Exception.InnerExceptionResult.Message;
-                        exception = remoteResult.Exception.InnerExceptionResult;
-                    }
-                    else
-                    {
-                        state._Message = remoteResult.Exception.Message;
-                        exception = remoteResult.Exception;
-                    }
+                    _errors += 1;
 
-                    this._server.TaskException(state._Task, ExceptionResultConverter.ConvertExceptions(exception, out state._Message));
+                    notify(task => _server.TaskException(task,
+                                                         ExceptionResultConverter.ConvertExceptions(result.Exception, out message)));
+                    taskResult = TaskResult.Exception;
                     break;
 
                 case Status.Passing:
-                    state.SetPassed();
+                    _successes += 1;
+
+                    taskResult = TaskResult.Success;
                     break;
 
                 case Status.NotImplemented:
-                    //notify(task => _server.TaskOutput(task, "Not implemented", TaskOutputType.STDOUT));
-                    this._server.TaskOutput(state._Task, "Not implemented", TaskOutputType.STDOUT);
-                    state._Result = TaskResult.Inconclusive;
-                    this._hasInconclusives = true;
+                    notify(task => _server.TaskOutput(task, "Not implemented", TaskOutputType.STDOUT));
+                    message = "Not implemented";
+                    taskResult = TaskResult.Inconclusive;
                     break;
 
                 case Status.Ignored:
-                    //notify(task => _server.TaskOutput(task, "Not implemented", TaskOutputType.STDOUT));
-                    this._server.TaskOutput(state._Task, "Ignored", TaskOutputType.STDOUT);
-                    state._Result = TaskResult.Skipped;
+                    notify(task => _server.TaskOutput(task, "Ignored", TaskOutputType.STDOUT));
+                    taskResult = TaskResult.Skipped;
                     break;
             }
 
-            this._server.TaskFinished(state._Task, state._Message, state._Result);
+            notify(task => _server.TaskFinished(task, message, taskResult));
         }
 
         public void OnFatalError(ExceptionResult exception)
         {
-            string message = "Fatal error: " + exception.Message;
+            string message;
+            _server.TaskOutput(_runAssemblyTask, "Fatal error: " + exception.Message, TaskOutputType.STDOUT);
+            _server.TaskException(_runAssemblyTask, ExceptionResultConverter.ConvertExceptions(exception, out message));
+            _server.TaskFinished(_runAssemblyTask, message, TaskResult.Exception);
 
-            var state = this._states.TryPop() ?? new TaskState(this._taskProvider.GetRunAssemblyTask());
-            this._server.TaskException(state._Task, ExceptionResultConverter.ConvertExceptions(exception, out state._Message));
-            this._server.TaskFinished(state._Task, message, TaskResult.Exception);
+            _errors += 1;
         }
 
-        private void FinishPreviousSpecTaskIfStillRunning(RemoteTask specTask)
+        internal void RegisterTaskNotification(RemoteTaskNotification notification)
         {
-            if (!Equals(specTask, this.CurrentState._Task) && this.CurrentState._Task is ContextSpecificationTask)
-                this.OnSpecificationEnd(null, null);
+            _taskNotifications.Add(notification);
         }
 
-        private void StartNewSpecTaskIfNotAlreadyRunning(RemoteTask specTask)
+        Action<Action<RemoteTask>> CreateTaskNotificationFor(object infoFromRunner, object maybeContext)
         {
-            if (!Equals(specTask, this.CurrentState._Task))
+            return actionToBePerformedForEachTask =>
             {
-                this._states.Push(new TaskState(specTask, string.Empty, TaskResult.Success));
-                this._server.TaskStarting(specTask);
+                bool invoked = false;
+
+                foreach (var notification in _taskNotifications)
+                {
+                    if (!notification.Matches(infoFromRunner, maybeContext))
+                    {
+                        continue;
+                    }
+
+                    Debug.WriteLine(String.Format("Invoking notification for {0}", notification.ToString()));
+                    invoked = true;
+
+                    foreach (var task in notification.RemoteTasks)
+                    {
+                        actionToBePerformedForEachTask(task);
+                    }
+                }
+
+                if (!invoked)
+                {
+                    Debug.WriteLine(String.Format("No matching notification for {0} received by the runner",
+                                                  infoFromRunner.ToString()));
+                }
+            };
+        }
+
+        delegate void Action<T>(T arg);
+
+        void NotifyRedirectedOutput(Action<Action<RemoteTask>> notify, object maybeHasCapturedOutput)
+        {
+            var capture = maybeHasCapturedOutput.GetFieldOrPropertyValue("CapturedOutput");
+            if (capture == null)
+            {
+                // Info doesn't have captured output, nothing to report.
+                return;
             }
+
+            var stdOutWithStdErrorAndDebugTrace = capture as string;
+            if (stdOutWithStdErrorAndDebugTrace == null)
+            {
+                return;
+            }
+
+            notify(task => _server.TaskOutput(task, stdOutWithStdErrorAndDebugTrace, TaskOutputType.STDOUT));
         }
     }
 }

@@ -22,10 +22,6 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             _assemblyLocation = assemblyLocation;
         }
 
-        public abstract string ContextTypeName { get; set; }
-        public abstract string BehaviorTypeName { get; set; }
-        public abstract string SpecificationFieldName { get; set; }
-
         public string AssemblyLocation
         {
             get { return _assemblyLocation; }
