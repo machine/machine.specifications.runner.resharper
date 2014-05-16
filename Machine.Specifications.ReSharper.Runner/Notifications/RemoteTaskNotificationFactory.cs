@@ -18,6 +18,8 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
 
             if (remoteTask is ContextTask)
             {
+                contexts.Add(((ContextTask)remoteTask).ContextTypeName);
+
                 return new ContextRemoteTaskNotification(node);
             }
 
