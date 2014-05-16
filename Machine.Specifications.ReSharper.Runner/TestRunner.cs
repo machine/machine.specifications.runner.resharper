@@ -33,7 +33,7 @@
 
                 var listener = new PerAssemblyRunListener(this._server, taskProvider);
                 var contextList = taskProvider.ContextNames.ToList();
-                var runOptions = RunOptions.Custom.RunOnly(contextList);
+                var runOptions = RunOptions.Custom.FilterBy(contextList);
                 var appDomainRunner = new AppDomainRunner(listener, runOptions);
 
                 if (this._configuration.ShadowCopy)
@@ -44,7 +44,7 @@
                     this._server.SetTempFolderPath(cachePath);
                 }
 
-                appDomainRunner.RunAssemblies(new[] { assemblyPath });
+                appDomainRunner.RunAssembly(assemblyPath);
             }
             finally
             {
