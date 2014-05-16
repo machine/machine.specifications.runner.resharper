@@ -1,3 +1,4 @@
+using JetBrains.Util;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperRunner
@@ -145,7 +146,7 @@ namespace Machine.Specifications.ReSharperRunner
         {
             string message = "Fatal error: " + exception.Message;
 
-            var state = this._states.Pop();
+            var state = this._states.TryPop() ?? new TaskState(this._taskProvider.GetRunAssemblyTask());
             this._server.TaskException(state._Task, ExceptionResultConverter.ConvertExceptions(exception, out state._Message));
             this._server.TaskFinished(state._Task, message, TaskResult.Exception);
         }

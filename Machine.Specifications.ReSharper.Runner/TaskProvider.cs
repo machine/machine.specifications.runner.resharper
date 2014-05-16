@@ -10,6 +10,7 @@
 
     public class TaskProvider
     {
+        private RunAssemblyTask _runAssemblyTask;
         private readonly IDictionary<string, ContextTask> _contextTasks = new Dictionary<string, ContextTask>();
         //private readonly IDictionary<string, IList<ContextSpecificationTask>> contextSpecTasks = new Dictionary<string, IList<ContextSpecificationTask>>();
         //private readonly IDictionary<string, IList<BehaviorSpecificationTask>> contextBehaviorTasks = new Dictionary<string, IList<BehaviorSpecificationTask>>();
@@ -27,6 +28,7 @@
         public static TaskProvider Create(RemoteTaskServer server, TaskExecutionNode assemblyNode)
         {
             var taskProvider = new TaskProvider(server);
+            taskProvider.SetAssemblyTask((RunAssemblyTask) assemblyNode.RemoteTask);
 
             foreach (var contextNode in assemblyNode.Children)
             {
@@ -44,6 +46,11 @@
             }
 
             return taskProvider;
+        }
+
+        public RunAssemblyTask GetRunAssemblyTask()
+        {
+            return this._runAssemblyTask;
         }
 
         public ContextTask GetContextTask(string type)
@@ -92,6 +99,11 @@
             {
                 this._specTasks[specTask.ContextTypeName].Add(specTask);
             }
+        }
+
+        private void SetAssemblyTask(RunAssemblyTask task)
+        {
+            _runAssemblyTask = task;
         }
     }
 }
