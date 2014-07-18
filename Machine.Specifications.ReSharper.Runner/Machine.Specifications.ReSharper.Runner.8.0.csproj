@@ -72,6 +72,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="RecursiveMSpecTaskRunner.cs" />
+    <Compile Include="RecursiveMSpecTaskRunnerRegisterer.cs" />
     <Compile Include="Tasks\BehaviorSpecificationTask.cs" />
     <Compile Include="Tasks\ContextSpecificationTask.cs" />
     <Compile Include="Tasks\ContextTask.cs" />
