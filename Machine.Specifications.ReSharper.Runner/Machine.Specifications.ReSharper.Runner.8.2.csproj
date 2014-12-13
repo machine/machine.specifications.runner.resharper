@@ -82,9 +82,6 @@
     <Compile Include="Tasks\Task.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="InstallResharperRunner.8.2.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.Machine.Specifications.ReSharper.Runner.8.2.config" />
   </ItemGroup>
   <ItemGroup>

@@ -134,9 +134,6 @@
     <Compile Include="Shims\Psi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="InstallDotCoverRunner.2.7.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.Machine.Specifications.dotCover.Provider.2.7.config" />
   </ItemGroup>
   <ItemGroup>

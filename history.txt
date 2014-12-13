@@ -1,2 +1,2 @@
-Machine.Specifications.Runner.Resharper x
+Machine.Specifications.Runner.Resharper 0.9.0
 -----------------------------

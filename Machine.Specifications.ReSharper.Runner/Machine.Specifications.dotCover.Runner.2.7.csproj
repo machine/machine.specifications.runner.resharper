@@ -119,9 +119,6 @@
     <Compile Include="Tasks\Task.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="InstallDotCoverRunner.2.7.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.Machine.Specifications.dotCover.Runner.2.7.config" />
   </ItemGroup>
   <ItemGroup>
