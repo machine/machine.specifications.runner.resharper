@@ -32,16 +32,17 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                               string assemblyLocation,
                               string subject,
                               IEnumerable<string> tags,
-                              bool isIgnored)
+                              bool isIgnored,
+                              IUnitTestCategoryFactory categoryFactory)
             : base(provider, psiModuleManager, cacheManager, null, projectEnvoy, typeName, isIgnored)
         {
-            this._id = CreateId(subject, this.TypeName.FullName, tags);
+            this._id = CreateId(provider, (IProject)projectEnvoy.GetValidProjectElement(), subject, this.TypeName.FullName, tags);
             this._assemblyLocation = assemblyLocation;
             this._subject = subject;
 
             if (tags != null)
             {
-                this._categories = new UnitTestElementCategory(new JetHashSet<string>(tags));
+                this._categories = categoryFactory.Create(tags);
             }
         }
 
@@ -123,7 +124,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                                               isIgnored);
         }
 
-        public static UnitTestElementId CreateId(string subject, string typeName, IEnumerable<string> tags)
+        public static UnitTestElementId CreateId(IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
         {
             string tagsAsString = null;
             if (tags != null)
@@ -131,7 +132,8 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 tagsAsString = tags.AggregateString("", "|", (builder, tag) => builder.Append(tag));
             }
             var result = new[] { subject, typeName, tagsAsString };
-            return result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+            return new UnitTestElementId(provider, new PersistentProjectId(project), id);
         }
     }
 }

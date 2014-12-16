@@ -1,3 +1,4 @@
+using JetBrains.Metadata.Reader.Impl;
 using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
@@ -73,7 +74,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var typeContainingBehaviorSpecifications = behavior.GetFirstGenericArgument();
 
             var metadataTypeName = behavior.FirstGenericArgumentClass().FullyQualifiedName();
-            var fieldType = new NormalizedTypeName(new ClrTypeName(metadataTypeName));
+            var fieldType = new NormalizedTypeName(metadataTypeName);
 
             var behaviorElement = this.GetOrCreateBehavior(context,
                                                       this._reflectionTypeNameCache.GetClrName(behavior.DeclaringType),
@@ -90,8 +91,8 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                    bool isIgnored,
                                                    string fieldType)
         {
-            var id = BehaviorElement.CreateId(context, fieldType, fieldName);
-            var behavior = this._manager.GetElementById(context.GetProject(), id) as BehaviorElement;
+            var id = BehaviorElement.CreateId(_provider, context, fieldType, fieldName);
+            var behavior = this._manager.GetElementById(id) as BehaviorElement;
             if (behavior != null)
             {
                 behavior.Parent = context;

@@ -1,4 +1,6 @@
-﻿namespace Machine.Specifications.ReSharperProvider
+﻿using JetBrains.Metadata.Reader.Impl;
+
+namespace Machine.Specifications.ReSharperProvider
 {
     using System;
     using System.Collections.Generic;

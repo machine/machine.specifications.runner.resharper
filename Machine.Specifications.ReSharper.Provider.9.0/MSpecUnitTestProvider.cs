@@ -42,19 +42,6 @@
             get { return Resources.Logo; }
         }
 
-        public void ExploreSolution(ISolution solution, UnitTestElementConsumer consumer)
-        {
-        }
-
-        public void ExploreExternal(UnitTestElementConsumer consumer)
-        {
-        }
-
-        public RemoteTaskRunnerInfo GetTaskRunnerInfo()
-        {
-            return new RemoteTaskRunnerInfo(this.ID, typeof(RecursiveMSpecTaskRunner));
-        }
-
         public int CompareUnitTestElements(IUnitTestElement x, IUnitTestElement y)
         {
             return this._unitTestElementComparer.Compare(x, y);

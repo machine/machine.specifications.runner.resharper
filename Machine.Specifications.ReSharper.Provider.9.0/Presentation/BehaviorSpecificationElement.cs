@@ -37,7 +37,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                    fieldName,
                    isIgnored || behavior.Explicit)
         {
-            this._id = CreateId(behavior, fieldName);
+            this._id = CreateId(provider, behavior, fieldName);
         }
 
         public BehaviorElement Behavior
@@ -97,10 +97,11 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                                                             isIgnored);
         }
 
-        public static UnitTestElementId CreateId(BehaviorElement behaviorElement, string fieldName)
+        public static UnitTestElementId CreateId(IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
         {
             var result = new[] { behaviorElement.Id, fieldName };
-            return result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+            return new UnitTestElementId(provider, new PersistentProjectId(behaviorElement.GetProject()), id);
         }
     }
 }

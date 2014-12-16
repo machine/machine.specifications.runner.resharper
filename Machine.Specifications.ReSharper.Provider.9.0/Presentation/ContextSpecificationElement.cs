@@ -37,7 +37,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                    fieldName,
                    isIgnored || context.Explicit)
         {
-            this._id = CreateId(context, fieldName);
+            this._id = CreateId(provider, context, fieldName);
         }
 
         public ContextElement Context
@@ -97,10 +97,11 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                                                            isIgnored);
         }
 
-        public static UnitTestElementId CreateId(ContextElement contextElement, string fieldName)
+        public static UnitTestElementId CreateId(IUnitTestProvider provider, ContextElement contextElement, string fieldName)
         {
             var result = new[] { contextElement.Id, fieldName };
-            return new UnitTestElementId(null, null,result.Where(s => !string.IsNullOrEmpty(s)).AggregateString("."));
+            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+            return new UnitTestElementId(provider, new PersistentProjectId(contextElement.GetProject()), id);
         }
     }
 }

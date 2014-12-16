@@ -9,8 +9,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
     using JetBrains.ReSharper.Resources.Shell;
     using JetBrains.ReSharper.UnitTestFramework;
 
-    [MetadataUnitTestExplorer]
-    public partial class MSpecTestMetadataExplorer : IUnitTestMetadataExplorer
+    public partial class MSpecTestMetadataExplorer
     {
         readonly AssemblyExplorer _assemblyExplorer;
         readonly MSpecUnitTestProvider _provider;
@@ -22,12 +21,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             this._provider = provider;
         }
 
-        public void ExploreAssembly(IProject project, IMetadataAssembly assembly, UnitTestElementConsumer consumer, ManualResetEvent exitEvent)
-        {
-            this.ExploreAssembly(project, assembly, consumer);
-        }
-
-        public void ExploreAssembly(IProject project, IMetadataAssembly assembly, UnitTestElementConsumer consumer)
+        public void ExploreAssembly(IProject project, IMetadataAssembly assembly, IUnitTestElementsObserver consumer)
         {
             using (ReadLockCookie.Create()) //Get a read lock so that it is safe to read the assembly
             {

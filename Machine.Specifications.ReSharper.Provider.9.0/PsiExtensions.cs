@@ -1,5 +1,3 @@
-using Machine.Specifications.Runner.Utility;
-
 namespace Machine.Specifications.ReSharperProvider
 {
     using System;
@@ -7,9 +5,12 @@ namespace Machine.Specifications.ReSharperProvider
     using System.Linq;
 
     using JetBrains.Application.Progress;
+    using JetBrains.Metadata.Reader.Impl;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Search;
     using JetBrains.ReSharper.Psi.Tree;
+
+    using Machine.Specifications.Runner.Utility;
 
     internal static partial class PsiExtensions
     {

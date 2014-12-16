@@ -1,3 +1,4 @@
+using Machine.Specifications.ReSharperProvider.Presentation;
 using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers
@@ -19,7 +20,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             this._factories = factories;
         }
 
-        public void Explore(IProject project, IMetadataAssembly assembly, UnitTestElementConsumer consumer, IMetadataTypeInfo metadataTypeInfo)
+        public void Explore(IProject project, IMetadataAssembly assembly, IUnitTestElementsObserver consumer, IMetadataTypeInfo metadataTypeInfo)
         {
             if (!metadataTypeInfo.IsContext())
             {
@@ -28,21 +29,31 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
             var contextElement = this._factories.Contexts.CreateContext(project, assembly.Location.FullPath, metadataTypeInfo);
 
-            consumer(contextElement);
+            consumer.OnUnitTestElement(contextElement);
 
             metadataTypeInfo.GetSpecifications()
-                .ForEach(x => consumer(this._factories.ContextSpecifications.CreateContextSpecification(contextElement, x)));
+                .ForEach(x =>
+                {
+                    var element = this._factories.ContextSpecifications.CreateContextSpecification(contextElement, x);
+                    consumer.OnUnitTestElement(element);
+                    consumer.OnUnitTestElementChanged(element);
+                });
 
 
             metadataTypeInfo.GetBehaviors().ForEach(x =>
             {
                 var behaviorElement = this._factories.Behaviors.CreateBehavior(contextElement, x);
-                consumer(behaviorElement);
+                consumer.OnUnitTestElement(behaviorElement);
+                consumer.OnUnitTestElementChanged(behaviorElement);
 
 
                 this._factories.BehaviorSpecifications
                             .CreateBehaviorSpecificationsFromBehavior(behaviorElement, x)
-                            .ForEach(y => consumer(y));
+                            .ForEach(y =>
+                            {
+                                consumer.OnUnitTestElement(y);
+                                consumer.OnUnitTestElementChanged(y);
+                            });
             });
         }
     }

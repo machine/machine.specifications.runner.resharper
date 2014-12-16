@@ -118,7 +118,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public UnitTestNamespace GetNamespace()
         {
-            return new UnitTestNamespace(this._declaringTypeName.GetNamespaceName());
+            return new UnitTestNamespace(this._declaringTypeName.NamespaceNames);
         }
 
         public UnitTestElementDisposition GetDisposition()
@@ -167,8 +167,8 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                     return false;
                 }
 
-                return other.ShortName == this.ShortName
-                       && other.Provider == this.Provider
+                return Equals(other.Id, this.Id)
+                       && other.ShortName == this.ShortName
                        && Equals(element._projectEnvoy, this._projectEnvoy)
                        && thisFullName == otherFullName;
             }
@@ -177,7 +177,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public abstract string GetPresentation();
 
-        public string GetPresentation(IUnitTestElement unitTestElement)
+        public string GetPresentation(IUnitTestElement unitTestElement, bool full)
         {
             return this.GetPresentation();
         }
@@ -195,7 +195,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return declaredType.GetSourceFiles().Select(x => x.ToProjectFile());
         }
 
-        public IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestLaunch launch)
+        public IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
             if (this is ContextSpecificationElement)
             {

@@ -22,17 +22,20 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         readonly ElementCache _cache;
         readonly ICache _cacheManager;
         readonly IUnitTestElementManager _manager;
+        readonly IUnitTestCategoryFactory _categoryFactory;
         readonly MSpecUnitTestProvider _provider;
         readonly IPsi _psiModuleManager;
         readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
 
         public ContextFactory(MSpecUnitTestProvider provider,
                               IUnitTestElementManager manager,
+                              IUnitTestCategoryFactory categoryFactory,
                               IPsi psiModuleManager,
                               ICache cacheManager,
                               ElementCache cache)
         {
             this._manager = manager;
+            this._categoryFactory = categoryFactory;
             this._psiModuleManager = psiModuleManager;
             this._cacheManager = cacheManager;
             this._provider = provider;
@@ -73,8 +76,8 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                  ICollection<string> tags,
                                                  bool isIgnored)
         {
-            var id = ContextElement.CreateId(subject, typeName.FullName, tags);
-            var contextElement = this._manager.GetElementById(project, id) as ContextElement;
+            var id = ContextElement.CreateId(_provider, project, subject, typeName.FullName, tags);
+            var contextElement = this._manager.GetElementById(id) as ContextElement;
             if (contextElement != null)
             {
                 contextElement.State = UnitTestElementState.Valid;
@@ -89,7 +92,8 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                       assemblyPath,
                                       subject,
                                       tags,
-                                      isIgnored);
+                                      isIgnored,
+                                      _categoryFactory);
         }
 
         public void UpdateChildState(ITypeElement type)

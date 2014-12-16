@@ -66,8 +66,8 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                            string fieldName,
                                                                            bool isIgnored)
         {
-            var id = ContextSpecificationElement.CreateId(context, fieldName);
-            var contextSpecification = this._manager.GetElementById(context.GetProject(), id) as ContextSpecificationElement;
+            var id = ContextSpecificationElement.CreateId(_provider, context, fieldName);
+            var contextSpecification = this._manager.GetElementById(id) as ContextSpecificationElement;
             if (contextSpecification != null)
             {
                 contextSpecification.Parent = context;

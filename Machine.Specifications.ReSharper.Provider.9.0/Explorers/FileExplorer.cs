@@ -14,7 +14,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
     public class FileExplorer : IRecursiveElementProcessor
     {
-        readonly UnitTestElementLocationConsumer _consumer;
+        readonly IUnitTestElementsObserver _consumer;
         readonly IEnumerable<IElementHandler> _elementHandlers;
         readonly IFile _file;
         readonly Func<bool> _interrupted;
@@ -23,7 +23,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         public FileExplorer(MSpecUnitTestProvider provider,
                             ElementFactories factories,
                             IFile file,
-                            UnitTestElementLocationConsumer consumer,
+                            IUnitTestElementsObserver consumer,
                             Func<bool> interrupted)
         {
             if (file == null)
@@ -74,7 +74,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             {
                 if (elementDisposition != null && elementDisposition.UnitTestElement != null)
                 {
-                    this._consumer(elementDisposition);
+                    this._consumer.OnUnitTestElementDisposition(elementDisposition);
                 }
             }
         }

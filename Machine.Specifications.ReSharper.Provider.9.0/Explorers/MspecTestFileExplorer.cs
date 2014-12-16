@@ -9,8 +9,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
     using Machine.Specifications.ReSharperProvider.Factories;
 
-    [FileUnitTestExplorer]
-    public class MspecTestFileExplorer : IUnitTestFileExplorer
+    public class MspecTestFileExplorer
     {
         readonly ElementFactories _factories;
         readonly MSpecUnitTestProvider _provider;
@@ -23,7 +22,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         }
 
 #if RESHARPER_81
-        public void ExploreFile(IFile psiFile, UnitTestElementLocationConsumer consumer, Func<bool> interrupted)
+        public void ExploreFile(IFile psiFile, IUnitTestElementsObserver consumer, Func<bool> interrupted)
         {
             if (psiFile == null)
                 throw new ArgumentNullException("psiFile");

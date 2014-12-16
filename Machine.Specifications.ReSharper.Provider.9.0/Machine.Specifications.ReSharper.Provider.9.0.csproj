@@ -169,6 +169,7 @@
     <Compile Include="..\ProductInfo.ReSharper.9.0.cs">
       <Link>Properties\ProductInfo.ReSharper.9.0.cs</Link>
     </Compile>
+    <Compile Include="Explorers\MSpecTestElementsSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>
       </SubType>

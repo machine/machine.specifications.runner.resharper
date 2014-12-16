@@ -69,8 +69,8 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                              string fieldName,
                                                                              bool isIgnored)
         {
-            var id = BehaviorSpecificationElement.CreateId(behavior, fieldName);
-            var behaviorSpecification = this._manager.GetElementById(behavior.GetProject(), id) as BehaviorSpecificationElement;
+            var id = BehaviorSpecificationElement.CreateId(_provider, behavior, fieldName);
+            var behaviorSpecification = this._manager.GetElementById(id) as BehaviorSpecificationElement;
             if (behaviorSpecification != null)
             {
                 behaviorSpecification.Parent = behavior;
