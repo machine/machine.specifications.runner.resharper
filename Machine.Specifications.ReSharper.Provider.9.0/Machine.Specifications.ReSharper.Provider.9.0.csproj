@@ -212,6 +212,7 @@
     <Compile Include="Shims\ICache.cs" />
     <Compile Include="Shims\IPsi.cs" />
     <Compile Include="Shims\Psi.cs" />
+    <Compile Include="ZoneMarker.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
