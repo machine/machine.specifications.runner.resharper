@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 	<metadata>
-		<id>Machine.Specifications.Runner.Resharper</id>
+		<id>Machine.Specifications.Runner.Resharper9</id>
 		<version>$version$</version>
 		<title>Machine.Specifications.Runner.Resharper</title>
 		<authors>Aaron Jensen, Alexander Groß, Daniel Marbach, et al.</authors>
@@ -15,17 +15,17 @@
 		<iconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</iconUrl>
 		<tags>test unit testing context specification bdd tdd mspec runner resharper</tags>
 		<dependencies>
-			<dependency id="Wave" version="1.0.0" />
+			<dependency id="Wave" version="[1.0]" />
 		</dependencies>		
 	</metadata>
 	<files>
 
-		<file src="..\Build\Release\Machine.Specifications.ReSharper.Provider.8.2.dll" target="ReSharper\v8.2\plugins" />
-		<file src="..\Build\Release\Machine.Specifications.ReSharper.Runner.8.2.dll" target="ReSharper\v8.2\plugins" />
-		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="ReSharper\v8.2\plugins" />
+		<file src="..\Build\Release\Machine.Specifications.ReSharper.Provider.9.0.dll" target="dotFiles" />
+		<file src="..\Build\Release\Machine.Specifications.ReSharper.Runner.9.0.dll" target="dotFiles" />
+		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="dotFiles" />
 
-		<!-- Settings and annotations -->
-		<file src="..\Misc\*.dotSettings" target="ReSharper\vAny\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>		
+		<!-- Settings -->
+		<file src="..\Misc\*.dotSettings" target="dotFiles\Extensions\Machine.Specifications.Runner.Resharper9\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>		
 
 	</files>
 </package>
