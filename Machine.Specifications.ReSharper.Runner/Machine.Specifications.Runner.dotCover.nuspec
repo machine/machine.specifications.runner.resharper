@@ -15,26 +15,15 @@
 		<iconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</iconUrl>
 		<tags>test unit testing context specification bdd tdd mspec runner dotCover</tags>
 		<dependencies>
-			<dependency id="dotCover" version="[2.6,2.8)" />
+			<dependency id="dotCover" version="[2.7,2.8)" />
 		</dependencies>
 	</metadata>
 	<files>
-		<!-- dotCover 2.6 -->
-		<file src="..\Build\Release\Machine.Specifications.dotCover.Provider.2.6.dll" target="dotCover\v2.6\plugins" />
-		<file src="..\Build\Release\Machine.Specifications.dotCover.Runner.2.6.dll" target="dotCover\v2.6\plugins" />
-		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="dotCover\v2.6\plugins" />
-
 		<!-- dotCover 2.7 -->
 		<file src="..\Build\Release\Machine.Specifications.dotCover.Provider.2.7.dll" target="dotCover\v2.7\plugins" />
 		<file src="..\Build\Release\Machine.Specifications.dotCover.Runner.2.7.dll" target="dotCover\v2.7\plugins" />
 		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="dotCover\v2.7\plugins" />
 
 		<!-- No settings and annotations support in dotCover -->		
-
-		<!-- Backwards compat -->  
-		<file src="..\Build\Release\InstallDotCover*" target="tools" exclude="..\Build\Release\*.InstallLog" />
-		<file src="..\Build\Release\Machine.Specifications.dotCover*" target="tools" exclude="..\Build\Release\*.pdb;..\Build\Release\*.InstallLog;..\Build\Release\*.InstallState"/> 
-	    <file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="tools" />
-
 	</files>
 </package>
