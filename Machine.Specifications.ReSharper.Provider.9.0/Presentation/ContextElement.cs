@@ -14,7 +14,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
     public class ContextElement : Element
     {
-        readonly string _assemblyLocation;
         readonly IEnumerable<UnitTestElementCategory> _categories;
         readonly UnitTestElementId _id;
         readonly string _subject;
@@ -32,7 +31,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             : base(provider, psiModuleManager, cacheManager, null, projectEnvoy, typeName, isIgnored)
         {
             this._id = CreateId(provider, (IProject)projectEnvoy.GetValidProjectElement(), subject, this.TypeName.FullName, tags);
-            this._assemblyLocation = assemblyLocation;
+            this.AssemblyLocation = assemblyLocation;
             this._subject = subject;
 
             if (tags != null)
@@ -46,10 +45,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return this.Kind + this.GetPresentation(); }
         }
 
-        public string AssemblyLocation
-        {
-            get { return this._assemblyLocation; }
-        }
+        public string AssemblyLocation { get; set; }
 
         public override string Kind
         {
