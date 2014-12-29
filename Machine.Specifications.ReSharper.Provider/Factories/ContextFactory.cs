@@ -78,6 +78,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             if (contextElement != null)
             {
                 contextElement.State = UnitTestElementState.Valid;
+                contextElement.AssemblyLocation = assemblyPath;
                 return contextElement;
             }
 
