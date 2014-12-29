@@ -1,18 +1,12 @@
-﻿using JetBrains.Metadata.Reader.Impl;
-
-namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Xml;
-
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Util;
-
-    using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperProvider.Shims;
 
     public class BehaviorSpecificationElement : FieldElement
@@ -67,34 +61,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public override UnitTestElementId Id
         {
             get { return this._id; }
-        }
-
-        public static IUnitTestElement ReadFromXml(XmlElement parent,
-                                                   IUnitTestElement parentElement,
-                                                   ISolution solution,
-                                                   BehaviorSpecificationFactory factory)
-        {
-            var projectId = parent.GetAttribute("projectId");
-            var project = ProjectUtil.FindProjectElementByPersistentID(solution, projectId) as IProject;
-            if (project == null)
-            {
-                return null;
-            }
-
-            var behavior = parentElement as BehaviorElement;
-            if (behavior == null)
-            {
-                return null;
-            }
-
-            var typeName = parent.GetAttribute("typeName");
-            var methodName = parent.GetAttribute("methodName");
-            var isIgnored = bool.Parse(parent.GetAttribute("isIgnored"));
-
-            return factory.GetOrCreateBehaviorSpecification(behavior,
-                                                            new ClrTypeName(typeName),
-                                                            methodName,
-                                                            isIgnored);
         }
 
         public static UnitTestElementId CreateId(IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)

@@ -1,18 +1,20 @@
 using System;
 using System.Xml;
+using JetBrains.Annotations;
 
 namespace Machine.Specifications.ReSharperRunner.Tasks
 {
     [Serializable]
     public class BehaviorSpecificationTask : Task, IEquatable<BehaviorSpecificationTask>
     {
+        [UsedImplicitly]
         public BehaviorSpecificationTask(XmlElement element)
             : base(element)
         {
-            ContextTypeName = GetXmlAttribute(element, "ContextTypeName");
-            BehaviorTypeName = GetXmlAttribute(element, "BehaviorTypeName");
-            SpecificationFieldName = GetXmlAttribute(element, "SpecificationFieldName");
-            SpecificationFieldNameOnContext = GetXmlAttribute(element, "SpecificationFieldNameOnContext");
+            ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
+            BehaviorTypeName = GetXmlAttribute(element, AttributeNames.BehaviorTypeName);
+            SpecificationFieldName = GetXmlAttribute(element, AttributeNames.SpecificationFieldName);
+            SpecificationFieldNameOnContext = GetXmlAttribute(element, AttributeNames.SpecificationFieldNameOnContext);
         }
 
         public BehaviorSpecificationTask(string providerId,
@@ -46,11 +48,11 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, "ContextTypeName", ContextTypeName);
-            SetXmlAttribute(element, "SpecificationFieldName", SpecificationFieldName);
-            SetXmlAttribute(element, "BehaviorTypeName", BehaviorTypeName);
-            SetXmlAttribute(element, "SpecificationFieldName", SpecificationFieldName);
-            SetXmlAttribute(element, "SpecificationFieldNameOnContext", SpecificationFieldNameOnContext);
+            SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
+            SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
+            SetXmlAttribute(element, AttributeNames.BehaviorTypeName, BehaviorTypeName);
+            SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
+            SetXmlAttribute(element, AttributeNames.SpecificationFieldNameOnContext, SpecificationFieldNameOnContext);
         }
 
         public bool Equals(BehaviorSpecificationTask other)

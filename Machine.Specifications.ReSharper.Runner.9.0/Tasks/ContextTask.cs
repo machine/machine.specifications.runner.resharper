@@ -1,15 +1,17 @@
 using System;
 using System.Xml;
+using JetBrains.Annotations;
 
 namespace Machine.Specifications.ReSharperRunner.Tasks
 {
     [Serializable]
     public class ContextTask : Task, IEquatable<ContextTask>
     {
+        [UsedImplicitly]
         public ContextTask(XmlElement element)
             : base(element)
         {
-            ContextTypeName = GetXmlAttribute(element, "ContextTypeName");
+            ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
         }
 
         public ContextTask(string providerId, string assemblyLocation, string contextTypeName)
@@ -29,7 +31,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, "ContextTypeName", ContextTypeName);
+            SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
         }
 
         public bool Equals(ContextTask other)

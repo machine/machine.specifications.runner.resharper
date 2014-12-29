@@ -1,11 +1,14 @@
 using System;
 using System.Xml;
+using JetBrains.Annotations;
+using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.ReSharperRunner.Tasks
 {
     [Serializable]
     public class RunAssemblyTask : Task, IEquatable<RunAssemblyTask>
     {
+        [UsedImplicitly]
         public RunAssemblyTask(XmlElement element)
             : base(element)
         {

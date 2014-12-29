@@ -8,30 +8,26 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
     [Serializable]
     public abstract class Task : RemoteTask, IEquatable<Task>
     {
-        readonly string _assemblyLocation;
-
         protected Task(XmlElement element)
             : base(element)
         {
-            _assemblyLocation = GetXmlAttribute(element, "AssemblyLocation");
+            AssemblyLocation = GetXmlAttribute(element, AttributeNames.AssemblyLocation);
         }
 
         protected Task(string providerId, string assemblyLocation)
             : base(providerId)
         {
-            _assemblyLocation = assemblyLocation;
+            AssemblyLocation = assemblyLocation;
         }
 
-        public string AssemblyLocation
-        {
-            get { return _assemblyLocation; }
-        }
+
+        public string AssemblyLocation { get; private set; }
 
         public override void SaveXml(XmlElement element)
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, "AssemblyLocation", AssemblyLocation);
+            SetXmlAttribute(element, AttributeNames.AssemblyLocation, AssemblyLocation);
         }
 
         public bool Equals(Task other)

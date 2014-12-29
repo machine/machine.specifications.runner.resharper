@@ -21,7 +21,6 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             this._factories = factories;
         }
 
-#if RESHARPER_81
         public void ExploreFile(IFile psiFile, IUnitTestElementsObserver consumer, Func<bool> interrupted)
         {
             if (psiFile == null)
@@ -36,24 +35,6 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
                 psiFile.ProcessDescendants(new FileExplorer(_provider, _factories, psiFile, consumer, interrupted));
             }
         }
-#else
-        public void ExploreFile(IFile psiFile, UnitTestElementLocationConsumer consumer, CheckForInterrupt interrupted)
-        {
-            Func<bool> interruptedFunc = () => interrupted();
-
-            if (psiFile == null)
-                throw new ArgumentNullException("psiFile");
-
-            var project = psiFile.GetProject();
-            if (project == null)
-                return;
-
-            if ((psiFile.Language.Name == "CSHARP") || (psiFile.Language.Name == "VBASIC"))
-            {
-                psiFile.ProcessDescendants(new FileExplorer(this._provider, this._factories, psiFile, consumer, interruptedFunc));
-            }
-        }
-#endif
 
         public IUnitTestProvider Provider
         {

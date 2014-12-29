@@ -1,19 +1,13 @@
 ﻿
-using JetBrains.Metadata.Reader.Impl;
-
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Xml;
-
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.Util;
-
-    using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperProvider.Shims;
 
     public class ContextSpecificationElement : FieldElement
@@ -67,34 +61,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public override UnitTestElementId Id
         {
             get { return this._id; }
-        }
-
-        public static IUnitTestElement ReadFromXml(XmlElement parent,
-                                                   IUnitTestElement parentElement,
-                                                   ISolution solution,
-                                                   ContextSpecificationFactory factory)
-        {
-            var projectId = parent.GetAttribute("projectId");
-            var project = ProjectUtil.FindProjectElementByPersistentID(solution, projectId) as IProject;
-            if (project == null)
-            {
-                return null;
-            }
-
-            var context = parentElement as ContextElement;
-            if (context == null)
-            {
-                return null;
-            }
-
-            var typeName = parent.GetAttribute("typeName");
-            var methodName = parent.GetAttribute("methodName");
-            var isIgnored = bool.Parse(parent.GetAttribute("isIgnored"));
-
-            return factory.GetOrCreateContextSpecification(context,
-                                                           new ClrTypeName(typeName),
-                                                           methodName,
-                                                           isIgnored);
         }
 
         public static UnitTestElementId CreateId(IUnitTestProvider provider, ContextElement contextElement, string fieldName)

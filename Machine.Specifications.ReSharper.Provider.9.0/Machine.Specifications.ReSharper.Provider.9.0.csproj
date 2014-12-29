@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\Build\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;RESHARPER_81</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -205,7 +205,6 @@
     <Compile Include="Presentation\ContextSpecificationElement.cs" />
     <Compile Include="Presentation\Element.cs" />
     <Compile Include="Presentation\FieldElement.cs" />
-    <Compile Include="Presentation\ISerializableElement.cs" />
     <Compile Include="Presentation\Presenter.cs" />
     <Compile Include="PsiExtensions.cs" />
     <Compile Include="Shims\Cache.cs" />

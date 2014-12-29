@@ -1,16 +1,18 @@
 using System;
 using System.Xml;
+using JetBrains.Annotations;
 
 namespace Machine.Specifications.ReSharperRunner.Tasks
 {
     [Serializable]
     public class ContextSpecificationTask : Task, IEquatable<ContextSpecificationTask>
     {
+        [UsedImplicitly]
         public ContextSpecificationTask(XmlElement element)
             : base(element)
         {
-            ContextTypeName = GetXmlAttribute(element, "ContextTypeName");
-            SpecificationFieldName = GetXmlAttribute(element, "SpecificationFieldName");
+            ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
+            SpecificationFieldName = GetXmlAttribute(element, AttributeNames.SpecificationFieldName);
         }
 
         public ContextSpecificationTask(string providerId,
@@ -36,8 +38,8 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, "ContextTypeName", ContextTypeName);
-            SetXmlAttribute(element, "SpecificationFieldName", SpecificationFieldName);
+            SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
+            SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
         }
 
         public bool Equals(ContextSpecificationTask other)

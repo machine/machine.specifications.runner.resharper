@@ -1,5 +1,4 @@
 ﻿using JetBrains.Metadata.Reader.API;
-using JetBrains.Metadata.Reader.Impl;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
@@ -7,17 +6,13 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Xml;
-
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Util;
-
-    using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperProvider.Shims;
 
-    public class ContextElement : Element, ISerializableElement
+    public class ContextElement : Element
     {
         readonly string _assemblyLocation;
         readonly IEnumerable<UnitTestElementCategory> _categories;
@@ -71,14 +66,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return this._id; }
         }
 
-        public void WriteToXml(XmlElement parent)
-        {
-            parent.SetAttribute("projectId", this.GetProject().GetPersistentID());
-            parent.SetAttribute("typeName", this.TypeName.FullName);
-            parent.SetAttribute("assemblyLocation", this.AssemblyLocation);
-            parent.SetAttribute("isIgnored", this.Explicit.ToString());
-            parent.SetAttribute("subject", this._subject);
-        }
 
         public override string GetPresentation()
         {
@@ -98,30 +85,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public override IDeclaredElement GetDeclaredElement()
         {
             return this.GetDeclaredType();
-        }
-
-        public static IUnitTestElement ReadFromXml(XmlElement parent,
-                                                   ISolution solution,
-                                                   ContextFactory factory)
-        {
-            var projectId = parent.GetAttribute("projectId");
-            var project = ProjectUtil.FindProjectElementByPersistentID(solution, projectId) as IProject;
-            if (project == null)
-            {
-                return null;
-            }
-
-            var typeName = parent.GetAttribute("typeName");
-            var assemblyLocation = parent.GetAttribute("assemblyLocation");
-            var isIgnored = bool.Parse(parent.GetAttribute("isIgnored"));
-            var subject = parent.GetAttribute("subject");
-
-            return factory.GetOrCreateContext(assemblyLocation,
-                                              project,
-                                              new ClrTypeName(typeName),
-                                              subject,
-                                              EmptyArray<string>.Instance,
-                                              isIgnored);
         }
 
         public static UnitTestElementId CreateId(IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)

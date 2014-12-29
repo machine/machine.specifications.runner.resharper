@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\Build\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;RESHARPER_81</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -171,7 +171,6 @@
     </Compile>
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="ExceptionResultConverter.cs" />
-    <Compile Include="MSpecTestAssemblyTask.cs" />
     <Compile Include="NormalizedTypeName.cs" />
     <Compile Include="Notifications\AssemblyRemoteTaskNotification.cs" />
     <Compile Include="Notifications\BehaviorSpecificationRemoteTaskNotification.cs" />
@@ -192,6 +191,7 @@
     </Compile>
     <Compile Include="RecursiveMSpecTaskRunner.cs" />
     <Compile Include="RecursiveMSpecTaskRunnerRegisterer.cs" />
+    <Compile Include="Tasks\AttributeNames.cs" />
     <Compile Include="Tasks\BehaviorSpecificationTask.cs" />
     <Compile Include="Tasks\ContextSpecificationTask.cs" />
     <Compile Include="Tasks\ContextTask.cs" />

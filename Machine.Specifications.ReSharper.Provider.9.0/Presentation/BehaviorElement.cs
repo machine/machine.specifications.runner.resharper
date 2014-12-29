@@ -1,18 +1,12 @@
-﻿using JetBrains.Metadata.Reader.Impl;
-
-namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Xml;
-
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Util;
-
-    using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperProvider.Shims;
 
     public class BehaviorElement : FieldElement
@@ -77,42 +71,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public override string GetTitlePrefix()
         {
             return "behaves like";
-        }
-
-        public override void WriteToXml(XmlElement parent)
-        {
-            base.WriteToXml(parent);
-            parent.SetAttribute("fieldType", this.FieldType);
-        }
-
-        public static IUnitTestElement ReadFromXml(XmlElement parent,
-                                                   IUnitTestElement parentElement,
-                                                   ISolution solution,
-                                                   BehaviorFactory factory)
-        {
-            var projectId = parent.GetAttribute("projectId");
-            var project = ProjectUtil.FindProjectElementByPersistentID(solution, projectId) as IProject;
-            if (project == null)
-            {
-                return null;
-            }
-
-            var context = parentElement as ContextElement;
-            if (context == null)
-            {
-                return null;
-            }
-
-            var typeName = parent.GetAttribute("typeName");
-            var methodName = parent.GetAttribute("methodName");
-            var isIgnored = bool.Parse(parent.GetAttribute("isIgnored"));
-            var fieldType = parent.GetAttribute("fieldType");
-
-            return factory.GetOrCreateBehavior(context,
-                                               new ClrTypeName(typeName),
-                                               methodName,
-                                               isIgnored,
-                                               fieldType);
         }
 
         public static UnitTestElementId CreateId(MSpecUnitTestProvider provider, ContextElement contextElement, string fieldType, string fieldName)

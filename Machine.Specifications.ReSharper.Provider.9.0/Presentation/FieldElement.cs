@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Xml;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -10,7 +9,7 @@
     using Runner.Utility;
     using Shims;
 
-    public abstract class FieldElement : Element, ISerializableElement
+    public abstract class FieldElement : Element
     {
         readonly string _fieldName;
 
@@ -62,14 +61,6 @@
             return declaredType
               .EnumerateMembers(this.FieldName, false)
               .FirstOrDefault(member => member as IField != null);
-        }
-
-        public virtual void WriteToXml(XmlElement parent)
-        {
-            parent.SetAttribute("projectId", this.GetProject().GetPersistentID());
-            parent.SetAttribute("typeName", this.TypeName.FullName);
-            parent.SetAttribute("methodName", this.FieldName);
-            parent.SetAttribute("isIgnored", this.Explicit.ToString());
         }
     }
 }
