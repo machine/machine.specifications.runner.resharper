@@ -1,3 +1,7 @@
+Machine.Specifications.Runner.Resharper 1.1.0
+-----------------------------
+- Resharper 9.1 support (only)
+
 Machine.Specifications.Runner.Resharper 1.0.0
 -----------------------------
 - Resharper 9.0 support
