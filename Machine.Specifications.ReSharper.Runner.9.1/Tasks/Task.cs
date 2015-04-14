@@ -43,7 +43,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as Task);
+            return Equals(other as object);
         }
 
         public override bool Equals(object other)
