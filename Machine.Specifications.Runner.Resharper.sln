@@ -3,21 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.dotCover.Provider.2.7", "Machine.Specifications.ReSharper.Provider\Machine.Specifications.dotCover.Provider.2.7.csproj", "{8DAC8C3F-9373-49DF-93F9-5397FF374D94}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Provider.8.2", "Machine.Specifications.ReSharper.Provider\Machine.Specifications.ReSharper.Provider.8.2.csproj", "{349DD3E5-2326-4457-AF79-F96BE2E0B0A1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.dotCover.Runner.2.7", "Machine.Specifications.ReSharper.Runner\Machine.Specifications.dotCover.Runner.2.7.csproj", "{783784C0-B842-4FC9-A941-B926C59FDF1F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Runner.8.2", "Machine.Specifications.ReSharper.Runner\Machine.Specifications.ReSharper.Runner.8.2.csproj", "{349DD3E5-2326-4457-AF79-F96BE2E0B0A0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharperRunner.Debug.VS2010", "Machine.Specifications.ReSharperRunner.Debug.VS2010\Machine.Specifications.ReSharperRunner.Debug.VS2010.csproj", "{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Provider.9.0", "Machine.Specifications.ReSharper.Provider.9.0\Machine.Specifications.ReSharper.Provider.9.0.csproj", "{35BC2FCD-E65D-4877-AA94-3873BCB6E05F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Provider.9.1", "Machine.Specifications.ReSharper.Provider.9.1\Machine.Specifications.ReSharper.Provider.9.1.csproj", "{35BC2FCD-E65D-4877-AA94-3873BCB6E05F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Runner.9.0", "Machine.Specifications.ReSharper.Runner.9.0\Machine.Specifications.ReSharper.Runner.9.0.csproj", "{62C72121-86C4-46C4-B262-9EE46C9D1B0B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8A80EB5E-DB1F-402B-B8C5-43325A9DF465}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Runner.9.1", "Machine.Specifications.ReSharper.Runner.9.1\Machine.Specifications.ReSharper.Runner.9.1.csproj", "{62C72121-86C4-46C4-B262-9EE46C9D1B0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,22 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8DAC8C3F-9373-49DF-93F9-5397FF374D94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DAC8C3F-9373-49DF-93F9-5397FF374D94}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DAC8C3F-9373-49DF-93F9-5397FF374D94}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DAC8C3F-9373-49DF-93F9-5397FF374D94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{783784C0-B842-4FC9-A941-B926C59FDF1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{783784C0-B842-4FC9-A941-B926C59FDF1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{783784C0-B842-4FC9-A941-B926C59FDF1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{783784C0-B842-4FC9-A941-B926C59FDF1F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{349DD3E5-2326-4457-AF79-F96BE2E0B0A0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
