@@ -16,17 +16,20 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         readonly ElementCache _cache;
         readonly ICache _cacheManager;
         readonly IUnitTestElementManager _manager;
+        readonly IUnitTestElementIdFactory _elementIdFactory;
         readonly MSpecUnitTestProvider _provider;
         readonly IPsi _psiModuleManager;
         readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
 
         public ContextSpecificationFactory(MSpecUnitTestProvider provider,
                                            IUnitTestElementManager manager,
+                                           IUnitTestElementIdFactory elementIdFactory,
                                            IPsi psiModuleManager,
                                            ICache cacheManager,
                                            ElementCache cache)
         {
             this._manager = manager;
+            this._elementIdFactory = elementIdFactory;
             this._psiModuleManager = psiModuleManager;
             this._cacheManager = cacheManager;
             this._provider = provider;
@@ -66,7 +69,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                            string fieldName,
                                                                            bool isIgnored)
         {
-            var id = ContextSpecificationElement.CreateId(_provider, context, fieldName);
+            var id = ContextSpecificationElement.CreateId(_elementIdFactory, _provider, context, fieldName);
             var contextSpecification = this._manager.GetElementById(id) as ContextSpecificationElement;
             if (contextSpecification != null)
             {
@@ -78,6 +81,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return new ContextSpecificationElement(this._provider,
                                                    this._psiModuleManager,
                                                    this._cacheManager,
+                                                   id,
                                                    new ProjectModelElementEnvoy(context.GetProject()),
                                                    context,
                                                    declaringTypeName,

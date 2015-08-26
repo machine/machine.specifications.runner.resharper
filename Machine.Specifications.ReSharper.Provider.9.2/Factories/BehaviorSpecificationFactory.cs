@@ -16,6 +16,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     public class BehaviorSpecificationFactory
     {
         readonly ICache _cacheManager;
+        readonly IUnitTestElementIdFactory _elementIdFactory;
         readonly IUnitTestElementManager _manager;
         readonly MSpecUnitTestProvider _provider;
         readonly IPsi _psiModuleManager;
@@ -24,11 +25,13 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         public BehaviorSpecificationFactory(MSpecUnitTestProvider provider,
                                             IUnitTestElementManager manager,
                                             IPsi psiModuleManager,
-                                            ICache cacheManager)
+                                            ICache cacheManager,
+                                            IUnitTestElementIdFactory elementIdFactory)
         {
             this._manager = manager;
             this._psiModuleManager = psiModuleManager;
             this._cacheManager = cacheManager;
+            this._elementIdFactory = elementIdFactory;
             this._provider = provider;
         }
 
@@ -69,7 +72,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                              string fieldName,
                                                                              bool isIgnored)
         {
-            var id = BehaviorSpecificationElement.CreateId(_provider, behavior, fieldName);
+            var id = BehaviorSpecificationElement.CreateId(_elementIdFactory, _provider, behavior, fieldName);
             var behaviorSpecification = this._manager.GetElementById(id) as BehaviorSpecificationElement;
             if (behaviorSpecification != null)
             {
@@ -81,6 +84,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return new BehaviorSpecificationElement(this._provider,
                                                     this._psiModuleManager,
                                                     this._cacheManager,
+                                                    id,
                                                     new ProjectModelElementEnvoy(behavior.GetProject()),
                                                     behavior,
                                                     declaringTypeName,
