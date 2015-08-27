@@ -1,3 +1,4 @@
+using System.Threading;
 using JetBrains.ReSharper.Psi;
 using Machine.Specifications.ReSharperProvider.Factories;
 
@@ -35,10 +36,10 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         {
         }
 
-        public void ExploreProjects(IDictionary<IProject, FileSystemPath> projects, MetadataLoader loader, IUnitTestElementsObserver observer)
+        public void ExploreProjects(IDictionary<IProject, FileSystemPath> projects, MetadataLoader loader, IUnitTestElementsObserver observer, CancellationToken cancellationToken)
         {
             var explorer = new MSpecTestMetadataExplorer(_provider, _assemblyExplorer);
-            _metadataElementsSource.ExploreProjects(projects, loader, observer, explorer.ExploreAssembly);
+            _metadataElementsSource.ExploreProjects(projects, loader, observer, explorer.ExploreAssembly, cancellationToken);
             observer.OnCompleted();
         }
 

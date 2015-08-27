@@ -21,6 +21,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public ContextElement(MSpecUnitTestProvider provider,
                               IPsi psiModuleManager,
                               ICache cacheManager,
+                              UnitTestElementId id,
                               ProjectModelElementEnvoy projectEnvoy,
                               IClrTypeName typeName,
                               string assemblyLocation,
@@ -30,7 +31,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                               IUnitTestCategoryFactory categoryFactory)
             : base(provider, psiModuleManager, cacheManager, null, projectEnvoy, typeName, isIgnored)
         {
-            this._id = CreateId(provider, (IProject)projectEnvoy.GetValidProjectElement(), subject, this.TypeName.FullName, tags);
+            this._id = id;
             this.AssemblyLocation = assemblyLocation;
             this._subject = subject;
 
@@ -83,7 +84,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return this.GetDeclaredType();
         }
 
-        public static UnitTestElementId CreateId(IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
         {
             string tagsAsString = null;
             if (tags != null)
@@ -92,7 +93,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             }
             var result = new[] { subject, typeName, tagsAsString };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return new UnitTestElementId(provider, new PersistentProjectId(project), id);
+            return elementIdFactory.Create(provider, new PersistentProjectId(project), id);
         }
     }
 }

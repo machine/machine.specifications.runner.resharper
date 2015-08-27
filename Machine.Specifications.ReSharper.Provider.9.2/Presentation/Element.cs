@@ -117,9 +117,9 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return this._projectEnvoy.GetValidProjectElement() as IProject;
         }
 
-        public UnitTestNamespace GetNamespace()
+        public UnitTestElementNamespace GetNamespace()
         {
-            return new UnitTestNamespace(this._declaringTypeName.NamespaceNames);
+            return UnitTestElementNamespaceFactory.Create(this._declaringTypeName.NamespaceNames);
         }
 
         public UnitTestElementDisposition GetDisposition()

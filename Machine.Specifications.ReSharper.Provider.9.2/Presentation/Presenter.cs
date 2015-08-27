@@ -71,7 +71,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         protected override bool IsNaturalParent(object parentValue, object childValue)
         {
-            var @namespace = parentValue as UnitTestNamespace;
+            var @namespace = parentValue as UnitTestElementNamespace;
             var context = childValue as ContextElement;
 
             if (context != null && @namespace != null)

@@ -20,6 +20,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     {
         readonly ElementCache _cache;
         readonly IUnitTestElementManager _manager;
+        readonly IUnitTestElementIdFactory _elementIdFactory;
         readonly ICache _cacheManager;
         readonly MSpecUnitTestProvider _provider;
         readonly IPsi _psiModuleManager;
@@ -27,6 +28,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
         public BehaviorFactory(MSpecUnitTestProvider provider,
                              IUnitTestElementManager manager,
+                             IUnitTestElementIdFactory elementIdFactory,
                              IPsi psiModuleManager,
                              ICache cacheManager,
                              ElementCache cache)
@@ -36,6 +38,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             this._provider = provider;
             this._cache = cache;
             this._manager = manager;
+            this._elementIdFactory = elementIdFactory;
         }
 
         public BehaviorElement CreateBehavior(IDeclaredElement field)
@@ -91,7 +94,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                    bool isIgnored,
                                                    string fieldType)
         {
-            var id = BehaviorElement.CreateId(_provider, context, fieldType, fieldName);
+            var id = BehaviorElement.CreateId(_elementIdFactory, _provider, context, fieldType, fieldName);
             var behavior = this._manager.GetElementById(id) as BehaviorElement;
             if (behavior != null)
             {
@@ -103,6 +106,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return new BehaviorElement(this._provider,
                                        this._psiModuleManager,
                                        this._cacheManager,
+                                       id,
                                        context,
                                        new ProjectModelElementEnvoy(context.GetProject()),
                                        declaringTypeName,
