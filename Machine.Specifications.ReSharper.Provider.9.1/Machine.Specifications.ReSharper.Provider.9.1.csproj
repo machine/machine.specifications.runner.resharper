@@ -159,9 +159,6 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ProductInfo.ReSharper.9.1.cs">
-      <Link>Properties\ProductInfo.ReSharper.9.1.cs</Link>
-    </Compile>
     <Compile Include="Explorers\MSpecTestElementsSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>
