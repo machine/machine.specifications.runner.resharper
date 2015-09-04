@@ -1,6 +1,7 @@
 Machine.Specifications.Runner.Resharper 1.2.0
 -----------------------------
 - ReSharper 9.2 support (only)
+- Fixed NullReferenceException in Presentation.Element during test run (issue #20)
 
 Machine.Specifications.Runner.Resharper 1.1.0
 -----------------------------
