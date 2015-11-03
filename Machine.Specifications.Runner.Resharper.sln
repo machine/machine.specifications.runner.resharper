@@ -5,10 +5,6 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharperRunner.Debug.VS2010", "Machine.Specifications.ReSharperRunner.Debug.VS2010\Machine.Specifications.ReSharperRunner.Debug.VS2010.csproj", "{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Provider.9.1", "Machine.Specifications.ReSharper.Provider.9.1\Machine.Specifications.ReSharper.Provider.9.1.csproj", "{35BC2FCD-E65D-4877-AA94-3873BCB6E05F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Runner.9.1", "Machine.Specifications.ReSharper.Runner.9.1\Machine.Specifications.ReSharper.Runner.9.1.csproj", "{62C72121-86C4-46C4-B262-9EE46C9D1B0B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Provider.9.2", "Machine.Specifications.ReSharper.Provider.9.2\Machine.Specifications.ReSharper.Provider.9.2.csproj", "{0AC9AC80-D8CC-4CB7-BB85-312168096781}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Runner.9.2", "Machine.Specifications.ReSharper.Runner.9.2\Machine.Specifications.ReSharper.Runner.9.2.csproj", "{585AE31B-2361-4A4E-8E9E-32B808D280A0}"
@@ -23,14 +19,6 @@ Global
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35BC2FCD-E65D-4877-AA94-3873BCB6E05F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35BC2FCD-E65D-4877-AA94-3873BCB6E05F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35BC2FCD-E65D-4877-AA94-3873BCB6E05F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35BC2FCD-E65D-4877-AA94-3873BCB6E05F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62C72121-86C4-46C4-B262-9EE46C9D1B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62C72121-86C4-46C4-B262-9EE46C9D1B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{62C72121-86C4-46C4-B262-9EE46C9D1B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{62C72121-86C4-46C4-B262-9EE46C9D1B0B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0AC9AC80-D8CC-4CB7-BB85-312168096781}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0AC9AC80-D8CC-4CB7-BB85-312168096781}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AC9AC80-D8CC-4CB7-BB85-312168096781}.Release|Any CPU.ActiveCfg = Release|Any CPU

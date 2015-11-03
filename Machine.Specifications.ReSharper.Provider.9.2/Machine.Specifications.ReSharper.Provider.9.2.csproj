@@ -220,7 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Machine.Specifications.ReSharper.Runner.9.2\Machine.Specifications.ReSharper.Runner.9.2.csproj">
-      <Project>{62c72121-86c4-46c4-b262-9ee46c9d1b0b}</Project>
+      <Project>{585ae31b-2361-4a4e-8e9e-32b808d280a0}</Project>
       <Name>Machine.Specifications.ReSharper.Runner.9.2</Name>
     </ProjectReference>
   </ItemGroup>
