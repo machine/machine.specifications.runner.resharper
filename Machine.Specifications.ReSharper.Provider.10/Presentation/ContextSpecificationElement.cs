@@ -68,7 +68,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         {
             var result = new[] { contextElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, new PersistentProjectId(contextElement.GetProject()), id);
+            return elementIdFactory.Create(provider, contextElement.GetProject(), id);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                               string subject,
                               IEnumerable<string> tags,
                               bool isIgnored,
-                              IUnitTestCategoryFactory categoryFactory)
+                              IUnitTestElementCategoryFactory categoryFactory)
             : base(provider, psiModuleManager, cacheManager, null, projectEnvoy, typeName, isIgnored)
         {
             this._id = id;
@@ -93,7 +93,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             }
             var result = new[] { subject, typeName, tagsAsString };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, new PersistentProjectId(project), id);
+            return elementIdFactory.Create(provider, project, id);
         }
     }
 }

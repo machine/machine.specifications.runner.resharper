@@ -16,7 +16,7 @@
 
         public ISymbolScope GetDeclarationsCache(IPsiModule psiModule, bool withReferences, bool caseSensitive)
         {
-            return this._cache.GetSymbolScope(LibrarySymbolScope.FULL, caseSensitive, psiModule.GetContextFromModule());
+            return this._cache.GetSymbolScope(psiModule, withReferences, caseSensitive);
         }
     }
 }
