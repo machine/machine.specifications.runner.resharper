@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Machine.Specifications.ReSharperRunner</RootNamespace>
-    <AssemblyName>Machine.Specifications.ReSharper.Runner.9.2</AssemblyName>
+    <AssemblyName>Machine.Specifications.ReSharper.Runner.10</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Build\Debug\9.2\</OutputPath>
+    <OutputPath>..\Build\Debug\10\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,7 +30,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Build\Release\9.2\</OutputPath>
+    <OutputPath>..\Build\Release\10\</OutputPath>
     <DefineConstants>TRACE;RESHARPER_81</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -158,11 +158,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ProductInfo.ReSharper.10.cs">
+      <Link>Properties\ProductInfo.ReSharper.10.cs</Link>
+    </Compile>
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\ProductInfo.ReSharper.9.2.cs">
-      <Link>Properties\ProductInfo.ReSharper.9.2.cs</Link>
     </Compile>
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="ExceptionResultConverter.cs" />
@@ -202,7 +202,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Machine.Specifications.Runner.Resharper.9.2.nuspec" />
+    <None Include="Machine.Specifications.Runner.Resharper.10.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Machine.Specifications.ReSharperProvider</RootNamespace>
-    <AssemblyName>Machine.Specifications.ReSharper.Provider.9.2</AssemblyName>
+    <AssemblyName>Machine.Specifications.ReSharper.Provider.10</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Build\Debug\9.2\</OutputPath>
+    <OutputPath>..\Build\Debug\10\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,7 +30,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Build\Release\9.2\</OutputPath>
+    <OutputPath>..\Build\Release\10\</OutputPath>
     <DefineConstants>TRACE;RESHARPER_81</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -219,9 +219,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Machine.Specifications.ReSharper.Runner.9.2\Machine.Specifications.ReSharper.Runner.9.2.csproj">
+    <ProjectReference Include="..\Machine.Specifications.ReSharper.Runner.10\Machine.Specifications.ReSharper.Runner.10.csproj">
       <Project>{585ae31b-2361-4a4e-8e9e-32b808d280a0}</Project>
-      <Name>Machine.Specifications.ReSharper.Runner.9.2</Name>
+      <Name>Machine.Specifications.ReSharper.Runner.10</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
