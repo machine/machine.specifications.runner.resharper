@@ -15,17 +15,17 @@
 		<iconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</iconUrl>
 		<tags>test unit testing context specification bdd tdd mspec runner resharper</tags>
 		<dependencies>
-			<dependency id="Wave" version="[2.0]" />
-		</dependencies>		
+			<dependency id="Wave" version="[3.0]" />
+		</dependencies>
 	</metadata>
 	<files>
 
-		<file src="..\Build\Release\Machine.Specifications.ReSharper.Provider.9.1.dll" target="dotFiles" />
-		<file src="..\Build\Release\Machine.Specifications.ReSharper.Runner.9.1.dll" target="dotFiles" />
-		<file src="..\Build\Release\Machine.Specifications.Runner.Utility.dll" target="dotFiles" />
+		<file src="..\Build\Release\9.2\Machine.Specifications.ReSharper.Provider.9.2.dll" target="dotFiles" />
+		<file src="..\Build\Release\9.2\Machine.Specifications.ReSharper.Runner.9.2.dll" target="dotFiles" />
+		<file src="..\Build\Release\9.2\Machine.Specifications.Runner.Utility.dll" target="dotFiles" />
 
 		<!-- Settings -->
-		<file src="..\Misc\*.dotSettings" target="dotFiles\Extensions\Machine.Specifications.Runner.Resharper9\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>		
+		<file src="..\Misc\*.dotSettings" target="dotFiles\Extensions\Machine.Specifications.Runner.Resharper9\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>
 
 	</files>
 </package>

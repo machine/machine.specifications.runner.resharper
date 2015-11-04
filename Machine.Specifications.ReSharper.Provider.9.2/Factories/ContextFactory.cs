@@ -22,6 +22,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         readonly ElementCache _cache;
         readonly ICache _cacheManager;
         readonly IUnitTestElementManager _manager;
+        readonly IUnitTestElementIdFactory _elementIdFactory;
         readonly IUnitTestCategoryFactory _categoryFactory;
         readonly MSpecUnitTestProvider _provider;
         readonly IPsi _psiModuleManager;
@@ -29,12 +30,14 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
         public ContextFactory(MSpecUnitTestProvider provider,
                               IUnitTestElementManager manager,
+                              IUnitTestElementIdFactory elementIdFactory,
                               IUnitTestCategoryFactory categoryFactory,
                               IPsi psiModuleManager,
                               ICache cacheManager,
                               ElementCache cache)
         {
             this._manager = manager;
+            this._elementIdFactory = elementIdFactory;
             this._categoryFactory = categoryFactory;
             this._psiModuleManager = psiModuleManager;
             this._cacheManager = cacheManager;
@@ -76,7 +79,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                  ICollection<string> tags,
                                                  bool isIgnored)
         {
-            var id = ContextElement.CreateId(_provider, project, subject, typeName.FullName, tags);
+            var id = ContextElement.CreateId(_elementIdFactory, _provider, project, subject, typeName.FullName, tags);
             var contextElement = this._manager.GetElementById(id) as ContextElement;
             if (contextElement != null)
             {
@@ -88,6 +91,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return new ContextElement(this._provider,
                                       this._psiModuleManager,
                                       this._cacheManager,
+                                      id,
                                       new ProjectModelElementEnvoy(project),
                                       typeName,
                                       assemblyPath,

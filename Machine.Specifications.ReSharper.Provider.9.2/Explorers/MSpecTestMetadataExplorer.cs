@@ -21,8 +21,10 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             this._provider = provider;
         }
 
-        public void ExploreAssembly(IProject project, IMetadataAssembly assembly, IUnitTestElementsObserver consumer)
+        public void ExploreAssembly(IProject project, IMetadataAssembly assembly, IUnitTestElementsObserver consumer, CancellationToken cancellationToken)
         {
+            // TODO: Use CancellationToken to exit early
+
             using (ReadLockCookie.Create()) //Get a read lock so that it is safe to read the assembly
             {
                 foreach (var metadataTypeInfo in GetTypesIncludingNested(assembly.GetTypes()))

@@ -17,6 +17,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public ContextSpecificationElement(MSpecUnitTestProvider provider,
                                            IPsi psiModuleManager,
                                            ICache cacheManager,
+                                           UnitTestElementId id,
                                            ProjectModelElementEnvoy project,
                                            ContextElement context,
                                            IClrTypeName declaringTypeName,
@@ -31,7 +32,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                    fieldName,
                    isIgnored || context.Explicit)
         {
-            this._id = CreateId(provider, context, fieldName);
+            this._id = id;
         }
 
         public ContextElement Context
@@ -63,11 +64,11 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return this._id; }
         }
 
-        public static UnitTestElementId CreateId(IUnitTestProvider provider, ContextElement contextElement, string fieldName)
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestProvider provider, ContextElement contextElement, string fieldName)
         {
             var result = new[] { contextElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return new UnitTestElementId(provider, new PersistentProjectId(contextElement.GetProject()), id);
+            return elementIdFactory.Create(provider, new PersistentProjectId(contextElement.GetProject()), id);
         }
     }
 }

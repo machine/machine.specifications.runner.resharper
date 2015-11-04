@@ -9,7 +9,7 @@ task :configure do
     :nunit_framework => "net-3.5",
     :mspec_options => (["--teamcity"] if ENV.include?('TEAMCITY_PROJECT_NAME')) || []
   }
-  
+
   configatron.solution = Configatron::Delayed.new do
     FileList.new("*.sln").to_a[0]
   end
@@ -24,7 +24,7 @@ task :configure do
   end
   configatron.version.short = Configatron::Delayed.new do
     `gitflowversion`.scan(/ShortVersion":"(.*)"/)[0][0]
-  end  
+  end
 
   configatron.configure_from_hash build_config
   #configatron.protect_all!
@@ -46,14 +46,14 @@ task :clean do
   f
   end
   FileUtils.rm_rf filesToClean
-  
+
   Dir.mkdir 'Distribution'
   Dir.mkdir 'Specs'
 end
 
 task :restore do
   nopts = %W(
-   nuget restore "#{configatron.solution}"
+   nuget restore #{configatron.solution}
   )
 
   sh(*nopts)

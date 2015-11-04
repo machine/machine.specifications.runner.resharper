@@ -16,6 +16,7 @@
         public BehaviorSpecificationElement(MSpecUnitTestProvider provider,
                                             IPsi psiModuleManager,
                                             ICache cacheManager,
+                                            UnitTestElementId id,
                                             ProjectModelElementEnvoy projectEnvoy,
                                             BehaviorElement behavior,
                                             IClrTypeName declaringTypeName,
@@ -31,7 +32,7 @@
                    fieldName,
                    isIgnored || behavior.Explicit)
         {
-            this._id = CreateId(provider, behavior, fieldName);
+            this._id = id;
         }
 
         public BehaviorElement Behavior
@@ -63,11 +64,11 @@
             get { return this._id; }
         }
 
-        public static UnitTestElementId CreateId(IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
         {
             var result = new[] { behaviorElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return new UnitTestElementId(provider, new PersistentProjectId(behaviorElement.GetProject()), id);
+            return elementIdFactory.Create(provider, new PersistentProjectId(behaviorElement.GetProject()), id);
         }
     }
 }
