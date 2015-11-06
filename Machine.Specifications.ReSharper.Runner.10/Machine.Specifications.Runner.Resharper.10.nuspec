@@ -25,7 +25,7 @@
 		<file src="..\Build\Release\10\Machine.Specifications.Runner.Utility.dll" target="dotFiles" />
 
 		<!-- Settings -->
-		<file src="..\Misc\*.dotSettings" target="dotFiles\Extensions\Machine.Specifications.Runner.Resharper10\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>
+		<file src="..\Misc\*.dotSettings" target="dotFiles\Extensions\Machine.Specifications.Runner.Resharper9\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>
 
 	</files>
 </package>
