@@ -23,7 +23,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         readonly ICache _cacheManager;
         readonly IUnitTestElementManager _manager;
         readonly IUnitTestElementIdFactory _elementIdFactory;
-        readonly IUnitTestCategoryFactory _categoryFactory;
+        readonly IUnitTestElementCategoryFactory _categoryFactory;
         readonly MSpecUnitTestProvider _provider;
         readonly IPsi _psiModuleManager;
         readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
@@ -31,7 +31,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         public ContextFactory(MSpecUnitTestProvider provider,
                               IUnitTestElementManager manager,
                               IUnitTestElementIdFactory elementIdFactory,
-                              IUnitTestCategoryFactory categoryFactory,
+                              IUnitTestElementCategoryFactory categoryFactory,
                               IPsi psiModuleManager,
                               ICache cacheManager,
                               ElementCache cache)

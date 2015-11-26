@@ -1,38 +1,37 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using System.Collections.Generic;
     using System.Linq;
-    using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
+    using JetBrains.Metadata.Reader.API;
     using JetBrains.Util;
     using Machine.Specifications.ReSharperProvider.Shims;
 
-    public class BehaviorElement : FieldElement
+    public class ContextSpecificationElement : FieldElement
     {
         readonly UnitTestElementId _id;
 
-        public BehaviorElement(MSpecUnitTestProvider provider,
-                               IPsi psiModuleManager,
-                               ICache cacheManager,
-                               UnitTestElementId id,
-                               ContextElement context,
-                               ProjectModelElementEnvoy projectEnvoy,
-                               IClrTypeName declaringTypeName,
-                               string fieldName,
-                               bool isIgnored,
-                               string fieldType)
+        public ContextSpecificationElement(MSpecUnitTestProvider provider,
+                                           IPsi psiModuleManager,
+                                           ICache cacheManager,
+                                           UnitTestElementId id,
+                                           ProjectModelElementEnvoy project,
+                                           ContextElement context,
+                                           IClrTypeName declaringTypeName,
+                                           string fieldName,
+                                           bool isIgnored)
             : base(provider,
                    psiModuleManager,
                    cacheManager,
                    context,
-                   projectEnvoy,
+                   project,
                    declaringTypeName,
                    fieldName,
                    isIgnored || context.Explicit)
         {
-            this.FieldType = fieldType;
             this._id = id;
         }
 
@@ -41,11 +40,9 @@
             get { return (ContextElement)this.Parent; }
         }
 
-        public string FieldType { get; private set; }
-
         public override string Kind
         {
-            get { return "Behavior"; }
+            get { return "Specification"; }
         }
 
         public override IEnumerable<UnitTestElementCategory> Categories
@@ -67,16 +64,11 @@
             get { return this._id; }
         }
 
-        public override string GetTitlePrefix()
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestProvider provider, ContextElement contextElement, string fieldName)
         {
-            return "behaves like";
-        }
-
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, MSpecUnitTestProvider provider, ContextElement contextElement, string fieldType, string fieldName)
-        {
-            var result = new[] { contextElement.Id, fieldType, fieldName };
+            var result = new[] { contextElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, new PersistentProjectId(contextElement.GetProject()), id);
+            return elementIdFactory.Create(provider, contextElement.GetProject(), id);
         }
     }
 }

@@ -5,9 +5,9 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharperRunner.Debug.VS2010", "Machine.Specifications.ReSharperRunner.Debug.VS2010\Machine.Specifications.ReSharperRunner.Debug.VS2010.csproj", "{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Provider.9.2", "Machine.Specifications.ReSharper.Provider.9.2\Machine.Specifications.ReSharper.Provider.9.2.csproj", "{0AC9AC80-D8CC-4CB7-BB85-312168096781}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Provider.10", "Machine.Specifications.ReSharper.Provider.10\Machine.Specifications.ReSharper.Provider.10.csproj", "{0AC9AC80-D8CC-4CB7-BB85-312168096781}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Runner.9.2", "Machine.Specifications.ReSharper.Runner.9.2\Machine.Specifications.ReSharper.Runner.9.2.csproj", "{585AE31B-2361-4A4E-8E9E-32B808D280A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.ReSharper.Runner.10", "Machine.Specifications.ReSharper.Runner.10\Machine.Specifications.ReSharper.Runner.10.csproj", "{585AE31B-2361-4A4E-8E9E-32B808D280A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
