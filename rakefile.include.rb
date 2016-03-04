@@ -5,7 +5,7 @@ task :configure do
   build_config = {
     :target => target,
     :sign_assembly => ENV.include?('SIGN_ASSEMBLY'),
-    :out_dir => "Build/#{target}/",
+    :out_dir => "Build/",
     :nunit_framework => "net-3.5",
     :mspec_options => (["--teamcity"] if ENV.include?('TEAMCITY_PROJECT_NAME')) || []
   }

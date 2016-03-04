@@ -20,9 +20,9 @@
 	</metadata>
 	<files>
 
-		<file src="..\Build\Release\10\Machine.Specifications.ReSharper.Provider.10.dll" target="dotFiles" />
-		<file src="..\Build\Release\10\Machine.Specifications.ReSharper.Runner.10.dll" target="dotFiles" />
-		<file src="..\Build\Release\10\Machine.Specifications.Runner.Utility.dll" target="dotFiles" />
+		<file src="..\Build\Machine.Specifications.ReSharper.Provider.10.dll" target="dotFiles" />
+		<file src="..\Build\Machine.Specifications.ReSharper.Runner.10.dll" target="dotFiles" />
+		<file src="..\Build\Machine.Specifications.Runner.Utility.dll" target="dotFiles" />
 
 		<!-- Settings -->
 		<file src="..\Misc\*.dotSettings" target="dotFiles\Extensions\Machine.Specifications.Runner.Resharper9\settings" exclude="..\Misc\Resharper.Style.DotSettings;..\Misc\Resharper.TypeMemberLayout.DotSettings"/>
