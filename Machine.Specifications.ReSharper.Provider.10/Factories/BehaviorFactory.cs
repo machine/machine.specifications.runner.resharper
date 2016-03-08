@@ -9,7 +9,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using System.Linq;
 
     [SolutionComponent]
     public class BehaviorFactory
@@ -55,9 +54,10 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                field.IsIgnored(),
                                                fieldType);
 
+            // TODO: Remove?
             foreach (var child in behavior.Children)
             {
-                child.State = UnitTestElementState.Pending;
+                child.State = UnitTestElementState.None;
             }
 
             this._cache.AddBehavior(field, behavior);
@@ -91,7 +91,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             if (behavior != null)
             {
                 behavior.Parent = context;
-                behavior.State = UnitTestElementState.Valid;
+                behavior.State = UnitTestElementState.None;
                 return behavior;
             }
             return new BehaviorElement(this._provider,
@@ -104,20 +104,21 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                        fieldType);
         }
 
+        // TODO: REMOVE
         public void UpdateChildState(IDeclaredElement field)
         {
-            var behavior = this._cache.TryGetBehavior(field);
-            if (behavior == null)
-            {
-                return;
-            }
+            //var behavior = this._cache.TryGetBehavior(field);
+            //if (behavior == null)
+            //{
+            //    return;
+            //}
 
-            foreach (var element in behavior
-              .Children.Where(x => x.State == UnitTestElementState.Pending)
-              .Flatten(x => x.Children))
-            {
-                element.State = UnitTestElementState.Invalid;
-            }
+            //foreach (var element in behavior
+            //  .Children.Where(x => x.State == UnitTestElementState.Pending)
+            //  .Flatten(x => x.Children))
+            //{
+            //    element.State = UnitTestElementState.Invalid;
+            //}
         }
     }
 }

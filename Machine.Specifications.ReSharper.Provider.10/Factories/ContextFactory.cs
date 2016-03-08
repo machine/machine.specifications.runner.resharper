@@ -1,5 +1,4 @@
 using JetBrains.Metadata.Reader.Impl;
-using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
@@ -11,7 +10,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     using JetBrains.ReSharper.UnitTestFramework.Elements;
     using Machine.Specifications.ReSharperProvider.Presentation;
     using System.Collections.Generic;
-    using System.Linq;
 
     [SolutionComponent]
     public class ContextFactory
@@ -47,9 +45,10 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                              type.GetSubjectString(),
                                              type.GetTags(), type.IsIgnored());
 
+            // TODO: Remove?
             foreach (var child in context.Children)
             {
-                child.State = UnitTestElementState.Pending;
+                child.State = UnitTestElementState.None;
             }
 
             this._cache.AddContext(type, context);
@@ -76,7 +75,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var contextElement = this._manager.GetElementById(id) as ContextElement;
             if (contextElement != null)
             {
-                contextElement.State = UnitTestElementState.Valid;
+                contextElement.State = UnitTestElementState.None;
                 contextElement.AssemblyLocation = assemblyPath;
                 return contextElement;
             }
@@ -92,20 +91,21 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                       _categoryFactory);
         }
 
+        // TODO: REMOVE
         public void UpdateChildState(ITypeElement type)
         {
-            var context = this._cache.TryGetContext(type);
-            if (context == null)
-            {
-                return;
-            }
+            //var context = this._cache.TryGetContext(type);
+            //if (context == null)
+            //{
+            //    return;
+            //}
 
-            foreach (var element in context
-              .Children.Where(x => x.State == UnitTestElementState.Pending)
-              .Flatten(x => x.Children))
-            {
-                element.State = UnitTestElementState.Invalid;
-            }
+            //foreach (var element in context
+            //  .Children.Where(x => x.State == UnitTestElementState.Pending)
+            //  .Flatten(x => x.Children))
+            //{
+            //    element.State = UnitTestElementState.Invalid;
+            //}
         }
     }
 }

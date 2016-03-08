@@ -71,7 +71,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             if (behaviorSpecification != null)
             {
                 behaviorSpecification.Parent = behavior;
-                behaviorSpecification.State = UnitTestElementState.Valid;
+                behaviorSpecification.State = UnitTestElementState.None;
                 return behaviorSpecification;
             }
 

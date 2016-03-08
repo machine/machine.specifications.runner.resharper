@@ -47,7 +47,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             this.Parent = parent;
 
             this.Children = new List<IUnitTestElement>();
-            this.State = UnitTestElementState.Valid;
+            this.State = UnitTestElementState.None;
             this._taskFactory = new UnitTestTaskFactory(this._provider.ID);
         }
 
