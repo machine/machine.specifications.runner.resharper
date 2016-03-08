@@ -22,7 +22,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         readonly UnitTestTaskFactory _taskFactory;
         Element _parent;
         readonly UnitTestingCachingService _cachingService;
-        private UnitTestElementState _state;
 
         protected Element(MSpecUnitTestProvider provider,
                           Element parent,
@@ -97,19 +96,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return false; }
         }
 
-        public UnitTestElementState State
-        {
-            get
-            {
-                if (this.Parent == null)
-                {
-                    return UnitTestElementState.Invalid;
-                }
-
-                return _state;
-            }
-            set { _state = value; }
-        }
+        public UnitTestElementState State { get; set; }
 
         public IProject GetProject()
         {
