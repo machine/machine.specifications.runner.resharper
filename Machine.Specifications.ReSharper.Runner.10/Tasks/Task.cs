@@ -37,8 +37,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
                 return false;
             }
 
-            return Equals(RunnerID, other.RunnerID) &&
-                   Equals(AssemblyLocation, other.AssemblyLocation);
+            return Equals(AssemblyLocation, other.AssemblyLocation);
         }
 
         public override bool Equals(RemoteTask other)
@@ -53,12 +52,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var result = Id.GetHashCode();
-                result = (result * 397) ^ AssemblyLocation.GetHashCode();
-                return result;
-            }
+            return AssemblyLocation.GetHashCode();
         }
     }
 }
