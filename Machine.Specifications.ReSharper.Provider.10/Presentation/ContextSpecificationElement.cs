@@ -1,34 +1,27 @@
 ﻿
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
+    using JetBrains.Metadata.Reader.API;
+    using JetBrains.ReSharper.UnitTestFramework;
+    using JetBrains.Util;
     using System.Collections.Generic;
     using System.Linq;
-    using JetBrains.ProjectModel;
-    using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.Util;
-    using Machine.Specifications.ReSharperProvider.Shims;
 
     public class ContextSpecificationElement : FieldElement
     {
         readonly UnitTestElementId _id;
 
         public ContextSpecificationElement(MSpecUnitTestProvider provider,
-                                           IPsi psiModuleManager,
-                                           ICache cacheManager,
                                            UnitTestElementId id,
-                                           ProjectModelElementEnvoy project,
                                            ContextElement context,
                                            IClrTypeName declaringTypeName,
+                                           UnitTestingCachingService cachingService,
                                            string fieldName,
                                            bool isIgnored)
             : base(provider,
-                   psiModuleManager,
-                   cacheManager,
                    context,
-                   project,
                    declaringTypeName,
+                   cachingService,
                    fieldName,
                    isIgnored || context.Explicit)
         {

@@ -192,7 +192,6 @@
     <Compile Include="Factories\UnitTestTaskFactory.cs" />
     <Compile Include="MetadataExtensions.cs" />
     <Compile Include="MSpecElementNaming.cs" />
-    <Compile Include="MSpecUnitTestElementComparer.cs" />
     <Compile Include="MSpecUnitTestPresenter.cs" />
     <Compile Include="MSpecUnitTestProvider.cs" />
     <Compile Include="Presentation\BehaviorElement.cs" />
@@ -203,10 +202,6 @@
     <Compile Include="Presentation\FieldElement.cs" />
     <Compile Include="Presentation\Presenter.cs" />
     <Compile Include="PsiExtensions.cs" />
-    <Compile Include="Shims\Cache.cs" />
-    <Compile Include="Shims\ICache.cs" />
-    <Compile Include="Shims\IPsi.cs" />
-    <Compile Include="Shims\Psi.cs" />
     <Compile Include="ZoneMarker.cs" />
   </ItemGroup>
   <ItemGroup>

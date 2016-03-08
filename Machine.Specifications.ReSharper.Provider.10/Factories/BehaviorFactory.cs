@@ -3,17 +3,13 @@ using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using System.Linq;
-
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.Psi.Impl.Reflection2;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
-
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using Machine.Specifications.ReSharperProvider.Shims;
+    using System.Linq;
 
     [SolutionComponent]
     public class BehaviorFactory
@@ -21,24 +17,20 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         readonly ElementCache _cache;
         readonly IUnitTestElementManager _manager;
         readonly IUnitTestElementIdFactory _elementIdFactory;
-        readonly ICache _cacheManager;
+        private readonly UnitTestingCachingService _cachingService;
         readonly MSpecUnitTestProvider _provider;
-        readonly IPsi _psiModuleManager;
-        readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
 
         public BehaviorFactory(MSpecUnitTestProvider provider,
                              IUnitTestElementManager manager,
                              IUnitTestElementIdFactory elementIdFactory,
-                             IPsi psiModuleManager,
-                             ICache cacheManager,
+                             UnitTestingCachingService cachingService,
                              ElementCache cache)
         {
-            this._psiModuleManager = psiModuleManager;
-            this._cacheManager = cacheManager;
             this._provider = provider;
             this._cache = cache;
             this._manager = manager;
             this._elementIdFactory = elementIdFactory;
+            this._cachingService = cachingService;
         }
 
         public BehaviorElement CreateBehavior(IDeclaredElement field)
@@ -80,7 +72,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var fieldType = new NormalizedTypeName(metadataTypeName);
 
             var behaviorElement = this.GetOrCreateBehavior(context,
-                                                      this._reflectionTypeNameCache.GetClrName(behavior.DeclaringType),
+                                                      new ClrTypeName(metadataTypeName),
                                                       behavior.Name,
                                                       behavior.IsIgnored() || typeContainingBehaviorSpecifications.IsIgnored(),
                                                       fieldType);
@@ -102,14 +94,11 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 behavior.State = UnitTestElementState.Valid;
                 return behavior;
             }
-
             return new BehaviorElement(this._provider,
-                                       this._psiModuleManager,
-                                       this._cacheManager,
                                        id,
                                        context,
-                                       new ProjectModelElementEnvoy(context.GetProject()),
                                        declaringTypeName,
+                                       this._cachingService,
                                        fieldName,
                                        isIgnored,
                                        fieldType);

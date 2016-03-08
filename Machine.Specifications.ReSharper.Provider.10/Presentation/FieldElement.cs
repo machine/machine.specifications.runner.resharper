@@ -1,27 +1,25 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿using JetBrains.ReSharper.UnitTestFramework;
+
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System;
-    using System.Linq;
     using JetBrains.Metadata.Reader.API;
-    using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Util;
     using Runner.Utility;
-    using Shims;
+    using System;
+    using System.Linq;
 
     public abstract class FieldElement : Element
     {
         readonly string _fieldName;
 
         protected FieldElement(MSpecUnitTestProvider provider,
-                               IPsi psiModuleManager,
-                               ICache cacheManager,
                                Element parent,
-                               ProjectModelElementEnvoy projectEnvoy,
                                IClrTypeName declaringTypeName,
+                               UnitTestingCachingService cachingService,
                                string fieldName,
                                bool isIgnored)
-            : base(provider, psiModuleManager, cacheManager, parent, projectEnvoy, declaringTypeName, isIgnored || parent.Explicit)
+            : base(provider, parent, declaringTypeName, cachingService, isIgnored || parent.Explicit)
         {
             this._fieldName = fieldName;
         }

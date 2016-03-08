@@ -1,34 +1,27 @@
 ﻿namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using JetBrains.Metadata.Reader.API;
-    using JetBrains.ProjectModel;
-    using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Util;
-    using Machine.Specifications.ReSharperProvider.Shims;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class BehaviorSpecificationElement : FieldElement
     {
         readonly UnitTestElementId _id;
 
         public BehaviorSpecificationElement(MSpecUnitTestProvider provider,
-                                            IPsi psiModuleManager,
-                                            ICache cacheManager,
                                             UnitTestElementId id,
-                                            ProjectModelElementEnvoy projectEnvoy,
                                             BehaviorElement behavior,
                                             IClrTypeName declaringTypeName,
+                                            UnitTestingCachingService cachingService,
                                             string fieldName,
                                             bool isIgnored
           )
             : base(provider,
-                   psiModuleManager,
-                   cacheManager,
                    behavior,
-                   projectEnvoy,
                    declaringTypeName,
+                   cachingService,
                    fieldName,
                    isIgnored || behavior.Explicit)
         {

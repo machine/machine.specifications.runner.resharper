@@ -2,10 +2,6 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -13,27 +9,24 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Strategy;
     using JetBrains.Util;
-
     using Machine.Specifications.ReSharperProvider.Factories;
-    using Machine.Specifications.ReSharperProvider.Shims;
     using Machine.Specifications.ReSharperRunner;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public abstract class Element : IUnitTestElement
     {
         readonly IClrTypeName _declaringTypeName;
-        readonly ProjectModelElementEnvoy _projectEnvoy;
         readonly MSpecUnitTestProvider _provider;
         readonly UnitTestTaskFactory _taskFactory;
         Element _parent;
-        readonly IPsi _psiModuleManager;
-        readonly ICache _cacheManager;
+        readonly UnitTestingCachingService _cachingService;
 
         protected Element(MSpecUnitTestProvider provider,
-                          IPsi psiModuleManager,
-                          ICache cacheManager,
                           Element parent,
-                          ProjectModelElementEnvoy projectEnvoy,
                           IClrTypeName declaringTypeName,
+                          UnitTestingCachingService cachingService,
                           bool isIgnored)
         {
             if (declaringTypeName == null)
@@ -41,15 +34,9 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 throw new ArgumentNullException("declaringTypeName");
             }
 
-            if (projectEnvoy != null)
-            {
-                this._projectEnvoy = projectEnvoy;
-            }
-
             this._provider = provider;
             this._declaringTypeName = declaringTypeName;
-            this._psiModuleManager = psiModuleManager;
-            this._cacheManager = cacheManager;
+            this._cachingService = cachingService;
 
             if (isIgnored)
             {
@@ -114,7 +101,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public IProject GetProject()
         {
-            return this._projectEnvoy.GetValidProjectElement() as IProject;
+            return this.Id.Project;
         }
 
         public UnitTestElementNamespace GetNamespace()
@@ -175,7 +162,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
                 return Equals(other.Id, this.Id)
                        && other.ShortName == this.ShortName
-                       && Equals(element._projectEnvoy, this._projectEnvoy)
                        && thisFullName == otherFullName;
             }
             return false;
@@ -252,28 +238,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         protected ITypeElement GetDeclaredType()
         {
-            IProject project = this.GetProject();
-            if (project == null)
-            {
-                return null;
-            }
-
-            var psiModule = this._psiModuleManager.GetPrimaryPsiModule(project);
-            if (psiModule == null)
-            {
-                return null;
-            }
-
-            var declarationsCache = this._cacheManager.GetDeclarationsCache(psiModule, true, true);
-
-            try
-            {
-                return declarationsCache.GetTypeElementByCLRName(this._declaringTypeName);
-            }
-            catch (NullReferenceException)
-            {
-                return null;
-            }
+            return _cachingService.GetTypeElement(Id.Project, TypeName, true, true);
         }
 
         public IClrTypeName GetTypeClrName()
@@ -283,19 +248,16 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public override bool Equals(object obj)
         {
-            var other = obj as Element;
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Equals(other._projectEnvoy, this._projectEnvoy) && other.Id == this.Id;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(Element)) return false;
+            return Equals((Element)obj);
         }
 
         public override int GetHashCode()
         {
             var result = 0;
-            result = 29 * result + this._projectEnvoy.GetHashCode();
+            result = 29 * result + this.ShortName.GetHashCode();
             result = 29 * result + this.Id.GetHashCode();
             return result;
         }

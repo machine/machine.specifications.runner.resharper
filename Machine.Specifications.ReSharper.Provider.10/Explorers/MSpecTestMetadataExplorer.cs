@@ -1,15 +1,14 @@
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using JetBrains.Application;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Resources.Shell;
     using JetBrains.ReSharper.UnitTestFramework;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
 
-    public partial class MSpecTestMetadataExplorer
+    public class MSpecTestMetadataExplorer
     {
         readonly AssemblyExplorer _assemblyExplorer;
         readonly MSpecUnitTestProvider _provider;
@@ -23,12 +22,14 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
         public void ExploreAssembly(IProject project, IMetadataAssembly assembly, IUnitTestElementsObserver consumer, CancellationToken cancellationToken)
         {
-            // TODO: Use CancellationToken to exit early
-
             using (ReadLockCookie.Create()) //Get a read lock so that it is safe to read the assembly
             {
                 foreach (var metadataTypeInfo in GetTypesIncludingNested(assembly.GetTypes()))
+                {
+                    if (cancellationToken.IsCancellationRequested) break;
+
                     this._assemblyExplorer.Explore(project, assembly, consumer, metadataTypeInfo);
+                }
             }
         }
 

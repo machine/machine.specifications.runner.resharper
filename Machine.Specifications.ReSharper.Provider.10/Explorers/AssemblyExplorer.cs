@@ -1,5 +1,4 @@
 using Machine.Specifications.ReSharperProvider.Presentation;
-using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {
@@ -27,7 +26,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
                 return;
             }
 
-            var contextElement = this._factories.Contexts.CreateContext(project, assembly.Location.FullPath, metadataTypeInfo);
+            ContextElement contextElement = this._factories.Contexts.CreateContext(project, assembly.Location.FullPath, metadataTypeInfo);
 
             consumer.OnUnitTestElement(contextElement);
 
