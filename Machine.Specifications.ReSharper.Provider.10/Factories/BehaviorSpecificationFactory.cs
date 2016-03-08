@@ -2,13 +2,13 @@ using JetBrains.Metadata.Reader.Impl;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
+    using System.Collections.Generic;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using System.Collections.Generic;
 
     [SolutionComponent]
     public class BehaviorSpecificationFactory
@@ -71,7 +71,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             if (behaviorSpecification != null)
             {
                 behaviorSpecification.Parent = behavior;
-                behaviorSpecification.State = UnitTestElementState.None;
                 return behaviorSpecification;
             }
 

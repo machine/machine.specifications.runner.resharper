@@ -54,7 +54,7 @@ namespace Machine.Specifications.ReSharperRunner
             _errors = 0;
             _successes = 0;
 
-            // TODO: This sucks, but there's no better way unless we make behaviors first-class citizens.
+            // This sucks, but there's no better way unless we make behaviors first-class citizens.
             _currentContext = context;
             var notify = CreateTaskNotificationFor(context, context);
             notify(task => _server.TaskStarting(task));

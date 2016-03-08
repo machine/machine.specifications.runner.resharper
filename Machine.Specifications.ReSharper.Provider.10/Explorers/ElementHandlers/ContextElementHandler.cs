@@ -43,11 +43,5 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
                                                         declaration.GetNavigationRange().TextRange,
                                                         declaration.GetDocumentRange().TextRange);
         }
-
-        public void Cleanup(ITreeNode element)
-        {
-            var declaration = (IDeclaration)element;
-            this._factory.UpdateChildState((IClass)declaration.DeclaredElement);
-        }
     }
 }

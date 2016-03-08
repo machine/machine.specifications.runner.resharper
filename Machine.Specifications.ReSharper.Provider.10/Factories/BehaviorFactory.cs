@@ -54,12 +54,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                field.IsIgnored(),
                                                fieldType);
 
-            // TODO: Remove?
-            foreach (var child in behavior.Children)
-            {
-                child.State = UnitTestElementState.None;
-            }
-
             this._cache.AddBehavior(field, behavior);
             return behavior;
         }
@@ -91,7 +85,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             if (behavior != null)
             {
                 behavior.Parent = context;
-                behavior.State = UnitTestElementState.None;
                 return behavior;
             }
             return new BehaviorElement(this._provider,
@@ -102,23 +95,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                        fieldName,
                                        isIgnored,
                                        fieldType);
-        }
-
-        // TODO: REMOVE
-        public void UpdateChildState(IDeclaredElement field)
-        {
-            //var behavior = this._cache.TryGetBehavior(field);
-            //if (behavior == null)
-            //{
-            //    return;
-            //}
-
-            //foreach (var element in behavior
-            //  .Children.Where(x => x.State == UnitTestElementState.Pending)
-            //  .Flatten(x => x.Children))
-            //{
-            //    element.State = UnitTestElementState.Invalid;
-            //}
         }
     }
 }

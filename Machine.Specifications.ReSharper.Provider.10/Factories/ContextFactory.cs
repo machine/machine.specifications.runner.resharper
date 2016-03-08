@@ -2,6 +2,7 @@ using JetBrains.Metadata.Reader.Impl;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
+    using System.Collections.Generic;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -9,7 +10,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using System.Collections.Generic;
 
     [SolutionComponent]
     public class ContextFactory
@@ -45,12 +45,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                              type.GetSubjectString(),
                                              type.GetTags(), type.IsIgnored());
 
-            // TODO: Remove?
-            foreach (var child in context.Children)
-            {
-                child.State = UnitTestElementState.None;
-            }
-
             this._cache.AddContext(type, context);
             return context;
         }
@@ -75,7 +69,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var contextElement = this._manager.GetElementById(id) as ContextElement;
             if (contextElement != null)
             {
-                contextElement.State = UnitTestElementState.None;
                 contextElement.AssemblyLocation = assemblyPath;
                 return contextElement;
             }
@@ -89,23 +82,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                       tags,
                                       isIgnored,
                                       _categoryFactory);
-        }
-
-        // TODO: REMOVE
-        public void UpdateChildState(ITypeElement type)
-        {
-            //var context = this._cache.TryGetContext(type);
-            //if (context == null)
-            //{
-            //    return;
-            //}
-
-            //foreach (var element in context
-            //  .Children.Where(x => x.State == UnitTestElementState.Pending)
-            //  .Flatten(x => x.Children))
-            //{
-            //    element.State = UnitTestElementState.Invalid;
-            //}
         }
     }
 }

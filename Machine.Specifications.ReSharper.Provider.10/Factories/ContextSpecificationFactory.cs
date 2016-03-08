@@ -70,7 +70,6 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             if (contextSpecification != null)
             {
                 contextSpecification.Parent = context;
-                contextSpecification.State = UnitTestElementState.None;
                 return contextSpecification;
             }
 

@@ -2,6 +2,9 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -11,9 +14,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     using JetBrains.Util;
     using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperRunner;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public abstract class Element : IUnitTestElement
     {
@@ -22,6 +22,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         readonly UnitTestTaskFactory _taskFactory;
         Element _parent;
         readonly UnitTestingCachingService _cachingService;
+        private UnitTestElementState _state;
 
         protected Element(MSpecUnitTestProvider provider,
                           Element parent,
@@ -47,7 +48,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             this.Parent = parent;
 
             this.Children = new List<IUnitTestElement>();
-            this.State = UnitTestElementState.None;
             this._taskFactory = new UnitTestTaskFactory(this._provider.ID);
         }
 
@@ -97,7 +97,19 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return false; }
         }
 
-        public UnitTestElementState State { get; set; }
+        public UnitTestElementState State
+        {
+            get
+            {
+                if (this.Parent == null)
+                {
+                    return UnitTestElementState.Invalid;
+                }
+
+                return _state;
+            }
+            set { _state = value; }
+        }
 
         public IProject GetProject()
         {

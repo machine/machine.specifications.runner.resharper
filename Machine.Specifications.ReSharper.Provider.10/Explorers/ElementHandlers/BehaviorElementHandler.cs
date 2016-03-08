@@ -97,11 +97,5 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 
             return new TextRange();
         }
-
-        public void Cleanup(ITreeNode element)
-        {
-            var declaration = (IDeclaration)element;
-            this._factory.UpdateChildState(declaration.DeclaredElement);
-        }
     }
 }

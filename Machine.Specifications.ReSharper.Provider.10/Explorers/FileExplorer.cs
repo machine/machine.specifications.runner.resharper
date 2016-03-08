@@ -81,11 +81,6 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
         public void ProcessAfterInterior(ITreeNode element)
         {
-            this._elementHandlers
-              .Where(x => x.Accepts(element))
-              .Reverse()
-              .ToList()
-              .ForEach(x => x.Cleanup(element));
         }
 
         public bool ProcessingIsFinished
