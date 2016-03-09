@@ -2,12 +2,12 @@
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
+    using System;
+    using System.Linq;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Util;
     using Runner.Utility;
-    using System;
-    using System.Linq;
 
     public abstract class FieldElement : Element
     {
@@ -36,16 +36,10 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public override string GetPresentation()
         {
-            var presentation = String.Format("{0}{1}{2}",
-                                             this.GetTitlePrefix(),
-                                             String.IsNullOrEmpty(this.GetTitlePrefix()) ? String.Empty : " ",
-                                             this.FieldName.ToFormat());
-
-#if DEBUG
-            presentation += String.Format(" ({0})", this.Id);
-#endif
-
-            return presentation;
+            return String.Format("{0}{1}{2}",
+                this.GetTitlePrefix(),
+                String.IsNullOrEmpty(this.GetTitlePrefix()) ? String.Empty : " ",
+                this.FieldName.ToFormat());
         }
 
         public override IDeclaredElement GetDeclaredElement()
@@ -57,8 +51,9 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             }
 
             return declaredType
-              .EnumerateMembers(this.FieldName, false)
-              .FirstOrDefault(member => member as IField != null);
+                .EnumerateMembers(this.FieldName, true)
+                .OfType<IField>()
+                .Single();
         }
     }
 }

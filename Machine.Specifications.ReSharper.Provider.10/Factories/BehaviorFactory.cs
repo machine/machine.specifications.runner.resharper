@@ -34,13 +34,13 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
         public BehaviorElement CreateBehavior(IDeclaredElement field)
         {
-            var clazz = ((ITypeMember)field).GetContainingType() as IClass;
-            if (clazz == null)
+            var contextClass = ((ITypeMember)field).GetContainingType() as IClass;
+            if (contextClass == null)
             {
                 return null;
             }
 
-            var context = this._cache.TryGetContext(clazz);
+            var context = this._cache.TryGetContext(contextClass);
             if (context == null)
             {
                 return null;
@@ -49,7 +49,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var fieldType = new NormalizedTypeName(field as ITypeOwner);
 
             var behavior = this.GetOrCreateBehavior(context,
-                                               clazz.GetClrName(),
+                                               contextClass.GetClrName(),
                                                field.ShortName,
                                                field.IsIgnored(),
                                                fieldType);
@@ -87,6 +87,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 behavior.Parent = context;
                 return behavior;
             }
+
             return new BehaviorElement(this._provider,
                                        id,
                                        context,

@@ -43,14 +43,11 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 this.ExplicitReason = "Ignored";
             }
 
-            this.TypeName = declaringTypeName;
             this.Parent = parent;
 
             this.Children = new List<IUnitTestElement>();
             this._taskFactory = new UnitTestTaskFactory(this._provider.ID);
         }
-
-        public IClrTypeName TypeName { get; private set; }
 
         public abstract string Kind { get; }
         public abstract IEnumerable<UnitTestElementCategory> Categories { get; }
@@ -71,7 +68,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return this._parent; }
             set
             {
-                if (this._parent == value)
+                if (Equals(this._parent, value))
                 {
                     return;
                 }
@@ -237,7 +234,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         protected ITypeElement GetDeclaredType()
         {
-            return _cachingService.GetTypeElement(Id.Project, TypeName, true, true);
+            return _cachingService.GetTypeElement(Id.Project, this._declaringTypeName, true, true);
         }
 
         public IClrTypeName GetTypeClrName()
