@@ -34,20 +34,20 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
         public ContextSpecificationElement CreateContextSpecification(IDeclaredElement field)
         {
-            var clazz = ((ITypeMember)field).GetContainingType() as IClass;
-            if (clazz == null)
+            var contextClass = ((ITypeMember)field).GetContainingType() as IClass;
+            if (contextClass == null)
             {
                 return null;
             }
 
-            var context = this._cache.TryGetContext(clazz);
+            var context = this._cache.TryGetContext(contextClass);
             if (context == null)
             {
                 return null;
             }
 
             return this.GetOrCreateContextSpecification(context,
-                                                   clazz.GetClrName().GetPersistent(),
+                                                   contextClass.GetClrName(),
                                                    field.ShortName,
                                                    field.IsIgnored());
         }
@@ -76,9 +76,10 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return new ContextSpecificationElement(this._provider,
                                                    id,
                                                    context,
-                                                   declaringTypeName,
+                                                   declaringTypeName.GetPersistent(),
                                                    this._cachingService,
-                                                   fieldName, isIgnored);
+                                                   fieldName,
+                                                   isIgnored);
         }
     }
 }

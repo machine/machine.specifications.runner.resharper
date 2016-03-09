@@ -45,9 +45,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                           IDeclaredElement behaviorSpecification)
         {
             return this.GetOrCreateBehaviorSpecification(behavior,
-                                                    ((ITypeMember)behaviorSpecification).GetContainingType()
-                                                                                         .GetClrName()
-                                                                                         .GetPersistent(),
+                                                    ((ITypeMember)behaviorSpecification).GetContainingType().GetClrName(),
                                                     behaviorSpecification.ShortName,
                                                     behaviorSpecification.IsIgnored());
         }
@@ -77,7 +75,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return new BehaviorSpecificationElement(this._provider,
                                                     id,
                                                     behavior,
-                                                    declaringTypeName,
+                                                    declaringTypeName.GetPersistent(),
                                                     this._cachingService,
                                                     fieldName,
                                                     isIgnored);

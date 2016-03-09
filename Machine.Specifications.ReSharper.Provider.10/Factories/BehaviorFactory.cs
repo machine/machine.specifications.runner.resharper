@@ -91,7 +91,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return new BehaviorElement(this._provider,
                                        id,
                                        context,
-                                       declaringTypeName,
+                                       declaringTypeName.GetPersistent(),
                                        this._cachingService,
                                        fieldName,
                                        isIgnored,

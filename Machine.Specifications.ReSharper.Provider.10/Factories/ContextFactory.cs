@@ -41,7 +41,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var type = (ITypeElement)declaration.DeclaredElement;
             var context = this.GetOrCreateContext(assemblyPath,
                                              declaration.GetProject(),
-                                             type.GetClrName().GetPersistent(),
+                                             type.GetClrName(),
                                              type.GetSubjectString(),
                                              type.GetTags(), type.IsIgnored());
 
@@ -75,7 +75,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
             return new ContextElement(this._provider,
                                       id,
-                                      typeName,
+                                      typeName.GetPersistent(),
                                       this._cachingService,
                                       assemblyPath,
                                       subject,
