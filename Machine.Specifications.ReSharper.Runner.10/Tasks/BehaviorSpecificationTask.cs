@@ -51,7 +51,6 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
             SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
             SetXmlAttribute(element, AttributeNames.BehaviorTypeName, BehaviorTypeName);
-            SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
             SetXmlAttribute(element, AttributeNames.SpecificationFieldNameOnContext, SpecificationFieldNameOnContext);
         }
 
