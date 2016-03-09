@@ -1,10 +1,12 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿using JetBrains.ReSharper.Psi;
+
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Util;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class BehaviorSpecificationElement : FieldElement
     {
@@ -62,6 +64,16 @@
             var result = new[] { behaviorElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
             return elementIdFactory.Create(provider, behaviorElement.GetProject(), id);
+        }
+
+        public override IList<UnitTestElementLocation> GetLocations(IDeclaredElement element)
+        {
+            var parent = this.Parent as BehaviorElement;
+            if (parent != null)
+            {
+                return parent.GetLocations(element);
+            }
+            return EmptyList<UnitTestElementLocation>.InstanceList;
         }
     }
 }

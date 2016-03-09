@@ -113,18 +113,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 return UnitTestElementDisposition.InvalidDisposition;
             }
 
-            var locations = new List<UnitTestElementLocation>();
-            element.GetDeclarations().ForEach(declaration =>
-            {
-                IFile file = declaration.GetContainingFile();
-                if (file != null)
-                {
-                    locations.Add(new UnitTestElementLocation(file.GetSourceFile().ToProjectFile(),
-                                                              declaration.GetNameDocumentRange().TextRange,
-                                                              declaration.GetDocumentRange().TextRange));
-                }
-            });
-
+            IList<UnitTestElementLocation> locations = this.GetLocations(element);
             return new UnitTestElementDisposition(locations, this);
         }
 
@@ -256,6 +245,22 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             result = 29 * result + this.ShortName.GetHashCode();
             result = 29 * result + this.Id.GetHashCode();
             return result;
+        }
+
+        public virtual IList<UnitTestElementLocation> GetLocations(IDeclaredElement element)
+        {
+            var locations = new List<UnitTestElementLocation>();
+            element.GetDeclarations().ForEach(declaration =>
+            {
+                IFile file = declaration.GetContainingFile();
+                if (file != null)
+                {
+                    locations.Add(new UnitTestElementLocation(file.GetSourceFile().ToProjectFile(),
+                        declaration.GetNameDocumentRange().TextRange,
+                        declaration.GetDocumentRange().TextRange));
+                }
+            });
+            return locations;
         }
 
         void AddChild(Element behaviorElement)
