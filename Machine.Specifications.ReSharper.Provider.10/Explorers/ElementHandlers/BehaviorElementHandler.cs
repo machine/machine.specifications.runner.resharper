@@ -42,7 +42,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 
             yield return new UnitTestElementDisposition(behavior,
                                                         file.GetSourceFile().ToProjectFile(),
-                                                        declaration.GetNavigationRange().TextRange,
+                                                        declaration.GetNameDocumentRange().TextRange,
                                                         declaration.GetDocumentRange().TextRange);
 
             var behaviorContainer = declaration.DeclaredElement.GetFirstGenericArgument();
@@ -62,7 +62,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 
                 yield return new UnitTestElementDisposition(behaviorSpecification,
                                                             file.GetSourceFile().ToProjectFile(),
-                                                            declaration.GetNavigationRange().TextRange,
+                                                            declaration.GetNameDocumentRange().TextRange,
                                                             declaration.GetDocumentRange().TextRange);
             }
         }

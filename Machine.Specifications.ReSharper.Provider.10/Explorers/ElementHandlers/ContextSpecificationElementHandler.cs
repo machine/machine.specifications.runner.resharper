@@ -40,7 +40,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 
             yield return new UnitTestElementDisposition(contextSpecification,
                                                         file.GetSourceFile().ToProjectFile(),
-                                                        declaration.GetNavigationRange().TextRange,
+                                                        declaration.GetNameDocumentRange().TextRange,
                                                         declaration.GetDocumentRange().TextRange);
         }
 
