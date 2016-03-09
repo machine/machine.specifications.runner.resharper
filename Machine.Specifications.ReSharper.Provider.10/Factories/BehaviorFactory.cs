@@ -1,4 +1,3 @@
-using JetBrains.Metadata.Reader.Impl;
 using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
@@ -66,7 +65,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var fieldType = new NormalizedTypeName(metadataTypeName);
 
             var behaviorElement = this.GetOrCreateBehavior(context,
-                                                      new ClrTypeName(metadataTypeName),
+                                                      context.GetTypeClrName(),
                                                       behavior.Name,
                                                       behavior.IsIgnored() || typeContainingBehaviorSpecifications.IsIgnored(),
                                                       fieldType);
