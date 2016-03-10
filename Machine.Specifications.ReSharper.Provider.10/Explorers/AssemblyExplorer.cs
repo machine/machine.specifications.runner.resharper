@@ -33,27 +33,23 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             metadataTypeInfo.GetSpecifications()
                 .ForEach(x =>
                 {
-                    var element = this._factories.ContextSpecifications.CreateContextSpecification(contextElement, x);
-                    consumer.OnUnitTestElement(element);
-                    consumer.OnUnitTestElementChanged(element);
+                    var contextSpecificationElement = this._factories.ContextSpecifications.CreateContextSpecification(contextElement, x);
+                    consumer.OnUnitTestElement(contextSpecificationElement);
                 });
-
 
             metadataTypeInfo.GetBehaviors().ForEach(x =>
             {
                 var behaviorElement = this._factories.Behaviors.CreateBehavior(contextElement, x);
                 consumer.OnUnitTestElement(behaviorElement);
-                consumer.OnUnitTestElementChanged(behaviorElement);
-
 
                 this._factories.BehaviorSpecifications
                             .CreateBehaviorSpecificationsFromBehavior(behaviorElement, x)
-                            .ForEach(y =>
-                            {
-                                consumer.OnUnitTestElement(y);
-                                consumer.OnUnitTestElementChanged(y);
-                            });
+                            .ForEach(consumer.OnUnitTestElement);
+
+                consumer.OnUnitTestElementChanged(behaviorElement);
             });
+
+            consumer.OnUnitTestElementChanged(contextElement);
         }
     }
 }
