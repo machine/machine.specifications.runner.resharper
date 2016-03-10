@@ -2,11 +2,11 @@ using Machine.Specifications.ReSharperProvider.Presentation;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 {
-    using System.Collections.Generic;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Tree;
     using JetBrains.ReSharper.UnitTestFramework;
     using Machine.Specifications.ReSharperProvider.Factories;
+    using System.Collections.Generic;
 
     class BehaviorElementHandler : IElementHandler
     {
@@ -40,10 +40,13 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
                 yield break;
             }
 
+            var projectFile = file.GetSourceFile().ToProjectFile();
+            var behaviorTextRange = declaration.GetNameDocumentRange().TextRange;
+            var behaviorContainingRange = declaration.GetDocumentRange().TextRange;
             yield return new UnitTestElementDisposition(behavior,
-                                                        file.GetSourceFile().ToProjectFile(),
-                                                        declaration.GetNameDocumentRange().TextRange,
-                                                        declaration.GetDocumentRange().TextRange);
+                                                        projectFile,
+                                                        behaviorTextRange,
+                                                        behaviorContainingRange);
 
             var behaviorContainer = declaration.DeclaredElement.GetFirstGenericArgument();
             if (!behaviorContainer.IsBehaviorContainer())
@@ -61,9 +64,9 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
                 BehaviorSpecificationElement behaviorSpecification = this._behaviorSpecifications.CreateBehaviorSpecification(behavior, field);
 
                 yield return new UnitTestElementDisposition(behaviorSpecification,
-                                                            file.GetSourceFile().ToProjectFile(),
-                                                            declaration.GetNameDocumentRange().TextRange,
-                                                            declaration.GetDocumentRange().TextRange);
+                                                            projectFile,
+                                                            behaviorTextRange,
+                                                            behaviorContainingRange);
             }
         }
     }
