@@ -1,4 +1,5 @@
 ﻿using JetBrains.Metadata.Reader.API;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
@@ -21,12 +22,13 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                               UnitTestElementId id,
                               IClrTypeName typeName,
                               UnitTestingCachingService cachingService,
+                              IUnitTestElementManager elementManager,
                               string assemblyLocation,
                               string subject,
                               IEnumerable<string> tags,
                               bool isIgnored,
                               IUnitTestElementCategoryFactory categoryFactory)
-            : base(provider, null, typeName, cachingService, isIgnored)
+            : base(provider, null, typeName, cachingService, elementManager, isIgnored)
         {
             this._id = id;
             this.AssemblyLocation = assemblyLocation;

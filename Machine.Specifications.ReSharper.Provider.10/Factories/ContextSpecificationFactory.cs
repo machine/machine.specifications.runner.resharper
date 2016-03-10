@@ -66,6 +66,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                            bool isIgnored)
         {
             var id = ContextSpecificationElement.CreateId(_elementIdFactory, _provider, context, fieldName);
+
             var contextSpecification = this._manager.GetElementById(id) as ContextSpecificationElement;
             if (contextSpecification != null)
             {
@@ -78,6 +79,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                    context,
                                                    declaringTypeName.GetPersistent(),
                                                    this._cachingService,
+                                                   this._manager,
                                                    fieldName,
                                                    isIgnored);
         }

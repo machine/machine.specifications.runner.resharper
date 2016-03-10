@@ -1,4 +1,6 @@
 ﻿
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using JetBrains.Metadata.Reader.API;
@@ -16,12 +18,14 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                                            ContextElement context,
                                            IClrTypeName declaringTypeName,
                                            UnitTestingCachingService cachingService,
+                                           IUnitTestElementManager elementManager,
                                            string fieldName,
                                            bool isIgnored)
             : base(provider,
                    context,
                    declaringTypeName,
                    cachingService,
+                   elementManager,
                    fieldName,
                    isIgnored || context.Explicit)
         {
@@ -42,13 +46,12 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         {
             get
             {
-                var parent = this.Parent ?? this.Context;
-                if (parent == null)
+                if (this.Context == null)
                 {
                     return UnitTestElementCategory.Uncategorized;
                 }
 
-                return parent.Categories;
+                return this.Context.Categories;
             }
         }
 

@@ -1,13 +1,14 @@
 ﻿using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System;
-    using System.Linq;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Util;
     using Runner.Utility;
+    using System;
+    using System.Linq;
 
     public abstract class FieldElement : Element
     {
@@ -17,9 +18,10 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                                Element parent,
                                IClrTypeName declaringTypeName,
                                UnitTestingCachingService cachingService,
+                               IUnitTestElementManager elementManager,
                                string fieldName,
                                bool isIgnored)
-            : base(provider, parent, declaringTypeName, cachingService, isIgnored || parent.Explicit)
+            : base(provider, parent, declaringTypeName, cachingService, elementManager, isIgnored || parent.Explicit)
         {
             this._fieldName = fieldName;
         }
@@ -53,7 +55,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return declaredType
                 .EnumerateMembers(this.FieldName, true)
                 .OfType<IField>()
-                .Single();
+                .FirstOrDefault();
         }
     }
 }

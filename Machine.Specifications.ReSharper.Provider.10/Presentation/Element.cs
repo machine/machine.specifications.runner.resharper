@@ -1,10 +1,11 @@
 using JetBrains.ReSharper.TaskRunnerFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using System.Diagnostics;
+using JetBrains.DataFlow;
+using JetBrains.UI.BindableLinq.Interfaces;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -14,19 +15,24 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     using JetBrains.Util;
     using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperRunner;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public abstract class Element : IUnitTestElement
     {
         readonly IClrTypeName _declaringTypeName;
         readonly MSpecUnitTestProvider _provider;
         readonly UnitTestTaskFactory _taskFactory;
-        Element _parent;
         readonly UnitTestingCachingService _cachingService;
+        readonly IUnitTestElementManager _elementManager;
+        IUnitTestElement _parent;
 
         protected Element(MSpecUnitTestProvider provider,
                           Element parent,
                           IClrTypeName declaringTypeName,
                           UnitTestingCachingService cachingService,
+                          IUnitTestElementManager elementManager,
                           bool isIgnored)
         {
             if (declaringTypeName == null)
@@ -37,6 +43,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             this._provider = provider;
             this._declaringTypeName = declaringTypeName;
             this._cachingService = cachingService;
+            this._elementManager = elementManager;
 
             if (isIgnored)
             {
@@ -45,7 +52,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
             this.Parent = parent;
 
-            this.Children = new List<IUnitTestElement>();
+            this.Children = new BindableCollection<IUnitTestElement>(EternalLifetime.Instance, UT.Locks.ReadLock);
             this._taskFactory = new UnitTestTaskFactory(this._provider.ID);
         }
 
@@ -73,16 +80,26 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                     return;
                 }
 
-                if (this._parent != null)
+                var oldParent = this._parent;
+                var newParent = value;
+
+                using (UT.WriteLock())
                 {
-                    this._parent.RemoveChild(this);
+                    if (this._parent != null)
+                    {
+                        this._parent.Children.Remove(this);
+                    }
+
+                    this._parent = newParent;
+
+                    if (this._parent != null)
+                    {
+                        this._parent.Children.Add(this);
+                    }
                 }
 
-                this._parent = (Element)value;
-                if (this._parent != null)
-                {
-                    this._parent.AddChild(this);
-                }
+                this._elementManager.FireElementChanged(oldParent);
+                this._elementManager.FireElementChanged(newParent);
             }
         }
         public ICollection<IUnitTestElement> Children { get; private set; }
@@ -105,7 +122,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return UnitTestElementNamespaceFactory.Create(this._declaringTypeName.NamespaceNames);
         }
 
-        public UnitTestElementDisposition GetDisposition()
+        public virtual UnitTestElementDisposition GetDisposition()
         {
             IDeclaredElement element = this.GetDeclaredElement();
             if (element == null || !element.IsValid())
@@ -113,43 +130,8 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 return UnitTestElementDisposition.InvalidDisposition;
             }
 
-            IList<UnitTestElementLocation> locations = this.GetLocations(element);
+            IEnumerable<UnitTestElementLocation> locations = this.GetLocations(element);
             return new UnitTestElementDisposition(locations, this);
-        }
-
-        public bool Equals(IUnitTestElement other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (other.GetType() == this.GetType())
-            {
-                var element = (Element)other;
-                string thisFullName;
-                string otherFullName;
-                try
-                {
-                    // This might throw for invalid elements.
-                    thisFullName = this._declaringTypeName.FullName;
-                    otherFullName = element._declaringTypeName.FullName;
-                }
-                catch (NullReferenceException)
-                {
-                    return false;
-                }
-
-                return Equals(other.Id, this.Id)
-                       && other.ShortName == this.ShortName
-                       && thisFullName == otherFullName;
-            }
-            return false;
         }
 
         public abstract string GetPresentation();
@@ -231,23 +213,68 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return this._declaringTypeName;
         }
 
+        public bool Equals(IUnitTestElement other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (other.GetType() == this.GetType())
+            {
+                var element = (Element)other;
+                string thisFullName;
+                string otherFullName;
+                try
+                {
+                    // This might throw for invalid elements.
+                    thisFullName = this._declaringTypeName.FullName;
+                    otherFullName = element._declaringTypeName.FullName;
+                }
+                catch (NullReferenceException)
+                {
+                    Debug.Fail("Should not happen as the type name should be persisted!");
+                    return false;
+                }
+
+                return Equals(other.Id, this.Id)
+                       && other.ShortName == this.ShortName
+                       && thisFullName == otherFullName;
+            }
+
+            return false;
+        }
+
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(Element)) return false;
-            return Equals((Element)obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return Equals(obj as IUnitTestElement);
         }
 
         public override int GetHashCode()
         {
             var result = 0;
-            result = 29 * result + this.ShortName.GetHashCode();
             result = 29 * result + this.Id.GetHashCode();
+            result = 29 * result + this.ShortName.GetHashCode();
+            result = 29 * result + this._declaringTypeName.FullName.GetHashCode();
             return result;
         }
 
-        public virtual IList<UnitTestElementLocation> GetLocations(IDeclaredElement element)
+        public virtual IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
         {
             var locations = new List<UnitTestElementLocation>();
             element.GetDeclarations().ForEach(declaration =>
@@ -255,22 +282,13 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 IFile file = declaration.GetContainingFile();
                 if (file != null)
                 {
-                    locations.Add(new UnitTestElementLocation(file.GetSourceFile().ToProjectFile(),
+                    locations.Add(new UnitTestElementLocation(
+                        file.GetSourceFile().ToProjectFile(),
                         declaration.GetNameDocumentRange().TextRange,
                         declaration.GetDocumentRange().TextRange));
                 }
             });
             return locations;
-        }
-
-        void AddChild(Element behaviorElement)
-        {
-            this.Children.Add(behaviorElement);
-        }
-
-        void RemoveChild(Element behaviorElement)
-        {
-            this.Children.Remove(behaviorElement);
         }
     }
 }

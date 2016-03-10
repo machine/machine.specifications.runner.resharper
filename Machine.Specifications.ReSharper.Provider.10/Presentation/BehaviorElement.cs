@@ -1,4 +1,6 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿using JetBrains.ReSharper.UnitTestFramework.Elements;
+
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ReSharper.UnitTestFramework;
@@ -15,6 +17,7 @@
                                ContextElement context,
                                IClrTypeName declaringTypeName,
                                UnitTestingCachingService cachingService,
+                               IUnitTestElementManager elementManager,
                                string fieldName,
                                bool isIgnored,
                                string fieldType)
@@ -22,6 +25,7 @@
                    context,
                    declaringTypeName,
                    cachingService,
+                   elementManager,
                    fieldName,
                    isIgnored || context.Explicit)
         {
@@ -45,13 +49,12 @@
         {
             get
             {
-                var parent = this.Parent ?? this.Context;
-                if (parent == null)
+                if (this.Context == null)
                 {
                     return UnitTestElementCategory.Uncategorized;
                 }
 
-                return parent.Categories;
+                return this.Context.Categories;
             }
         }
 

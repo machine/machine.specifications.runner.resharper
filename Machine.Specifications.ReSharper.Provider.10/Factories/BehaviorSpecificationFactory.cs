@@ -2,13 +2,13 @@ using JetBrains.Metadata.Reader.Impl;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using System.Collections.Generic;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
     using Machine.Specifications.ReSharperProvider.Presentation;
+    using System.Collections.Generic;
 
     [SolutionComponent]
     public class BehaviorSpecificationFactory
@@ -65,6 +65,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                              bool isIgnored)
         {
             var id = BehaviorSpecificationElement.CreateId(_elementIdFactory, _provider, behavior, fieldName);
+
             var behaviorSpecification = this._manager.GetElementById(id) as BehaviorSpecificationElement;
             if (behaviorSpecification != null)
             {
@@ -77,6 +78,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                     behavior,
                                                     declaringTypeName.GetPersistent(),
                                                     this._cachingService,
+                                                    this._manager,
                                                     fieldName,
                                                     isIgnored);
         }

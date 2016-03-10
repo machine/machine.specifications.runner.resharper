@@ -47,14 +47,11 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
             var fieldType = new NormalizedTypeName(field as ITypeOwner);
 
-            var behavior = this.GetOrCreateBehavior(context,
-                                               contextClass.GetClrName(),
-                                               field.ShortName,
-                                               field.IsIgnored(),
-                                               fieldType);
-
-            this._cache.AddBehavior(field, behavior);
-            return behavior;
+            return this.GetOrCreateBehavior(context,
+                                            contextClass.GetClrName(),
+                                            field.ShortName,
+                                            field.IsIgnored(),
+                                            fieldType);
         }
 
         public BehaviorElement CreateBehavior(ContextElement context, IMetadataField behavior)
@@ -92,6 +89,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                        context,
                                        declaringTypeName.GetPersistent(),
                                        this._cachingService,
+                                       this._manager,
                                        fieldName,
                                        isIgnored,
                                        fieldType);

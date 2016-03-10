@@ -2,7 +2,6 @@ using JetBrains.Metadata.Reader.Impl;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using System.Collections.Generic;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -10,6 +9,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
     using Machine.Specifications.ReSharperProvider.Presentation;
+    using System.Collections.Generic;
 
     [SolutionComponent]
     public class ContextFactory
@@ -36,36 +36,39 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             this._cache = cache;
         }
 
-        public IUnitTestElement CreateContext(string assemblyPath, IDeclaration declaration)
+        public IUnitTestElement CreateContext(string assemblyPath, IDeclaration contextDeclaration)
         {
-            var type = (ITypeElement)declaration.DeclaredElement;
+            var contextType = (ITypeElement)contextDeclaration.DeclaredElement;
             var context = this.GetOrCreateContext(assemblyPath,
-                                             declaration.GetProject(),
-                                             type.GetClrName(),
-                                             type.GetSubjectString(),
-                                             type.GetTags(), type.IsIgnored());
+                                           contextDeclaration.GetProject(),
+                                           contextType.GetClrName(),
+                                           contextType.GetSubjectString(),
+                                           contextType.GetTags(),
+                                           contextType.IsIgnored());
 
-            this._cache.AddContext(type, context);
+            this._cache.AddContext(contextType, context);
             return context;
         }
 
-        public ContextElement CreateContext(IProject project, string assemblyPath, IMetadataTypeInfo type)
+        public ContextElement CreateContext(IProject project, string assemblyPath, IMetadataTypeInfo contextType)
         {
             return this.GetOrCreateContext(assemblyPath,
                                       project,
-                                      new ClrTypeName(type.FullyQualifiedName),
-                                      type.GetSubjectString(),
-                                      type.GetTags(), type.IsIgnored());
+                                      new ClrTypeName(contextType.FullyQualifiedName),
+                                      contextType.GetSubjectString(),
+                                      contextType.GetTags(),
+                                      contextType.IsIgnored());
         }
 
         public ContextElement GetOrCreateContext(string assemblyPath,
                                                  IProject project,
-                                                 IClrTypeName typeName,
+                                                 IClrTypeName contextTypeName,
                                                  string subject,
                                                  ICollection<string> tags,
                                                  bool isIgnored)
         {
-            UnitTestElementId id = ContextElement.CreateId(_elementIdFactory, _provider, project, subject, typeName.FullName, tags);
+            UnitTestElementId id = ContextElement.CreateId(_elementIdFactory, _provider, project, subject, contextTypeName.FullName, tags);
+
             var contextElement = this._manager.GetElementById(id) as ContextElement;
             if (contextElement != null)
             {
@@ -75,8 +78,9 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
             return new ContextElement(this._provider,
                                       id,
-                                      typeName.GetPersistent(),
+                                      contextTypeName.GetPersistent(),
                                       this._cachingService,
+                                      this._manager,
                                       assemblyPath,
                                       subject,
                                       tags,
