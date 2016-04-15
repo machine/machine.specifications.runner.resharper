@@ -1,11 +1,13 @@
+using System.Diagnostics;
 using JetBrains.ReSharper.TaskRunnerFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
-using System.Diagnostics;
-using JetBrains.DataFlow;
 using JetBrains.UI.BindableLinq.Interfaces;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -15,9 +17,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     using JetBrains.Util;
     using Machine.Specifications.ReSharperProvider.Factories;
     using Machine.Specifications.ReSharperRunner;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public abstract class Element : IUnitTestElement
     {
@@ -52,7 +51,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
             this.Parent = parent;
 
-            this.Children = new BindableCollection<IUnitTestElement>(EternalLifetime.Instance, UT.Locks.ReadLock);
+            this.Children = new BindableCollection<IUnitTestElement>(UT.Locks.ReadLock);
             this._taskFactory = new UnitTestTaskFactory(this._provider.ID);
         }
 
