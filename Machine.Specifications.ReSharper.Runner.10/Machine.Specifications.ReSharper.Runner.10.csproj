@@ -199,11 +199,6 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="RecursiveMSpecTaskRunner.cs" />
     <Compile Include="RecursiveMSpecTaskRunnerRegisterer.cs" />
     <Compile Include="Tasks\AttributeNames.cs" />
@@ -212,13 +207,6 @@
     <Compile Include="Tasks\ContextTask.cs" />
     <Compile Include="Tasks\RunAssemblyTask.cs" />
     <Compile Include="Tasks\Task.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
