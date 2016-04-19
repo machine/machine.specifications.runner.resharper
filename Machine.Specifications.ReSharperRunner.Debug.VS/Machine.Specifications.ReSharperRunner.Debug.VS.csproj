@@ -8,8 +8,8 @@
     <ProjectGuid>{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Machine.Specifications.ReSharperRunner.Debug.VS2010</RootNamespace>
-    <AssemblyName>Machine.Specifications.ReSharperRunner.Debug.VS2010</AssemblyName>
+    <RootNamespace>Machine.Specifications.ReSharperRunner.Debug.VS</RootNamespace>
+    <AssemblyName>Machine.Specifications.ReSharperRunner.Debug.VS</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -55,7 +55,7 @@
   <PropertyGroup>
     <StartAction>Program</StartAction>
     <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
-    <StartArguments>/rootsuffix mspec /ReSharper.Internal /ReSharper.Plugin "$(SolutionDir)\Build\Debug\Machine.Specifications.ReSharper.Runner.8.2.dll";"$(SolutionDir)\Build\Debug\Machine.Specifications.ReSharper.Provider.8.2.dll";"$(SolutionDir)\Build\Debug\Machine.Specifications.Runner.Utility.dll";"$(SolutionDir)\Build\Debug\Machine.Specifications.dll"</StartArguments>
+    <StartArguments>/rootsuffix mspec /ReSharper.Internal /ReSharper.Plugin "$(SolutionDir)\Build\Machine.Specifications.ReSharper.Runner.10.dll";"$(SolutionDir)\Build\Machine.Specifications.ReSharper.Provider.10.dll";"$(SolutionDir)\Build\Machine.Specifications.Runner.Utility.dll";"$(SolutionDir)\Build\Machine.Specifications.dll"</StartArguments>
   </PropertyGroup>
   <Import Project="..\packages\GitVersionTask.1.3.3\Build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.1.3.3\Build\GitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

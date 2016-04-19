@@ -1,21 +1,22 @@
-﻿namespace Machine.Specifications.ReSharperProvider
+﻿using JetBrains.Metadata.Reader.API;
+using JetBrains.Metadata.Utils;
+using JetBrains.Util.Reflection;
+
+namespace Machine.Specifications.ReSharperProvider
 {
     using System.Diagnostics;
-    using System.Drawing;
 
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.TaskRunnerFramework;
     using JetBrains.ReSharper.UnitTestFramework;
 
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using Machine.Specifications.ReSharperProvider.Properties;
-    using Machine.Specifications.ReSharperRunner;
 
     [UnitTestProvider]
     public class MSpecUnitTestProvider : IUnitTestProvider
     {
-        const string ProviderId = "Machine.Specifications";
+        private const string ProviderId = "Machine.Specifications";
+        private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(ProviderId, null);
 
         readonly UnitTestElementComparer _unitTestElementComparer = new UnitTestElementComparer(typeof(ContextElement),
                                                                                                 typeof(BehaviorElement),
@@ -35,11 +36,6 @@
         public string Name
         {
             get { return this.ID; }
-        }
-
-        public Image Icon
-        {
-            get { return Resources.Logo; }
         }
 
         public int CompareUnitTestElements(IUnitTestElement x, IUnitTestElement y)
@@ -86,6 +82,12 @@
         public bool IsSupported(IHostProvider hostProvider)
         {
             return true;
+        }
+
+        public bool IsSupported(IProject project)
+        {
+            AssemblyNameInfo referencedAssembly;
+            return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, TargetFrameworkId.Default, MSpecReferenceName, out referencedAssembly);
         }
     }
 }

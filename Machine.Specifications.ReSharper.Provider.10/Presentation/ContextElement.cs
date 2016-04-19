@@ -1,16 +1,16 @@
 ﻿using JetBrains.Metadata.Reader.API;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Util;
-    using Machine.Specifications.ReSharperProvider.Shims;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class ContextElement : Element
     {
@@ -19,17 +19,16 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         readonly string _subject;
 
         public ContextElement(MSpecUnitTestProvider provider,
-                              IPsi psiModuleManager,
-                              ICache cacheManager,
                               UnitTestElementId id,
-                              ProjectModelElementEnvoy projectEnvoy,
                               IClrTypeName typeName,
+                              UnitTestingCachingService cachingService,
+                              IUnitTestElementManager elementManager,
                               string assemblyLocation,
                               string subject,
                               IEnumerable<string> tags,
                               bool isIgnored,
                               IUnitTestElementCategoryFactory categoryFactory)
-            : base(provider, psiModuleManager, cacheManager, null, projectEnvoy, typeName, isIgnored)
+            : base(provider, null, typeName, cachingService, elementManager, isIgnored)
         {
             this._id = id;
             this.AssemblyLocation = assemblyLocation;

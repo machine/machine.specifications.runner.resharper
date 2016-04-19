@@ -1,5 +1,4 @@
 using Machine.Specifications.ReSharperProvider.Presentation;
-using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {
@@ -27,34 +26,30 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
                 return;
             }
 
-            var contextElement = this._factories.Contexts.CreateContext(project, assembly.Location.FullPath, metadataTypeInfo);
+            ContextElement contextElement = this._factories.Contexts.CreateContext(project, assembly.Location.FullPath, metadataTypeInfo);
 
             consumer.OnUnitTestElement(contextElement);
 
             metadataTypeInfo.GetSpecifications()
                 .ForEach(x =>
                 {
-                    var element = this._factories.ContextSpecifications.CreateContextSpecification(contextElement, x);
-                    consumer.OnUnitTestElement(element);
-                    consumer.OnUnitTestElementChanged(element);
+                    var contextSpecificationElement = this._factories.ContextSpecifications.CreateContextSpecification(contextElement, x);
+                    consumer.OnUnitTestElement(contextSpecificationElement);
                 });
-
 
             metadataTypeInfo.GetBehaviors().ForEach(x =>
             {
                 var behaviorElement = this._factories.Behaviors.CreateBehavior(contextElement, x);
                 consumer.OnUnitTestElement(behaviorElement);
-                consumer.OnUnitTestElementChanged(behaviorElement);
-
 
                 this._factories.BehaviorSpecifications
                             .CreateBehaviorSpecificationsFromBehavior(behaviorElement, x)
-                            .ForEach(y =>
-                            {
-                                consumer.OnUnitTestElement(y);
-                                consumer.OnUnitTestElementChanged(y);
-                            });
+                            .ForEach(consumer.OnUnitTestElement);
+
+                consumer.OnUnitTestElementChanged(behaviorElement);
             });
+
+            consumer.OnUnitTestElementChanged(contextElement);
         }
     }
 }

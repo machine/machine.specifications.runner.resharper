@@ -1,6 +1,5 @@
 using System;
 using System.Text.RegularExpressions;
-using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 
 namespace Machine.Specifications.ReSharperRunner
@@ -14,11 +13,6 @@ namespace Machine.Specifications.ReSharperRunner
         public NormalizedTypeName(string typeName)
         {
             this._normalized = QualifiedNetNotationWithoutAssembly(typeName);
-        }
-
-        public NormalizedTypeName(IClrTypeName clrTypeName)
-        {
-            this._normalized = QualifiedNetNotationWithoutAssembly(clrTypeName.FullName);
         }
 
         public NormalizedTypeName(ITypeOwner field)

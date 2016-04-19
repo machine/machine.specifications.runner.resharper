@@ -1,11 +1,13 @@
+using System.Diagnostics;
 using JetBrains.ReSharper.TaskRunnerFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.UI.BindableLinq.Interfaces;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
@@ -13,27 +15,23 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Strategy;
     using JetBrains.Util;
-
     using Machine.Specifications.ReSharperProvider.Factories;
-    using Machine.Specifications.ReSharperProvider.Shims;
     using Machine.Specifications.ReSharperRunner;
 
     public abstract class Element : IUnitTestElement
     {
         readonly IClrTypeName _declaringTypeName;
-        readonly ProjectModelElementEnvoy _projectEnvoy;
         readonly MSpecUnitTestProvider _provider;
         readonly UnitTestTaskFactory _taskFactory;
-        Element _parent;
-        readonly IPsi _psiModuleManager;
-        readonly ICache _cacheManager;
+        readonly UnitTestingCachingService _cachingService;
+        readonly IUnitTestElementManager _elementManager;
+        IUnitTestElement _parent;
 
         protected Element(MSpecUnitTestProvider provider,
-                          IPsi psiModuleManager,
-                          ICache cacheManager,
                           Element parent,
-                          ProjectModelElementEnvoy projectEnvoy,
                           IClrTypeName declaringTypeName,
+                          UnitTestingCachingService cachingService,
+                          IUnitTestElementManager elementManager,
                           bool isIgnored)
         {
             if (declaringTypeName == null)
@@ -41,30 +39,21 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 throw new ArgumentNullException("declaringTypeName");
             }
 
-            if (projectEnvoy != null)
-            {
-                this._projectEnvoy = projectEnvoy;
-            }
-
             this._provider = provider;
             this._declaringTypeName = declaringTypeName;
-            this._psiModuleManager = psiModuleManager;
-            this._cacheManager = cacheManager;
+            this._cachingService = cachingService;
+            this._elementManager = elementManager;
 
             if (isIgnored)
             {
                 this.ExplicitReason = "Ignored";
             }
 
-            this.TypeName = declaringTypeName;
             this.Parent = parent;
 
-            this.Children = new List<IUnitTestElement>();
-            this.State = UnitTestElementState.Valid;
+            this.Children = new BindableCollection<IUnitTestElement>(UT.Locks.ReadLock);
             this._taskFactory = new UnitTestTaskFactory(this._provider.ID);
         }
-
-        public IClrTypeName TypeName { get; private set; }
 
         public abstract string Kind { get; }
         public abstract IEnumerable<UnitTestElementCategory> Categories { get; }
@@ -85,21 +74,31 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return this._parent; }
             set
             {
-                if (this._parent == value)
+                if (Equals(this._parent, value))
                 {
                     return;
                 }
 
-                if (this._parent != null)
+                var oldParent = this._parent;
+                var newParent = value;
+
+                using (UT.WriteLock())
                 {
-                    this._parent.RemoveChild(this);
+                    if (this._parent != null)
+                    {
+                        this._parent.Children.Remove(this);
+                    }
+
+                    this._parent = newParent;
+
+                    if (this._parent != null)
+                    {
+                        this._parent.Children.Add(this);
+                    }
                 }
 
-                this._parent = (Element)value;
-                if (this._parent != null)
-                {
-                    this._parent.AddChild(this);
-                }
+                this._elementManager.FireElementChanged(oldParent);
+                this._elementManager.FireElementChanged(newParent);
             }
         }
         public ICollection<IUnitTestElement> Children { get; private set; }
@@ -114,7 +113,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public IProject GetProject()
         {
-            return this._projectEnvoy.GetValidProjectElement() as IProject;
+            return this.Id.Project;
         }
 
         public UnitTestElementNamespace GetNamespace()
@@ -122,7 +121,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return UnitTestElementNamespaceFactory.Create(this._declaringTypeName.NamespaceNames);
         }
 
-        public UnitTestElementDisposition GetDisposition()
+        public virtual UnitTestElementDisposition GetDisposition()
         {
             IDeclaredElement element = this.GetDeclaredElement();
             if (element == null || !element.IsValid())
@@ -130,55 +129,8 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                 return UnitTestElementDisposition.InvalidDisposition;
             }
 
-            var locations = new List<UnitTestElementLocation>();
-            element.GetDeclarations().ForEach(declaration =>
-            {
-                IFile file = declaration.GetContainingFile();
-                if (file != null)
-                {
-                    locations.Add(new UnitTestElementLocation(file.GetSourceFile().ToProjectFile(),
-                                                              declaration.GetNameDocumentRange().TextRange,
-                                                              declaration.GetDocumentRange().TextRange));
-                }
-            });
-
+            IEnumerable<UnitTestElementLocation> locations = this.GetLocations(element);
             return new UnitTestElementDisposition(locations, this);
-        }
-
-        public bool Equals(IUnitTestElement other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (other.GetType() == this.GetType())
-            {
-                var element = (Element)other;
-                string thisFullName;
-                string otherFullName;
-                try
-                {
-                    // This might throw for invalid elements.
-                    thisFullName = this._declaringTypeName.FullName;
-                    otherFullName = element._declaringTypeName.FullName;
-                }
-                catch (NullReferenceException)
-                {
-                    return false;
-                }
-
-                return Equals(other.Id, this.Id)
-                       && other.ShortName == this.ShortName
-                       && Equals(element._projectEnvoy, this._projectEnvoy)
-                       && thisFullName == otherFullName;
-            }
-            return false;
         }
 
         public abstract string GetPresentation();
@@ -252,28 +204,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         protected ITypeElement GetDeclaredType()
         {
-            IProject project = this.GetProject();
-            if (project == null)
-            {
-                return null;
-            }
-
-            var psiModule = this._psiModuleManager.GetPrimaryPsiModule(project);
-            if (psiModule == null)
-            {
-                return null;
-            }
-
-            var declarationsCache = this._cacheManager.GetDeclarationsCache(psiModule, true, true);
-
-            try
-            {
-                return declarationsCache.GetTypeElementByCLRName(this._declaringTypeName);
-            }
-            catch (NullReferenceException)
-            {
-                return null;
-            }
+            return _cachingService.GetTypeElement(Id.Project, this._declaringTypeName, true, true);
         }
 
         public IClrTypeName GetTypeClrName()
@@ -281,33 +212,82 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return this._declaringTypeName;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(IUnitTestElement other)
         {
-            var other = obj as Element;
-            if (other == null)
+            if (ReferenceEquals(null, other))
             {
                 return false;
             }
 
-            return Equals(other._projectEnvoy, this._projectEnvoy) && other.Id == this.Id;
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (other.GetType() == this.GetType())
+            {
+                var element = (Element)other;
+                string thisFullName;
+                string otherFullName;
+                try
+                {
+                    // This might throw for invalid elements.
+                    thisFullName = this._declaringTypeName.FullName;
+                    otherFullName = element._declaringTypeName.FullName;
+                }
+                catch (NullReferenceException)
+                {
+                    Debug.Fail("Should not happen as the type name should be persisted!");
+                    return false;
+                }
+
+                return Equals(other.Id, this.Id)
+                       && other.ShortName == this.ShortName
+                       && thisFullName == otherFullName;
+            }
+
+            return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return Equals(obj as IUnitTestElement);
         }
 
         public override int GetHashCode()
         {
             var result = 0;
-            result = 29 * result + this._projectEnvoy.GetHashCode();
             result = 29 * result + this.Id.GetHashCode();
+            result = 29 * result + this.ShortName.GetHashCode();
+            result = 29 * result + this._declaringTypeName.FullName.GetHashCode();
             return result;
         }
 
-        void AddChild(Element behaviorElement)
+        public virtual IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
         {
-            this.Children.Add(behaviorElement);
-        }
-
-        void RemoveChild(Element behaviorElement)
-        {
-            this.Children.Remove(behaviorElement);
+            var locations = new List<UnitTestElementLocation>();
+            element.GetDeclarations().ForEach(declaration =>
+            {
+                IFile file = declaration.GetContainingFile();
+                if (file != null)
+                {
+                    locations.Add(new UnitTestElementLocation(
+                        file.GetSourceFile().ToProjectFile(),
+                        declaration.GetNameDocumentRange().TextRange,
+                        declaration.GetDocumentRange().TextRange));
+                }
+            });
+            return locations;
         }
     }
 }

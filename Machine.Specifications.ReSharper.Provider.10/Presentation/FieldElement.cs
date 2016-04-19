@@ -1,27 +1,27 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System;
-    using System.Linq;
     using JetBrains.Metadata.Reader.API;
-    using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Util;
     using Runner.Utility;
-    using Shims;
+    using System;
+    using System.Linq;
 
     public abstract class FieldElement : Element
     {
         readonly string _fieldName;
 
         protected FieldElement(MSpecUnitTestProvider provider,
-                               IPsi psiModuleManager,
-                               ICache cacheManager,
                                Element parent,
-                               ProjectModelElementEnvoy projectEnvoy,
                                IClrTypeName declaringTypeName,
+                               UnitTestingCachingService cachingService,
+                               IUnitTestElementManager elementManager,
                                string fieldName,
                                bool isIgnored)
-            : base(provider, psiModuleManager, cacheManager, parent, projectEnvoy, declaringTypeName, isIgnored || parent.Explicit)
+            : base(provider, parent, declaringTypeName, cachingService, elementManager, isIgnored || parent.Explicit)
         {
             this._fieldName = fieldName;
         }
@@ -38,16 +38,10 @@
 
         public override string GetPresentation()
         {
-            var presentation = String.Format("{0}{1}{2}",
-                                             this.GetTitlePrefix(),
-                                             String.IsNullOrEmpty(this.GetTitlePrefix()) ? String.Empty : " ",
-                                             this.FieldName.ToFormat());
-
-#if DEBUG
-            presentation += String.Format(" ({0})", this.Id);
-#endif
-
-            return presentation;
+            return String.Format("{0}{1}{2}",
+                this.GetTitlePrefix(),
+                String.IsNullOrEmpty(this.GetTitlePrefix()) ? String.Empty : " ",
+                this.FieldName.ToFormat());
         }
 
         public override IDeclaredElement GetDeclaredElement()
@@ -59,8 +53,9 @@
             }
 
             return declaredType
-              .EnumerateMembers(this.FieldName, false)
-              .FirstOrDefault(member => member as IField != null);
+                .EnumerateMembers(this.FieldName, true)
+                .OfType<IField>()
+                .FirstOrDefault();
         }
     }
 }

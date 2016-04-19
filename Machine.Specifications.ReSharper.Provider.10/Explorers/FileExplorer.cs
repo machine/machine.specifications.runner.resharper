@@ -64,13 +64,13 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
         public void ProcessBeforeInterior(ITreeNode element)
         {
-            var handler = this._elementHandlers.FirstOrDefault(x => x.Accepts(element));
+            IElementHandler handler = this._elementHandlers.FirstOrDefault(x => x.Accepts(element));
             if (handler == null)
             {
                 return;
             }
 
-            foreach (var elementDisposition in handler.AcceptElement(this._assemblyPath, this._file, element))
+            foreach (UnitTestElementDisposition elementDisposition in handler.AcceptElement(this._assemblyPath, this._file, element))
             {
                 if (elementDisposition != null && elementDisposition.UnitTestElement != null)
                 {
@@ -81,11 +81,6 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
         public void ProcessAfterInterior(ITreeNode element)
         {
-            this._elementHandlers
-              .Where(x => x.Accepts(element))
-              .Reverse()
-              .ToList()
-              .ForEach(x => x.Cleanup(element));
         }
 
         public bool ProcessingIsFinished

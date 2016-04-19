@@ -1,19 +1,13 @@
-using JetBrains.Metadata.Reader.Impl;
 using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using System.Linq;
-
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.Psi.Impl.Reflection2;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
-
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using Machine.Specifications.ReSharperProvider.Shims;
 
     [SolutionComponent]
     public class BehaviorFactory
@@ -21,35 +15,31 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         readonly ElementCache _cache;
         readonly IUnitTestElementManager _manager;
         readonly IUnitTestElementIdFactory _elementIdFactory;
-        readonly ICache _cacheManager;
+        private readonly UnitTestingCachingService _cachingService;
         readonly MSpecUnitTestProvider _provider;
-        readonly IPsi _psiModuleManager;
-        readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
 
         public BehaviorFactory(MSpecUnitTestProvider provider,
                              IUnitTestElementManager manager,
                              IUnitTestElementIdFactory elementIdFactory,
-                             IPsi psiModuleManager,
-                             ICache cacheManager,
+                             UnitTestingCachingService cachingService,
                              ElementCache cache)
         {
-            this._psiModuleManager = psiModuleManager;
-            this._cacheManager = cacheManager;
             this._provider = provider;
             this._cache = cache;
             this._manager = manager;
             this._elementIdFactory = elementIdFactory;
+            this._cachingService = cachingService;
         }
 
         public BehaviorElement CreateBehavior(IDeclaredElement field)
         {
-            var clazz = ((ITypeMember)field).GetContainingType() as IClass;
-            if (clazz == null)
+            var contextClass = ((ITypeMember)field).GetContainingType() as IClass;
+            if (contextClass == null)
             {
                 return null;
             }
 
-            var context = this._cache.TryGetContext(clazz);
+            var context = this._cache.TryGetContext(contextClass);
             if (context == null)
             {
                 return null;
@@ -57,19 +47,11 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
             var fieldType = new NormalizedTypeName(field as ITypeOwner);
 
-            var behavior = this.GetOrCreateBehavior(context,
-                                               clazz.GetClrName(),
-                                               field.ShortName,
-                                               field.IsIgnored(),
-                                               fieldType);
-
-            foreach (var child in behavior.Children)
-            {
-                child.State = UnitTestElementState.Pending;
-            }
-
-            this._cache.AddBehavior(field, behavior);
-            return behavior;
+            return this.GetOrCreateBehavior(context,
+                                            contextClass.GetClrName(),
+                                            field.ShortName,
+                                            field.IsIgnored(),
+                                            fieldType);
         }
 
         public BehaviorElement CreateBehavior(ContextElement context, IMetadataField behavior)
@@ -80,7 +62,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var fieldType = new NormalizedTypeName(metadataTypeName);
 
             var behaviorElement = this.GetOrCreateBehavior(context,
-                                                      this._reflectionTypeNameCache.GetClrName(behavior.DeclaringType),
+                                                      context.GetTypeClrName(),
                                                       behavior.Name,
                                                       behavior.IsIgnored() || typeContainingBehaviorSpecifications.IsIgnored(),
                                                       fieldType);
@@ -99,36 +81,18 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             if (behavior != null)
             {
                 behavior.Parent = context;
-                behavior.State = UnitTestElementState.Valid;
                 return behavior;
             }
 
             return new BehaviorElement(this._provider,
-                                       this._psiModuleManager,
-                                       this._cacheManager,
                                        id,
                                        context,
-                                       new ProjectModelElementEnvoy(context.GetProject()),
-                                       declaringTypeName,
+                                       declaringTypeName.GetPersistent(),
+                                       this._cachingService,
+                                       this._manager,
                                        fieldName,
                                        isIgnored,
                                        fieldType);
-        }
-
-        public void UpdateChildState(IDeclaredElement field)
-        {
-            var behavior = this._cache.TryGetBehavior(field);
-            if (behavior == null)
-            {
-                return;
-            }
-
-            foreach (var element in behavior
-              .Children.Where(x => x.State == UnitTestElementState.Pending)
-              .Flatten(x => x.Children))
-            {
-                element.State = UnitTestElementState.Invalid;
-            }
         }
     }
 }

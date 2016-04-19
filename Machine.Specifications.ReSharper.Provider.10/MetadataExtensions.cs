@@ -2,13 +2,12 @@
 
 namespace Machine.Specifications.ReSharperProvider
 {
+    using JetBrains.Metadata.Reader.API;
+    using Runner.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.ReSharper.Psi;
-    using Runner.Utility;
 
     internal static partial class MetadataExtensions
     {

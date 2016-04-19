@@ -8,50 +8,46 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     using JetBrains.ReSharper.UnitTestFramework.Elements;
 
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using Machine.Specifications.ReSharperProvider.Shims;
 
     [SolutionComponent]
     public class ContextSpecificationFactory
     {
         readonly ElementCache _cache;
-        readonly ICache _cacheManager;
+        private readonly UnitTestingCachingService _cachingService;
         readonly IUnitTestElementManager _manager;
         readonly IUnitTestElementIdFactory _elementIdFactory;
         readonly MSpecUnitTestProvider _provider;
-        readonly IPsi _psiModuleManager;
         readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
 
         public ContextSpecificationFactory(MSpecUnitTestProvider provider,
                                            IUnitTestElementManager manager,
                                            IUnitTestElementIdFactory elementIdFactory,
-                                           IPsi psiModuleManager,
-                                           ICache cacheManager,
+                                           UnitTestingCachingService cachingService,
                                            ElementCache cache)
         {
             this._manager = manager;
             this._elementIdFactory = elementIdFactory;
-            this._psiModuleManager = psiModuleManager;
-            this._cacheManager = cacheManager;
+            this._cachingService = cachingService;
             this._provider = provider;
             this._cache = cache;
         }
 
         public ContextSpecificationElement CreateContextSpecification(IDeclaredElement field)
         {
-            var clazz = ((ITypeMember)field).GetContainingType() as IClass;
-            if (clazz == null)
+            var contextClass = ((ITypeMember)field).GetContainingType() as IClass;
+            if (contextClass == null)
             {
                 return null;
             }
 
-            var context = this._cache.TryGetContext(clazz);
+            var context = this._cache.TryGetContext(contextClass);
             if (context == null)
             {
                 return null;
             }
 
             return this.GetOrCreateContextSpecification(context,
-                                                   clazz.GetClrName().GetPersistent(),
+                                                   contextClass.GetClrName(),
                                                    field.ShortName,
                                                    field.IsIgnored());
         }
@@ -70,22 +66,22 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                            bool isIgnored)
         {
             var id = ContextSpecificationElement.CreateId(_elementIdFactory, _provider, context, fieldName);
+
             var contextSpecification = this._manager.GetElementById(id) as ContextSpecificationElement;
             if (contextSpecification != null)
             {
                 contextSpecification.Parent = context;
-                contextSpecification.State = UnitTestElementState.Valid;
                 return contextSpecification;
             }
 
             return new ContextSpecificationElement(this._provider,
-                                                   this._psiModuleManager,
-                                                   this._cacheManager,
                                                    id,
-                                                   new ProjectModelElementEnvoy(context.GetProject()),
                                                    context,
-                                                   declaringTypeName,
-                                                   fieldName, isIgnored);
+                                                   declaringTypeName.GetPersistent(),
+                                                   this._cachingService,
+                                                   this._manager,
+                                                   fieldName,
+                                                   isIgnored);
         }
     }
 }

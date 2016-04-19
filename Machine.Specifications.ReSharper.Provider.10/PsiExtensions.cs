@@ -1,18 +1,16 @@
 namespace Machine.Specifications.ReSharperProvider
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     using JetBrains.Application.Progress;
     using JetBrains.Metadata.Reader.Impl;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Search;
     using JetBrains.ReSharper.Psi.Tree;
-
     using Machine.Specifications.Runner.Utility;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    internal static partial class PsiExtensions
+    internal static class PsiExtensions
     {
         public static bool IsContext(this IDeclaredElement element)
         {

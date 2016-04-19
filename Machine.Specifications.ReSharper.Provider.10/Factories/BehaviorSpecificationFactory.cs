@@ -1,38 +1,32 @@
+using JetBrains.Metadata.Reader.Impl;
+
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using System.Collections.Generic;
-
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.Psi.Impl.Reflection2;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.ReSharper.UnitTestFramework.Elements;
-
     using Machine.Specifications.ReSharperProvider.Presentation;
-    using Machine.Specifications.ReSharperProvider.Shims;
+    using System.Collections.Generic;
 
     [SolutionComponent]
     public class BehaviorSpecificationFactory
     {
-        readonly ICache _cacheManager;
         readonly IUnitTestElementIdFactory _elementIdFactory;
-        readonly IUnitTestElementManager _manager;
         readonly MSpecUnitTestProvider _provider;
-        readonly IPsi _psiModuleManager;
-        readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
+        private readonly IUnitTestElementManager _manager;
+        private readonly UnitTestingCachingService _cachingService;
 
         public BehaviorSpecificationFactory(MSpecUnitTestProvider provider,
                                             IUnitTestElementManager manager,
-                                            IPsi psiModuleManager,
-                                            ICache cacheManager,
+                                            UnitTestingCachingService cachingService,
                                             IUnitTestElementIdFactory elementIdFactory)
         {
-            this._manager = manager;
-            this._psiModuleManager = psiModuleManager;
-            this._cacheManager = cacheManager;
             this._elementIdFactory = elementIdFactory;
             this._provider = provider;
+            _manager = manager;
+            _cachingService = cachingService;
         }
 
         public IEnumerable<BehaviorSpecificationElement> CreateBehaviorSpecificationsFromBehavior(
@@ -51,9 +45,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                           IDeclaredElement behaviorSpecification)
         {
             return this.GetOrCreateBehaviorSpecification(behavior,
-                                                    ((ITypeMember)behaviorSpecification).GetContainingType()
-                                                                                         .GetClrName()
-                                                                                         .GetPersistent(),
+                                                    ((ITypeMember)behaviorSpecification).GetContainingType().GetClrName(),
                                                     behaviorSpecification.ShortName,
                                                     behaviorSpecification.IsIgnored());
         }
@@ -62,7 +54,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                  IMetadataField behaviorSpecification)
         {
             return this.GetOrCreateBehaviorSpecification(behavior,
-                                                    this._reflectionTypeNameCache.GetClrName(behaviorSpecification.DeclaringType),
+                                                    new ClrTypeName(behaviorSpecification.DeclaringType.FullyQualifiedName),
                                                     behaviorSpecification.Name,
                                                     behaviorSpecification.IsIgnored());
         }
@@ -73,21 +65,20 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                                                              bool isIgnored)
         {
             var id = BehaviorSpecificationElement.CreateId(_elementIdFactory, _provider, behavior, fieldName);
+
             var behaviorSpecification = this._manager.GetElementById(id) as BehaviorSpecificationElement;
             if (behaviorSpecification != null)
             {
                 behaviorSpecification.Parent = behavior;
-                behaviorSpecification.State = UnitTestElementState.Valid;
                 return behaviorSpecification;
             }
 
             return new BehaviorSpecificationElement(this._provider,
-                                                    this._psiModuleManager,
-                                                    this._cacheManager,
                                                     id,
-                                                    new ProjectModelElementEnvoy(behavior.GetProject()),
                                                     behavior,
-                                                    declaringTypeName,
+                                                    declaringTypeName.GetPersistent(),
+                                                    this._cachingService,
+                                                    this._manager,
                                                     fieldName,
                                                     isIgnored);
         }

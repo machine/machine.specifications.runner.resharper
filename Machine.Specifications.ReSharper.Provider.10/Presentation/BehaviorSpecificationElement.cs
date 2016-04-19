@@ -1,34 +1,32 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Presentation
+﻿using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using JetBrains.Metadata.Reader.API;
-    using JetBrains.ProjectModel;
-    using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.UnitTestFramework;
     using JetBrains.Util;
-    using Machine.Specifications.ReSharperProvider.Shims;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class BehaviorSpecificationElement : FieldElement
     {
         readonly UnitTestElementId _id;
 
         public BehaviorSpecificationElement(MSpecUnitTestProvider provider,
-                                            IPsi psiModuleManager,
-                                            ICache cacheManager,
                                             UnitTestElementId id,
-                                            ProjectModelElementEnvoy projectEnvoy,
                                             BehaviorElement behavior,
                                             IClrTypeName declaringTypeName,
+                                            UnitTestingCachingService cachingService,
+                                            IUnitTestElementManager elementManager,
                                             string fieldName,
                                             bool isIgnored
           )
             : base(provider,
-                   psiModuleManager,
-                   cacheManager,
                    behavior,
-                   projectEnvoy,
                    declaringTypeName,
+                   cachingService,
+                   elementManager,
                    fieldName,
                    isIgnored || behavior.Explicit)
         {
@@ -49,19 +47,39 @@
         {
             get
             {
-                var parent = this.Parent ?? this.Behavior;
-                if (parent == null)
+                if (this.Behavior == null)
                 {
                     return UnitTestElementCategory.Uncategorized;
                 }
 
-                return parent.Categories;
+                return this.Behavior.Categories;
             }
         }
 
         public override UnitTestElementId Id
         {
             get { return this._id; }
+        }
+
+        public override UnitTestElementDisposition GetDisposition()
+        {
+            if (this.Behavior == null)
+            {
+                return UnitTestElementDisposition.InvalidDisposition;
+            }
+
+            IDeclaredElement behaviorElement = this.Behavior.GetDeclaredElement();
+            if (behaviorElement == null || !behaviorElement.IsValid())
+            {
+                return UnitTestElementDisposition.InvalidDisposition;
+            }
+
+            return base.GetDisposition();
+        }
+
+        public override IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
+        {
+            return this.Behavior.GetLocations(element);
         }
 
         public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)

@@ -1,7 +1,6 @@
 using System;
 using System.Xml;
 using JetBrains.Annotations;
-using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.ReSharperRunner.Tasks
 {
@@ -31,17 +30,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
                 return false;
             }
 
-            return Equals(AssemblyLocation, other.AssemblyLocation);
-        }
-
-        public override bool Equals(object other)
-        {
-            return Equals(other as RunAssemblyTask);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return base.Equals(other);
         }
     }
 }

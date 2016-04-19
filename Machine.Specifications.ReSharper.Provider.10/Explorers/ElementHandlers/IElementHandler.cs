@@ -9,6 +9,5 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
     {
         bool Accepts(ITreeNode element);
         IEnumerable<UnitTestElementDisposition> AcceptElement(string assemblyPath, IFile file, ITreeNode element);
-        void Cleanup(ITreeNode element);
     }
 }

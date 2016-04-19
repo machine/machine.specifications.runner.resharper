@@ -1,14 +1,12 @@
+using Machine.Specifications.ReSharperProvider.Presentation;
+
 namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 {
-    using System.Collections.Generic;
-
-    using JetBrains.ProjectModel;
     using JetBrains.ReSharper.Psi;
     using JetBrains.ReSharper.Psi.Tree;
     using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.Util;
-
     using Machine.Specifications.ReSharperProvider.Factories;
+    using System.Collections.Generic;
 
     class BehaviorElementHandler : IElementHandler
     {
@@ -34,18 +32,21 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 
         public IEnumerable<UnitTestElementDisposition> AcceptElement(string assemblyPath, IFile file, ITreeNode element)
         {
-            var declaration = (IDeclaration)element;
-            var behavior = this._factory.CreateBehavior(declaration.DeclaredElement);
+            IDeclaration declaration = (IDeclaration)element;
+            BehaviorElement behavior = this._factory.CreateBehavior(declaration.DeclaredElement);
 
             if (behavior == null)
             {
                 yield break;
             }
 
+            var projectFile = file.GetSourceFile().ToProjectFile();
+            var behaviorTextRange = declaration.GetNameDocumentRange().TextRange;
+            var behaviorContainingRange = declaration.GetDocumentRange().TextRange;
             yield return new UnitTestElementDisposition(behavior,
-                                                        file.GetSourceFile().ToProjectFile(),
-                                                        declaration.GetNavigationRange().TextRange,
-                                                        declaration.GetDocumentRange().TextRange);
+                                                        projectFile,
+                                                        behaviorTextRange,
+                                                        behaviorContainingRange);
 
             var behaviorContainer = declaration.DeclaredElement.GetFirstGenericArgument();
             if (!behaviorContainer.IsBehaviorContainer())
@@ -60,48 +61,13 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
                     continue;
                 }
 
-                var behaviorSpecification = this._behaviorSpecifications.CreateBehaviorSpecification(behavior, field);
+                BehaviorSpecificationElement behaviorSpecification = this._behaviorSpecifications.CreateBehaviorSpecification(behavior, field);
 
-                var projectFile = GetProjectFile(field);
-                if (projectFile != null)
-                {
-                    yield return new UnitTestElementDisposition(behaviorSpecification,
-                                                                projectFile,
-                                                                new TextRange(),
-                                                                GetTextRange(field));
-                }
-                else
-                {
-                    yield return new UnitTestElementDisposition(new UnitTestElementLocation[] { }, behaviorSpecification);
-                }
+                yield return new UnitTestElementDisposition(behaviorSpecification,
+                                                            projectFile,
+                                                            behaviorTextRange,
+                                                            behaviorContainingRange);
             }
-        }
-
-        static IProjectFile GetProjectFile(IDeclaredElement field)
-        {
-            var sourceFile = field.GetSourceFiles();
-            if (sourceFile.Count > 0)
-            {
-                return sourceFile[0].ToProjectFile();
-            }
-            return null;
-        }
-
-        static TextRange GetTextRange(IDeclaredElement field)
-        {
-            var declarations = field.GetDeclarations();
-            if (declarations.Count > 0)
-            {
-                return declarations[0].GetDocumentRange().TextRange;
-            }
-
-            return new TextRange();
-        }
-
-        public void Cleanup(ITreeNode element)
-        {
-            var declaration = (IDeclaration)element;
-            this._factory.UpdateChildState(declaration.DeclaredElement);
         }
     }
 }
