@@ -209,7 +209,6 @@
     <Compile Include="Tasks\Task.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Machine.Specifications.Runner.Resharper.10.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
