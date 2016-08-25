@@ -1,3 +1,5 @@
+using JetBrains.Metadata.Reader.API;
+
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {
     using System;
@@ -42,7 +44,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
             var project = file.GetSourceFile().ToProjectFile().GetProject();
 
-            this._assemblyPath = project.GetOutputFilePath().FullPath;
+            this._assemblyPath = project.GetOutputFilePath(TargetFrameworkId.Default).FullPath;
 
             this._elementHandlers = new List<IElementHandler>
                          {
