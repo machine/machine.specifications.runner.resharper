@@ -1,5 +1,5 @@
 environment:
-  nuget_version: '1.6.0-beta3'
+  nuget_version: '1.6.0-beta4'
   nuget_prerelease: true
   assembly_version: '1.6.0'
 
@@ -24,7 +24,14 @@ before_build:
 
 build:
   project: Machine.Specifications.Runner.Resharper.sln
-  publish_nuget: true
+  publish_nuget: false
+
+after_build:
+- cmd: >-
+    nuget pack Machine.Specifications.ReSharper.Runner.10\Machine.Specifications.ReSharper.Runner.10.nuspec -properties "Version=%NUGET_VERSION%"
+
+artifacts:
+  - path: Build\*.nupkg
 
 deploy:
   - provider: GitHub
