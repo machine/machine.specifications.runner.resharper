@@ -1,7 +1,7 @@
 environment:
-  nuget_version: '1.5.0-beta1'
+  nuget_version: '1.6.0-beta1'
   nuget_prerelease: true
-  assembly_version: '1.5.0'
+  assembly_version: '1.6.0'
 
 version: '$(nuget_version)+{build}'
 configuration: Release
