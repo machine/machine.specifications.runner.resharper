@@ -237,7 +237,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitVersionTask.1.3.3\Build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.1.3.3\Build\GitVersionTask.targets'))" />
     <Error Condition="!Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.106.0.20160818.163532\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.106.0.20160818.163532\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.Targets'))" />
@@ -260,7 +259,6 @@
     <Error Condition="!Exists('..\packages\JetBrains.Psi.Features.Cpp.Src.106.0.20160818.165003\build\JetBrains.Psi.Features.Cpp.Src.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Psi.Features.Cpp.Src.106.0.20160818.165003\build\JetBrains.Psi.Features.Cpp.Src.Targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.ReSharper.SDK.Internal.106.0.20160818.171542\build\JetBrains.ReSharper.SDK.Internal.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.ReSharper.SDK.Internal.106.0.20160818.171542\build\JetBrains.ReSharper.SDK.Internal.Targets'))" />
   </Target>
-  <Import Project="..\packages\GitVersionTask.1.3.3\Build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.1.3.3\Build\GitVersionTask.targets')" />
   <Import Project="..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets" Condition="Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" />
   <Import Project="..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets" Condition="Exists('..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets')" />
   <Import Project="..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.106.0.20160818.163532\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.Targets" Condition="Exists('..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.106.0.20160818.163532\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.Targets')" />

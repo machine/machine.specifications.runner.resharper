@@ -1,0 +1,49 @@
+environment:
+  nuget_version: '1.5.0'
+  nuget_prerelease: true
+  assembly_version: '1.5.0'
+
+version: '$(nuget_version)+{build}'
+configuration: Release
+platform: Any CPU
+
+assembly_info:
+  patch: true
+  file: SharedAssemblyInfo.cs
+  assembly_version: '$(assembly_version).{build}'
+  assembly_file_version: '$(assembly_version).{build}'
+  assembly_informational_version: '$(nuget_version)'
+
+clone_depth: 5
+pull_requests:
+  do_not_increment_build_number: true
+
+before_build:
+- cmd: >-
+    nuget restore
+
+build:
+  project: Machine.Specifications.Runner.Resharper.sln
+  publish_nuget: true
+
+
+artifacts:
+- path: Build\*.nupkg
+
+deploy:
+  - provider: GitHub
+    description: |
+      * Added support for ReSharper 2016.2.2
+    on:
+      appveyor_repo_tag: true
+    prerelease: $(nuget_prerelease)
+
+    release: v$(nuget_version)
+    auth_token:
+      secure: VrF5TrpBRN0ims9nJC1LG32O6ga5hsRuGNSufEbatAiIWZ1z68iiCYKZtqnAaT9y
+
+  - provider: NuGet
+    api_key:
+      secure: R+qirYPrTX9IzJHpRLL6KAV1Lo+vlAnInf6ShiIB2rAGIP28ceJxRAh1jirHE/uD
+    on:
+      appveyor_repo_tag: true
