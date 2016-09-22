@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using JetBrains.ReSharper.TaskRunnerFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.UI.BindableLinq.Interfaces;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
