@@ -217,7 +217,9 @@
     <Compile Include="Tasks\Task.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Machine.Specifications.Runner.Resharper.10.nuspec" />
+    <None Include="Machine.Specifications.Runner.Resharper.10.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
