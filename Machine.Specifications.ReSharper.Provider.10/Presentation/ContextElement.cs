@@ -92,7 +92,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             }
             var result = new[] { subject, typeName, tagsAsString };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, project, id);
+            return elementIdFactory.Create(provider, project, TargetFrameworkId.Default, id);
         }
     }
 }

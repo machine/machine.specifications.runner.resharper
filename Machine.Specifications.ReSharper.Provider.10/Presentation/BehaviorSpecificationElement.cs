@@ -86,7 +86,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         {
             var result = new[] { behaviorElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, behaviorElement.GetProject(), id);
+            return elementIdFactory.Create(provider, behaviorElement.GetProject(), TargetFrameworkId.Default, id);
         }
     }
 }

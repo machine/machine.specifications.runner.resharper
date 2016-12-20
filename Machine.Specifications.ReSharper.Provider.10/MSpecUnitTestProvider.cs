@@ -79,15 +79,15 @@ namespace Machine.Specifications.ReSharperProvider
             return false;
         }
 
-        public bool IsSupported(IHostProvider hostProvider)
+        public bool IsSupported(IHostProvider hostProvider, IProject project, TargetFrameworkId targetFrameworkId)
         {
             return true;
         }
 
-        public bool IsSupported(IProject project)
+        public bool IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
             AssemblyNameInfo referencedAssembly;
-            return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, TargetFrameworkId.Default, MSpecReferenceName, out referencedAssembly);
+            return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MSpecReferenceName, out referencedAssembly);
         }
     }
 }

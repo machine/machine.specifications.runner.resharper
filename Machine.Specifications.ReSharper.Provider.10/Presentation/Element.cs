@@ -205,7 +205,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         protected ITypeElement GetDeclaredType()
         {
-            return _cachingService.GetTypeElement(Id.Project, this._declaringTypeName, true, true);
+            return _cachingService.GetTypeElement(Id.Project, TargetFrameworkId.Default, this._declaringTypeName, true, true);
         }
 
         public IClrTypeName GetTypeClrName()
