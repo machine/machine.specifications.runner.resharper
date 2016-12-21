@@ -26,24 +26,24 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
                 return;
             }
 
-            ContextElement contextElement = this._factories.Contexts.CreateContext(project, assembly.Location.FullPath, metadataTypeInfo);
+            ContextElement contextElement = this._factories.Contexts.CreateContext(consumer, project, assembly.Location.FullPath, metadataTypeInfo);
 
             consumer.OnUnitTestElement(contextElement);
 
             metadataTypeInfo.GetSpecifications()
                 .ForEach(x =>
                 {
-                    var contextSpecificationElement = this._factories.ContextSpecifications.CreateContextSpecification(contextElement, x);
+                    var contextSpecificationElement = this._factories.ContextSpecifications.CreateContextSpecification(consumer, contextElement, x);
                     consumer.OnUnitTestElement(contextSpecificationElement);
                 });
 
             metadataTypeInfo.GetBehaviors().ForEach(x =>
             {
-                var behaviorElement = this._factories.Behaviors.CreateBehavior(contextElement, x);
+                var behaviorElement = this._factories.Behaviors.CreateBehavior(contextElement, x, consumer);
                 consumer.OnUnitTestElement(behaviorElement);
 
                 this._factories.BehaviorSpecifications
-                            .CreateBehaviorSpecificationsFromBehavior(behaviorElement, x)
+                            .CreateBehaviorSpecificationsFromBehavior(behaviorElement, x, consumer)
                             .ForEach(consumer.OnUnitTestElement);
 
                 consumer.OnUnitTestElementChanged(behaviorElement);

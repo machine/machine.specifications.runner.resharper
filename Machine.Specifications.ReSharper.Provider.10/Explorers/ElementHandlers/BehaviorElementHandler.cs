@@ -12,11 +12,13 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
     {
         readonly BehaviorFactory _factory;
         readonly BehaviorSpecificationFactory _behaviorSpecifications;
+        readonly IUnitTestElementsObserver _consumer;
 
-        public BehaviorElementHandler(ElementFactories factories)
+        public BehaviorElementHandler(ElementFactories factories, IUnitTestElementsObserver consumer)
         {
             this._factory = factories.Behaviors;
             this._behaviorSpecifications = factories.BehaviorSpecifications;
+            _consumer = consumer;
         }
 
         public bool Accepts(ITreeNode element)
@@ -33,7 +35,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
         public IEnumerable<UnitTestElementDisposition> AcceptElement(string assemblyPath, IFile file, ITreeNode element)
         {
             IDeclaration declaration = (IDeclaration)element;
-            BehaviorElement behavior = this._factory.CreateBehavior(declaration.DeclaredElement);
+            BehaviorElement behavior = this._factory.CreateBehavior(declaration.DeclaredElement, _consumer);
 
             if (behavior == null)
             {
@@ -61,7 +63,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
                     continue;
                 }
 
-                BehaviorSpecificationElement behaviorSpecification = this._behaviorSpecifications.CreateBehaviorSpecification(behavior, field);
+                BehaviorSpecificationElement behaviorSpecification = this._behaviorSpecifications.CreateBehaviorSpecification(behavior, field, _consumer);
 
                 yield return new UnitTestElementDisposition(behaviorSpecification,
                                                             projectFile,

@@ -36,10 +36,11 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             this._cache = cache;
         }
 
-        public IUnitTestElement CreateContext(string assemblyPath, IDeclaration contextDeclaration)
+        public IUnitTestElement CreateContext(IUnitTestElementsObserver consumer, string assemblyPath, IDeclaration contextDeclaration)
         {
             var contextType = (ITypeElement)contextDeclaration.DeclaredElement;
-            var context = this.GetOrCreateContext(assemblyPath,
+            var context = this.GetOrCreateContext(consumer, 
+                                           assemblyPath,
                                            contextDeclaration.GetProject(),
                                            contextType.GetClrName(),
                                            contextType.GetSubjectString(),
@@ -50,9 +51,10 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return context;
         }
 
-        public ContextElement CreateContext(IProject project, string assemblyPath, IMetadataTypeInfo contextType)
+        public ContextElement CreateContext(IUnitTestElementsObserver consumer, IProject project, string assemblyPath, IMetadataTypeInfo contextType)
         {
-            return this.GetOrCreateContext(assemblyPath,
+            return this.GetOrCreateContext(consumer, 
+                                      assemblyPath,
                                       project,
                                       new ClrTypeName(contextType.FullyQualifiedName),
                                       contextType.GetSubjectString(),
@@ -60,14 +62,15 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                       contextType.IsIgnored());
         }
 
-        public ContextElement GetOrCreateContext(string assemblyPath,
+        public ContextElement GetOrCreateContext(IUnitTestElementsObserver consumer,
+                                                 string assemblyPath,
                                                  IProject project,
                                                  IClrTypeName contextTypeName,
                                                  string subject,
                                                  ICollection<string> tags,
                                                  bool isIgnored)
         {
-            UnitTestElementId id = ContextElement.CreateId(_elementIdFactory, _provider, project, subject, contextTypeName.FullName, tags);
+            UnitTestElementId id = ContextElement.CreateId(_elementIdFactory, consumer, _provider, project, subject, contextTypeName.FullName, tags);
 
             var contextElement = this._manager.GetElementById(id) as ContextElement;
             if (contextElement != null)

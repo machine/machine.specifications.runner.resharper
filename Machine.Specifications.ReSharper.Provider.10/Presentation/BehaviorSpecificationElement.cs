@@ -82,11 +82,11 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return this.Behavior.GetLocations(element);
         }
 
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
         {
             var result = new[] { behaviorElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, behaviorElement.GetProject(), TargetFrameworkId.Default, id);
+            return elementIdFactory.Create(provider, behaviorElement.GetProject(), consumer.TargetFrameworkId, id);
         }
     }
 }

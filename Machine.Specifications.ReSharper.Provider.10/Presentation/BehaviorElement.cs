@@ -68,11 +68,11 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return "behaves like";
         }
 
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, MSpecUnitTestProvider provider, ContextElement contextElement, string fieldType, string fieldName)
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, MSpecUnitTestProvider provider, ContextElement contextElement, string fieldType, string fieldName)
         {
             var result = new[] { contextElement.Id, fieldType, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, contextElement.GetProject(), TargetFrameworkId.Default, id);
+            return elementIdFactory.Create(provider, contextElement.GetProject(), consumer.TargetFrameworkId, id);
         }
     }
 }

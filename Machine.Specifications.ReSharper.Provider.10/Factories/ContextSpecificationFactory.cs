@@ -32,7 +32,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             this._cache = cache;
         }
 
-        public ContextSpecificationElement CreateContextSpecification(IDeclaredElement field)
+        public ContextSpecificationElement CreateContextSpecification(IUnitTestElementsObserver consumer, IDeclaredElement field)
         {
             var contextClass = ((ITypeMember)field).GetContainingType() as IClass;
             if (contextClass == null)
@@ -46,26 +46,29 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return null;
             }
 
-            return this.GetOrCreateContextSpecification(context,
+            return this.GetOrCreateContextSpecification(consumer, 
+                                                   context,
                                                    contextClass.GetClrName(),
                                                    field.ShortName,
                                                    field.IsIgnored());
         }
 
-        public ContextSpecificationElement CreateContextSpecification(ContextElement context, IMetadataField specification)
+        public ContextSpecificationElement CreateContextSpecification(IUnitTestElementsObserver consumer, ContextElement context, IMetadataField specification)
         {
-            return this.GetOrCreateContextSpecification(context,
+            return this.GetOrCreateContextSpecification(consumer, 
+                                                   context,
                                                    this._reflectionTypeNameCache.GetClrName(specification.DeclaringType),
                                                    specification.Name,
                                                    specification.IsIgnored());
         }
 
-        public ContextSpecificationElement GetOrCreateContextSpecification(ContextElement context,
+        public ContextSpecificationElement GetOrCreateContextSpecification(IUnitTestElementsObserver consumer,
+                                                                           ContextElement context,
                                                                            IClrTypeName declaringTypeName,
                                                                            string fieldName,
                                                                            bool isIgnored)
         {
-            var id = ContextSpecificationElement.CreateId(_elementIdFactory, _provider, context, fieldName);
+            var id = ContextSpecificationElement.CreateId(_elementIdFactory, consumer, _provider, context, fieldName);
 
             var contextSpecification = this._manager.GetElementById(id) as ContextSpecificationElement;
             if (contextSpecification != null)

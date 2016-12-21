@@ -83,7 +83,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return this.GetDeclaredType();
         }
 
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
         {
             string tagsAsString = null;
             if (tags != null)
@@ -92,7 +92,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             }
             var result = new[] { subject, typeName, tagsAsString };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-            return elementIdFactory.Create(provider, project, TargetFrameworkId.Default, id);
+            return elementIdFactory.Create(provider, project, consumer.TargetFrameworkId, id);
         }
     }
 }
