@@ -24,6 +24,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
         public bool Accepts(ITreeNode element)
         {
             var declaration = element as IDeclaration;
+
             if (declaration == null)
             {
                 return false;
