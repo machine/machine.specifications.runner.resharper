@@ -44,13 +44,13 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
             var project = file.GetSourceFile().ToProjectFile().GetProject();
 
-            this._assemblyPath = project.GetOutputFilePath(TargetFrameworkId.Default).FullPath;
+            this._assemblyPath = project.GetOutputFilePath(consumer.TargetFrameworkId).FullPath;
 
             this._elementHandlers = new List<IElementHandler>
                          {
-                           new ContextElementHandler(factories),
-                           new ContextSpecificationElementHandler(factories),
-                           new BehaviorElementHandler(factories)
+                           new ContextElementHandler(factories, consumer),
+                           new ContextSpecificationElementHandler(factories, consumer),
+                           new BehaviorElementHandler(factories, consumer)
                          };
         }
 

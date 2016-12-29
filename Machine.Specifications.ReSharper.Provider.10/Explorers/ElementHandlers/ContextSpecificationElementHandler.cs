@@ -11,10 +11,12 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
     class ContextSpecificationElementHandler : IElementHandler
     {
         readonly ContextSpecificationFactory _factory;
+        readonly IUnitTestElementsObserver _consumer;
 
-        public ContextSpecificationElementHandler(ElementFactories factories)
+        public ContextSpecificationElementHandler(ElementFactories factories, IUnitTestElementsObserver consumer)
         {
             this._factory = factories.ContextSpecifications;
+            _consumer = consumer;
         }
 
         public bool Accepts(ITreeNode element)
@@ -31,7 +33,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
         public IEnumerable<UnitTestElementDisposition> AcceptElement(string assemblyPath, IFile file, ITreeNode element)
         {
             var declaration = (IDeclaration)element;
-            var contextSpecification = this._factory.CreateContextSpecification(declaration.DeclaredElement);
+            var contextSpecification = this._factory.CreateContextSpecification(_consumer, declaration.DeclaredElement);
 
             if (contextSpecification == null)
             {

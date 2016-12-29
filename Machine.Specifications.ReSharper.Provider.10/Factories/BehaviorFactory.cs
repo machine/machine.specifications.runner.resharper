@@ -31,7 +31,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             this._cachingService = cachingService;
         }
 
-        public BehaviorElement CreateBehavior(IDeclaredElement field)
+        public BehaviorElement CreateBehavior(IDeclaredElement field, IUnitTestElementsObserver consumer)
         {
             var contextClass = ((ITypeMember)field).GetContainingType() as IClass;
             if (contextClass == null)
@@ -48,13 +48,14 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var fieldType = new NormalizedTypeName(field as ITypeOwner);
 
             return this.GetOrCreateBehavior(context,
+                                            consumer,
                                             contextClass.GetClrName(),
                                             field.ShortName,
                                             field.IsIgnored(),
                                             fieldType);
         }
 
-        public BehaviorElement CreateBehavior(ContextElement context, IMetadataField behavior)
+        public BehaviorElement CreateBehavior(ContextElement context, IMetadataField behavior, IUnitTestElementsObserver consumer)
         {
             var typeContainingBehaviorSpecifications = behavior.GetFirstGenericArgument();
 
@@ -62,6 +63,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var fieldType = new NormalizedTypeName(metadataTypeName);
 
             var behaviorElement = this.GetOrCreateBehavior(context,
+                                                      consumer,
                                                       context.GetTypeClrName(),
                                                       behavior.Name,
                                                       behavior.IsIgnored() || typeContainingBehaviorSpecifications.IsIgnored(),
@@ -71,12 +73,13 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         }
 
         public BehaviorElement GetOrCreateBehavior(ContextElement context,
+                                                   IUnitTestElementsObserver consumer,
                                                    IClrTypeName declaringTypeName,
                                                    string fieldName,
                                                    bool isIgnored,
                                                    string fieldType)
         {
-            var id = BehaviorElement.CreateId(_elementIdFactory, _provider, context, fieldType, fieldName);
+            var id = BehaviorElement.CreateId(_elementIdFactory, consumer, _provider, context, fieldType, fieldName);
             var behavior = this._manager.GetElementById(id) as BehaviorElement;
             if (behavior != null)
             {
