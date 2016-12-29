@@ -1,7 +1,7 @@
 environment:
-  nuget_version: '1.6.0-beta5'
-  nuget_prerelease: true
-  assembly_version: '1.6.0'
+  nuget_version: '1.7.0'
+  nuget_prerelease: false
+  assembly_version: '1.7.0'
 
 version: '$(nuget_version)+{build}'
 configuration: Release
@@ -36,7 +36,7 @@ artifacts:
 deploy:
   - provider: GitHub
     description: |
-      * Added support for ReSharper 2016.2.2 (big thanks to robertcoltheart!)
+      * Added support for ReSharper 2016.3
     on:
       appveyor_repo_tag: true
     prerelease: $(nuget_prerelease)
