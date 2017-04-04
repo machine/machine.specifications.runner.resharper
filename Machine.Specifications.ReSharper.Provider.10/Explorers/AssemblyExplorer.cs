@@ -2,10 +2,10 @@ using Machine.Specifications.ReSharperProvider.Presentation;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {
+    using System.Linq;
     using JetBrains.Metadata.Reader.API;
     using JetBrains.ProjectModel;
     using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.Util;
 
     using Machine.Specifications.ReSharperProvider.Factories;
 
@@ -31,19 +31,21 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             consumer.OnUnitTestElement(contextElement);
 
             metadataTypeInfo.GetSpecifications()
+                .ToList()
                 .ForEach(x =>
                 {
                     var contextSpecificationElement = this._factories.ContextSpecifications.CreateContextSpecification(consumer, contextElement, x);
                     consumer.OnUnitTestElement(contextSpecificationElement);
                 });
 
-            metadataTypeInfo.GetBehaviors().ForEach(x =>
+            metadataTypeInfo.GetBehaviors().ToList().ForEach(x =>
             {
                 var behaviorElement = this._factories.Behaviors.CreateBehavior(contextElement, x, consumer);
                 consumer.OnUnitTestElement(behaviorElement);
 
                 this._factories.BehaviorSpecifications
                             .CreateBehaviorSpecificationsFromBehavior(behaviorElement, x, consumer)
+                            .ToList()
                             .ForEach(consumer.OnUnitTestElement);
 
                 consumer.OnUnitTestElementChanged(behaviorElement);

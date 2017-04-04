@@ -43,16 +43,16 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return "Behavior Specification"; }
         }
 
-        public override IEnumerable<UnitTestElementCategory> Categories
+        public override ISet<UnitTestElementCategory> OwnCategories
         {
             get
             {
                 if (this.Behavior == null)
                 {
-                    return UnitTestElementCategory.Uncategorized;
+                    return UnitTestElementCategory.Uncategorized.ToSet();
                 }
 
-                return this.Behavior.Categories;
+                return this.Behavior.OwnCategories;
             }
         }
 
