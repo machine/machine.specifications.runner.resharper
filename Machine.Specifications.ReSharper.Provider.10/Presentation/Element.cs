@@ -57,7 +57,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         }
 
         public abstract string Kind { get; }
-        public abstract IEnumerable<UnitTestElementCategory> Categories { get; }
+        public abstract ISet<UnitTestElementCategory> OwnCategories { get; }
         public string ExplicitReason { get; private set; }
 
         public abstract UnitTestElementId Id
@@ -277,7 +277,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public virtual IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
         {
             var locations = new List<UnitTestElementLocation>();
-            element.GetDeclarations().ForEach(declaration =>
+            element.GetDeclarations().ToList().ForEach(declaration =>
             {
                 IFile file = declaration.GetContainingFile();
                 if (file != null)

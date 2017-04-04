@@ -52,11 +52,6 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             observer.OnCompleted();
         }
         
-        public IUnitTestProvider Provider
-        {
-            get { return _provider; }
-        }
-
         private static bool IsProjectFile(IFile psiFile)
         {
             // Can return null for external sources

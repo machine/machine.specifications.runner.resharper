@@ -265,7 +265,7 @@ namespace Machine.Specifications.ReSharperProvider
             finder.FindInheritors(clazz,
                                   searchDomain,
                                   findResult.Consumer,
-                                  NullProgressIndicator.Instance);
+                                  NullProgressIndicator.Create());
 
             return findResult.Found;
         }

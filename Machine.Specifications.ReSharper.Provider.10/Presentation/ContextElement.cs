@@ -14,7 +14,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
     public class ContextElement : Element
     {
-        readonly IEnumerable<UnitTestElementCategory> _categories;
+        readonly ISet<UnitTestElementCategory> _categories;
         readonly UnitTestElementId _id;
         readonly string _subject;
 
@@ -52,7 +52,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             get { return "Context"; }
         }
 
-        public override IEnumerable<UnitTestElementCategory> Categories
+        public override ISet<UnitTestElementCategory> OwnCategories
         {
             get { return this._categories; }
         }
