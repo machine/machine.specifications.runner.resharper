@@ -1,7 +1,7 @@
 environment:
-  nuget_version: '1.8.1'
+  nuget_version: '1.9.0'
   nuget_prerelease: false
-  assembly_version: '1.8.1'
+  assembly_version: '1.9.0'
 
 version: '$(nuget_version)+{build}'
 configuration: Release
@@ -36,7 +36,7 @@ artifacts:
 deploy:
   - provider: GitHub
     description: |
-      * Added support for ReSharper 2017.1
+      * Added support for ReSharper 2017.1.2
     on:
       appveyor_repo_tag: true
     prerelease: $(nuget_prerelease)
