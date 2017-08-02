@@ -44,7 +44,7 @@ namespace Machine.Specifications.ReSharperRunner
                     string cachePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
                     runOptions.ShadowCopyTo(cachePath);
-                    this.Server.SetTempFolderPath(cachePath);
+                    Server.SetTempFolderPath(cachePath);
                 }
 
                 appDomainRunner.RunAssembly(assemblyPath);
@@ -55,7 +55,7 @@ namespace Machine.Specifications.ReSharperRunner
             }
         }
 
-        void RegisterRemoteTaskNotifications(PerAssemblyRunListener listener, TaskExecutionNode node, ICollection<string> contexts)
+        private void RegisterRemoteTaskNotifications(PerAssemblyRunListener listener, TaskExecutionNode node, ICollection<string> contexts)
         {
             listener.RegisterTaskNotification(TaskNotificationFactory.CreateTaskNotification(node, contexts));
         }
