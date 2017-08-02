@@ -6,9 +6,10 @@ namespace Machine.Specifications.ReSharperRunner
 {
     public class NormalizedTypeName
     {
-        private readonly string _normalized;
         private static readonly Regex OpenBracketFollowedByDart = new Regex(@"\[.*->\s", RegexOptions.Compiled);
         private static readonly Regex DoubleOpenBrackets = new Regex(@"\[\[", RegexOptions.Compiled);
+
+        private readonly string _normalized;
 
         public NormalizedTypeName(string typeName)
         {
@@ -41,6 +42,7 @@ namespace Machine.Specifications.ReSharperRunner
             typeName = typeName.Substring(typeName.IndexOf("-> ") + 3);
             typeName = typeName.Remove(typeName.Length - 1);
             typeName = OpenBracketFollowedByDart.Replace(typeName, "[");
+
             return typeName;
         }
 
@@ -48,6 +50,7 @@ namespace Machine.Specifications.ReSharperRunner
         {
             var typeName = Regex.Replace(fullyQualifiedTypeName, @"\,.+]", "]");
             typeName = DoubleOpenBrackets.Replace(typeName, "[");
+
             return typeName;
         }
     }
