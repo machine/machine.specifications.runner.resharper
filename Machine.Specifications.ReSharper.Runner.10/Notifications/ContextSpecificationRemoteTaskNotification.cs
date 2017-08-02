@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using JetBrains.ReSharper.TaskRunnerFramework;
-
 using Machine.Specifications.ReSharperRunner.Tasks;
-using Machine.Specifications.Runner;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
+namespace Machine.Specifications.ReSharperRunner.Notifications
 {
     public class ContextSpecificationRemoteTaskNotification : RemoteTaskNotification
     {
-        readonly TaskExecutionNode _node;
-        readonly ContextSpecificationTask _task;
+        private readonly TaskExecutionNode _node;
+        private readonly ContextSpecificationTask _task;
 
         public ContextSpecificationRemoteTaskNotification(TaskExecutionNode node)
         {
@@ -21,15 +18,9 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
             _task = (ContextSpecificationTask)node.RemoteTask;
         }
 
-        string ContainingType
-        {
-            get { return _task.ContextTypeName; }
-        }
+        private string ContainingType => _task.ContextTypeName;
 
-        string FieldName
-        {
-            get { return _task.SpecificationFieldName; }
-        }
+        private string FieldName => _task.SpecificationFieldName;
 
         public override IEnumerable<RemoteTask> RemoteTasks
         {
@@ -41,9 +32,7 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
             var specification = infoFromRunner as SpecificationInfo;
 
             if (specification == null)
-            {
                 return false;
-            }
 
             return ContainingType == specification.ContainingType &&
                    FieldName == specification.FieldName;
@@ -51,10 +40,7 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
 
         public override string ToString()
         {
-            return String.Format("Context specification {0}.{1} with {2} remote tasks",
-                                 ContainingType,
-                                 FieldName,
-                                 RemoteTasks.Count());
+            return $"Context specification {ContainingType}.{FieldName} with {RemoteTasks.Count()} remote tasks";
         }
     }
 }

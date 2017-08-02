@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-
 using JetBrains.ReSharper.TaskRunnerFramework;
 
-namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
+namespace Machine.Specifications.ReSharperRunner.Notifications
 {
     internal class SilentRemoteTaskNotification : RemoteTaskNotification
     {

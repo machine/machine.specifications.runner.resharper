@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-
 using JetBrains.ReSharper.TaskRunnerFramework;
-
 using Machine.Specifications.ReSharperRunner.Tasks;
 
-namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
+namespace Machine.Specifications.ReSharperRunner.Notifications
 {
     public class AssemblyRemoteTaskNotification : RemoteTaskNotification
     {
-        readonly TaskExecutionNode _node;
-        readonly RunAssemblyTask _task;
+        private readonly TaskExecutionNode _node;
+        private readonly RunAssemblyTask _task;
 
         public AssemblyRemoteTaskNotification(TaskExecutionNode node)
         {
@@ -19,10 +16,7 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
             _task = (RunAssemblyTask)node.RemoteTask;
         }
 
-        string Location
-        {
-            get { return _task.AssemblyLocation; }
-        }
+        private string Location => _task.AssemblyLocation;
 
         public override IEnumerable<RemoteTask> RemoteTasks
         {
@@ -32,19 +26,16 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
         public override bool Matches(object infoFromRunner, object maybeContext)
         {
             var assembly = infoFromRunner as Runner.Utility.AssemblyInfo;
+
             if (assembly == null)
-            {
                 return false;
-            }
 
             return Location == assembly.Location;
         }
 
         public override string ToString()
         {
-            return String.Format("Assembly {0} with {1} remote tasks",
-                                 Location,
-                                 RemoteTasks.Count());
+            return $"Assembly {Location} with {RemoteTasks.Count()} remote tasks";
         }
     }
 }

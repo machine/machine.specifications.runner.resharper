@@ -1,22 +1,17 @@
+using System;
 using System.Threading;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.Assemblies.AssemblyToAssemblyResolvers;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Search;
+using JetBrains.ReSharper.Psi.Tree;
+using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.Util;
 using Machine.Specifications.ReSharperProvider.Factories;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {
-    using System;
-    using System.Collections.Generic;
-    using JetBrains.Application;
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.ProjectModel;
-    using JetBrains.ReSharper.Psi.Tree;
-    using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.Util;
-    using JetBrains.Util.Logging;
-
     [SolutionComponent]
     public class MSpecTestElementsSource : UnitTestExplorerFrom.DotNetArtefacts, IUnitTestExplorerFromFile
     {
@@ -28,24 +23,26 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         public MSpecTestElementsSource(MSpecUnitTestProvider provider, AssemblyExplorer assemblyExplorer, ElementFactories elementFactories, ISolution solution, AssemblyToAssemblyReferencesResolveManager resolveManager, ILogger logger)
             : base(solution, provider, resolveManager, logger)
         {
-            this._provider = provider;
-            this._assemblyExplorer = assemblyExplorer;
-            this._elementFactories = elementFactories;
-            this._logger = logger;
+            _provider = provider;
+            _assemblyExplorer = assemblyExplorer;
+            _elementFactories = elementFactories;
+            _logger = logger;
         }
         
         public override void ProcessProject(IProject project, FileSystemPath assemblyPath, MetadataLoader loader, IUnitTestElementsObserver observer, CancellationToken token)
         {
-            var explorer = new MSpecTestMetadataExplorer(_provider, _assemblyExplorer);
+            var explorer = new MSpecTestMetadataExplorer(_assemblyExplorer);
 
             MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, _logger, token,
                 assembly => explorer.ExploreAssembly(project, assembly, observer, token));
+
             observer.OnCompleted();
         }
 
         public void ProcessFile(IFile psiFile, IUnitTestElementsObserver observer, Func<bool> interrupted)
         {
-            if (!IsProjectFile(psiFile)) return;
+            if (!IsProjectFile(psiFile))
+                return;
 
             var explorer = new MspecTestFileExplorer(_provider, _elementFactories);
             explorer.ExploreFile(psiFile, observer, interrupted);
@@ -56,6 +53,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         {
             // Can return null for external sources
             var projectFile = psiFile.GetSourceFile().ToProjectFile();
+
             return projectFile != null;
         }
     }

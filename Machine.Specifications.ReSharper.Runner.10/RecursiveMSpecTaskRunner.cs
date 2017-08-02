@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Machine.Specifications.ReSharperRunner.Runners.Notifications;
+using JetBrains.ReSharper.TaskRunnerFramework;
+using Machine.Specifications.ReSharperRunner.Notifications;
+using Machine.Specifications.ReSharperRunner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperRunner
 {
-    using JetBrains.ReSharper.TaskRunnerFramework;
-
-    using Machine.Specifications.ReSharperRunner.Tasks;
-
     public class RecursiveMSpecTaskRunner : RecursiveRemoteTaskRunner
     {
         public const string RunnerId = "Machine.Specifications";
-        static readonly RemoteTaskNotificationFactory TaskNotificationFactory = new RemoteTaskNotificationFactory();
+
+        private static readonly RemoteTaskNotificationFactory TaskNotificationFactory = new RemoteTaskNotificationFactory();
 
         public RecursiveMSpecTaskRunner(IRemoteTaskServer server)
             : base(server)

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using JetBrains.ReSharper.TaskRunnerFramework;
-
 using Machine.Specifications.ReSharperRunner.Tasks;
 
-namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
+namespace Machine.Specifications.ReSharperRunner.Notifications
 {
     public class RemoteTaskNotificationFactory
     {
@@ -12,9 +11,7 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
             var remoteTask = node.RemoteTask;
 
             if (remoteTask is RunAssemblyTask)
-            {
                 return new AssemblyRemoteTaskNotification(node);
-            }
 
             if (remoteTask is ContextTask)
             {
@@ -24,14 +21,10 @@ namespace Machine.Specifications.ReSharperRunner.Runners.Notifications
             }
 
             if (remoteTask is ContextSpecificationTask)
-            {
                 return new ContextSpecificationRemoteTaskNotification(node);
-            }
 
             if (remoteTask is BehaviorSpecificationTask)
-            {
                 return new BehaviorSpecificationRemoteTaskNotification(node);
-            }
 
             return new SilentRemoteTaskNotification();
         }

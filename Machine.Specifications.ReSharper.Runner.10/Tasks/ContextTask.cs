@@ -20,12 +20,9 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             ContextTypeName = contextTypeName;
         }
 
-        public string ContextTypeName { get; private set; }
+        public string ContextTypeName { get; }
 
-        public override bool IsMeaningfulTask
-        {
-            get { return true; }
-        }
+        public override bool IsMeaningfulTask => true;
 
         public override void SaveXml(XmlElement element)
         {
@@ -36,13 +33,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
 
         public bool Equals(ContextTask other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return base.Equals(other) &&
-                   Equals(ContextTypeName, other.ContextTypeName);
+            return other != null && base.Equals(other) && Equals(ContextTypeName, other.ContextTypeName);
         }
 
         public override bool Equals(object other)

@@ -1,11 +1,10 @@
+using System.Collections.Generic;
+using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
+using Machine.Specifications.ReSharperProvider.Presentation;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using JetBrains.ProjectModel;
-    using Machine.Specifications.ReSharperProvider.Presentation;
-    using System.Collections.Generic;
-
     [SolutionComponent]
     public class ElementCache
     {
@@ -13,26 +12,20 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 
         public ElementCache()
         {
-            this._contexts = new Dictionary<ITypeElement, ContextElement>();
+            _contexts = new Dictionary<ITypeElement, ContextElement>();
         }
 
         public void AddContext(ITypeElement contextType, ContextElement context)
         {
-            if (!this._contexts.ContainsKey(contextType))
-            {
-                this._contexts.Add(contextType, context);
-            }
+            if (!_contexts.ContainsKey(contextType))
+                _contexts.Add(contextType, context);
             else
-            {
-                this._contexts[contextType] = context;
-            }
+                _contexts[contextType] = context;
         }
 
         public ContextElement TryGetContext(ITypeElement contextType)
         {
-            ContextElement context;
-            return this._contexts.TryGetValue(contextType, out context) ? context : null;
+            return _contexts.TryGetValue(contextType, out ContextElement context) ? context : null;
         }
-
     }
 }

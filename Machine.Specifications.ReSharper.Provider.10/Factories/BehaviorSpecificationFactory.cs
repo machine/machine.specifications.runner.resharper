@@ -1,20 +1,19 @@
+using System.Collections.Generic;
+using JetBrains.Metadata.Reader.API;
 using JetBrains.Metadata.Reader.Impl;
+using JetBrains.ProjectModel;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using Machine.Specifications.ReSharperProvider.Presentation;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.ProjectModel;
-    using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.ReSharper.UnitTestFramework.Elements;
-    using Machine.Specifications.ReSharperProvider.Presentation;
-    using System.Collections.Generic;
-
     [SolutionComponent]
     public class BehaviorSpecificationFactory
     {
-        readonly IUnitTestElementIdFactory _elementIdFactory;
-        readonly MSpecUnitTestProvider _provider;
+        private readonly IUnitTestElementIdFactory _elementIdFactory;
+        private readonly MSpecUnitTestProvider _provider;
         private readonly IUnitTestElementManager _manager;
         private readonly UnitTestingCachingService _cachingService;
 
@@ -23,48 +22,42 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                                             UnitTestingCachingService cachingService,
                                             IUnitTestElementIdFactory elementIdFactory)
         {
-            this._elementIdFactory = elementIdFactory;
-            this._provider = provider;
+            _elementIdFactory = elementIdFactory;
+            _provider = provider;
             _manager = manager;
             _cachingService = cachingService;
         }
 
         public IEnumerable<BehaviorSpecificationElement> CreateBehaviorSpecificationsFromBehavior(
-          BehaviorElement behavior,
-          IMetadataField behaviorSpecification,
-          IUnitTestElementsObserver consumer)
+            BehaviorElement behavior,
+            IMetadataField behaviorSpecification,
+            IUnitTestElementsObserver consumer)
         {
-            var typeContainingBehaviorSpecifications = behaviorSpecification.GetFirstGenericArgument();
+            var type = behaviorSpecification.GetFirstGenericArgument();
 
-            foreach (var specification in typeContainingBehaviorSpecifications.GetSpecifications())
-            {
-                yield return this.CreateBehaviorSpecification(behavior, specification, consumer);
-            }
+            foreach (var specification in type.GetSpecifications())
+                yield return CreateBehaviorSpecification(behavior, specification, consumer);
         }
 
         internal BehaviorSpecificationElement CreateBehaviorSpecification(BehaviorElement behavior,
                                                                           IDeclaredElement behaviorSpecification,
                                                                           IUnitTestElementsObserver consumer)
         {
-            return this.GetOrCreateBehaviorSpecification(behavior,
-                                                    consumer,
-                                                    ((ITypeMember)behaviorSpecification).GetContainingType().GetClrName(),
-                                                    behaviorSpecification.ShortName,
-                                                    behaviorSpecification.IsIgnored());
+            return GetOrCreateBehaviorSpecification(behavior, consumer,
+                ((ITypeMember) behaviorSpecification).GetContainingType().GetClrName(), behaviorSpecification.ShortName,
+                behaviorSpecification.IsIgnored());
         }
 
         BehaviorSpecificationElement CreateBehaviorSpecification(BehaviorElement behavior,
                                                                  IMetadataField behaviorSpecification,
                                                                  IUnitTestElementsObserver consumer)
         {
-            return this.GetOrCreateBehaviorSpecification(behavior,
-                                                    consumer,
-                                                    new ClrTypeName(behaviorSpecification.DeclaringType.FullyQualifiedName),
-                                                    behaviorSpecification.Name,
-                                                    behaviorSpecification.IsIgnored());
+            return GetOrCreateBehaviorSpecification(behavior, consumer,
+                new ClrTypeName(behaviorSpecification.DeclaringType.FullyQualifiedName), behaviorSpecification.Name,
+                behaviorSpecification.IsIgnored());
         }
 
-        public BehaviorSpecificationElement GetOrCreateBehaviorSpecification(BehaviorElement behavior,
+        private BehaviorSpecificationElement GetOrCreateBehaviorSpecification(BehaviorElement behavior,
                                                                              IUnitTestElementsObserver consumer,
                                                                              IClrTypeName declaringTypeName,
                                                                              string fieldName,
@@ -72,21 +65,16 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         {
             var id = BehaviorSpecificationElement.CreateId(_elementIdFactory, consumer, _provider, behavior, fieldName);
 
-            var behaviorSpecification = this._manager.GetElementById(id) as BehaviorSpecificationElement;
+            var behaviorSpecification = _manager.GetElementById(id) as BehaviorSpecificationElement;
+
             if (behaviorSpecification != null)
             {
                 behaviorSpecification.Parent = behavior;
                 return behaviorSpecification;
             }
 
-            return new BehaviorSpecificationElement(this._provider,
-                                                    id,
-                                                    behavior,
-                                                    declaringTypeName.GetPersistent(),
-                                                    this._cachingService,
-                                                    this._manager,
-                                                    fieldName,
-                                                    isIgnored);
+            return new BehaviorSpecificationElement(_provider, id, behavior, declaringTypeName.GetPersistent(),
+                _cachingService, _manager, fieldName, isIgnored);
         }
     }
 }

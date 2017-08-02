@@ -20,8 +20,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             AssemblyLocation = assemblyLocation;
         }
 
-
-        public string AssemblyLocation { get; private set; }
+        public string AssemblyLocation { get; }
 
         public override void SaveXml(XmlElement element)
         {
@@ -32,12 +31,7 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
 
         public bool Equals(Task other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Equals(AssemblyLocation, other.AssemblyLocation);
+            return other != null && Equals(AssemblyLocation, other.AssemblyLocation);
         }
 
         public override bool Equals(RemoteTask other)

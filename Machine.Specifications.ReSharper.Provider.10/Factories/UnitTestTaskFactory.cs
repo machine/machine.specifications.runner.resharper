@@ -1,53 +1,49 @@
+using JetBrains.ReSharper.UnitTestFramework;
+using Machine.Specifications.ReSharperProvider.Presentation;
+using Machine.Specifications.ReSharperRunner.Tasks;
+
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
-    using JetBrains.ReSharper.UnitTestFramework;
-
-    using Machine.Specifications.ReSharperProvider.Presentation;
-    using Machine.Specifications.ReSharperRunner.Tasks;
-
-    class UnitTestTaskFactory
+    public class UnitTestTaskFactory
     {
-        readonly string _providerId;
+        private readonly string _providerId;
 
         public UnitTestTaskFactory(string providerId)
         {
-            this._providerId = providerId;
+            _providerId = providerId;
         }
 
         public UnitTestTask CreateRunAssemblyTask(ContextElement context)
         {
-            return new UnitTestTask(null,
-                                    new RunAssemblyTask(this._providerId, context.AssemblyLocation));
+            return new UnitTestTask(null, new RunAssemblyTask(_providerId, context.AssemblyLocation));
         }
 
         public UnitTestTask CreateContextTask(ContextElement context)
         {
             return new UnitTestTask(context,
-                                    new ContextTask(this._providerId,
-                                                    context.AssemblyLocation,
-                                                    context.GetTypeClrName().FullName));
+                new ContextTask(_providerId,
+                    context.AssemblyLocation,
+                    context.GetTypeClrName().FullName));
         }
 
-        public UnitTestTask CreateContextSpecificationTask(ContextElement context,
-                                                           ContextSpecificationElement contextSpecification)
+        public UnitTestTask CreateContextSpecificationTask(ContextElement context, ContextSpecificationElement contextSpecification)
         {
             return new UnitTestTask(contextSpecification,
-                                    new ContextSpecificationTask(this._providerId,
-                                                                 context.AssemblyLocation,
-                                                                 context.GetTypeClrName().FullName,
-                                                                 contextSpecification.FieldName));
+                new ContextSpecificationTask(_providerId,
+                    context.AssemblyLocation,
+                    context.GetTypeClrName().FullName,
+                    contextSpecification.FieldName));
         }
 
-        public UnitTestTask CreateBehaviorSpecificationTask(ContextElement context,
-                                                            BehaviorSpecificationElement behaviorSpecification)
+        public UnitTestTask CreateBehaviorSpecificationTask(ContextElement context, BehaviorSpecificationElement behaviorSpecification)
         {
             return new UnitTestTask(behaviorSpecification,
-                                    new BehaviorSpecificationTask(this._providerId,
-                                                                  context.AssemblyLocation,
-                                                                  context.GetTypeClrName().FullName,
-                                                                  behaviorSpecification.Behavior.FieldName,
-                                                                  behaviorSpecification.FieldName,
-                                                                  behaviorSpecification.Behavior.FieldType));
+                new BehaviorSpecificationTask(_providerId,
+                    context.AssemblyLocation,
+                    context.GetTypeClrName().FullName,
+                    behaviorSpecification.Behavior.FieldName,
+                    behaviorSpecification.FieldName,
+                    behaviorSpecification.Behavior.FieldType));
         }
     }
 }

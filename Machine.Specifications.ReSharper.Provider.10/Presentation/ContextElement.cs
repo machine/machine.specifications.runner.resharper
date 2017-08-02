@@ -1,22 +1,18 @@
-﻿using JetBrains.Metadata.Reader.API;
+﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.ProjectModel;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.Util;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using JetBrains.ProjectModel;
-    using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.Util;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class ContextElement : Element
     {
-        readonly ISet<UnitTestElementCategory> _categories;
-        readonly UnitTestElementId _id;
-        readonly string _subject;
+        private readonly string _subject;
 
         public ContextElement(MSpecUnitTestProvider provider,
                               UnitTestElementId id,
@@ -30,68 +26,52 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                               IUnitTestElementCategoryFactory categoryFactory)
             : base(provider, null, typeName, cachingService, elementManager, isIgnored)
         {
-            this._id = id;
-            this.AssemblyLocation = assemblyLocation;
-            this._subject = subject;
+            Id = id;
+            AssemblyLocation = assemblyLocation;
+            _subject = subject;
 
             if (tags != null)
-            {
-                this._categories = categoryFactory.Create(tags);
-            }
+                OwnCategories = categoryFactory.Create(tags);
         }
 
-        public override string ShortName
-        {
-            get { return this.Kind + this.GetPresentation(); }
-        }
+        public override string ShortName => Kind + GetPresentation();
 
         public string AssemblyLocation { get; set; }
 
-        public override string Kind
+        public override string Kind => "Context";
+
+        public override ISet<UnitTestElementCategory> OwnCategories { get; }
+
+        public override UnitTestElementId Id { get; }
+
+        protected override string GetPresentation()
         {
-            get { return "Context"; }
+            return GetSubject() + GetTypeClrName().ShortName.ToFormat();
         }
 
-        public override ISet<UnitTestElementCategory> OwnCategories
+        private string GetSubject()
         {
-            get { return this._categories; }
-        }
-
-        public override UnitTestElementId Id
-        {
-            get { return this._id; }
-        }
-
-
-        public override string GetPresentation()
-        {
-            return this.GetSubject() + this.GetTypeClrName().ShortName.ToFormat();
-        }
-
-        string GetSubject()
-        {
-            if (String.IsNullOrEmpty(this._subject))
-            {
+            if (string.IsNullOrEmpty(_subject))
                 return null;
-            }
 
-            return this._subject + ", ";
+            return _subject + ", ";
         }
 
         public override IDeclaredElement GetDeclaredElement()
         {
-            return this.GetDeclaredType();
+            return GetDeclaredType();
         }
 
         public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
         {
             string tagsAsString = null;
+
             if (tags != null)
-            {
                 tagsAsString = tags.AggregateString("", "|", (builder, tag) => builder.Append(tag));
-            }
+
             var result = new[] { subject, typeName, tagsAsString };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+
             return elementIdFactory.Create(provider, project, consumer.TargetFrameworkId, id);
         }
     }

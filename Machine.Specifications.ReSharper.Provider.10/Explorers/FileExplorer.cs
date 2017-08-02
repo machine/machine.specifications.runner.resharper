@@ -1,26 +1,22 @@
-using JetBrains.Metadata.Reader.API;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Application.Progress;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.Tree;
+using JetBrains.ReSharper.UnitTestFramework;
+using Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers;
+using Machine.Specifications.ReSharperProvider.Factories;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using JetBrains.Application.Progress;
-    using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.Psi.Tree;
-    using JetBrains.ReSharper.UnitTestFramework;
-
-    using Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers;
-    using Machine.Specifications.ReSharperProvider.Factories;
-
     public class FileExplorer : IRecursiveElementProcessor
     {
-        readonly IUnitTestElementsObserver _consumer;
-        readonly IEnumerable<IElementHandler> _elementHandlers;
-        readonly IFile _file;
-        readonly Func<bool> _interrupted;
-        readonly string _assemblyPath;
+        private readonly IUnitTestElementsObserver _consumer;
+        private readonly IEnumerable<IElementHandler> _elementHandlers;
+        private readonly IFile _file;
+        private readonly Func<bool> _interrupted;
+        private readonly string _assemblyPath;
 
         public FileExplorer(MSpecUnitTestProvider provider,
                             ElementFactories factories,
@@ -28,56 +24,47 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
                             IUnitTestElementsObserver consumer,
                             Func<bool> interrupted)
         {
-            if (file == null)
-            {
-                throw new ArgumentNullException("file");
-            }
-
             if (provider == null)
             {
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             }
 
-            this._consumer = consumer;
-            this._file = file;
-            this._interrupted = interrupted;
+            _file = file ?? throw new ArgumentNullException(nameof(file));
+
+            _consumer = consumer;
+            _interrupted = interrupted;
 
             var project = file.GetSourceFile().ToProjectFile().GetProject();
 
-            this._assemblyPath = project.GetOutputFilePath(consumer.TargetFrameworkId).FullPath;
+            _assemblyPath = project.GetOutputFilePath(consumer.TargetFrameworkId).FullPath;
 
-            this._elementHandlers = new List<IElementHandler>
-                         {
-                           new ContextElementHandler(factories, consumer),
-                           new ContextSpecificationElementHandler(factories, consumer),
-                           new BehaviorElementHandler(factories, consumer)
-                         };
+            _elementHandlers = new List<IElementHandler>
+            {
+                new ContextElementHandler(factories, consumer),
+                new ContextSpecificationElementHandler(factories, consumer),
+                new BehaviorElementHandler(factories, consumer)
+            };
         }
 
         public bool InteriorShouldBeProcessed(ITreeNode element)
         {
             if (element is ITypeMemberDeclaration)
-            {
                 return element is ITypeDeclaration;
-            }
 
             return true;
         }
 
         public void ProcessBeforeInterior(ITreeNode element)
         {
-            IElementHandler handler = this._elementHandlers.FirstOrDefault(x => x.Accepts(element));
-            if (handler == null)
-            {
-                return;
-            }
+            IElementHandler handler = _elementHandlers.FirstOrDefault(x => x.Accepts(element));
 
-            foreach (UnitTestElementDisposition elementDisposition in handler.AcceptElement(this._assemblyPath, this._file, element))
+            if (handler == null)
+                return;
+
+            foreach (UnitTestElementDisposition elementDisposition in handler.AcceptElement(_assemblyPath, _file, element))
             {
-                if (elementDisposition != null && elementDisposition.UnitTestElement != null)
-                {
-                    this._consumer.OnUnitTestElementDisposition(elementDisposition);
-                }
+                if (elementDisposition?.UnitTestElement != null)
+                    _consumer.OnUnitTestElementDisposition(elementDisposition);
             }
         }
 
@@ -89,10 +76,8 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         {
             get
             {
-                if (this._interrupted())
-                {
+                if (_interrupted())
                     throw new ProcessCancelledException();
-                }
 
                 return false;
             }

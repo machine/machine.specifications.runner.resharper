@@ -3,7 +3,6 @@
     internal static class AttributeNames
     {
         public const string AssemblyLocation = "AssemblyLocation";
-        public const string ProjectId = "ProjectId";
         public const string ContextTypeName = "ContextTypeName";
         public const string SpecificationFieldName = "SpecificationFieldName";
         public const string BehaviorTypeName = "BehaviorTypeName";

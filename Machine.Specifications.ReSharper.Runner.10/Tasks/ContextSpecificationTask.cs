@@ -25,14 +25,11 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             SpecificationFieldName = specificationFieldName;
         }
 
-        public string ContextTypeName { get; private set; }
+        public string ContextTypeName { get; }
 
-        public string SpecificationFieldName { get; private set; }
+        public string SpecificationFieldName { get; }
 
-        public override bool IsMeaningfulTask
-        {
-            get { return true; }
-        }
+        public override bool IsMeaningfulTask => true;
 
         public override void SaveXml(XmlElement element)
         {
@@ -44,14 +41,10 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
 
         public bool Equals(ContextSpecificationTask other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return base.Equals(other) &&
-                   Equals(ContextTypeName, other.ContextTypeName) &&
-                   Equals(SpecificationFieldName, other.SpecificationFieldName);
+            return other != null && 
+                base.Equals(other) && 
+                Equals(ContextTypeName, other.ContextTypeName) && 
+                Equals(SpecificationFieldName, other.SpecificationFieldName);
         }
 
         public override bool Equals(object other)
