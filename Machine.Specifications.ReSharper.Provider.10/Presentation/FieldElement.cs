@@ -1,19 +1,15 @@
-﻿using JetBrains.ReSharper.UnitTestFramework;
+﻿using System.Linq;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.Util;
+using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.ReSharper.Psi;
-    using JetBrains.ReSharper.Psi.Util;
-    using Runner.Utility;
-    using System;
-    using System.Linq;
-
     public abstract class FieldElement : Element
     {
-        readonly string _fieldName;
-
         protected FieldElement(MSpecUnitTestProvider provider,
                                Element parent,
                                IClrTypeName declaringTypeName,
@@ -23,37 +19,26 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                                bool isIgnored)
             : base(provider, parent, declaringTypeName, cachingService, elementManager, isIgnored || parent.Explicit)
         {
-            this._fieldName = fieldName;
+            FieldName = fieldName;
         }
 
-        public override string ShortName
-        {
-            get { return this.FieldName; }
-        }
+        public override string ShortName => FieldName;
 
-        public string FieldName
-        {
-            get { return this._fieldName; }
-        }
+        public string FieldName { get; }
 
-        public override string GetPresentation()
+        protected override string GetPresentation()
         {
-            return String.Format("{0}{1}{2}",
-                this.GetTitlePrefix(),
-                String.IsNullOrEmpty(this.GetTitlePrefix()) ? String.Empty : " ",
-                this.FieldName.ToFormat());
+            var prefix = GetTitlePrefix();
+            var title = string.IsNullOrEmpty(GetTitlePrefix()) ? string.Empty : " ";
+
+            return $"{prefix}{title}{FieldName.ToFormat()}";
         }
 
         public override IDeclaredElement GetDeclaredElement()
         {
-            ITypeElement declaredType = this.GetDeclaredType();
-            if (declaredType == null)
-            {
-                return null;
-            }
+            ITypeElement declaredType = GetDeclaredType();
 
-            return declaredType
-                .EnumerateMembers(this.FieldName, true)
+            return declaredType?.EnumerateMembers(FieldName, true)
                 .OfType<IField>()
                 .FirstOrDefault();
         }

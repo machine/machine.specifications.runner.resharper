@@ -1,27 +1,23 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Reflection;
-using Machine.Specifications.ReSharperRunner.Runners.Notifications;
+using JetBrains.ReSharper.TaskRunnerFramework;
+using Machine.Specifications.ReSharperRunner.Notifications;
+using Machine.Specifications.ReSharperRunner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperRunner
 {
-    using System;
-    using System.Collections.Generic;
-
-    using JetBrains.ReSharper.TaskRunnerFramework;
-
-    using Machine.Specifications.ReSharperRunner.Tasks;
-    using AssemblyInfo = Runner.Utility.AssemblyInfo;
-
     public class PerAssemblyRunListener : ISpecificationRunListener
     {
-        readonly RunAssemblyTask _runAssemblyTask;
-        readonly IRemoteTaskServer _server;
-        readonly IList<RemoteTaskNotification> _taskNotifications = new List<RemoteTaskNotification>();
-        int _specifications;
-        int _successes;
-        int _errors;
-        ContextInfo _currentContext;
+        private readonly RunAssemblyTask _runAssemblyTask;
+        private readonly IRemoteTaskServer _server;
+        private readonly IList<RemoteTaskNotification> _taskNotifications = new List<RemoteTaskNotification>();
+        private int _specifications;
+        private int _successes;
+        private int _errors;
+        private ContextInfo _currentContext;
 
         public PerAssemblyRunListener(IRemoteTaskServer server, RunAssemblyTask runAssemblyTask)
         {
@@ -29,12 +25,12 @@ namespace Machine.Specifications.ReSharperRunner
             _runAssemblyTask = runAssemblyTask;
         }
 
-        public void OnAssemblyStart(AssemblyInfo assembly)
+        public void OnAssemblyStart(Runner.Utility.AssemblyInfo assembly)
         {
             _server.TaskStarting(_runAssemblyTask);
         }
 
-        public void OnAssemblyEnd(AssemblyInfo assembly)
+        public void OnAssemblyEnd(Runner.Utility.AssemblyInfo assembly)
         {
             var notify = CreateTaskNotificationFor(assembly, _runAssemblyTask);
             NotifyRedirectedOutput(notify, assembly);
@@ -128,6 +124,7 @@ namespace Machine.Specifications.ReSharperRunner
         public void OnFatalError(ExceptionResult exception)
         {
             string message;
+
             _server.TaskOutput(_runAssemblyTask, "Fatal error: " + exception.Message, TaskOutputType.STDOUT);
             _server.TaskException(_runAssemblyTask, ExceptionResultConverter.ConvertExceptions(exception, out message));
             _server.TaskFinished(_runAssemblyTask, message, TaskResult.Exception);
@@ -140,7 +137,7 @@ namespace Machine.Specifications.ReSharperRunner
             _taskNotifications.Add(notification);
         }
 
-        Action<Action<RemoteTask>> CreateTaskNotificationFor(object infoFromRunner, object maybeContext)
+        private Action<Action<RemoteTask>> CreateTaskNotificationFor(object infoFromRunner, object maybeContext)
         {
             return actionToBePerformedForEachTask =>
             {
@@ -169,10 +166,8 @@ namespace Machine.Specifications.ReSharperRunner
                 }
             };
         }
-
-        delegate void Action<T>(T arg);
-
-        void NotifyRedirectedOutput(Action<Action<RemoteTask>> notify, object maybeHasCapturedOutput)
+        
+        private void NotifyRedirectedOutput(Action<Action<RemoteTask>> notify, object maybeHasCapturedOutput)
         {
             var capture = maybeHasCapturedOutput.GetFieldOrPropertyValue("CapturedOutput");
             if (capture == null)

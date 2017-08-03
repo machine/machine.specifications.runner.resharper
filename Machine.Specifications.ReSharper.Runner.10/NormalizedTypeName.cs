@@ -6,23 +6,24 @@ namespace Machine.Specifications.ReSharperRunner
 {
     public class NormalizedTypeName
     {
-        readonly string _normalized;
-        static readonly Regex OpenBracketFollowedByDart = new Regex(@"\[.*->\s", RegexOptions.Compiled);
-        static readonly Regex DoubleOpenBrackets = new Regex(@"\[\[", RegexOptions.Compiled);
+        private static readonly Regex OpenBracketFollowedByDart = new Regex(@"\[.*->\s", RegexOptions.Compiled);
+        private static readonly Regex DoubleOpenBrackets = new Regex(@"\[\[", RegexOptions.Compiled);
+
+        private readonly string _normalized;
 
         public NormalizedTypeName(string typeName)
         {
-            this._normalized = QualifiedNetNotationWithoutAssembly(typeName);
+            _normalized = QualifiedNetNotationWithoutAssembly(typeName);
         }
 
         public NormalizedTypeName(ITypeOwner field)
         {
-            this._normalized = QualifiedNetNotationWithoutAssembly(field);
+            _normalized = QualifiedNetNotationWithoutAssembly(field);
         }
 
         public override string ToString()
         {
-            return this._normalized;
+            return _normalized;
         }
 
         public static implicit operator String(NormalizedTypeName instance)
@@ -30,7 +31,7 @@ namespace Machine.Specifications.ReSharperRunner
             return instance.ToString();
         }
 
-        static string QualifiedNetNotationWithoutAssembly(ITypeOwner field)
+        private static string QualifiedNetNotationWithoutAssembly(ITypeOwner field)
         {
             if (field == null)
             {
@@ -41,13 +42,15 @@ namespace Machine.Specifications.ReSharperRunner
             typeName = typeName.Substring(typeName.IndexOf("-> ") + 3);
             typeName = typeName.Remove(typeName.Length - 1);
             typeName = OpenBracketFollowedByDart.Replace(typeName, "[");
+
             return typeName;
         }
 
-        static string QualifiedNetNotationWithoutAssembly(string fullyQualifiedTypeName)
+        private static string QualifiedNetNotationWithoutAssembly(string fullyQualifiedTypeName)
         {
             var typeName = Regex.Replace(fullyQualifiedTypeName, @"\,.+]", "]");
             typeName = DoubleOpenBrackets.Replace(typeName, "[");
+
             return typeName;
         }
     }

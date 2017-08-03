@@ -1,7 +1,9 @@
+image: Visual Studio 2017
+
 environment:
-  nuget_version: '1.9.0'
+  nuget_version: '1.9.1'
   nuget_prerelease: false
-  assembly_version: '1.9.0'
+  assembly_version: '1.9.1'
 
 version: '$(nuget_version)+{build}'
 configuration: Release
@@ -28,7 +30,7 @@ build:
 
 after_build:
 - cmd: >-
-    nuget pack Machine.Specifications.ReSharper.Runner.10\Machine.Specifications.ReSharper.Runner.10.nuspec -properties "Version=%NUGET_VERSION%" -outputdirectory Build
+    nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=%NUGET_VERSION%" -outputdirectory Build
 
 artifacts:
   - path: Build\*.nupkg

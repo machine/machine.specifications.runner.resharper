@@ -1,18 +1,14 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.Util;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.Util;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class ContextSpecificationElement : FieldElement
     {
-        readonly UnitTestElementId _id;
-
         public ContextSpecificationElement(MSpecUnitTestProvider provider,
                                            UnitTestElementId id,
                                            ContextElement context,
@@ -29,41 +25,33 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                    fieldName,
                    isIgnored || context.Explicit)
         {
-            this._id = id;
+            Id = id;
         }
 
-        public ContextElement Context
-        {
-            get { return (ContextElement)this.Parent; }
-        }
+        public ContextElement Context => (ContextElement)Parent;
 
-        public override string Kind
-        {
-            get { return "Specification"; }
-        }
+        public override string Kind => "Specification";
 
         public override ISet<UnitTestElementCategory> OwnCategories
         {
             get
             {
-                if (this.Context == null)
+                if (Context == null)
                 {
                     return UnitTestElementCategory.Uncategorized.ToSet();
                 }
 
-                return this.Context.OwnCategories;
+                return Context.OwnCategories;
             }
         }
 
-        public override UnitTestElementId Id
-        {
-            get { return this._id; }
-        }
+        public override UnitTestElementId Id { get; }
 
         public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, ContextElement contextElement, string fieldName)
         {
             var result = new[] { contextElement.Id, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+
             return elementIdFactory.Create(provider, contextElement.GetProject(), consumer.TargetFrameworkId, id);
         }
     }

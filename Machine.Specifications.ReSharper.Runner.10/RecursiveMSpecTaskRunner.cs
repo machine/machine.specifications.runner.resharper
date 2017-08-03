@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Machine.Specifications.ReSharperRunner.Runners.Notifications;
+using JetBrains.ReSharper.TaskRunnerFramework;
+using Machine.Specifications.ReSharperRunner.Notifications;
+using Machine.Specifications.ReSharperRunner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperRunner
 {
-    using JetBrains.ReSharper.TaskRunnerFramework;
-
-    using Machine.Specifications.ReSharperRunner.Tasks;
-
     public class RecursiveMSpecTaskRunner : RecursiveRemoteTaskRunner
     {
         public const string RunnerId = "Machine.Specifications";
-        static readonly RemoteTaskNotificationFactory TaskNotificationFactory = new RemoteTaskNotificationFactory();
+
+        private static readonly RemoteTaskNotificationFactory TaskNotificationFactory = new RemoteTaskNotificationFactory();
 
         public RecursiveMSpecTaskRunner(IRemoteTaskServer server)
             : base(server)
@@ -45,7 +44,7 @@ namespace Machine.Specifications.ReSharperRunner
                     string cachePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
                     runOptions.ShadowCopyTo(cachePath);
-                    this.Server.SetTempFolderPath(cachePath);
+                    Server.SetTempFolderPath(cachePath);
                 }
 
                 appDomainRunner.RunAssembly(assemblyPath);
@@ -56,7 +55,7 @@ namespace Machine.Specifications.ReSharperRunner
             }
         }
 
-        void RegisterRemoteTaskNotifications(PerAssemblyRunListener listener, TaskExecutionNode node, ICollection<string> contexts)
+        private void RegisterRemoteTaskNotifications(PerAssemblyRunListener listener, TaskExecutionNode node, ICollection<string> contexts)
         {
             listener.RegisterTaskNotification(TaskNotificationFactory.CreateTaskNotification(node, contexts));
         }

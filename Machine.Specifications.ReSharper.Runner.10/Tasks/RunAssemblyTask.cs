@@ -18,19 +18,11 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
         {
         }
 
-        public override bool IsMeaningfulTask
-        {
-            get { return false; }
-        }
+        public override bool IsMeaningfulTask => false;
 
         public bool Equals(RunAssemblyTask other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return base.Equals(other);
+            return other != null && base.Equals(other);
         }
     }
 }

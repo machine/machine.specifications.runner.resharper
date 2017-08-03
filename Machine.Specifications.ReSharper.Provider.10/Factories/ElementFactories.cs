@@ -1,7 +1,7 @@
-﻿namespace Machine.Specifications.ReSharperProvider.Factories
-{
-    using JetBrains.ProjectModel;
+﻿using JetBrains.ProjectModel;
 
+namespace Machine.Specifications.ReSharperProvider.Factories
+{
     [SolutionComponent]
     public class ElementFactories
     {
@@ -10,15 +10,18 @@
                                 BehaviorFactory behaviors,
                                 BehaviorSpecificationFactory behaviorSpecifications)
         {
-            this.Contexts = contexts;
-            this.ContextSpecifications = contextSpecifications;
-            this.Behaviors = behaviors;
-            this.BehaviorSpecifications = behaviorSpecifications;
+            Contexts = contexts;
+            ContextSpecifications = contextSpecifications;
+            Behaviors = behaviors;
+            BehaviorSpecifications = behaviorSpecifications;
         }
 
-        public ContextFactory Contexts { get; private set; }
-        public ContextSpecificationFactory ContextSpecifications { get; private set; }
-        public BehaviorFactory Behaviors { get; private set; }
-        public BehaviorSpecificationFactory BehaviorSpecifications { get; private set; }
+        public ContextFactory Contexts { get; }
+
+        public ContextSpecificationFactory ContextSpecifications { get; }
+
+        public BehaviorFactory Behaviors { get; }
+
+        public BehaviorSpecificationFactory BehaviorSpecifications { get; }
     }
 }

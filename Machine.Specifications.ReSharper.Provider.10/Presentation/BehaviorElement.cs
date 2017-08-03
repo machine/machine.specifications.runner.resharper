@@ -1,17 +1,14 @@
-﻿using JetBrains.ReSharper.UnitTestFramework.Elements;
+﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.Util;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    using JetBrains.Metadata.Reader.API;
-    using JetBrains.ReSharper.UnitTestFramework;
-    using JetBrains.Util;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class BehaviorElement : FieldElement
     {
-        readonly UnitTestElementId _id;
-
         public BehaviorElement(MSpecUnitTestProvider provider,
                                UnitTestElementId id,
                                ContextElement context,
@@ -29,41 +26,30 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                    fieldName,
                    isIgnored || context.Explicit)
         {
-            this.FieldType = fieldType;
-            this._id = id;
+            FieldType = fieldType;
+            Id = id;
         }
 
-        public ContextElement Context
-        {
-            get { return (ContextElement)this.Parent; }
-        }
+        public ContextElement Context => (ContextElement)Parent;
 
-        public string FieldType { get; private set; }
+        public string FieldType { get; }
 
-        public override string Kind
-        {
-            get { return "Behavior"; }
-        }
+        public override string Kind => "Behavior";
 
         public override ISet<UnitTestElementCategory> OwnCategories
         {
             get
             {
-                if (this.Context == null)
-                {
+                if (Context == null)
                     return UnitTestElementCategory.Uncategorized.ToSet();
-                }
 
-                return this.Context.OwnCategories;
+                return Context.OwnCategories;
             }
         }
 
-        public override UnitTestElementId Id
-        {
-            get { return this._id; }
-        }
+        public override UnitTestElementId Id { get; }
 
-        public override string GetTitlePrefix()
+        protected override string GetTitlePrefix()
         {
             return "behaves like";
         }
@@ -72,6 +58,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         {
             var result = new[] { contextElement.Id, fieldType, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
+
             return elementIdFactory.Create(provider, contextElement.GetProject(), consumer.TargetFrameworkId, id);
         }
     }
