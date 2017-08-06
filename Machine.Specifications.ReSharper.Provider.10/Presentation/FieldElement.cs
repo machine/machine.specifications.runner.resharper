@@ -10,14 +10,13 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public abstract class FieldElement : Element
     {
-        protected FieldElement(MSpecUnitTestProvider provider,
-                               Element parent,
+        protected FieldElement(Element parent,
                                IClrTypeName declaringTypeName,
                                UnitTestingCachingService cachingService,
                                IUnitTestElementManager elementManager,
                                string fieldName,
                                bool isIgnored)
-            : base(provider, parent, declaringTypeName, cachingService, elementManager, isIgnored || parent.Explicit)
+            : base(parent, declaringTypeName, cachingService, elementManager, isIgnored || parent.Explicit)
         {
             FieldName = fieldName;
         }

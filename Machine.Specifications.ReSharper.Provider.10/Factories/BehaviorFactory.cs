@@ -74,7 +74,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return behavior;
             }
 
-            return new BehaviorElement(_provider, id, context, declaringTypeName.GetPersistent(), _cachingService,
+            return new BehaviorElement(id, context, declaringTypeName.GetPersistent(), _cachingService,
                 _manager, fieldName, isIgnored, fieldType);
         }
     }

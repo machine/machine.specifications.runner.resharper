@@ -301,28 +301,21 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="ExceptionResultConverter.cs" />
-    <Compile Include="NormalizedTypeName.cs" />
-    <Compile Include="Notifications\AssemblyRemoteTaskNotification.cs" />
-    <Compile Include="Notifications\BehaviorSpecificationRemoteTaskNotification.cs" />
-    <Compile Include="Notifications\ContextRemoteTaskNotification.cs" />
-    <Compile Include="Notifications\ContextSpecificationRemoteTaskNotification.cs" />
-    <Compile Include="Notifications\RemoteTaskNotification.cs" />
-    <Compile Include="Notifications\RemoteTaskNotificationFactory.cs" />
-    <Compile Include="Notifications\SilentRemoteTaskNotification.cs" />
-    <Compile Include="PerAssemblyRunListener.cs" />
+    <Compile Include="ExceptionResultExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="RecursiveMSpecTaskRunner.cs" />
-    <Compile Include="RecursiveMSpecTaskRunnerRegisterer.cs" />
+    <Compile Include="MspecTaskRunner.cs" />
     <Compile Include="Tasks\AttributeNames.cs" />
-    <Compile Include="Tasks\BehaviorSpecificationTask.cs" />
-    <Compile Include="Tasks\ContextSpecificationTask.cs" />
-    <Compile Include="Tasks\ContextTask.cs" />
-    <Compile Include="Tasks\RunAssemblyTask.cs" />
-    <Compile Include="Tasks\Task.cs" />
+    <Compile Include="Tasks\MspecTestBehaviorTask.cs" />
+    <Compile Include="Tasks\MspecTestSpecificationTask.cs" />
+    <Compile Include="Tasks\MspecTestContextTask.cs" />
+    <Compile Include="Tasks\MspecTestAssemblyTask.cs" />
+    <Compile Include="TestContext.cs" />
+    <Compile Include="TestEnvironment.cs" />
+    <Compile Include="TestRunListener.cs" />
+    <Compile Include="TestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

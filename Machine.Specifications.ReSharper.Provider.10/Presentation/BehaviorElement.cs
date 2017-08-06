@@ -9,8 +9,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public class BehaviorElement : FieldElement
     {
-        public BehaviorElement(MSpecUnitTestProvider provider,
-                               UnitTestElementId id,
+        public BehaviorElement(UnitTestElementId id,
                                ContextElement context,
                                IClrTypeName declaringTypeName,
                                UnitTestingCachingService cachingService,
@@ -18,8 +17,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                                string fieldName,
                                bool isIgnored,
                                string fieldType)
-            : base(provider,
-                   context,
+            : base(context,
                    declaringTypeName,
                    cachingService,
                    elementManager,

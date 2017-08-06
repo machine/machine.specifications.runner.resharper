@@ -69,7 +69,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return contextSpecification;
             }
 
-            return new ContextSpecificationElement(_provider, id, context, declaringTypeName.GetPersistent(),
+            return new ContextSpecificationElement(id, context, declaringTypeName.GetPersistent(),
                 _cachingService, _manager, fieldName, isIgnored);
         }
     }

@@ -6,40 +6,31 @@ namespace Machine.Specifications.ReSharperProvider.Factories
 {
     public class UnitTestTaskFactory
     {
-        private readonly string _providerId;
-
-        public UnitTestTaskFactory(string providerId)
+        public UnitTestTask CreateRunAssemblyTask(ContextElement context, UnitTestElementId id)
         {
-            _providerId = providerId;
+            return new UnitTestTask(null, new MspecTestAssemblyTask(id.ProjectId, context.AssemblyLocation));
         }
 
-        public UnitTestTask CreateRunAssemblyTask(ContextElement context)
-        {
-            return new UnitTestTask(null, new RunAssemblyTask(_providerId, context.AssemblyLocation));
-        }
-
-        public UnitTestTask CreateContextTask(ContextElement context)
+        public UnitTestTask CreateContextTask(ContextElement context, UnitTestElementId id)
         {
             return new UnitTestTask(context,
-                new ContextTask(_providerId,
-                    context.AssemblyLocation,
+                new MspecTestContextTask(id.ProjectId,
                     context.GetTypeClrName().FullName));
         }
 
-        public UnitTestTask CreateContextSpecificationTask(ContextElement context, ContextSpecificationElement contextSpecification)
+        public UnitTestTask CreateContextSpecificationTask(ContextElement context, ContextSpecificationElement contextSpecification, UnitTestElementId id)
         {
             return new UnitTestTask(contextSpecification,
-                new ContextSpecificationTask(_providerId,
-                    context.AssemblyLocation,
+                new MspecTestSpecificationTask(id.ProjectId,
                     context.GetTypeClrName().FullName,
                     contextSpecification.FieldName));
         }
 
-        public UnitTestTask CreateBehaviorSpecificationTask(ContextElement context, BehaviorSpecificationElement behaviorSpecification)
+        public UnitTestTask CreateBehaviorSpecificationTask(ContextElement context, BehaviorSpecificationElement behaviorSpecification, UnitTestElementId id)
         {
             return new UnitTestTask(behaviorSpecification,
-                new BehaviorSpecificationTask(_providerId,
-                    context.AssemblyLocation,
+                new MspecTestBehaviorTask(
+                    id.ProjectId,
                     context.GetTypeClrName().FullName,
                     behaviorSpecification.Behavior.FieldName,
                     behaviorSpecification.FieldName,
