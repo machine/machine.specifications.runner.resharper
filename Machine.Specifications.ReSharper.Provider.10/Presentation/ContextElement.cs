@@ -14,8 +14,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     {
         private readonly string _subject;
 
-        public ContextElement(MSpecUnitTestProvider provider,
-                              UnitTestElementId id,
+        public ContextElement(UnitTestElementId id,
                               IClrTypeName typeName,
                               UnitTestingCachingService cachingService,
                               IUnitTestElementManager elementManager,
@@ -24,7 +23,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                               IEnumerable<string> tags,
                               bool isIgnored,
                               IUnitTestElementCategoryFactory categoryFactory)
-            : base(provider, null, typeName, cachingService, elementManager, isIgnored)
+            : base(null, typeName, cachingService, elementManager, isIgnored)
         {
             Id = id;
             AssemblyLocation = assemblyLocation;

@@ -9,16 +9,14 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public class ContextSpecificationElement : FieldElement
     {
-        public ContextSpecificationElement(MSpecUnitTestProvider provider,
-                                           UnitTestElementId id,
+        public ContextSpecificationElement(UnitTestElementId id,
                                            ContextElement context,
                                            IClrTypeName declaringTypeName,
                                            UnitTestingCachingService cachingService,
                                            IUnitTestElementManager elementManager,
                                            string fieldName,
                                            bool isIgnored)
-            : base(provider,
-                   context,
+            : base(context,
                    declaringTypeName,
                    cachingService,
                    elementManager,

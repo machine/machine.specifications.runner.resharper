@@ -71,7 +71,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return contextElement;
             }
 
-            return new ContextElement(_provider, id, contextTypeName.GetPersistent(), _cachingService, _manager,
+            return new ContextElement(id, contextTypeName.GetPersistent(), _cachingService, _manager,
                 assemblyPath, subject, tags, isIgnored, _categoryFactory);
         }
     }

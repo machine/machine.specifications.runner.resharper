@@ -20,7 +20,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public abstract class Element : IUnitTestElement
     {
-        private static readonly IUnitTestRunStrategy RunStrategy = new OutOfProcessUnitTestRunStrategy(new RemoteTaskRunnerInfo(RecursiveMSpecTaskRunner.RunnerId, typeof(RecursiveMSpecTaskRunner)));
+        private static readonly IUnitTestRunStrategy RunStrategy = new OutOfProcessUnitTestRunStrategy(new RemoteTaskRunnerInfo(MspecTaskRunner.RunnerId, typeof(MspecTaskRunner)));
 
         private readonly IClrTypeName _declaringTypeName;
         private readonly UnitTestTaskFactory _taskFactory;
@@ -28,8 +28,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         private readonly IUnitTestElementManager _elementManager;
         private IUnitTestElement _parent;
 
-        protected Element(MSpecUnitTestProvider provider,
-                          Element parent,
+        protected Element(Element parent,
                           IClrTypeName declaringTypeName,
                           UnitTestingCachingService cachingService,
                           IUnitTestElementManager elementManager,
@@ -48,7 +47,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             Parent = parent;
 
             Children = new BindableCollection<IUnitTestElement>(UT.Locks.ReadLock);
-            _taskFactory = new UnitTestTaskFactory(provider.ID);
+            _taskFactory = new UnitTestTaskFactory();
         }
 
         public abstract string Kind { get; }
@@ -145,9 +144,9 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
                 return new List<UnitTestTask>
                 {
-                    _taskFactory.CreateRunAssemblyTask(context),
-                    _taskFactory.CreateContextTask(context),
-                    _taskFactory.CreateContextSpecificationTask(context, contextSpecification)
+                    _taskFactory.CreateRunAssemblyTask(context, Id),
+                    _taskFactory.CreateContextTask(context, Id),
+                    _taskFactory.CreateContextSpecificationTask(context, contextSpecification, Id)
                 };
             }
 
@@ -159,9 +158,9 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
                 return new List<UnitTestTask>
                 {
-                    _taskFactory.CreateRunAssemblyTask(context),
-                    _taskFactory.CreateContextTask(context),
-                    _taskFactory.CreateBehaviorSpecificationTask(context, behaviorSpecification)
+                    _taskFactory.CreateRunAssemblyTask(context, Id),
+                    _taskFactory.CreateContextTask(context, Id),
+                    _taskFactory.CreateBehaviorSpecificationTask(context, behaviorSpecification, Id)
                 };
             }
 

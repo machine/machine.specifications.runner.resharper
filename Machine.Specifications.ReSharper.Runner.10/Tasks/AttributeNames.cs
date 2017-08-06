@@ -1,7 +1,8 @@
 ﻿namespace Machine.Specifications.ReSharperRunner.Tasks
 {
-    internal static class AttributeNames
+    public static class AttributeNames
     {
+        public const string ProjectId = "ProjectId";
         public const string AssemblyLocation = "AssemblyLocation";
         public const string ContextTypeName = "ContextTypeName";
         public const string SpecificationFieldName = "SpecificationFieldName";

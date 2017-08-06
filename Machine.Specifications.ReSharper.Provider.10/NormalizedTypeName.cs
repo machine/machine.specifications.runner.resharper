@@ -2,7 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using JetBrains.ReSharper.Psi;
 
-namespace Machine.Specifications.ReSharperRunner
+namespace Machine.Specifications.ReSharperProvider
 {
     public class NormalizedTypeName
     {
