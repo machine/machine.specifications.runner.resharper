@@ -5,7 +5,7 @@ namespace Machine.Specifications.ReSharperRunner
 {
     public class MspecTaskRunner : RecursiveRemoteTaskRunner
     {
-        public const string RunnerId = "MSpec.Specifications.Rob";
+        public const string RunnerId = "Machine.Specifications";
 
         private readonly TestRunner _testRunner;
 
