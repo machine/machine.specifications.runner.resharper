@@ -3,6 +3,7 @@ using System.Threading;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.Assemblies.AssemblyToAssemblyResolvers;
+using JetBrains.ProjectModel.Assemblies.Impl;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
@@ -20,8 +21,8 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         private readonly ElementFactories _elementFactories;
         private readonly ILogger _logger;
 
-        public MSpecTestElementsSource(MSpecUnitTestProvider provider, AssemblyExplorer assemblyExplorer, ElementFactories elementFactories, ISolution solution, AssemblyToAssemblyReferencesResolveManager resolveManager, ILogger logger)
-            : base(solution, provider, resolveManager, logger)
+        public MSpecTestElementsSource(MSpecUnitTestProvider provider, AssemblyExplorer assemblyExplorer, ElementFactories elementFactories, ISolution solution, AssemblyToAssemblyReferencesResolveManager resolveManager, ResolveContextManager contextManager, ILogger logger)
+            : base(solution, provider, resolveManager, contextManager, logger)
         {
             _provider = provider;
             _assemblyExplorer = assemblyExplorer;
