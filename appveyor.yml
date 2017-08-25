@@ -38,7 +38,7 @@ artifacts:
 deploy:
   - provider: GitHub
     description: |
-      * Added support for ReSharper 2017.1.2
+      * Added support for ReSharper 2017.2
     on:
       appveyor_repo_tag: true
     prerelease: $(nuget_prerelease)
