@@ -1,7 +1,7 @@
 image: Visual Studio 2017
 
 environment:
-  nuget_version: '2.0.0-beta.1'
+  nuget_version: '2.0.0-beta.2'
   nuget_prerelease: false
   assembly_version: '2.0.0'
 
@@ -38,7 +38,7 @@ artifacts:
 deploy:
   - provider: GitHub
     description: |
-      * Added support for ReSharper 2017.1.2
+      * Added support for ReSharper 2017.2
     on:
       appveyor_repo_tag: true
     prerelease: $(nuget_prerelease)
