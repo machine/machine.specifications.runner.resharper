@@ -214,6 +214,15 @@
     <None Include="Data\Psi\AbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Psi\SingleBehavior.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Psi\ConcreteAndAbstractSpecs.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Psi\SingleBehaviorSpec.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="IMspecTestZone.cs" />
     <Compile Include="MspecReferencesAttribute.cs" />
     <Compile Include="PsiElementCollector.cs" />

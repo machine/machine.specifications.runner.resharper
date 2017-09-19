@@ -52,11 +52,48 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         }
 
         [Test]
+        public void BehaviorClassIsNotAContext()
+        {
+            WithPsiFile("SingleBehavior.cs", x =>
+            {
+                var type = Classes.FirstOrDefault()?.AsTypeInfo();
+
+                Assert.That(type, Is.Not.Null);
+                Assert.That(type.IsContext(), Is.False);
+            });
+        }
+
+        [Test]
+        public void ConcreteClassWithAbstractSpecsIsNotAContext()
+        {
+            WithPsiFile("ConcreteAndAbstractSpecs.cs", x =>
+            {
+                var type = Classes.FirstOrDefault()?.AsTypeInfo();
+
+                Assert.That(type, Is.Not.Null);
+                Assert.That(type.IsContext(), Is.False);
+            });
+        }
+
+        [Test]
         public void ClassWithOneSpecIsAContext()
         {
             WithPsiFile("SingleSpec.cs", x =>
             {
                 var type = Classes.FirstOrDefault()?.AsTypeInfo();
+
+                Assert.That(type, Is.Not.Null);
+                Assert.That(type.IsContext(), Is.True);
+            });
+        }
+
+        [Test]
+        public void ClassWithOneBehaviorSpecIsAContext()
+        {
+            WithPsiFile("SingleBehaviorSpec.cs", x =>
+            {
+                var type = Classes.FirstOrDefault(y => y.ShortName == "Specs")?
+                    .AsTypeInfo();
 
                 Assert.That(type, Is.Not.Null);
                 Assert.That(type.IsContext(), Is.True);
