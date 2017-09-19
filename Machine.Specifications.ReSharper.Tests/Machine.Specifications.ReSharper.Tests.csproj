@@ -211,12 +211,16 @@
     <None Include="Data\Psi\EmptyStruct.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Psi\AbstractSpecs.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="IMspecTestZone.cs" />
+    <Compile Include="MspecReferencesAttribute.cs" />
     <Compile Include="PsiElementCollector.cs" />
     <Compile Include="PsiTests.cs" />
     <Compile Include="Psi\ContextTests.cs" />
     <Compile Include="MspecEnvironmentAssembly.cs" />
-    <None Include="Data\Psi\Simple.cs">
+    <None Include="Data\Psi\SingleSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Properties\AssemblyInfo.cs" />

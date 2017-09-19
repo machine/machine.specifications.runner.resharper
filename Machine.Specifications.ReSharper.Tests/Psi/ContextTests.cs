@@ -38,5 +38,29 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
                 Assert.That(type.IsContext(), Is.False);
             });
         }
+
+        [Test]
+        public void AbstractClassIsNotAContext()
+        {
+            WithPsiFile("AbstractSpecs.cs", x =>
+            {
+                var type = Classes.FirstOrDefault()?.AsTypeInfo();
+
+                Assert.That(type, Is.Not.Null);
+                Assert.That(type.IsContext(), Is.False);
+            });
+        }
+
+        [Test]
+        public void ClassWithOneSpecIsAContext()
+        {
+            WithPsiFile("SingleSpec.cs", x =>
+            {
+                var type = Classes.FirstOrDefault()?.AsTypeInfo();
+
+                Assert.That(type, Is.Not.Null);
+                Assert.That(type.IsContext(), Is.True);
+            });
+        }
     }
 }

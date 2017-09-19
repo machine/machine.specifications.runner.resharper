@@ -11,6 +11,7 @@ using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
+    [MspecReferencesAttribute]
     public abstract class PsiTests : BaseTestWithSingleProject
     {
         private readonly PsiElementCollector _collector = new PsiElementCollector();
