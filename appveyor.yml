@@ -32,6 +32,11 @@ after_build:
 - cmd: >-
     nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=%NUGET_VERSION%" -outputdirectory Build
 
+test:
+  assemblies:
+    only:
+      - 'Build\Machine.Specifications.ReSharper.Tests.dll'
+
 artifacts:
   - path: Build\*.nupkg
 
