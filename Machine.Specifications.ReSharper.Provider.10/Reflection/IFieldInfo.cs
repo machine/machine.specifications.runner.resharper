@@ -4,12 +4,12 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 {
     public interface IFieldInfo
     {
-        ITypeInfo FieldType { get; }
-
         string DeclaringType { get; }
 
         string ShortName { get; }
 
-        IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName);
+        ITypeInfo FieldType { get; }
+
+        IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit);
     }
 }

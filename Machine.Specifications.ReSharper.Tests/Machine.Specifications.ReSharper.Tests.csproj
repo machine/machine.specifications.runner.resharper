@@ -223,6 +223,9 @@
     <None Include="Data\Psi\SingleBehaviorSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Psi\ClassWithGenericField.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="IMspecTestZone.cs" />
     <Compile Include="MspecReferencesAttribute.cs" />
     <Compile Include="PsiElementCollector.cs" />

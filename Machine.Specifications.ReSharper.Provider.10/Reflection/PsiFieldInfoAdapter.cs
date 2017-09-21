@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Util;
 
@@ -14,31 +15,30 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
             _field = field;
         }
 
+        public string DeclaringType => _field.GetContainingType()?.GetClrName().FullName;
+
+        public string ShortName => _field.ShortName;
+
         public ITypeInfo FieldType
         {
             get
             {
-                if (_field.Type.IsResolved)
+                if (_field.Type is IDeclaredType type && type.IsResolved && type.IsValid())
                 {
-                    if (_field.Type is IDeclaredType declaredType)
-                        return declaredType.AsTypeInfo();
+                    if (type.IsClassType())
+                        return new PsiClassInfoAdapter(type.GetClassType());
 
-                    if (_field.Type.GetTypeElement() is IClass classType)
-                        return classType.AsTypeInfo();
+                    if (type.IsDelegate())
+                        return new PsiDelegateInfoAdapter(type.GetDelegateType(), type);
                 }
 
                 return UnknownTypeInfoAdapter.Default;
             }
         }
 
-        public string DeclaringType => _field.GetContainingType()?.GetClrName().FullName;
-
-        public string ShortName => _field.ShortName;
-
-        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName)
+        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
         {
-            return _field.GetAttributeInstances(false)
-                .Where(x => x.GetClrName().FullName == typeName)
+            return _field.GetAttributeInstances(new ClrTypeName(typeName), inherit)
                 .Select(x => x.AsAttributeInfo());
         }
     }

@@ -99,5 +99,18 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
                 Assert.That(type.IsContext(), Is.True);
             });
         }
+
+        [Test]
+        public void ClassWithGenericFieldIsNotAContext()
+        {
+            WithPsiFile("ClassWithGenericField.cs", x =>
+            {
+                var type = Classes.FirstOrDefault()?.AsTypeInfo();
+                var field = Fields.FirstOrDefault()?.AsFieldInfo();
+
+                Assert.That(type, Is.Not.Null);
+                Assert.That(type.IsContext(), Is.False);
+            });
+        }
     }
 }

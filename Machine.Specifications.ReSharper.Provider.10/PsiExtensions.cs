@@ -15,14 +15,9 @@ namespace Machine.Specifications.ReSharperProvider
     {
         public static ITypeInfo AsTypeInfo(this IClass type)
         {
-            return new PsiTypeInfoAdapter(type);
+            return new PsiClassInfoAdapter(type);
         }
-
-        public static ITypeInfo AsTypeInfo(this IDeclaredType type)
-        {
-            return new PsiDeclaredTypeInfoAdapter(type);
-        }
-
+        
         public static IAttributeInfo AsAttributeInfo(this IAttributeInstance attribute)
         {
             return new PsiAttributeInfoAdapter(attribute);

@@ -7,16 +7,16 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
     {
         public static readonly UnknownTypeInfoAdapter Default = new UnknownTypeInfoAdapter();
 
-        public bool IsAbstract => false;
+        public string FullName => string.Empty;
 
-        public string FullyQualifiedName => string.Empty;
+        public bool IsAbstract => false;
 
         public IEnumerable<IFieldInfo> GetFields()
         {
             return Enumerable.Empty<IFieldInfo>();
         }
 
-        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName)
+        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
         {
             return Enumerable.Empty<IAttributeInfo>();
         }

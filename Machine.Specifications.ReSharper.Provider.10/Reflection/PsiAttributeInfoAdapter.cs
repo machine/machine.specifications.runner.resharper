@@ -19,23 +19,17 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
                 .Where(x => !x.IsBadValue)
                 .ToArray();
 
-            var typeValues = parameters
-                .Where(x => x.IsType)
-                .Select(x => x.TypeValue)
-                .OfType<IDeclaredType>()
-                .Where(x => x.IsValid())
-                .Select(x => x.GetClrName().ShortName);
+            var constantItems = parameters.Where(x => x.IsConstant);
 
-            var arrayValues = parameters
+            var arrayItems = parameters
                 .Where(x => x.IsArray)
-                .SelectMany(x => x.ArrayValue)
-                .Select(x => x.ConstantValue.Value?.ToString());
+                .SelectMany(x => x.ArrayValue);
 
-            var constantValues = parameters
-                .Where(x => x.IsConstant)
-                .Select(x => x.ConstantValue.Value?.ToString());
-
-            return typeValues.Concat(arrayValues).Concat(constantValues);
+            return arrayItems
+                .Concat(constantItems)
+                .Select(x => x.ConstantValue.Value)
+                .Where(x => x != null)
+                .Select(x => x.ToString());
         }
     }
 }
