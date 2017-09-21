@@ -52,7 +52,13 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         [Test]
         public void GenericClassIsNotAContext()
         {
-            WithPsiFile("GenericWithSpecs.cs", x => Assert.That(Type().IsContext(), Is.False));
+            WithPsiFile("GenericWithSpecs.cs", x =>
+            {
+                var f = Fields.FirstOrDefault().AsFieldInfo();
+                f.FieldType.GetGenericArguments();
+
+                Assert.That(Type().IsContext(), Is.False);
+            });
         }
     }
 }

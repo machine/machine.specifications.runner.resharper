@@ -25,12 +25,14 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
             {
                 if (_field.Type is IDeclaredType type && type.IsResolved && type.IsValid())
                 {
-                    if (type.IsClassType())
-                        return new PsiClassInfoAdapter(type.GetClassType());
+                    var element = type.GetTypeElement();
 
-                    if (type.IsDelegate())
-                        return new PsiDelegateInfoAdapter(type.GetDelegateType(), type);
-                }
+                    if (element is IClass classType)
+                        return new PsiClassInfoAdapter(classType);
+
+                    if (element is IDelegate delegateType)
+                        return new PsiDelegateInfoAdapter(delegateType, type);
+                 }
 
                 return UnknownTypeInfoAdapter.Default;
             }

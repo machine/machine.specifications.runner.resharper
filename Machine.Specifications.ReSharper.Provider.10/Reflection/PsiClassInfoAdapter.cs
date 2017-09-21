@@ -33,7 +33,8 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         public IEnumerable<ITypeInfo> GetGenericArguments()
         {
-            return Enumerable.Empty<ITypeInfo>();
+            return _type.TypeParameters
+                .Select(x => UnknownTypeInfoAdapter.Default);
         }
     }
 }
