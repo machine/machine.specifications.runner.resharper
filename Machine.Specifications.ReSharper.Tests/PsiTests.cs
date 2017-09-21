@@ -7,6 +7,8 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.TestFramework;
+using Machine.Specifications.ReSharperProvider;
+using Machine.Specifications.ReSharperProvider.Reflection;
 using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests
@@ -21,6 +23,28 @@ namespace Machine.Specifications.ReSharper.Tests
         protected IList<IClass> Classes => _collector.Classes;
 
         protected IList<IField> Fields => _collector.Fields;
+
+        protected ITypeInfo Type(string name = null)
+        {
+            var type = string.IsNullOrEmpty(name)
+                ? Classes.FirstOrDefault()
+                : Classes.FirstOrDefault(x => x.ShortName == name);
+
+            Assert.That(type, Is.Not.Null);
+
+            return type.AsTypeInfo();
+        }
+
+        protected IFieldInfo Field(string name = null)
+        {
+            var field = string.IsNullOrEmpty(name)
+                ? Fields.FirstOrDefault()
+                : Fields.FirstOrDefault(x => x.ShortName == name);
+
+            Assert.That(field, Is.Not.Null);
+
+            return field.AsFieldInfo();
+        }
 
         protected void WithPsiFile(string filename, Action<IFile> action)
         {

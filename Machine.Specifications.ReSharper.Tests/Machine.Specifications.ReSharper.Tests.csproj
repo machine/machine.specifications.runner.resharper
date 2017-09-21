@@ -205,12 +205,6 @@
     <None Include="Data\Psi\EmptyClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\EmptyInterface.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Psi\EmptyStruct.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Data\Psi\AbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -224,6 +218,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Data\Psi\ClassWithGenericField.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Psi\GenericWithSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="IMspecTestZone.cs" />

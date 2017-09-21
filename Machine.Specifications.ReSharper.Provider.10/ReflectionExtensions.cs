@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Util;
 using Machine.Specifications.ReSharperProvider.Reflection;
@@ -11,12 +10,17 @@ namespace Machine.Specifications.ReSharperProvider
     {
         public static IEnumerable<string> GetTags(this ITypeInfo type)
         {
-            throw new NotImplementedException();
+            return type.GetCustomAttributes(FullNames.TagsAttribute, true)
+                .SelectMany(x => x.GetParameters())
+                .Distinct();
         }
 
         public static string GetSubject(this ITypeInfo type)
         {
-            throw new NotImplementedException();
+            return type.GetCustomAttributes(FullNames.SubjectAttribute, true)
+                .FirstOrDefault()?
+                .GetParameters()
+                .Join(" ");
         }
 
         public static bool IsSpecification(this IFieldInfo field)
@@ -26,31 +30,38 @@ namespace Machine.Specifications.ReSharperProvider
 
         public static bool IsBehavior(this IFieldInfo field)
         {
-            var fieldType = field.FieldType;
-            var arguments = fieldType.GetGenericArguments();
+            var type = field.FieldType;
 
-            return fieldType.GetCustomAttributes(FullNames.BehaviorDelegateAttribute, false).Any() &&
-                   arguments.Any(x => x.GetCustomAttributes(FullNames.BehaviorsAttribute, false).Any());
+            var arguments = type.GetGenericArguments()
+                .SelectMany(x => x.GetCustomAttributes(FullNames.BehaviorsAttribute, false));
+
+            return type.GetCustomAttributes(FullNames.BehaviorDelegateAttribute, false).Any() &&
+                   arguments.Any();
         }
 
         public static bool IsIgnored(this ITypeInfo type)
         {
-            throw new NotImplementedException();
+            return type.GetCustomAttributes(FullNames.IgnoreAttribute, false).Any();
         }
 
         public static bool IsIgnored(this IFieldInfo field)
         {
-            throw new NotImplementedException();
+            return field.GetCustomAttributes(FullNames.IgnoreAttribute, false).Any();
         }
 
         public static bool IsBehaviorContainer(this ITypeInfo type)
         {
-            throw new NotImplementedException();
+            return !type.IsAbstract &&
+                   type.GetCustomAttributes(FullNames.BehaviorsAttribute, false).Any() &&
+                   type.GetFields().Any(x => x.IsSpecification());
         }
 
         public static bool IsContext(this ITypeInfo type)
         {
-            throw new NotImplementedException();
+            return !type.IsAbstract &&
+                   !type.GetCustomAttributes(FullNames.BehaviorsAttribute, false).Any() &&
+                   !type.GetGenericArguments().Any() &&
+                   type.GetFields().Any(x => x.IsSpecification() || x.IsBehavior());
         }
     }
 }

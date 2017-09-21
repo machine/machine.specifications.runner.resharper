@@ -8,109 +8,51 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
     public class ContextTests : PsiTests
     {
         [Test]
-        public void StructsAreIgnored()
-        {
-            WithPsiFile("EmptyStruct.cs", x =>
-            {
-                CollectionAssert.IsEmpty(Classes);
-                CollectionAssert.IsEmpty(Fields);
-            });
-        }
-
-        [Test]
-        public void InterfacesAreIgnored()
-        {
-            WithPsiFile("EmptyInterface.cs", x =>
-            {
-                CollectionAssert.IsEmpty(Classes);
-                CollectionAssert.IsEmpty(Fields);
-            });
-        }
-
-        [Test]
         public void EmptyClassIsNotAContext()
         {
-            WithPsiFile("EmptyClass.cs", x =>
-            {
-                var type = Classes.FirstOrDefault()?.AsTypeInfo();
-
-                Assert.That(type, Is.Not.Null);
-                Assert.That(type.IsContext(), Is.False);
-            });
+            WithPsiFile("EmptyClass.cs", x => Assert.That(Type().IsContext(), Is.False));
         }
 
         [Test]
         public void AbstractClassIsNotAContext()
         {
-            WithPsiFile("AbstractSpecs.cs", x =>
-            {
-                var type = Classes.FirstOrDefault()?.AsTypeInfo();
-
-                Assert.That(type, Is.Not.Null);
-                Assert.That(type.IsContext(), Is.False);
-            });
+            WithPsiFile("AbstractSpecs.cs", x => Assert.That(Type().IsContext(), Is.False));
         }
 
         [Test]
         public void BehaviorClassIsNotAContext()
         {
-            WithPsiFile("SingleBehavior.cs", x =>
-            {
-                var type = Classes.FirstOrDefault()?.AsTypeInfo();
-
-                Assert.That(type, Is.Not.Null);
-                Assert.That(type.IsContext(), Is.False);
-            });
+            WithPsiFile("SingleBehavior.cs", x => Assert.That(Type().IsContext(), Is.False));
         }
 
         [Test]
         public void ConcreteClassWithAbstractSpecsIsNotAContext()
         {
-            WithPsiFile("ConcreteAndAbstractSpecs.cs", x =>
-            {
-                var type = Classes.FirstOrDefault()?.AsTypeInfo();
-
-                Assert.That(type, Is.Not.Null);
-                Assert.That(type.IsContext(), Is.False);
-            });
+            WithPsiFile("ConcreteAndAbstractSpecs.cs", x => Assert.That(Type().IsContext(), Is.False));
         }
 
         [Test]
         public void ClassWithOneSpecIsAContext()
         {
-            WithPsiFile("SingleSpec.cs", x =>
-            {
-                var type = Classes.FirstOrDefault()?.AsTypeInfo();
-
-                Assert.That(type, Is.Not.Null);
-                Assert.That(type.IsContext(), Is.True);
-            });
+            WithPsiFile("SingleSpec.cs", x => Assert.That(Type().IsContext(), Is.True));
         }
 
         [Test]
         public void ClassWithOneBehaviorSpecIsAContext()
         {
-            WithPsiFile("SingleBehaviorSpec.cs", x =>
-            {
-                var type = Classes.FirstOrDefault(y => y.ShortName == "Specs")?
-                    .AsTypeInfo();
-
-                Assert.That(type, Is.Not.Null);
-                Assert.That(type.IsContext(), Is.True);
-            });
+            WithPsiFile("SingleBehaviorSpec.cs", x => Assert.That(Type("Specs").IsContext(), Is.True));
         }
 
         [Test]
         public void ClassWithGenericFieldIsNotAContext()
         {
-            WithPsiFile("ClassWithGenericField.cs", x =>
-            {
-                var type = Classes.FirstOrDefault()?.AsTypeInfo();
-                var field = Fields.FirstOrDefault()?.AsFieldInfo();
+            WithPsiFile("ClassWithGenericField.cs", x => Assert.That(Type().IsContext(), Is.False));
+        }
 
-                Assert.That(type, Is.Not.Null);
-                Assert.That(type.IsContext(), Is.False);
-            });
+        [Test]
+        public void GenericClassIsNotAContext()
+        {
+            WithPsiFile("GenericWithSpecs.cs", x => Assert.That(Type().IsContext(), Is.False));
         }
     }
 }
