@@ -259,9 +259,8 @@
     <Compile Include="Reflection\IFieldInfo.cs" />
     <Compile Include="Reflection\ITypeInfo.cs" />
     <Compile Include="Reflection\PsiAttributeInfoAdapter.cs" />
-    <Compile Include="Reflection\PsiClassInfoAdapter.cs" />
-    <Compile Include="Reflection\PsiDelegateInfoAdapter.cs" />
     <Compile Include="Reflection\PsiFieldInfoAdapter.cs" />
+    <Compile Include="Reflection\PsiTypeInfoAdapter.cs" />
     <Compile Include="Reflection\UnknownTypeInfoAdapter.cs" />
     <Compile Include="ZoneMarker.cs" />
   </ItemGroup>

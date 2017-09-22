@@ -13,9 +13,9 @@ namespace Machine.Specifications.ReSharperProvider
 {
     public static class PsiExtensions
     {
-        public static ITypeInfo AsTypeInfo(this IClass type)
+        public static ITypeInfo AsTypeInfo(this ITypeElement type, IDeclaredType declaredType = null)
         {
-            return new PsiClassInfoAdapter(type);
+            return new PsiTypeInfoAdapter(type, declaredType);
         }
         
         public static IAttributeInfo AsAttributeInfo(this IAttributeInstance attribute)
