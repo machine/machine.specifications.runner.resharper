@@ -8,6 +8,8 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         bool IsAbstract { get; }
 
+        ITypeInfo GetContainingType();
+
         IEnumerable<IFieldInfo> GetFields();
 
         IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit);

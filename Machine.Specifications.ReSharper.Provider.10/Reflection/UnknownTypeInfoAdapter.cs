@@ -11,6 +11,11 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         public bool IsAbstract => false;
 
+        public ITypeInfo GetContainingType()
+        {
+            return null;
+        }
+
         public IEnumerable<IFieldInfo> GetFields()
         {
             return Enumerable.Empty<IFieldInfo>();

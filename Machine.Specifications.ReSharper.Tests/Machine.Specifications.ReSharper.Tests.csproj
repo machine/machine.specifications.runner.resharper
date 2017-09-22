@@ -202,6 +202,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Psi\BaseClassWithSubject.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Psi\InheritedSubjects.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Psi\CompositeSubject.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Psi\NestedSubject.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Psi\ParentSubject.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Psi\SubjectTests.cs" />
     <None Include="Data\Psi\EmptyClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

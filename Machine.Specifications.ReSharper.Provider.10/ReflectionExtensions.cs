@@ -17,8 +17,13 @@ namespace Machine.Specifications.ReSharperProvider
 
         public static string GetSubject(this ITypeInfo type)
         {
-            return type.GetCustomAttributes(FullNames.SubjectAttribute, true)
-                .FirstOrDefault()?
+            var attributes = type.GetCustomAttributes(FullNames.SubjectAttribute, true)
+                .ToArray();
+
+            if (!attributes.Any())
+                return type.GetContainingType()?.GetSubject() ?? string.Empty;
+
+            return attributes.First()
                 .GetParameters()
                 .Join(" ");
         }

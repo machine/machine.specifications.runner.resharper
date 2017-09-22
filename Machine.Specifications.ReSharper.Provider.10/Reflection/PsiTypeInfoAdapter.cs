@@ -20,6 +20,11 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         public bool IsAbstract => _type is IModifiersOwner owner && owner.IsAbstract;
 
+        public ITypeInfo GetContainingType()
+        {
+            return _type.GetContainingType()?.AsTypeInfo();
+        }
+
         public IEnumerable<IFieldInfo> GetFields()
         {
             if (!(_type is IClass type))

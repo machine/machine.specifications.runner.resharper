@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Machine.Specifications.ReSharperProvider;
+﻿using Machine.Specifications.ReSharperProvider;
 using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests.Psi
