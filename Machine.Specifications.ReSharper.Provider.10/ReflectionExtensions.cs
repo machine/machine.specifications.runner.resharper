@@ -10,7 +10,7 @@ namespace Machine.Specifications.ReSharperProvider
     {
         public static IEnumerable<string> GetTags(this ITypeInfo type)
         {
-            return type.GetCustomAttributes(FullNames.TagsAttribute, true)
+            return type.GetCustomAttributes(FullNames.TagsAttribute, false)
                 .SelectMany(x => x.GetParameters())
                 .Distinct();
         }

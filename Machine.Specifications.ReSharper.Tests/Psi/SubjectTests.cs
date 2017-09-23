@@ -47,5 +47,11 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         {
             WithPsiFile("ParentSubject.cs", x => Assert.That(Type("InnerSpecs").GetSubject(), Is.EqualTo("Specs")));
         }
+
+        [Test]
+        public void ParentBaseClassSubjectIsUsed()
+        {
+            WithPsiFile("ParentBaseSubject.cs", x => Assert.That(Type("InnerSpecs").GetSubject(), Is.EqualTo("BaseClass")));
+        }
     }
 }

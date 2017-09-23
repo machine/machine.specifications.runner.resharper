@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
-    [MspecReferencesAttribute]
+    [MspecReferences]
     public abstract class PsiTests : BaseTestWithSingleProject
     {
         private readonly PsiElementCollector _collector = new PsiElementCollector();
@@ -30,7 +30,7 @@ namespace Machine.Specifications.ReSharper.Tests
                 ? Classes.FirstOrDefault()
                 : Classes.FirstOrDefault(x => x.ShortName == name);
 
-            Assert.That(type, Is.Not.Null);
+            Assert.That(type, Is.Not.Null, $"Type not found: {name}");
 
             return type.AsTypeInfo();
         }
@@ -41,7 +41,7 @@ namespace Machine.Specifications.ReSharper.Tests
                 ? Fields.FirstOrDefault()
                 : Fields.FirstOrDefault(x => x.ShortName == name);
 
-            Assert.That(field, Is.Not.Null);
+            Assert.That(field, Is.Not.Null, $"Field not found: {name}");
 
             return field.AsFieldInfo();
         }
@@ -56,8 +56,7 @@ namespace Machine.Specifications.ReSharper.Tests
                     {
                         var file = GetFile(project, filename);
 
-                        if (file == null)
-                            Assert.Fail($"Data file not found: {filename}");
+                        Assert.That(file, Is.Not.Null, $"Data file not found: {filename}");
 
                         _collector.Reset();
                         file.ProcessDescendants(_collector);
