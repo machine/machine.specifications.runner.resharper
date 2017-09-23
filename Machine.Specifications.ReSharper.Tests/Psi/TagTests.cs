@@ -57,5 +57,18 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
                 Assert.That(tags, Contains.Item("Taggy3"));
             });
         }
+
+        [Test]
+        public void DuplicateTagsIgnored()
+        {
+            WithPsiFile("DuplicateTags.cs", x =>
+            {
+                var tags = Type().GetTags().ToArray();
+
+                Assert.That(tags.Length, Is.EqualTo(2));
+                Assert.That(tags, Contains.Item("Taggy"));
+                Assert.That(tags, Contains.Item("Taggy2"));
+            });
+        }
     }
 }

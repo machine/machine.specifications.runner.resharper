@@ -4,12 +4,28 @@ using System.Linq;
 using System.Text;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.Metadata.Reader.Impl;
+using Machine.Specifications.ReSharperProvider.Reflection;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider
 {
     internal static class MetadataExtensions
     {
+        public static ITypeInfo AsTypeInfo(this IMetadataTypeInfo type, IMetadataClassType classType = null)
+        {
+            return new MetadataTypeInfoAdapter(type, classType);
+        }
+
+        public static IAttributeInfo AsAttributeInfo(this IMetadataCustomAttribute attribute)
+        {
+            return new MetadataAttributeInfoAdapter(attribute);
+        }
+
+        public static IFieldInfo AsFieldInfo(this IMetadataField field)
+        {
+            return new MetadataFieldInfoAdapter(field);
+        }
+
         public static bool IsContext(this IMetadataTypeInfo type)
         {
             return !type.IsAbstract &&

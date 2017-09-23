@@ -1,0 +1,12 @@
+﻿Simple.Data.Simple:
+  Kind: Context
+  DisplayName: Simple, Simple
+  Explicit: False
+  Categories: 
+
+  Simple.Data.Simple.is_true:
+    Kind: Specification
+    DisplayName: is true
+    Explicit: False
+    Categories: 
+
