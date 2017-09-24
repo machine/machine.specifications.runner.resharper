@@ -15,6 +15,8 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
             _classType = classType;
         }
 
+        public string ShortName => _type.Name;
+
         public string FullName => _type.FullyQualifiedName;
 
         public bool IsAbstract => _type.IsAbstract;
@@ -47,7 +49,9 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         public IEnumerable<ITypeInfo> GetGenericArguments()
         {
-            return _classType.Arguments
+            var arguments = _classType?.Arguments ?? _type.ToClassType()?.Arguments;
+
+            return arguments?
                 .OfType<IMetadataClassType>()
                 .Select(x => x.Type.AsTypeInfo());
         }

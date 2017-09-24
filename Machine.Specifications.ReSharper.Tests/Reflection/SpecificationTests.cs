@@ -2,7 +2,7 @@
 using Machine.Specifications.ReSharperProvider;
 using NUnit.Framework;
 
-namespace Machine.Specifications.ReSharper.Tests.Psi
+namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
     public class SpecificationTests : PsiTests
@@ -10,13 +10,13 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         [Test]
         public void SingleSpecIsValid()
         {
-            WithPsiFile("SingleSpec.cs", x => Assert.That(Field("is_true").IsSpecification(), Is.True));
+            WithFile("SingleSpec.cs", x => Assert.That(Field("is_true").IsSpecification(), Is.True));
         }
 
         [Test]
         public void BaseSpecsNotRetrieved()
         {
-            WithPsiFile("ConcreteAndAbstractSpecs.cs", x => Assert.That(Type("ConcreteClass").GetFields().Any(y => y.IsSpecification()), Is.False));
+            WithFile("ConcreteAndAbstractSpecs.cs", x => Assert.That(Type("ConcreteClass").GetFields().Any(y => y.IsSpecification()), Is.False));
         }
     }
 }

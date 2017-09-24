@@ -2,27 +2,31 @@
 using Machine.Specifications.ReSharperProvider;
 using NUnit.Framework;
 
-namespace Machine.Specifications.ReSharper.Tests.Psi
+namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class IgnoreTests : PsiTests
+    public class IgnoreTests : CombinedProjectTest
     {
         [Test]
         public void NoAttributeIsntIgnored()
         {
-            WithPsiFile("SingleSpec.cs", x => Assert.That(Fields.All(y => y.IsIgnored()), Is.False));
+            WithFile("SingleSpec.cs", x =>
+            {
+                Assert.That(x.Fields, Is.Not.Empty);
+                Assert.That(x.Fields.All(y => y.IsIgnored()), Is.False);
+            });
         }
 
         [Test]
         public void FieldIsIgnored()
         {
-            WithPsiFile("IgnoredField.cs", x => Assert.That(Field().IsIgnored(), Is.True));
+            WithFile("IgnoredField.cs", x => Assert.That(x.Field().IsIgnored(), Is.True));
         }
 
         [Test]
         public void ClassIsIgnored()
         {
-            WithPsiFile("IgnoredClass.cs", x => Assert.That(Type().IsIgnored(), Is.True));
+            WithFile("IgnoredClass.cs", x => Assert.That(x.Type().IsIgnored(), Is.True));
         }
 
         [Test]

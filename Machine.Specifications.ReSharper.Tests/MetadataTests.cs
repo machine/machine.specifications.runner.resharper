@@ -1,64 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
-using JetBrains.ProjectModel.Impl;
-using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
-using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
-using Machine.Specifications.ReSharperProvider.Explorers;
 using NuGet.Frameworks;
+using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
     [MspecReferences]
-    //[TestNetFramework45]
-    public abstract class MetadataTests : UnitTestMetadataTestBase
+    public abstract class MetadataTests : SingleProjectTest
     {
-        protected override string RelativeTestDataPath => "Metadata";
-
         private readonly TargetFrameworkId _framework = new TargetFrameworkId(new NuGetFramework(".NETFramework", Version.Parse("4.5")), true);
 
-        protected void ExecuteTest(string filename)
+        private readonly MetadataElementCollector _collector = new MetadataElementCollector();
+
+        public override ICollector Collector => _collector;
+
+        protected override void WithFile(IProject project, string filename, Action<MspecContext> action)
         {
-            var assembly = GetAssembly(filename);
+            var compiledAssembly = GetAssembly(filename);
+            var path = GetTestDataFilePath2(filename).Directory;
 
-            DoTestSolution(assembly);
-        }
+            var resolverOnFolders = new AssemblyResolverOnFolders();
+            resolverOnFolders.AddPath(path);
 
-        protected override void ExploreAssembly(
-            IProject testProject, 
-            FileSystemPath assemblyPath, 
-            MetadataLoader loader,
-            IUnitTestElementsObserver observer)
-        {
-            var assemblyExplorer = Solution.GetComponent<AssemblyExplorer>();
+            var assemblyPath = path.Combine(compiledAssembly);
 
-            var explorer = new MSpecTestMetadataExplorer(assemblyExplorer);
-
-            var assembly = loader.TryLoadFrom(assemblyPath, x => true);
-
-            explorer.ExploreAssembly(testProject, assembly, observer, CancellationToken.None);
-        }
-
-        protected override void PrepareBeforeRun(IProject testProject)
-        {
-            var assemblies = GetProjectReferences();
-
-            foreach (var assembly in assemblies)
+            using (var loader = new MetadataLoader(resolverOnFolders))
             {
-                var location = FileSystemPath.Parse(assembly);
-                var reference = ProjectToAssemblyReference.CreateFromLocation(testProject, location);
+                var assembly = loader.TryLoadFrom(assemblyPath, x => true);
 
-                ((ProjectImpl) testProject).DoAddReference(reference);
+                Assert.That(assembly, Is.Not.Null, $"Cannot get metadata assembly: {filename}");
 
-                if (location.IsAbsolute && location.ExistsFile)
-                {
-                    var localCopy = TestDataPath2.Combine(location.Name);
-                    location.CopyFile(localCopy, true);
-                }
+                _collector.Explore(assembly);
+
+                var context = new MspecContext(_collector);
+
+                action(context);
             }
         }
 

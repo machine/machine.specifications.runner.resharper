@@ -9,7 +9,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider
 {
-    internal static class MetadataExtensions
+    public static class MetadataExtensions
     {
         public static ITypeInfo AsTypeInfo(this IMetadataTypeInfo type, IMetadataClassType classType = null)
         {

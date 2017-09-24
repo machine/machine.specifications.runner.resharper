@@ -4,6 +4,8 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 {
     public interface ITypeInfo
     {
+        string ShortName { get; }
+
         string FullName { get; }
 
         bool IsAbstract { get; }

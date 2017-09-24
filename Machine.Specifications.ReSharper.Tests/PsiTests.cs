@@ -1,70 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.ReSharper.Resources.Shell;
-using JetBrains.ReSharper.TestFramework;
-using Machine.Specifications.ReSharperProvider;
-using Machine.Specifications.ReSharperProvider.Reflection;
 using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
     [MspecReferences]
-    public abstract class PsiTests : BaseTestWithSingleProject
+    public abstract class PsiTests : SingleProjectTest
     {
         private readonly PsiElementCollector _collector = new PsiElementCollector();
 
-        protected override string RelativeTestDataPath => "Psi";
+        public override ICollector Collector => _collector;
 
-        protected IList<IClass> Classes => _collector.Classes;
-
-        protected IList<IField> Fields => _collector.Fields;
-
-        protected ITypeInfo Type(string name = null)
+        protected override void WithFile(IProject project, string filename, Action<MspecContext> action)
         {
-            var type = string.IsNullOrEmpty(name)
-                ? Classes.FirstOrDefault()
-                : Classes.FirstOrDefault(x => x.ShortName == name);
+            var file = GetFile(project, filename);
 
-            Assert.That(type, Is.Not.Null, $"Type not found: {name}");
+            Assert.That(file, Is.Not.Null, $"Data file not found: {filename}");
 
-            return type.AsTypeInfo();
-        }
+            file.ProcessDescendants(_collector);
 
-        protected IFieldInfo Field(string name = null)
-        {
-            var field = string.IsNullOrEmpty(name)
-                ? Fields.FirstOrDefault()
-                : Fields.FirstOrDefault(x => x.ShortName == name);
+            var context = new MspecContext(_collector);
 
-            Assert.That(field, Is.Not.Null, $"Field not found: {name}");
-
-            return field.AsFieldInfo();
-        }
-
-        protected void WithPsiFile(string filename, Action<IFile> action)
-        {
-            WithSingleProject(filename, (lifetime, solution, project) =>
-            {
-                Locks.ReentrancyGuard.Execute(nameof(PsiTests), () =>
-                {
-                    using (ReadLockCookie.Create())
-                    {
-                        var file = GetFile(project, filename);
-
-                        Assert.That(file, Is.Not.Null, $"Data file not found: {filename}");
-
-                        _collector.Reset();
-                        file.ProcessDescendants(_collector);
-
-                        action(file);
-                    }
-                });
-            });
+            action(context);
         }
 
         private IFile GetFile(IProject project, string filename)

@@ -202,101 +202,93 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Metadata\AbstractSpecs.dll.metadata.gold">
+    <Compile Include="CombinedProjectTest.cs" />
+    <Compile Include="ICollector.cs" />
+    <Compile Include="MspecContext.cs" />
+    <Compile Include="SingleProjectTest.cs" />
+    <None Include="Data\Files\BaseClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\BaseClassTags.cs">
+    <None Include="Data\Files\ContainingClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ContainingClassTags.cs">
+    <None Include="Data\Files\NestedTag.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\NestedTag.cs">
+    <None Include="Data\Files\SingleTag.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\SingleTag.cs">
+    <None Include="Data\Files\MultipleTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\MultipleTags.cs">
+    <None Include="Data\Files\IgnoredField.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\IgnoredField.cs">
+    <None Include="Data\Files\IgnoredClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\IgnoredClass.cs">
+    <None Include="Data\Files\BehaviorNoSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\BehaviorNoSpecs.cs">
+    <None Include="Data\Files\BehaviorAbstract.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\BehaviorAbstract.cs">
+    <None Include="Data\Files\DuplicateTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Metadata\SingleSpec.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Metadata\SingleSpec.dll.metadata.gold">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Metadata\AbstractSpecs.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Psi\DuplicateTags.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Compile Include="MetadataElementCollector.cs" />
     <Compile Include="MetadataTests.cs" />
-    <Compile Include="Metadata\ContextTests.cs" />
-    <Compile Include="Psi\BehaviorTests.cs" />
-    <Compile Include="Psi\IgnoreTests.cs" />
-    <Compile Include="Psi\SpecificationTests.cs" />
-    <Compile Include="Psi\TagTests.cs" />
-    <None Include="Data\Psi\BaseClassWithSubject.cs">
+    <Compile Include="Reflection\BehaviorTests.cs" />
+    <Compile Include="Reflection\IgnoreTests.cs" />
+    <Compile Include="Reflection\SpecificationTests.cs" />
+    <Compile Include="Reflection\TagTests.cs" />
+    <None Include="Data\Files\BaseClassWithSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\InheritedSubjects.cs">
+    <None Include="Data\Files\InheritedSubjects.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\CompositeSubject.cs">
+    <None Include="Data\Files\CompositeSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\NestedSubject.cs">
+    <None Include="Data\Files\NestedSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ParentSubject.cs">
+    <None Include="Data\Files\ParentSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ParentBaseSubject.cs">
+    <None Include="Data\Files\ParentBaseSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="Psi\SubjectTests.cs" />
-    <None Include="Data\Psi\EmptyClass.cs">
+    <Compile Include="Reflection\SubjectTests.cs" />
+    <None Include="Data\Files\EmptyClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\AbstractSpecs.cs">
+    <None Include="Data\Files\AbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\SingleBehavior.cs">
+    <None Include="Data\Files\SingleBehavior.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ConcreteAndAbstractSpecs.cs">
+    <None Include="Data\Files\ConcreteAndAbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\SingleBehaviorSpec.cs">
+    <None Include="Data\Files\SingleBehaviorSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ClassWithGenericField.cs">
+    <None Include="Data\Files\ClassWithGenericField.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\GenericWithSpecs.cs">
+    <None Include="Data\Files\GenericWithSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="IMspecTestZone.cs" />
     <Compile Include="MspecReferencesAttribute.cs" />
     <Compile Include="PsiElementCollector.cs" />
     <Compile Include="PsiTests.cs" />
-    <Compile Include="Psi\ContextTests.cs" />
+    <Compile Include="Reflection\ContextTests.cs" />
     <Compile Include="MspecEnvironmentAssembly.cs" />
-    <None Include="Data\Psi\SingleSpec.cs">
+    <None Include="Data\Files\SingleSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -314,6 +306,10 @@
     <ProjectReference Include="..\Machine.Specifications.ReSharper.Provider.10\Machine.Specifications.ReSharper.Provider.10.csproj">
       <Project>{0ac9ac80-d8cc-4cb7-bb85-312168096781}</Project>
       <Name>Machine.Specifications.ReSharper.Provider.10</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Machine.Specifications.ReSharper.Runner.10\Machine.Specifications.ReSharper.Runner.10.csproj">
+      <Project>{585ae31b-2361-4a4e-8e9e-32b808d280a0}</Project>
+      <Name>Machine.Specifications.ReSharper.Runner.10</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -1,22 +1,18 @@
 ﻿using System.Collections.Generic;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
+using Machine.Specifications.ReSharperProvider;
+using Machine.Specifications.ReSharperProvider.Reflection;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
-    public class PsiElementCollector : IRecursiveElementProcessor
+    public class PsiElementCollector : IRecursiveElementProcessor, ICollector
     {
-        public List<IClass> Classes { get; } = new List<IClass>();
+        public IList<ITypeInfo> Types { get; } = new List<ITypeInfo>();
 
-        public List<IField> Fields { get; } = new List<IField>();
+        public IList<IFieldInfo> Fields { get; } = new List<IFieldInfo>();
 
         public bool ProcessingIsFinished => false;
-
-        public void Reset()
-        {
-            Classes.Clear();
-            Fields.Clear();
-        }
 
         public bool InteriorShouldBeProcessed(ITreeNode element)
         {
@@ -29,10 +25,10 @@ namespace Machine.Specifications.ReSharper.Tests
                 return;
 
             if (declaration.DeclaredElement is IClass classElement)
-                Classes.Add(classElement);
+                Types.Add(classElement.AsTypeInfo());
 
             if (declaration.DeclaredElement is IField fieldElement)
-                Fields.Add(fieldElement);
+                Fields.Add(fieldElement.AsFieldInfo());
         }
 
         public void ProcessAfterInterior(ITreeNode element)

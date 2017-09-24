@@ -2,11 +2,14 @@
 
 namespace Data
 {
-    [Subject(typeof(Simple))]
-    class Simple
+    [Tags("Taggy")]
+    class BaseClass
     {
-        static bool value;
+        protected static bool value;
+    }
 
+    class Spec : BaseClass
+    {
         It is_true = () =>
             value.ShouldBeFalse();
     }

@@ -2,7 +2,7 @@
 using Machine.Specifications.ReSharperProvider;
 using NUnit.Framework;
 
-namespace Machine.Specifications.ReSharper.Tests.Psi
+namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
     public class TagTests : PsiTests
@@ -10,19 +10,19 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         [Test]
         public void TagsInBaseClassIgnored()
         {
-            WithPsiFile("BaseClassTags.cs", x => Assert.That(Type("Spec").GetTags(), Is.Empty));
+            WithFile("BaseClassTags.cs", x => Assert.That(Type("Spec").GetTags(), Is.Empty));
         }
 
         [Test]
         public void TagsInContainingClassIgnored()
         {
-            WithPsiFile("ContainingClassTags.cs", x => Assert.That(Type("InnerSpecs").GetTags(), Is.Empty));
+            WithFile("ContainingClassTags.cs", x => Assert.That(Type("InnerSpecs").GetTags(), Is.Empty));
         }
 
         [Test]
         public void TagsFromInnerClassUsed()
         {
-            WithPsiFile("NestedTag.cs", x =>
+            WithFile("NestedTag.cs", x =>
             {
                 var tags = Type("InnerSpecs").GetTags().ToArray();
 
@@ -35,7 +35,7 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         [Test]
         public void SingleTagNameMatched()
         {
-            WithPsiFile("SingleTag.cs", x =>
+            WithFile("SingleTag.cs", x =>
             {
                 var tags = Type().GetTags().ToArray();
 
@@ -47,7 +47,7 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         [Test]
         public void MultipleTagsMatched()
         {
-            WithPsiFile("MultipleTags.cs", x =>
+            WithFile("MultipleTags.cs", x =>
             {
                 var tags = Type().GetTags().ToArray();
 
@@ -61,7 +61,7 @@ namespace Machine.Specifications.ReSharper.Tests.Psi
         [Test]
         public void DuplicateTagsIgnored()
         {
-            WithPsiFile("DuplicateTags.cs", x =>
+            WithFile("DuplicateTags.cs", x =>
             {
                 var tags = Type().GetTags().ToArray();
 
