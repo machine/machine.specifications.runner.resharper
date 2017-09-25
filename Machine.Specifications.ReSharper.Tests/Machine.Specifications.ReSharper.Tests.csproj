@@ -202,93 +202,89 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CombinedProjectTest.cs" />
     <Compile Include="ICollector.cs" />
     <Compile Include="MspecContext.cs" />
     <Compile Include="SingleProjectTest.cs" />
-    <None Include="Data\Files\BaseClassTags.cs">
+    <None Include="Data\Reflection\BaseClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\ContainingClassTags.cs">
+    <None Include="Data\Reflection\ContainingClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\NestedTag.cs">
+    <None Include="Data\Reflection\NestedTag.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\SingleTag.cs">
+    <None Include="Data\Reflection\SingleTag.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\MultipleTags.cs">
+    <None Include="Data\Reflection\MultipleTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\IgnoredField.cs">
+    <None Include="Data\Reflection\IgnoredField.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\IgnoredClass.cs">
+    <None Include="Data\Reflection\IgnoredClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\BehaviorNoSpecs.cs">
+    <None Include="Data\Reflection\BehaviorNoSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\BehaviorAbstract.cs">
+    <None Include="Data\Reflection\BehaviorAbstract.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\DuplicateTags.cs">
+    <None Include="Data\Reflection\DuplicateTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="MetadataElementCollector.cs" />
-    <Compile Include="MetadataTests.cs" />
     <Compile Include="Reflection\BehaviorTests.cs" />
     <Compile Include="Reflection\IgnoreTests.cs" />
     <Compile Include="Reflection\SpecificationTests.cs" />
     <Compile Include="Reflection\TagTests.cs" />
-    <None Include="Data\Files\BaseClassWithSubject.cs">
+    <None Include="Data\Reflection\BaseClassWithSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\InheritedSubjects.cs">
+    <None Include="Data\Reflection\InheritedSubjects.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\CompositeSubject.cs">
+    <None Include="Data\Reflection\CompositeSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\NestedSubject.cs">
+    <None Include="Data\Reflection\NestedSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\ParentSubject.cs">
+    <None Include="Data\Reflection\ParentSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\ParentBaseSubject.cs">
+    <None Include="Data\Reflection\ParentBaseSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Reflection\SubjectTests.cs" />
-    <None Include="Data\Files\EmptyClass.cs">
+    <None Include="Data\Reflection\EmptyClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\AbstractSpecs.cs">
+    <None Include="Data\Reflection\AbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\SingleBehavior.cs">
+    <None Include="Data\Reflection\SingleBehavior.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\ConcreteAndAbstractSpecs.cs">
+    <None Include="Data\Reflection\ConcreteAndAbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\SingleBehaviorSpec.cs">
+    <None Include="Data\Reflection\SingleBehaviorSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\ClassWithGenericField.cs">
+    <None Include="Data\Reflection\ClassWithGenericField.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Files\GenericWithSpecs.cs">
+    <None Include="Data\Reflection\GenericWithSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="IMspecTestZone.cs" />
     <Compile Include="MspecReferencesAttribute.cs" />
-    <Compile Include="PsiElementCollector.cs" />
-    <Compile Include="PsiTests.cs" />
+    <Compile Include="MspecElementCollector.cs" />
     <Compile Include="Reflection\ContextTests.cs" />
     <Compile Include="MspecEnvironmentAssembly.cs" />
-    <None Include="Data\Files\SingleSpec.cs">
+    <None Include="Data\Reflection\SingleSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Properties\AssemblyInfo.cs" />

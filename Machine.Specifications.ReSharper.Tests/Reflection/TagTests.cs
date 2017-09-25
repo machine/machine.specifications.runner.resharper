@@ -5,18 +5,18 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class TagTests : PsiTests
+    public class TagTests : SingleProjectTest
     {
         [Test]
         public void TagsInBaseClassIgnored()
         {
-            WithFile("BaseClassTags.cs", x => Assert.That(Type("Spec").GetTags(), Is.Empty));
+            WithFile("BaseClassTags.cs", x => Assert.That(x.Type("Spec").GetTags(), Is.Empty));
         }
 
         [Test]
         public void TagsInContainingClassIgnored()
         {
-            WithFile("ContainingClassTags.cs", x => Assert.That(Type("InnerSpecs").GetTags(), Is.Empty));
+            WithFile("ContainingClassTags.cs", x => Assert.That(x.Type("InnerSpecs").GetTags(), Is.Empty));
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace Machine.Specifications.ReSharper.Tests.Reflection
         {
             WithFile("NestedTag.cs", x =>
             {
-                var tags = Type("InnerSpecs").GetTags().ToArray();
+                var tags = x.Type("InnerSpecs").GetTags().ToArray();
 
                 Assert.That(tags, Is.Not.Empty);
                 Assert.That(tags.Length, Is.EqualTo(1));
@@ -37,7 +37,7 @@ namespace Machine.Specifications.ReSharper.Tests.Reflection
         {
             WithFile("SingleTag.cs", x =>
             {
-                var tags = Type().GetTags().ToArray();
+                var tags = x.Type().GetTags().ToArray();
 
                 Assert.That(tags.Length, Is.EqualTo(1));
                 Assert.That(tags, Contains.Item("Taggy"));
@@ -49,7 +49,7 @@ namespace Machine.Specifications.ReSharper.Tests.Reflection
         {
             WithFile("MultipleTags.cs", x =>
             {
-                var tags = Type().GetTags().ToArray();
+                var tags = x.Type().GetTags().ToArray();
 
                 Assert.That(tags.Length, Is.EqualTo(3));
                 Assert.That(tags, Contains.Item("Taggy1"));
@@ -63,7 +63,7 @@ namespace Machine.Specifications.ReSharper.Tests.Reflection
         {
             WithFile("DuplicateTags.cs", x =>
             {
-                var tags = Type().GetTags().ToArray();
+                var tags = x.Type().GetTags().ToArray();
 
                 Assert.That(tags.Length, Is.EqualTo(2));
                 Assert.That(tags, Contains.Item("Taggy"));

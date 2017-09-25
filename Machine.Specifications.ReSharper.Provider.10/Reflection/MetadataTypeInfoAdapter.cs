@@ -49,9 +49,10 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         public IEnumerable<ITypeInfo> GetGenericArguments()
         {
-            var arguments = _classType?.Arguments ?? _type.ToClassType()?.Arguments;
+            if (_classType == null)
+                return _type.GenericParameters.Select(x => UnknownTypeInfoAdapter.Default);
 
-            return arguments?
+            return _classType.Arguments
                 .OfType<IMetadataClassType>()
                 .Select(x => x.Type.AsTypeInfo());
         }

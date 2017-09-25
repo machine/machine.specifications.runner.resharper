@@ -3,7 +3,7 @@
 namespace Data
 {
     [Tags("Taggy")]
-    public class Specs : BaseClass
+    public class Specs
     {
         class InnerSpecs
         {

@@ -5,7 +5,7 @@ namespace Data
     [Subject(typeof(BaseClass))]
     class BaseClass
     {
-        static bool value;
+        protected static bool value;
     }
 
     class Spec : BaseClass

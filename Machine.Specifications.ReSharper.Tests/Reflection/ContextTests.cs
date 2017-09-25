@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class ContextTests : CombinedProjectTest
+    public class ContextTests : SingleProjectTest
     {
         [Test]
         public void EmptyClassIsNotAContext()

@@ -4,54 +4,54 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class SubjectTests : PsiTests
+    public class SubjectTests : SingleProjectTest
     {
         [Test]
         public void NoSubjectReturnsEmptyString()
         {
-            WithFile("EmptyClass.cs", x => Assert.That(Type().GetSubject(), Is.EqualTo(string.Empty)));
+            WithFile("EmptyClass.cs", x => Assert.That(x.Type().GetSubject(), Is.EqualTo(string.Empty)));
         }
 
         [Test]
         public void GetsSubjectTypeAsString()
         {
-            WithFile("SingleSpec.cs", x => Assert.That(Type().GetSubject(), Is.EqualTo("Simple")));
+            WithFile("SingleSpec.cs", x => Assert.That(x.Type().GetSubject(), Is.EqualTo("Simple")));
         }
 
         [Test]
         public void SubjectIsRetrievedFromBaseClass()
         {
-            WithFile("BaseClassWithSubject.cs", x => Assert.That(Type("Spec").GetSubject(), Is.EqualTo("BaseClass")));
+            WithFile("BaseClassWithSubject.cs", x => Assert.That(x.Type("Spec").GetSubject(), Is.EqualTo("BaseClass")));
         }
 
         [Test]
         public void NearestTypeSubjectIsUsed()
         {
-            WithFile("InheritedSubjects.cs", x => Assert.That(Type("Spec").GetSubject(), Is.EqualTo("specifications")));
+            WithFile("InheritedSubjects.cs", x => Assert.That(x.Type("Spec").GetSubject(), Is.EqualTo("specifications")));
         }
 
         [Test]
         public void CompositeSubjectIsUsed()
         {
-            WithFile("CompositeSubject.cs", x => Assert.That(Type().GetSubject(), Is.EqualTo("Specs plus plus")));
+            WithFile("CompositeSubject.cs", x => Assert.That(x.Type().GetSubject(), Is.EqualTo("Specs plus plus")));
         }
 
         [Test]
         public void NestedClassSubjectIsUsed()
         {
-            WithFile("NestedSubject.cs", x => Assert.That(Type("InnerSpecs").GetSubject(), Is.EqualTo("InnerSpecs plus")));
+            WithFile("NestedSubject.cs", x => Assert.That(x.Type("InnerSpecs").GetSubject(), Is.EqualTo("InnerSpecs plus")));
         }
 
         [Test]
         public void ParentClassSubjectIsUsed()
         {
-            WithFile("ParentSubject.cs", x => Assert.That(Type("InnerSpecs").GetSubject(), Is.EqualTo("Specs")));
+            WithFile("ParentSubject.cs", x => Assert.That(x.Type("InnerSpecs").GetSubject(), Is.EqualTo("Specs")));
         }
 
         [Test]
         public void ParentBaseClassSubjectIsUsed()
         {
-            WithFile("ParentBaseSubject.cs", x => Assert.That(Type("InnerSpecs").GetSubject(), Is.EqualTo("BaseClass")));
+            WithFile("ParentBaseSubject.cs", x => Assert.That(x.Type("InnerSpecs").GetSubject(), Is.EqualTo("BaseClass")));
         }
     }
 }
