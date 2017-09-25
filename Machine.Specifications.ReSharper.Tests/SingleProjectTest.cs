@@ -20,8 +20,6 @@ namespace Machine.Specifications.ReSharper.Tests
     {
         private readonly TargetFrameworkId _framework = new TargetFrameworkId(new NuGetFramework(".NETFramework", Version.Parse("4.5")), true);
 
-        private readonly MspecElementCollector _collector = new MspecElementCollector();
-
         protected override string RelativeTestDataPath => "Reflection";
 
         protected void WithFile(string filename, Action<MspecContext> action)
@@ -30,31 +28,32 @@ namespace Machine.Specifications.ReSharper.Tests
             {
                 Locks.ReentrancyGuard.Execute(GetType().Name, () =>
                 {
-                    _collector.Types.Clear();
-                    _collector.Fields.Clear();
-
-                    using (ReadLockCookie.Create())
-                    {
-                        WithPsiFile(project, filename, action);
-                        WithMetadataFile(filename, action);
-                    }
+                    WithFile(project, filename, action);
                 });
             });
         }
 
-        private void WithPsiFile(IProject project, string filename, Action<MspecContext> action)
+        private void WithFile(IProject project, string filename, Action<MspecContext> action)
+        {
+            using (ReadLockCookie.Create())
+            {
+                WithPsiFile(project, filename, new MspecElementCollector(), action);
+                WithMetadataFile(filename, new MspecElementCollector(), action);
+            }
+        }
+
+        private void WithPsiFile(IProject project, string filename, MspecElementCollector collector, Action<MspecContext> action)
         {
             var file = GetFile(project, filename);
 
             Assert.That(file, Is.Not.Null, $"Data file not found: {filename}");
 
-            _collector.Reset();
-            file.ProcessDescendants(_collector);
+            file.ProcessDescendants(collector);
 
-            action(new MspecContext(_collector));
+            action(collector.GetContext());
         }
 
-        private void WithMetadataFile(string filename, Action<MspecContext> action)
+        private void WithMetadataFile(string filename, MspecElementCollector collector, Action<MspecContext> action)
         {
             var references = GetProjectReferences()
                 .ToArray();
@@ -80,10 +79,9 @@ namespace Machine.Specifications.ReSharper.Tests
 
                 Assert.That(assembly, Is.Not.Null, $"Cannot get metadata assembly: {filename}");
 
-                _collector.Reset();
-                _collector.Explore(assembly);
+                collector.Explore(assembly);
 
-                action(new MspecContext(_collector));
+                action(collector.GetContext());
             }
         }
 

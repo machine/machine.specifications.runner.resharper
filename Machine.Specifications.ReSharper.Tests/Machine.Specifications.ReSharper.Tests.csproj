@@ -202,7 +202,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICollector.cs" />
     <Compile Include="MspecContext.cs" />
     <Compile Include="SingleProjectTest.cs" />
     <None Include="Data\Reflection\BaseClassTags.cs">

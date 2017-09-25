@@ -7,22 +7,21 @@ namespace Machine.Specifications.ReSharper.Tests
 {
     public class MspecContext
     {
-        private readonly ICollector _collector;
-
-        public MspecContext(ICollector collector)
+        public MspecContext(ITypeInfo[] types, IFieldInfo[] fields)
         {
-            _collector = collector;
+            Types = types;
+            Fields = fields;
         }
 
-        public IEnumerable<IFieldInfo> Fields => _collector.Fields;
+        public IEnumerable<IFieldInfo> Fields { get; }
 
-        public IEnumerable<ITypeInfo> Types => _collector.Types;
+        public IEnumerable<ITypeInfo> Types { get; }
 
         public ITypeInfo Type(string name = null)
         {
             var type = string.IsNullOrEmpty(name)
-                ? _collector.Types.FirstOrDefault()
-                : _collector.Types.FirstOrDefault(x => x.ShortName == name);
+                ? Types.FirstOrDefault()
+                : Types.FirstOrDefault(x => x.ShortName == name);
 
             Assert.That(type, Is.Not.Null, $"Type not found: {name}");
 
@@ -32,8 +31,8 @@ namespace Machine.Specifications.ReSharper.Tests
         public IFieldInfo Field(string name = null)
         {
             var field = string.IsNullOrEmpty(name)
-                ? _collector.Fields.FirstOrDefault()
-                : _collector.Fields.FirstOrDefault(x => x.ShortName == name);
+                ? Fields.FirstOrDefault()
+                : Fields.FirstOrDefault(x => x.ShortName == name);
 
             Assert.That(field, Is.Not.Null, $"Field not found: {name}");
 

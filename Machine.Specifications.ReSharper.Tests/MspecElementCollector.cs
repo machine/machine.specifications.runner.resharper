@@ -11,7 +11,7 @@ using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
-    public class MspecElementCollector : IRecursiveElementProcessor, ICollector
+    public class MspecElementCollector : IRecursiveElementProcessor
     {
         public IList<ITypeInfo> Types { get; } = new List<ITypeInfo>();
 
@@ -19,10 +19,9 @@ namespace Machine.Specifications.ReSharper.Tests
 
         public bool ProcessingIsFinished => false;
 
-        public void Reset()
+        public MspecContext GetContext()
         {
-            Types.Clear();
-            Fields.Clear();
+            return new MspecContext(Types.ToArray(), Fields.ToArray());
         }
 
         public void Explore(IMetadataAssembly assembly)
