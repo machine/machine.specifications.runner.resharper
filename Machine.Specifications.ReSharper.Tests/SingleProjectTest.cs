@@ -46,8 +46,6 @@ namespace Machine.Specifications.ReSharper.Tests
         {
             var file = GetFile(project, filename);
 
-            Assert.That(file, Is.Not.Null, $"Data file not found: {filename}");
-
             file.ProcessDescendants(collector);
 
             action(collector.GetContext());
@@ -87,9 +85,13 @@ namespace Machine.Specifications.ReSharper.Tests
 
         private IFile GetFile(IProject project, string filename)
         {
-            return project.GetAllProjectFiles(x => x.Name == filename)
-                .FirstOrDefault()?
-                .ToSourceFile()?
+            var file = project.GetAllProjectFiles(x => x.Name == filename)
+                .FirstOrDefault();
+
+            if (file == null || file.IsMissing)
+                Assert.That(file, Is.Not.Null, $"Data file not found: {filename}");
+
+            return file.ToSourceFile()?
                 .GetTheOnlyPsiFile<CSharpLanguage>();
         }
 

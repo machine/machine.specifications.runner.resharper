@@ -203,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MspecContext.cs" />
+    <Compile Include="Reflection\BehaviorSpecificationTests.cs" />
     <Compile Include="SingleProjectTest.cs" />
     <None Include="Data\Reflection\BaseClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
