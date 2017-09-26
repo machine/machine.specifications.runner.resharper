@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class SubjectTests : SingleProjectTest
+    public class SubjectTests : ReflectionWithSingleProject
     {
         [Test]
         public void NoSubjectReturnsEmptyString()

@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class IgnoreTests : SingleProjectTest
+    public class IgnoreTests : ReflectionWithSingleProject
     {
         [Test]
         public void NoAttributeIsntIgnored()

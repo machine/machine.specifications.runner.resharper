@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class TagTests : SingleProjectTest
+    public class TagTests : ReflectionWithSingleProject
     {
         [Test]
         public void TagsInBaseClassIgnored()

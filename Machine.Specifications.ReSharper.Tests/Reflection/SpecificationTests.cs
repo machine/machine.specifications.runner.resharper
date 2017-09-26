@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class SpecificationTests : SingleProjectTest
+    public class SpecificationTests : ReflectionWithSingleProject
     {
         [Test]
         public void SingleSpecIsValid()

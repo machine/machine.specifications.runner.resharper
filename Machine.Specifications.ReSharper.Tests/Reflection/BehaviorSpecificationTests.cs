@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class BehaviorSpecificationTests : SingleProjectTest
+    public class BehaviorSpecificationTests : ReflectionWithSingleProject
     {
         [Test]
         public void ClassHasBehavior()

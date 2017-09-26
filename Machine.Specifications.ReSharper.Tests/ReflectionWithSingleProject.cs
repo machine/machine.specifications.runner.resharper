@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests
 {
     [MspecReferences]
-    public abstract class SingleProjectTest : BaseTestWithSingleProject
+    public abstract class ReflectionWithSingleProject : BaseTestWithSingleProject
     {
         private readonly TargetFrameworkId _framework = new TargetFrameworkId(new NuGetFramework(".NETFramework", Version.Parse("4.5")), true);
 

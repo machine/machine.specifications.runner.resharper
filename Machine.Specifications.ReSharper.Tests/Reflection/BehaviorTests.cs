@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Reflection
 {
     [TestFixture]
-    public class BehaviorTests : SingleProjectTest
+    public class BehaviorTests : ReflectionWithSingleProject
     {
         [Test]
         public void SingleBehaviorSpecIsValid()
