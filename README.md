@@ -8,6 +8,6 @@ MSpec provides a Resharper plugin integrate with the ReSharper test runner, cust
 
 1) Follow the instructions for deploying a ReSharper package locally [here](https://www.jetbrains.com/help/resharper/sdk/Extensions/Deployment/LocalInstallation.html)
 2) Set the startup project to `Machine.Specifications.ReSharperRunner.Debug.VS`
-3) Build the project and take note of the warnings `"No install product MyProductName"`
-4) Modify the provider and runner .csproj files to replace `MyProductName` with the product name that matches your experimental ReSharper instance.
+3) Build the project and take note of the warnings `"No installed product MyProductName"`
+4) Modify the provider and runner `.csproj` files to replace `MyProductName` with the product name that matches your experimental ReSharper instance (eg. `ReSharperPlatformVs15_abc123mspec`).
 5) Run and debug from Visual Studio
