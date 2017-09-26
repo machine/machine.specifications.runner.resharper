@@ -22,9 +22,6 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             if (!metadataTypeInfo.IsContext())
                 return;
 
-            var t = metadataTypeInfo.AsTypeInfo();
-            t.GetFields().Select(x => x.FieldType.GetGenericArguments()).ToArray();
-
             ContextElement contextElement = _factories.Contexts.CreateContext(consumer, project, assembly.Location.FullPath, metadataTypeInfo);
 
             consumer.OnUnitTestElement(contextElement);
