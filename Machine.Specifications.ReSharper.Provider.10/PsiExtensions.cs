@@ -6,12 +6,28 @@ using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
+using Machine.Specifications.ReSharperProvider.Reflection;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider
 {
-    internal static class PsiExtensions
+    public static class PsiExtensions
     {
+        public static ITypeInfo AsTypeInfo(this ITypeElement type, IDeclaredType declaredType = null)
+        {
+            return new PsiTypeInfoAdapter(type, declaredType);
+        }
+        
+        public static IAttributeInfo AsAttributeInfo(this IAttributeInstance attribute)
+        {
+            return new PsiAttributeInfoAdapter(attribute);
+        }
+
+        public static IFieldInfo AsFieldInfo(this IField field)
+        {
+            return new PsiFieldInfoAdapter(field);
+        }
+
         public static bool IsContext(this IDeclaredElement element)
         {
             var clazz = element as IClass;

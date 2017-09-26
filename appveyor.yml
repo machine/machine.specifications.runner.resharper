@@ -1,7 +1,7 @@
 image: Visual Studio 2017
 
 environment:
-  nuget_version: '2.0.0-beta.3'
+  nuget_version: '2.0.0-beta.4'
   nuget_prerelease: false
   assembly_version: '2.0.0'
 
@@ -31,6 +31,11 @@ build:
 after_build:
 - cmd: >-
     nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=%NUGET_VERSION%" -outputdirectory Build
+
+test:
+  assemblies:
+    only:
+      - 'Build\Machine.Specifications.ReSharper.Tests.dll'
 
 artifacts:
   - path: Build\*.nupkg
