@@ -4,7 +4,7 @@
 
 MSpec provides a Resharper plugin integrate with the ReSharper test runner, custom naming rules, and code annotations. MSpec currently supports ReSharper (2017.1 to 8.2) over the extension gallery. Just search for `Machine.Specifications.Runner.Resharper`.
 
-## Debugging
+### Debugging
 
 1) Follow the instructions for deploying a ReSharper package locally [here](https://www.jetbrains.com/help/resharper/sdk/Extensions/Deployment/LocalInstallation.html)
 2) Set the startup project to `Machine.Specifications.ReSharperRunner.Debug.VS`
