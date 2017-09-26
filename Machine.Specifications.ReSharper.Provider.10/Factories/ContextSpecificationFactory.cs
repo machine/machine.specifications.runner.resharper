@@ -12,21 +12,21 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     public class ContextSpecificationFactory
     {
         private readonly ElementCache _cache;
-        private readonly UnitTestingCachingService _cachingService;
+        private readonly MspecServiceProvider _serviceProvider;
         private readonly IUnitTestElementManager _manager;
         private readonly IUnitTestElementIdFactory _elementIdFactory;
-        private readonly MSpecUnitTestProvider _provider;
+        private readonly MspecTestProvider _provider;
         private readonly ReflectionTypeNameCache _reflectionTypeNameCache = new ReflectionTypeNameCache();
 
-        public ContextSpecificationFactory(MSpecUnitTestProvider provider,
+        public ContextSpecificationFactory(MspecTestProvider provider,
                                            IUnitTestElementManager manager,
                                            IUnitTestElementIdFactory elementIdFactory,
-                                           UnitTestingCachingService cachingService,
+                                           MspecServiceProvider serviceProvider,
                                            ElementCache cache)
         {
             _manager = manager;
             _elementIdFactory = elementIdFactory;
-            _cachingService = cachingService;
+            _serviceProvider = serviceProvider;
             _provider = provider;
             _cache = cache;
         }
@@ -69,8 +69,13 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return contextSpecification;
             }
 
-            return new ContextSpecificationElement(id, context, declaringTypeName.GetPersistent(),
-                _cachingService, _manager, fieldName, isIgnored);
+            var element = new ContextSpecificationElement(id, context, declaringTypeName.GetPersistent(),
+                _serviceProvider, fieldName, isIgnored);
+
+            element.Parent = context;
+            element.OwnCategories = context.OwnCategories;
+
+            return element;
         }
     }
 }

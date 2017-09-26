@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.Util;
 using Machine.Specifications.ReSharperProvider.Factories;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
@@ -27,7 +28,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
             return declaration.DeclaredElement.IsSpecification();
         }
 
-        public IEnumerable<UnitTestElementDisposition> AcceptElement(string assemblyPath, IFile file, ITreeNode element)
+        public IEnumerable<UnitTestElementDisposition> AcceptElement(FileSystemPath assemblyPath, IFile file, ITreeNode element)
         {
             var declaration = (IDeclaration)element;
             var contextSpecification = _factory.CreateContextSpecification(_consumer, declaration.DeclaredElement);

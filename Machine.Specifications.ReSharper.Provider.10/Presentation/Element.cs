@@ -24,35 +24,27 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         private readonly IClrTypeName _declaringTypeName;
         private readonly UnitTestTaskFactory _taskFactory;
-        private readonly UnitTestingCachingService _cachingService;
-        private readonly IUnitTestElementManager _elementManager;
+        private readonly MspecServiceProvider _serviceProvider;
         private IUnitTestElement _parent;
 
-        protected Element(Element parent,
-                          IClrTypeName declaringTypeName,
-                          UnitTestingCachingService cachingService,
-                          IUnitTestElementManager elementManager,
-                          bool isIgnored)
+        protected Element(
+            IUnitTestElement parent,
+            IClrTypeName declaringTypeName,
+            MspecServiceProvider serviceProvider,
+            bool isIgnored)
         {
-            _declaringTypeName = declaringTypeName ?? throw new ArgumentNullException(nameof(declaringTypeName));
-
-            _cachingService = cachingService;
-            _elementManager = elementManager;
-
-            if (isIgnored)
-            {
-                ExplicitReason = "Ignored";
-            }
+            _declaringTypeName = declaringTypeName;
+            _serviceProvider = serviceProvider;
 
             Parent = parent;
+            ExplicitReason = isIgnored ? "Ignored" : string.Empty;
 
-            Children = new BindableCollection<IUnitTestElement>(UT.Locks.ReadLock);
             _taskFactory = new UnitTestTaskFactory();
         }
 
         public abstract string Kind { get; }
 
-        public abstract ISet<UnitTestElementCategory> OwnCategories { get; }
+        public ISet<UnitTestElementCategory> OwnCategories { get; set; } = JetHashSet<UnitTestElementCategory>.Empty;
 
         public string ExplicitReason { get; }
 
@@ -81,12 +73,12 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                     _parent?.Children.Add(this);
                 }
 
-                _elementManager.FireElementChanged(oldParent);
-                _elementManager.FireElementChanged(newParent);
+                _serviceProvider.ElementManager.FireElementChanged(oldParent);
+                _serviceProvider.ElementManager.FireElementChanged(newParent);
             }
         }
 
-        public ICollection<IUnitTestElement> Children { get; }
+        public ICollection<IUnitTestElement> Children { get; } = new BindableCollection<IUnitTestElement>(UT.Locks.ReadLock);
 
         public abstract string ShortName { get; }
 
@@ -182,7 +174,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         protected ITypeElement GetDeclaredType()
         {
-            return _cachingService.GetTypeElement(Id.Project, TargetFrameworkId.Default, _declaringTypeName, true, true);
+            return _serviceProvider.CachingService.GetTypeElement(Id.Project, TargetFrameworkId.Default, _declaringTypeName, true, true);
         }
 
         public IClrTypeName GetTypeClrName()

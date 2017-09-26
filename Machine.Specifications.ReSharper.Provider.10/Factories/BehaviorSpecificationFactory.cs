@@ -13,19 +13,19 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     public class BehaviorSpecificationFactory
     {
         private readonly IUnitTestElementIdFactory _elementIdFactory;
-        private readonly MSpecUnitTestProvider _provider;
+        private readonly MspecTestProvider _provider;
         private readonly IUnitTestElementManager _manager;
-        private readonly UnitTestingCachingService _cachingService;
+        private readonly MspecServiceProvider _serviceProvider;
 
-        public BehaviorSpecificationFactory(MSpecUnitTestProvider provider,
+        public BehaviorSpecificationFactory(MspecTestProvider provider,
                                             IUnitTestElementManager manager,
-                                            UnitTestingCachingService cachingService,
+                                            MspecServiceProvider serviceProvider,
                                             IUnitTestElementIdFactory elementIdFactory)
         {
             _elementIdFactory = elementIdFactory;
             _provider = provider;
             _manager = manager;
-            _cachingService = cachingService;
+            _serviceProvider = serviceProvider;
         }
 
         public IEnumerable<BehaviorSpecificationElement> CreateBehaviorSpecificationsFromBehavior(
@@ -73,8 +73,13 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return behaviorSpecification;
             }
 
-            return new BehaviorSpecificationElement(id, behavior, declaringTypeName.GetPersistent(),
-                _cachingService, _manager, fieldName, isIgnored);
+            var element = new BehaviorSpecificationElement(id, behavior, declaringTypeName.GetPersistent(),
+                _serviceProvider, fieldName, isIgnored);
+
+            element.Parent = behavior;
+            element.OwnCategories = behavior.OwnCategories;
+
+            return element;
         }
     }
 }

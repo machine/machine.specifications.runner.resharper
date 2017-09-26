@@ -4,7 +4,6 @@ using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.Util;
 using Machine.Specifications.Runner.Utility;
 
@@ -14,32 +13,23 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     {
         private readonly string _subject;
 
-        public ContextElement(UnitTestElementId id,
-                              IClrTypeName typeName,
-                              UnitTestingCachingService cachingService,
-                              IUnitTestElementManager elementManager,
-                              string assemblyLocation,
-                              string subject,
-                              IEnumerable<string> tags,
-                              bool isIgnored,
-                              IUnitTestElementCategoryFactory categoryFactory)
-            : base(null, typeName, cachingService, elementManager, isIgnored)
+        public ContextElement(
+            UnitTestElementId id,
+            IClrTypeName typeName,
+            MspecServiceProvider serviceProvider,
+            string subject,
+            bool isIgnored)
+            : base(null, typeName, serviceProvider, isIgnored)
         {
             Id = id;
-            AssemblyLocation = assemblyLocation;
             _subject = subject;
-
-            if (tags != null)
-                OwnCategories = categoryFactory.Create(tags);
         }
 
         public override string ShortName => Kind + GetPresentation();
 
-        public string AssemblyLocation { get; set; }
+        public FileSystemPath AssemblyLocation { get; set; }
 
         public override string Kind => "Context";
-
-        public override ISet<UnitTestElementCategory> OwnCategories { get; }
 
         public override UnitTestElementId Id { get; }
 

@@ -1,27 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.Util;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public class ContextSpecificationElement : FieldElement
     {
-        public ContextSpecificationElement(UnitTestElementId id,
-                                           ContextElement context,
-                                           IClrTypeName declaringTypeName,
-                                           UnitTestingCachingService cachingService,
-                                           IUnitTestElementManager elementManager,
-                                           string fieldName,
-                                           bool isIgnored)
-            : base(context,
-                   declaringTypeName,
-                   cachingService,
-                   elementManager,
-                   fieldName,
-                   isIgnored || context.Explicit)
+        public ContextSpecificationElement
+            (UnitTestElementId id,
+            IUnitTestElement parent,
+            IClrTypeName declaringTypeName,
+            MspecServiceProvider serviceProvider,
+            string fieldName,
+            bool isIgnored)
+            : base(parent, declaringTypeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
         {
             Id = id;
         }
@@ -29,19 +22,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public ContextElement Context => (ContextElement)Parent;
 
         public override string Kind => "Specification";
-
-        public override ISet<UnitTestElementCategory> OwnCategories
-        {
-            get
-            {
-                if (Context == null)
-                {
-                    return UnitTestElementCategory.Uncategorized.ToSet();
-                }
-
-                return Context.OwnCategories;
-            }
-        }
 
         public override UnitTestElementId Id { get; }
 

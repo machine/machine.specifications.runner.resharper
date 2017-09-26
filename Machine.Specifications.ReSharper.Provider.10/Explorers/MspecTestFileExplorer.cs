@@ -9,9 +9,9 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
     public class MspecTestFileExplorer
     {
         private readonly ElementFactories _factories;
-        private readonly MSpecUnitTestProvider _provider;
+        private readonly MspecTestProvider _provider;
 
-        public MspecTestFileExplorer(MSpecUnitTestProvider provider, ElementFactories factories)
+        public MspecTestFileExplorer(MspecTestProvider provider, ElementFactories factories)
         {
             _provider = provider;
             _factories = factories;

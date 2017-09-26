@@ -8,7 +8,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
     {
         public UnitTestTask CreateRunAssemblyTask(ContextElement context, UnitTestElementId id)
         {
-            return new UnitTestTask(null, new MspecTestAssemblyTask(id.ProjectId, context.AssemblyLocation));
+            return new UnitTestTask(null, new MspecTestAssemblyTask(id.ProjectId, context.AssemblyLocation.FullPath));
         }
 
         public UnitTestTask CreateContextTask(ContextElement context, UnitTestElementId id)

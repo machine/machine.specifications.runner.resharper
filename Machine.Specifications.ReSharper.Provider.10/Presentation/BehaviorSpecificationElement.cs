@@ -3,27 +3,20 @@ using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.Util;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public class BehaviorSpecificationElement : FieldElement
     {
-        public BehaviorSpecificationElement(UnitTestElementId id,
-                                            BehaviorElement behavior,
-                                            IClrTypeName declaringTypeName,
-                                            UnitTestingCachingService cachingService,
-                                            IUnitTestElementManager elementManager,
-                                            string fieldName,
-                                            bool isIgnored
-          )
-            : base(behavior,
-                   declaringTypeName,
-                   cachingService,
-                   elementManager,
-                   fieldName,
-                   isIgnored || behavior.Explicit)
+        public BehaviorSpecificationElement(
+            UnitTestElementId id,
+            IUnitTestElement parent,
+            IClrTypeName declaringTypeName,
+            MspecServiceProvider serviceProvider,
+            string fieldName,
+            bool isIgnored)
+            : base(parent, declaringTypeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
         {
             Id = id;
         }
@@ -31,17 +24,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public BehaviorElement Behavior => (BehaviorElement)Parent;
 
         public override string Kind => "Behavior Specification";
-
-        public override ISet<UnitTestElementCategory> OwnCategories
-        {
-            get
-            {
-                if (Behavior == null)
-                    return UnitTestElementCategory.Uncategorized.ToSet();
-
-                return Behavior.OwnCategories;
-            }
-        }
 
         public override UnitTestElementId Id { get; }
 

@@ -3,20 +3,19 @@ using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Util;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Elements;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public abstract class FieldElement : Element
     {
-        protected FieldElement(Element parent,
-                               IClrTypeName declaringTypeName,
-                               UnitTestingCachingService cachingService,
-                               IUnitTestElementManager elementManager,
-                               string fieldName,
-                               bool isIgnored)
-            : base(parent, declaringTypeName, cachingService, elementManager, isIgnored || parent.Explicit)
+        protected FieldElement(
+            IUnitTestElement parent,
+            IClrTypeName declaringTypeName,
+            MspecServiceProvider serviceProvider,
+            string fieldName,
+            bool isIgnored)
+            : base(parent, declaringTypeName, serviceProvider, isIgnored || parent.Explicit)
         {
             FieldName = fieldName;
         }

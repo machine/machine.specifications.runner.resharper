@@ -6,13 +6,14 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.ReSharperProvider.Presentation;
+using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider
 {
     [UnitTestProvider]
-    public class MSpecUnitTestProvider : IUnitTestProvider
+    public class MspecTestProvider : IUnitTestProvider
     {
-        private const string ProviderId = "Machine.Specifications";
+        private const string ProviderId = MspecTaskRunner.RunnerId;
 
         private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(ProviderId, null);
 
@@ -22,7 +23,7 @@ namespace Machine.Specifications.ReSharperProvider
             typeof(BehaviorSpecificationElement),
             typeof(ContextSpecificationElement));
 
-        public MSpecUnitTestProvider()
+        public MspecTestProvider()
         {
             Debug.Listeners.Add(new DefaultTraceListener());
         }

@@ -5,6 +5,7 @@ using JetBrains.Application.Progress;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.Util;
 using Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers;
 using Machine.Specifications.ReSharperProvider.Factories;
 
@@ -16,9 +17,9 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
         private readonly IEnumerable<IElementHandler> _elementHandlers;
         private readonly IFile _file;
         private readonly Func<bool> _interrupted;
-        private readonly string _assemblyPath;
+        private readonly FileSystemPath _assemblyPath;
 
-        public FileExplorer(MSpecUnitTestProvider provider,
+        public FileExplorer(MspecTestProvider provider,
                             ElementFactories factories,
                             IFile file,
                             IUnitTestElementsObserver consumer,
@@ -36,7 +37,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
 
             var project = file.GetSourceFile().ToProjectFile().GetProject();
 
-            _assemblyPath = project.GetOutputFilePath(consumer.TargetFrameworkId).FullPath;
+            _assemblyPath = project.GetOutputFilePath(consumer.TargetFrameworkId);
 
             _elementHandlers = new List<IElementHandler>
             {
