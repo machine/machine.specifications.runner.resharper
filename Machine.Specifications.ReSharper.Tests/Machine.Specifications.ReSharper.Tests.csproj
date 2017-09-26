@@ -202,84 +202,89 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Psi\BaseClassTags.cs">
+    <Compile Include="MspecContext.cs" />
+    <Compile Include="Reflection\BehaviorSpecificationTests.cs" />
+    <Compile Include="ReflectionWithSingleProject.cs" />
+    <None Include="Data\Reflection\BaseClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ContainingClassTags.cs">
+    <None Include="Data\Reflection\ContainingClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\NestedTag.cs">
+    <None Include="Data\Reflection\NestedTag.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\SingleTag.cs">
+    <None Include="Data\Reflection\SingleTag.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\MultipleTags.cs">
+    <None Include="Data\Reflection\MultipleTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\IgnoredField.cs">
+    <None Include="Data\Reflection\IgnoredField.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\IgnoredClass.cs">
+    <None Include="Data\Reflection\IgnoredClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\BehaviorNoSpecs.cs">
+    <None Include="Data\Reflection\BehaviorNoSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\BehaviorAbstract.cs">
+    <None Include="Data\Reflection\BehaviorAbstract.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="Psi\BehaviorTests.cs" />
-    <Compile Include="Psi\IgnoreTests.cs" />
-    <Compile Include="Psi\SpecificationTests.cs" />
-    <Compile Include="Psi\TagTests.cs" />
-    <None Include="Data\Psi\BaseClassWithSubject.cs">
+    <None Include="Data\Reflection\DuplicateTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\InheritedSubjects.cs">
+    <Compile Include="Reflection\BehaviorTests.cs" />
+    <Compile Include="Reflection\IgnoreTests.cs" />
+    <Compile Include="Reflection\SpecificationTests.cs" />
+    <Compile Include="Reflection\TagTests.cs" />
+    <None Include="Data\Reflection\BaseClassWithSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\CompositeSubject.cs">
+    <None Include="Data\Reflection\InheritedSubjects.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\NestedSubject.cs">
+    <None Include="Data\Reflection\CompositeSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ParentSubject.cs">
+    <None Include="Data\Reflection\NestedSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ParentBaseSubject.cs">
+    <None Include="Data\Reflection\ParentSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="Psi\SubjectTests.cs" />
-    <None Include="Data\Psi\EmptyClass.cs">
+    <None Include="Data\Reflection\ParentBaseSubject.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\AbstractSpecs.cs">
+    <Compile Include="Reflection\SubjectTests.cs" />
+    <None Include="Data\Reflection\EmptyClass.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\SingleBehavior.cs">
+    <None Include="Data\Reflection\AbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ConcreteAndAbstractSpecs.cs">
+    <None Include="Data\Reflection\SingleBehavior.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\SingleBehaviorSpec.cs">
+    <None Include="Data\Reflection\ConcreteAndAbstractSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\ClassWithGenericField.cs">
+    <None Include="Data\Reflection\SingleBehaviorSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Psi\GenericWithSpecs.cs">
+    <None Include="Data\Reflection\ClassWithGenericField.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Reflection\GenericWithSpecs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="IMspecTestZone.cs" />
     <Compile Include="MspecReferencesAttribute.cs" />
-    <Compile Include="PsiElementCollector.cs" />
-    <Compile Include="PsiTests.cs" />
-    <Compile Include="Psi\ContextTests.cs" />
+    <Compile Include="MspecElementCollector.cs" />
+    <Compile Include="Reflection\ContextTests.cs" />
     <Compile Include="MspecEnvironmentAssembly.cs" />
-    <None Include="Data\Psi\SingleSpec.cs">
+    <None Include="Data\Reflection\SingleSpec.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -298,7 +303,12 @@
       <Project>{0ac9ac80-d8cc-4cb7-bb85-312168096781}</Project>
       <Name>Machine.Specifications.ReSharper.Provider.10</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Machine.Specifications.ReSharper.Runner.10\Machine.Specifications.ReSharper.Runner.10.csproj">
+      <Project>{585ae31b-2361-4a4e-8e9e-32b808d280a0}</Project>
+      <Name>Machine.Specifications.ReSharper.Runner.10</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets" Condition="Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

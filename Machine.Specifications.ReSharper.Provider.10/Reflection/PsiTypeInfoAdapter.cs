@@ -16,6 +16,8 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
             _declaredType = declaredType;
         }
 
+        public string ShortName => _type.ShortName;
+
         public string FullName => _type.GetClrName().FullName;
 
         public bool IsAbstract => _type is IModifiersOwner owner && owner.IsAbstract;

@@ -38,6 +38,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <HostFullIdentifier>MyProductName</HostFullIdentifier>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="antlr.runtime, Version=2.7.7.1, Culture=neutral, PublicKeyToken=0f493c87b190d7e9, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr2.Runtime.2.7.7.02\lib\antlr.runtime.dll</HintPath>
@@ -258,6 +261,9 @@
     <Compile Include="Reflection\IAttributeInfo.cs" />
     <Compile Include="Reflection\IFieldInfo.cs" />
     <Compile Include="Reflection\ITypeInfo.cs" />
+    <Compile Include="Reflection\MetadataAttributeInfoAdapter.cs" />
+    <Compile Include="Reflection\MetadataFieldInfoAdapter.cs" />
+    <Compile Include="Reflection\MetadataTypeInfoAdapter.cs" />
     <Compile Include="Reflection\PsiAttributeInfoAdapter.cs" />
     <Compile Include="Reflection\PsiFieldInfoAdapter.cs" />
     <Compile Include="Reflection\PsiTypeInfoAdapter.cs" />
