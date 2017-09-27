@@ -2,8 +2,8 @@ using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
+using Machine.Specifications.ReSharperProvider.Elements;
 using Machine.Specifications.ReSharperProvider.Factories;
-using Machine.Specifications.ReSharperProvider.Presentation;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers
 {

@@ -5,7 +5,7 @@ using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 
-namespace Machine.Specifications.ReSharperProvider.Presentation
+namespace Machine.Specifications.ReSharperProvider.Elements
 {
     public class BehaviorElement : FieldElement, IEquatable<BehaviorElement>
     {

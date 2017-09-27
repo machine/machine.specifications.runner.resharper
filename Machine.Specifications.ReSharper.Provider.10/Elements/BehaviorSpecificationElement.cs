@@ -9,7 +9,7 @@ using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 using Machine.Specifications.ReSharperRunner.Tasks;
 
-namespace Machine.Specifications.ReSharperProvider.Presentation
+namespace Machine.Specifications.ReSharperProvider.Elements
 {
     public class BehaviorSpecificationElement : FieldElement, IEquatable<BehaviorSpecificationElement>
     {

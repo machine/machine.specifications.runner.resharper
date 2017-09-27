@@ -5,7 +5,7 @@ using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
-using Machine.Specifications.ReSharperProvider.Presentation;
+using Machine.Specifications.ReSharperProvider.Elements;
 
 namespace Machine.Specifications.ReSharperProvider
 {

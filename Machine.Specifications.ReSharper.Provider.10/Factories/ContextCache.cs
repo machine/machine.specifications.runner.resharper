@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
-using Machine.Specifications.ReSharperProvider.Presentation;
+using Machine.Specifications.ReSharperProvider.Elements;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {

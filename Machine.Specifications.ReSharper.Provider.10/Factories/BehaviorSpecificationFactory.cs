@@ -5,7 +5,7 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
-using Machine.Specifications.ReSharperProvider.Presentation;
+using Machine.Specifications.ReSharperProvider.Elements;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
