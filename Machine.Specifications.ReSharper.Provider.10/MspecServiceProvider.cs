@@ -1,7 +1,6 @@
 ﻿using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
 using Machine.Specifications.ReSharperProvider.RunStrategies;

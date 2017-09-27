@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Application.UI.BindableLinq.Collections;
 using JetBrains.Metadata.Reader.API;
@@ -124,61 +122,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         protected ITypeElement GetDeclaredType()
         {
             return ServiceProvider.CachingService.GetTypeElement(Id.Project, TargetFrameworkId.Default, TypeName, true, true);
-        }
-
-        private bool Equals(IUnitTestElement other)
-        {
-            if (ReferenceEquals(null, other))
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
-
-            if (other.GetType() == GetType())
-            {
-                var element = (Element)other;
-                string thisFullName;
-                string otherFullName;
-
-                try
-                {
-                    // This might throw for invalid elements.
-                    thisFullName = TypeName.FullName;
-                    otherFullName = element.TypeName.FullName;
-                }
-                catch (NullReferenceException)
-                {
-                    Debug.Fail("Should not happen as the type name should be persisted!");
-                    return false;
-                }
-
-                return Equals(other.Id, Id)
-                       && other.ShortName == ShortName
-                       && thisFullName == otherFullName;
-            }
-
-            return false;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-                return false;
-
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            return Equals(obj as IUnitTestElement);
-        }
-
-        public override int GetHashCode()
-        {
-            var result = 0;
-            result = 29 * result + Id.GetHashCode();
-            result = 29 * result + ShortName.GetHashCode();
-            result = 29 * result + TypeName.FullName.GetHashCode();
-
-            return result;
         }
 
         public virtual IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
@@ -9,7 +10,7 @@ using Machine.Specifications.ReSharperRunner.Tasks;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    public class BehaviorSpecificationElement : FieldElement
+    public class BehaviorSpecificationElement : FieldElement, IEquatable<BehaviorSpecificationElement>
     {
         public BehaviorSpecificationElement(
             UnitTestElementId id,
@@ -44,13 +45,38 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
             var context = Behavior.Context;
+            var fullName = context.TypeName.FullName;
 
             return new List<UnitTestTask>
             {
                 new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, context.AssemblyLocation.FullPath)),
-                new UnitTestTask(context, new MspecTestContextTask(Id.ProjectId, context.TypeName.FullName)),
-                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, context.TypeName.FullName, Behavior.FieldName, FieldName, Behavior.FieldType))
+                new UnitTestTask(context, new MspecTestContextTask(Id.ProjectId, fullName)),
+                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName, Behavior.FieldType))
             };
+        }
+
+        public bool Equals(BehaviorSpecificationElement other)
+        {
+            return other != null &&
+                   Equals(Id, other.Id) &&
+                   Equals(TypeName, other.TypeName) &&
+                   Equals(Behavior.Context.TypeName, other.Behavior.Context.TypeName) &&
+                   Equals(FieldName, other.FieldName);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as BehaviorSpecificationElement);
+        }
+
+        public override int GetHashCode()
+        {
+            var result = Id != null ? Id.GetHashCode() : 0;
+            result = (result * 397) ^ (TypeName != null ? TypeName.FullName.GetHashCode() : 0);
+            result = (result * 397) ^ (Behavior.Context != null ? Behavior.Context.TypeName.GetHashCode() : 0);
+            result = (result * 397) ^ (FieldName != null ? FieldName.GetHashCode() : 0);
+
+            return result;
         }
 
         public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
