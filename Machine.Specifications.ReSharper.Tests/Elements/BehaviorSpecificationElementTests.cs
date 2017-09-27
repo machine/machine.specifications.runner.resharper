@@ -1,6 +1,6 @@
 ﻿using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
-using Machine.Specifications.ReSharperProvider.Elements;
+using Machine.Specifications.ReSharperProvider.Presentation;
 using NSubstitute;
 using NUnit.Framework;
 

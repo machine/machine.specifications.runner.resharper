@@ -3,8 +3,8 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
-using Machine.Specifications.ReSharperProvider.Elements;
 using Machine.Specifications.ReSharperProvider.Factories;
+using Machine.Specifications.ReSharperProvider.Presentation;
 
 namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
 {

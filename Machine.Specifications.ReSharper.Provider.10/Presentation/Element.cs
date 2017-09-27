@@ -11,7 +11,7 @@ using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
 using JetBrains.Util;
 
-namespace Machine.Specifications.ReSharperProvider.Elements
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public abstract class Element : IUnitTestElement
     {

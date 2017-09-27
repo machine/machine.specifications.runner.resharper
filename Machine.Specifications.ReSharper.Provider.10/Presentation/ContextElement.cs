@@ -9,7 +9,7 @@ using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.ReSharperProvider.Elements
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public class ContextElement : Element, IEquatable<ContextElement>
     {

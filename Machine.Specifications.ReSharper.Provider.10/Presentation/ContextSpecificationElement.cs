@@ -8,7 +8,7 @@ using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 using Machine.Specifications.ReSharperRunner.Tasks;
 
-namespace Machine.Specifications.ReSharperProvider.Elements
+namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public class ContextSpecificationElement : FieldElement, IEquatable<ContextSpecificationElement>
     {
