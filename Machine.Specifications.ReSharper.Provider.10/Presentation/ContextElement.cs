@@ -5,7 +5,6 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
-using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
@@ -19,9 +18,8 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             MspecServiceProvider serviceProvider,
             string subject,
             bool isIgnored)
-            : base(null, typeName, serviceProvider, isIgnored)
+            : base(id, null, typeName, serviceProvider, isIgnored)
         {
-            Id = id;
             _subject = subject;
         }
 
@@ -31,19 +29,14 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public override string Kind => "Context";
 
-        public override UnitTestElementId Id { get; }
-
         protected override string GetPresentation()
         {
-            return GetSubject() + GetTypeClrName().ShortName.ToFormat();
-        }
+            var display = TypeName.ShortName.ToLower();
 
-        private string GetSubject()
-        {
             if (string.IsNullOrEmpty(_subject))
-                return null;
+                return display;
 
-            return _subject + ", ";
+            return $"{_subject}, {display}";
         }
 
         public override IDeclaredElement GetDeclaredElement()

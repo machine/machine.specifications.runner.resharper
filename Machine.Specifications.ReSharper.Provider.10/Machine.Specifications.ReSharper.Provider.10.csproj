@@ -247,7 +247,6 @@
     <Compile Include="Factories\ContextFactory.cs" />
     <Compile Include="Factories\ContextSpecificationFactory.cs" />
     <Compile Include="Factories\ElementFactories.cs" />
-    <Compile Include="Factories\UnitTestTaskFactory.cs" />
     <Compile Include="MetadataExtensions.cs" />
     <Compile Include="MSpecElementNaming.cs" />
     <Compile Include="MspecTestProvider.cs" />

@@ -14,23 +14,17 @@ namespace Machine.Specifications.ReSharperProvider
         private static readonly MspecOutOfProcessUnitTestRunStrategy Default = new MspecOutOfProcessUnitTestRunStrategy();
 
         private readonly MspecTestProvider _provider;
-        private readonly ISolution _solution;
         private readonly IUnitTestElementIdFactory _elementIdFactory;
-        private readonly IDotNetCoreSdkResolver _dotNetCoreSdkResolver;
 
         public MspecServiceProvider(
             MspecTestProvider provider,
             UnitTestingCachingService cachingService,
-            ISolution solution,
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
-            IUnitTestElementCategoryFactory categoryFactory,
-            IDotNetCoreSdkResolver dotNetCoreSdkResolver)
+            IUnitTestElementCategoryFactory categoryFactory)
         {
             _provider = provider;
-            _solution = solution;
             _elementIdFactory = elementIdFactory;
-            _dotNetCoreSdkResolver = dotNetCoreSdkResolver;
             CategoryFactory = categoryFactory;
             CachingService = cachingService;
             ElementManager = elementManager;

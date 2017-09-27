@@ -53,7 +53,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var metadataTypeName = behavior.FirstGenericArgumentClass().FullyQualifiedName();
             var fieldType = new NormalizedTypeName(metadataTypeName);
 
-            return GetOrCreateBehavior(context, consumer, context.GetTypeClrName(), behavior.Name,
+            return GetOrCreateBehavior(context, consumer, context.TypeName, behavior.Name,
                 behavior.IsIgnored() || typeContainingBehaviorSpecifications.IsIgnored(), fieldType);
         }
 

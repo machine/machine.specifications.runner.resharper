@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
@@ -28,14 +29,12 @@ namespace Machine.Specifications.ReSharperProvider
             string[] tags,
             bool ignored)
         {
-            var element = GetOrCreateElement(typeName.FullName, x =>
+            var categories = _serviceProvider.CategoryFactory.Create(tags);
+
+            var element = GetOrCreateElement(typeName.FullName, null, categories, x =>
                 new ContextElement(x, typeName, _serviceProvider, subject, ignored));
 
-            element.OwnCategories = _serviceProvider.CategoryFactory.Create(tags);
             element.AssemblyLocation = assemblyLocation;
-
-            var invalidChildren = element.Children.Where(x => x.State == UnitTestElementState.Invalid);
-            _serviceProvider.ElementManager.RemoveElements(invalidChildren.ToSet());
 
             return element;
         }
@@ -49,13 +48,8 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var id = $"{typeName.FullName}.{fieldName}";
 
-            var element = GetOrCreateElement(id, x =>
+            return GetOrCreateElement(id, parent, parent.OwnCategories, x =>
                 new BehaviorElement(x, parent, typeName, _serviceProvider, fieldName, ignored, fieldType));
-
-            element.Parent = parent;
-            element.OwnCategories = parent.OwnCategories;
-
-            return element;
         }
 
         public IUnitTestElement GetOrCreateContextSpecification(
@@ -66,13 +60,8 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var id = $"{typeName.FullName}.{fieldName}";
 
-            var element = GetOrCreateElement(id, x =>
+            return GetOrCreateElement(id, parent, parent.OwnCategories, x =>
                 new ContextSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, ignored || parent.Explicit));
-
-            element.Parent = parent;
-            element.OwnCategories = parent.OwnCategories;
-
-            return element;
         }
 
         public IUnitTestElement GetOrCreateBehaviorSpecification(
@@ -83,13 +72,8 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var id = $"{parent.Id.Id}.{typeName.FullName}.{fieldName}";
 
-            var element = GetOrCreateElement(id, x =>
+            return GetOrCreateElement(id, parent, parent.OwnCategories, x =>
                 new BehaviorSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, isIgnored || parent.Explicit));
-
-            element.Parent = parent;
-            element.OwnCategories = parent.OwnCategories;
-
-            return element;
         }
 
         private T GetElementById<T>(UnitTestElementId id)
@@ -98,12 +82,20 @@ namespace Machine.Specifications.ReSharperProvider
             return _serviceProvider.ElementManager.GetElementById(id) as T;
         }
 
-        private T GetOrCreateElement<T>(string id, Func<UnitTestElementId, T> factory)
+        private T GetOrCreateElement<T>(string id, IUnitTestElement parent, ISet<UnitTestElementCategory> categories, Func<UnitTestElementId, T> factory)
             where T : Element
         {
             var elementId = _serviceProvider.CreateId(_project, _targetFrameworkId, id);
 
-            return GetElementById<T>(elementId) ?? factory(elementId);
+            var element = GetElementById<T>(elementId) ?? factory(elementId);
+
+            var invalidChildren = element.Children.Where(x => x.State == UnitTestElementState.Invalid);
+            _serviceProvider.ElementManager.RemoveElements(invalidChildren.ToSet());
+
+            element.Parent = parent;
+            element.OwnCategories = categories;
+
+            return element;
         }
     }
 }

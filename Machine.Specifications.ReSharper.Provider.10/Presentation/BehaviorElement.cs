@@ -10,15 +10,14 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public BehaviorElement(
             UnitTestElementId id,
             IUnitTestElement parent,
-            IClrTypeName declaringTypeName,
+            IClrTypeName typeName,
             MspecServiceProvider serviceProvider,
             string fieldName,
             bool isIgnored,
             string fieldType)
-            : base(parent, declaringTypeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
+            : base(id, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
         {
             FieldType = fieldType;
-            Id = id;
         }
 
         public ContextElement Context => (ContextElement) Parent;
@@ -26,8 +25,6 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         public string FieldType { get; }
 
         public override string Kind => "Behavior";
-
-        public override UnitTestElementId Id { get; }
 
         protected override string GetTitlePrefix()
         {
@@ -39,7 +36,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             var result = new[] { contextElement.Id, fieldType, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
 
-            return elementIdFactory.Create(provider, contextElement.GetProject(), consumer.TargetFrameworkId, id);
+            return elementIdFactory.Create(provider, contextElement.Id.Project, consumer.TargetFrameworkId, id);
         }
     }
 }

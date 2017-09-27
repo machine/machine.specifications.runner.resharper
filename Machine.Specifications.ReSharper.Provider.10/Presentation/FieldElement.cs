@@ -10,12 +10,13 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
     public abstract class FieldElement : Element
     {
         protected FieldElement(
+            UnitTestElementId id,
             IUnitTestElement parent,
-            IClrTypeName declaringTypeName,
+            IClrTypeName typeName,
             MspecServiceProvider serviceProvider,
             string fieldName,
             bool isIgnored)
-            : base(parent, declaringTypeName, serviceProvider, isIgnored || parent.Explicit)
+            : base(id, parent, typeName, serviceProvider, isIgnored || parent.Explicit)
         {
             FieldName = fieldName;
         }
@@ -24,19 +25,22 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public string FieldName { get; }
 
+        protected virtual string GetTitlePrefix()
+        {
+            return string.Empty;
+        }
+
         protected override string GetPresentation()
         {
-            var prefix = GetTitlePrefix();
-            var title = string.IsNullOrEmpty(GetTitlePrefix()) ? string.Empty : " ";
+            var value = $"{GetTitlePrefix()} {FieldName.ToFormat()}";
 
-            return $"{prefix}{title}{FieldName.ToFormat()}";
+            return value.Trim();
         }
 
         public override IDeclaredElement GetDeclaredElement()
         {
-            ITypeElement declaredType = GetDeclaredType();
-
-            return declaredType?.EnumerateMembers(FieldName, true)
+            return GetDeclaredType()?
+                .EnumerateMembers(FieldName, true)
                 .OfType<IField>()
                 .FirstOrDefault();
         }
