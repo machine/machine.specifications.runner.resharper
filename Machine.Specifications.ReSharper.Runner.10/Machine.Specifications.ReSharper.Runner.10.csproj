@@ -231,6 +231,7 @@
     </Compile>
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="ExceptionResultExtensions.cs" />
+    <Compile Include="HashCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>
       </SubType>

@@ -6,6 +6,7 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
+using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
@@ -60,11 +61,10 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public override int GetHashCode()
         {
-            var result = Id != null ? Id.GetHashCode() : 0;
-            result = (result * 397) ^ (TypeName != null ? TypeName.FullName.GetHashCode() : 0);
-            result = (result * 397) ^ (AssemblyLocation != null ? AssemblyLocation.GetHashCode() : 0);
-
-            return result;
+            return HashCode
+                .Of(Id)
+                .And(TypeName?.FullName)
+                .And(AssemblyLocation);
         }
 
         public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
