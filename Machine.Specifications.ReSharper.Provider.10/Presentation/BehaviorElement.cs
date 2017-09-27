@@ -22,7 +22,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             FieldType = fieldType;
         }
 
-        public ContextElement Context => (ContextElement) Parent;
+        public ContextElement Context => Parent as ContextElement;
 
         public string FieldType { get; }
 

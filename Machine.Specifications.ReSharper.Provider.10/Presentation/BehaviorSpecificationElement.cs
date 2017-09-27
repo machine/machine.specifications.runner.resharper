@@ -24,7 +24,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         {
         }
 
-        public BehaviorElement Behavior => (BehaviorElement)Parent;
+        public BehaviorElement Behavior => Parent as BehaviorElement;
 
         public override string Kind => "Behavior Specification";
 

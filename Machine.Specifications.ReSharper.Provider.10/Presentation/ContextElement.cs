@@ -7,6 +7,7 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
@@ -33,7 +34,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         protected override string GetPresentation()
         {
-            var display = TypeName.ShortName.ToLower();
+            var display = TypeName.ShortName.ToFormat();
 
             if (string.IsNullOrEmpty(_subject))
                 return display;

@@ -111,6 +111,9 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NSubstitute, Version=2.0.3.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSubstitute.2.0.3\lib\net45\NSubstitute.dll</HintPath>
+    </Reference>
     <Reference Include="NuGet.Commands, Version=4.3.0.5, Culture=neutral, PublicKeyToken=5aaa11a165479571, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.NuGet.Ultimate.4.3.0.10000\lib\net45\NuGet.Commands.dll</HintPath>
     </Reference>
@@ -202,9 +205,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Elements\BehaviorElementTests.cs" />
+    <Compile Include="Elements\BehaviorSpecificationElementTests.cs" />
+    <Compile Include="Elements\ContextElementTests.cs" />
+    <Compile Include="Elements\ContextSpecificationElementTests.cs" />
+    <Compile Include="Elements\UnitTestElementFactoryTests.cs" />
     <Compile Include="MspecContext.cs" />
     <Compile Include="Reflection\BehaviorSpecificationTests.cs" />
     <Compile Include="ReflectionWithSingleProject.cs" />
+    <Compile Include="WithSingleProject.cs" />
     <None Include="Data\Reflection\BaseClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

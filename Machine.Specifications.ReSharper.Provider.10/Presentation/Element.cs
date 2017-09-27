@@ -15,6 +15,8 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 {
     public abstract class Element : IUnitTestElement
     {
+        private readonly MspecServiceProvider _serviceProvider;
+
         private IUnitTestElement _parent;
 
         protected Element(
@@ -24,10 +26,11 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             MspecServiceProvider serviceProvider,
             bool isIgnored)
         {
+            _serviceProvider = serviceProvider;
+
             Id = id;
-            Parent = parent;
             TypeName = typeName;
-            ServiceProvider = serviceProvider;
+            Parent = parent;
             ExplicitReason = isIgnored ? "Ignored" : string.Empty;
         }
 
@@ -56,14 +59,12 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
                     _parent?.Children.Add(this);
                 }
 
-                ServiceProvider.ElementManager.FireElementChanged(oldParent);
-                ServiceProvider.ElementManager.FireElementChanged(value);
+                _serviceProvider.ElementManager.FireElementChanged(oldParent);
+                _serviceProvider.ElementManager.FireElementChanged(value);
             }
         }
 
         public ICollection<IUnitTestElement> Children { get; } = new BindableCollection<IUnitTestElement>(UT.Locks.ReadLock);
-
-        public MspecServiceProvider ServiceProvider { get; }
 
         public abstract string ShortName { get; }
 
@@ -116,12 +117,12 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
 
         public IUnitTestRunStrategy GetRunStrategy(IHostProvider hostProvider)
         {
-            return ServiceProvider.GetRunStrategy(this);
+            return _serviceProvider.GetRunStrategy(this);
         }
 
         protected ITypeElement GetDeclaredType()
         {
-            return ServiceProvider.CachingService.GetTypeElement(Id.Project, TargetFrameworkId.Default, TypeName, true, true);
+            return _serviceProvider.CachingService.GetTypeElement(Id.Project, TargetFrameworkId.Default, TypeName, true, true);
         }
 
         public virtual IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)

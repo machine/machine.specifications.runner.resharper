@@ -23,7 +23,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
         {
         }
 
-        public ContextElement Context => (ContextElement) Parent;
+        public ContextElement Context => Parent as ContextElement;
 
         public override string Kind => "Specification";
 
