@@ -61,7 +61,7 @@ namespace Machine.Specifications.ReSharperProvider.Presentation
             return other != null &&
                    Equals(Id, other.Id) &&
                    Equals(TypeName, other.TypeName) &&
-                   Equals(Behavior.Context.TypeName, other.Behavior.Context.TypeName) &&
+                   Equals(Behavior?.Context?.TypeName, other.Behavior?.Context?.TypeName) &&
                    Equals(FieldName, other.FieldName);
         }
 
