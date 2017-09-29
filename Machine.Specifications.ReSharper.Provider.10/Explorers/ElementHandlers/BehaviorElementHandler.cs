@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.Util;
 using Machine.Specifications.ReSharperProvider.Factories;
 using Machine.Specifications.ReSharperProvider.Presentation;
 
@@ -30,7 +31,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers.ElementHandlers
             return declaration.DeclaredElement.IsBehavior();
         }
 
-        public IEnumerable<UnitTestElementDisposition> AcceptElement(string assemblyPath, IFile file, ITreeNode element)
+        public IEnumerable<UnitTestElementDisposition> AcceptElement(FileSystemPath assemblyPath, IFile file, ITreeNode element)
         {
             IDeclaration declaration = (IDeclaration)element;
             BehaviorElement behavior = _factory.CreateBehavior(declaration.DeclaredElement, _consumer);

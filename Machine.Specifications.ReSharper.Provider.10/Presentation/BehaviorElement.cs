@@ -1,63 +1,65 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.Util;
+using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Presentation
 {
-    public class BehaviorElement : FieldElement
+    public class BehaviorElement : FieldElement, IEquatable<BehaviorElement>
     {
-        public BehaviorElement(UnitTestElementId id,
-                               ContextElement context,
-                               IClrTypeName declaringTypeName,
-                               UnitTestingCachingService cachingService,
-                               IUnitTestElementManager elementManager,
-                               string fieldName,
-                               bool isIgnored,
-                               string fieldType)
-            : base(context,
-                   declaringTypeName,
-                   cachingService,
-                   elementManager,
-                   fieldName,
-                   isIgnored || context.Explicit)
+        public BehaviorElement(
+            UnitTestElementId id,
+            IUnitTestElement parent,
+            IClrTypeName typeName,
+            MspecServiceProvider serviceProvider,
+            string fieldName,
+            bool isIgnored,
+            string fieldType)
+            : base(id, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
         {
             FieldType = fieldType;
-            Id = id;
         }
 
-        public ContextElement Context => (ContextElement)Parent;
+        public ContextElement Context => Parent as ContextElement;
 
         public string FieldType { get; }
 
         public override string Kind => "Behavior";
-
-        public override ISet<UnitTestElementCategory> OwnCategories
-        {
-            get
-            {
-                if (Context == null)
-                    return UnitTestElementCategory.Uncategorized.ToSet();
-
-                return Context.OwnCategories;
-            }
-        }
-
-        public override UnitTestElementId Id { get; }
 
         protected override string GetTitlePrefix()
         {
             return "behaves like";
         }
 
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, MSpecUnitTestProvider provider, ContextElement contextElement, string fieldType, string fieldName)
+        public bool Equals(BehaviorElement other)
+        {
+            return other != null &&
+                   Equals(Id, other.Id) &&
+                   Equals(TypeName, other.TypeName) &&
+                   Equals(FieldName, other.FieldName);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as BehaviorElement);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode
+                .Of(Id)
+                .And(TypeName?.FullName)
+                .And(FieldName);
+        }
+
+        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, MspecTestProvider provider, ContextElement contextElement, string fieldType, string fieldName)
         {
             var result = new[] { contextElement.Id, fieldType, fieldName };
             var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
 
-            return elementIdFactory.Create(provider, contextElement.GetProject(), consumer.TargetFrameworkId, id);
+            return elementIdFactory.Create(provider, contextElement.Id.Project, consumer.TargetFrameworkId, id);
         }
     }
 }

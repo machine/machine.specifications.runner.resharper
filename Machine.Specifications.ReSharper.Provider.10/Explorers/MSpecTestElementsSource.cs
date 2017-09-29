@@ -16,12 +16,12 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
     [SolutionComponent]
     public class MSpecTestElementsSource : UnitTestExplorerFrom.DotNetArtefacts, IUnitTestExplorerFromFile
     {
-        private readonly MSpecUnitTestProvider _provider;
+        private readonly MspecTestProvider _provider;
         private readonly AssemblyExplorer _assemblyExplorer;
         private readonly ElementFactories _elementFactories;
         private readonly ILogger _logger;
 
-        public MSpecTestElementsSource(MSpecUnitTestProvider provider, AssemblyExplorer assemblyExplorer, ElementFactories elementFactories, ISolution solution, AssemblyToAssemblyReferencesResolveManager resolveManager, ResolveContextManager contextManager, ILogger logger)
+        public MSpecTestElementsSource(MspecTestProvider provider, AssemblyExplorer assemblyExplorer, ElementFactories elementFactories, ISolution solution, AssemblyToAssemblyReferencesResolveManager resolveManager, ResolveContextManager contextManager, ILogger logger)
             : base(solution, provider, resolveManager, contextManager, logger)
         {
             _provider = provider;

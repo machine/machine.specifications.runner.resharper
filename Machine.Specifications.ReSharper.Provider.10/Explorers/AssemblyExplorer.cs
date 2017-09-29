@@ -22,7 +22,7 @@ namespace Machine.Specifications.ReSharperProvider.Explorers
             if (!metadataTypeInfo.IsContext())
                 return;
 
-            ContextElement contextElement = _factories.Contexts.CreateContext(consumer, project, assembly.Location.FullPath, metadataTypeInfo);
+            ContextElement contextElement = _factories.Contexts.CreateContext(consumer, project, assembly.Location, metadataTypeInfo);
 
             consumer.OnUnitTestElement(contextElement);
 

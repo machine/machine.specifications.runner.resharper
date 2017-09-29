@@ -4,7 +4,6 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using Machine.Specifications.ReSharperProvider.Presentation;
-using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
 {
@@ -14,20 +13,20 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         private readonly ElementCache _cache;
         private readonly IUnitTestElementManager _manager;
         private readonly IUnitTestElementIdFactory _elementIdFactory;
-        private readonly UnitTestingCachingService _cachingService;
-        private readonly MSpecUnitTestProvider _provider;
+        private readonly MspecServiceProvider _serviceProvider;
+        private readonly MspecTestProvider _provider;
 
-        public BehaviorFactory(MSpecUnitTestProvider provider,
+        public BehaviorFactory(MspecTestProvider provider,
                              IUnitTestElementManager manager,
                              IUnitTestElementIdFactory elementIdFactory,
-                             UnitTestingCachingService cachingService,
+                             MspecServiceProvider serviceProvider,
                              ElementCache cache)
         {
             _provider = provider;
             _cache = cache;
             _manager = manager;
             _elementIdFactory = elementIdFactory;
-            _cachingService = cachingService;
+            _serviceProvider = serviceProvider;
         }
 
         public BehaviorElement CreateBehavior(IDeclaredElement field, IUnitTestElementsObserver consumer)
@@ -54,7 +53,7 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             var metadataTypeName = behavior.FirstGenericArgumentClass().FullyQualifiedName();
             var fieldType = new NormalizedTypeName(metadataTypeName);
 
-            return GetOrCreateBehavior(context, consumer, context.GetTypeClrName(), behavior.Name,
+            return GetOrCreateBehavior(context, consumer, context.TypeName, behavior.Name,
                 behavior.IsIgnored() || typeContainingBehaviorSpecifications.IsIgnored(), fieldType);
         }
 
@@ -74,8 +73,13 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return behavior;
             }
 
-            return new BehaviorElement(id, context, declaringTypeName.GetPersistent(), _cachingService,
-                _manager, fieldName, isIgnored, fieldType);
+            var element = new BehaviorElement(id, context, declaringTypeName.GetPersistent(), _serviceProvider,
+                fieldName, isIgnored, fieldType);
+
+            element.Parent = context;
+            element.OwnCategories = context.OwnCategories;
+
+            return element;
         }
     }
 }

@@ -6,6 +6,7 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.Util;
 using Machine.Specifications.ReSharperProvider.Presentation;
 
 namespace Machine.Specifications.ReSharperProvider.Factories
@@ -17,25 +18,25 @@ namespace Machine.Specifications.ReSharperProvider.Factories
         private readonly IUnitTestElementManager _manager;
         private readonly IUnitTestElementIdFactory _elementIdFactory;
         private readonly IUnitTestElementCategoryFactory _categoryFactory;
-        private readonly UnitTestingCachingService _cachingService;
-        private readonly MSpecUnitTestProvider _provider;
+        private readonly MspecServiceProvider _serviceProvider;
+        private readonly MspecTestProvider _provider;
 
-        public ContextFactory(MSpecUnitTestProvider provider,
+        public ContextFactory(MspecTestProvider provider,
                               IUnitTestElementManager manager,
                               IUnitTestElementIdFactory elementIdFactory,
                               IUnitTestElementCategoryFactory categoryFactory,
-                              UnitTestingCachingService cachingService,
+                              MspecServiceProvider serviceProvider,
                               ElementCache cache)
         {
             _manager = manager;
             _elementIdFactory = elementIdFactory;
             _categoryFactory = categoryFactory;
-            _cachingService = cachingService;
+            _serviceProvider = serviceProvider;
             _provider = provider;
             _cache = cache;
         }
 
-        public IUnitTestElement CreateContext(IUnitTestElementsObserver consumer, string assemblyPath, IDeclaration contextDeclaration)
+        public IUnitTestElement CreateContext(IUnitTestElementsObserver consumer, FileSystemPath assemblyPath, IDeclaration contextDeclaration)
         {
             var contextType = (ITypeElement)contextDeclaration.DeclaredElement;
             var context = GetOrCreateContext(consumer, assemblyPath, contextDeclaration.GetProject(),
@@ -47,14 +48,14 @@ namespace Machine.Specifications.ReSharperProvider.Factories
             return context;
         }
 
-        public ContextElement CreateContext(IUnitTestElementsObserver consumer, IProject project, string assemblyPath, IMetadataTypeInfo contextType)
+        public ContextElement CreateContext(IUnitTestElementsObserver consumer, IProject project, FileSystemPath assemblyPath, IMetadataTypeInfo contextType)
         {
             return GetOrCreateContext(consumer, assemblyPath, project, new ClrTypeName(contextType.FullyQualifiedName),
                 contextType.GetSubjectString(), contextType.GetTags(), contextType.IsIgnored());
         }
 
         public ContextElement GetOrCreateContext(IUnitTestElementsObserver consumer,
-                                                 string assemblyPath,
+                                                 FileSystemPath assemblyPath,
                                                  IProject project,
                                                  IClrTypeName contextTypeName,
                                                  string subject,
@@ -71,8 +72,13 @@ namespace Machine.Specifications.ReSharperProvider.Factories
                 return contextElement;
             }
 
-            return new ContextElement(id, contextTypeName.GetPersistent(), _cachingService, _manager,
-                assemblyPath, subject, tags, isIgnored, _categoryFactory);
+            var element = new ContextElement(id, contextTypeName.GetPersistent(), _serviceProvider,
+                subject, isIgnored);
+
+            element.AssemblyLocation = assemblyPath;
+            element.OwnCategories = _categoryFactory.Create(tags);
+
+            return element;
         }
     }
 }
