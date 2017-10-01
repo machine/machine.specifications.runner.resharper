@@ -210,6 +210,9 @@
     <Compile Include="Elements\ContextElementTests.cs" />
     <Compile Include="Elements\ContextSpecificationElementTests.cs" />
     <Compile Include="Elements\UnitTestElementFactoryTests.cs" />
+    <Compile Include="Explorers\ClrTypeNameTests.cs" />
+    <Compile Include="Explorers\MspecPsiFileExplorerTests.cs" />
+    <Compile Include="Explorers\MspecTestMetadataExplorerTests.cs" />
     <Compile Include="MspecContext.cs" />
     <Compile Include="Reflection\BehaviorSpecificationTests.cs" />
     <Compile Include="ReflectionWithSingleProject.cs" />

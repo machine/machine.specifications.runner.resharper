@@ -33,6 +33,22 @@ namespace Machine.Specifications.ReSharper.Tests
             });
         }
 
+        protected void WithPsiFile(string filename, Action<IFile, IProject> action)
+        {
+            WithSingleProject(filename, (lifetime, solution, project) =>
+            {
+                Locks.ReentrancyGuard.Execute(GetType().Name, () =>
+                {
+                    using (ReadLockCookie.Create())
+                    {
+                        var file = GetFile(project, filename);
+
+                        action(file, project);
+                    }
+                });
+            });
+        }
+
         private void WithFile(IProject project, string filename, Action<MspecContext> action)
         {
             using (ReadLockCookie.Create())
