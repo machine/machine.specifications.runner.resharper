@@ -236,12 +236,12 @@
     </Compile>
     <Compile Include="MetadataExtensions.cs" />
     <Compile Include="MspecTestProvider.cs" />
-    <Compile Include="Presentation\BehaviorElement.cs" />
-    <Compile Include="Presentation\BehaviorSpecificationElement.cs" />
-    <Compile Include="Presentation\ContextElement.cs" />
-    <Compile Include="Presentation\ContextSpecificationElement.cs" />
-    <Compile Include="Presentation\Element.cs" />
-    <Compile Include="Presentation\FieldElement.cs" />
+    <Compile Include="Elements\BehaviorElement.cs" />
+    <Compile Include="Elements\BehaviorSpecificationElement.cs" />
+    <Compile Include="Elements\ContextElement.cs" />
+    <Compile Include="Elements\ContextSpecificationElement.cs" />
+    <Compile Include="Elements\Element.cs" />
+    <Compile Include="Elements\FieldElement.cs" />
     <Compile Include="PsiExtensions.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="Reflection\IAttributeInfo.cs" />
