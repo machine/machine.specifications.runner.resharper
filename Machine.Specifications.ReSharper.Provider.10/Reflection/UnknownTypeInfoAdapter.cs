@@ -9,7 +9,7 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         public string ShortName => string.Empty;
 
-        public string FullName => string.Empty;
+        public string FullyQualifiedName => string.Empty;
 
         public bool IsAbstract => false;
 

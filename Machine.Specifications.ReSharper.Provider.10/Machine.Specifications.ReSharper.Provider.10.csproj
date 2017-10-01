@@ -226,29 +226,15 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Explorers\MSpecTestElementsSource.cs" />
+    <Compile Include="MspecPsiFileExplorer.cs" />
     <Compile Include="MspecServiceProvider.cs" />
-    <Compile Include="NormalizedTypeName.cs" />
+    <Compile Include="MspecTestElementsSource.cs" />
+    <Compile Include="MspecTestMetadataExplorer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="Explorers\AssemblyExplorer.cs" />
-    <Compile Include="Explorers\ElementHandlers\BehaviorElementHandler.cs" />
-    <Compile Include="Explorers\ElementHandlers\ContextElementHandler.cs" />
-    <Compile Include="Explorers\ElementHandlers\ContextSpecificationElementHandler.cs" />
-    <Compile Include="Explorers\ElementHandlers\IElementHandler.cs" />
-    <Compile Include="Explorers\FileExplorer.cs" />
-    <Compile Include="Explorers\MspecTestFileExplorer.cs" />
-    <Compile Include="Explorers\MSpecTestMetadataExplorer.cs" />
-    <Compile Include="Factories\BehaviorFactory.cs" />
-    <Compile Include="Factories\BehaviorSpecificationFactory.cs" />
-    <Compile Include="Factories\ContextCache.cs" />
-    <Compile Include="Factories\ContextFactory.cs" />
-    <Compile Include="Factories\ContextSpecificationFactory.cs" />
-    <Compile Include="Factories\ElementFactories.cs" />
     <Compile Include="MetadataExtensions.cs" />
-    <Compile Include="MSpecElementNaming.cs" />
     <Compile Include="MspecTestProvider.cs" />
     <Compile Include="Presentation\BehaviorElement.cs" />
     <Compile Include="Presentation\BehaviorSpecificationElement.cs" />

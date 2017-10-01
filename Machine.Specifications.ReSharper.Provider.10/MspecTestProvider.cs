@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using JetBrains.Metadata.Reader.API;
+﻿using JetBrains.Metadata.Reader.API;
 using JetBrains.Metadata.Utils;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
@@ -13,9 +12,7 @@ namespace Machine.Specifications.ReSharperProvider
     [UnitTestProvider]
     public class MspecTestProvider : IUnitTestProvider
     {
-        private const string ProviderId = MspecTaskRunner.RunnerId;
-
-        private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(ProviderId, null);
+        private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(MspecTaskRunner.RunnerId, null);
 
         private readonly UnitTestElementComparer _unitTestElementComparer = new UnitTestElementComparer(
             typeof(ContextElement),
@@ -23,12 +20,7 @@ namespace Machine.Specifications.ReSharperProvider
             typeof(BehaviorSpecificationElement),
             typeof(ContextSpecificationElement));
 
-        public MspecTestProvider()
-        {
-            Debug.Listeners.Add(new DefaultTraceListener());
-        }
-
-        public string ID => ProviderId;
+        public string ID => MspecTaskRunner.RunnerId;
 
         public string Name => ID;
 
@@ -48,12 +40,10 @@ namespace Machine.Specifications.ReSharperProvider
                     return element is ContextElement || element is BehaviorElement;
 
                 case UnitTestElementKind.TestStuff:
-                    return element is ContextSpecificationElement || element is BehaviorSpecificationElement ||
-                           element is ContextElement || element is BehaviorElement;
+                    return element is Element;
 
                 case UnitTestElementKind.Unknown:
-                    return !(element is ContextSpecificationElement || element is BehaviorSpecificationElement ||
-                             element is ContextElement || element is BehaviorElement);
+                    return !(element is Element);
             }
 
             return false;
@@ -81,7 +71,7 @@ namespace Machine.Specifications.ReSharperProvider
 
         public bool IsSupported(IHostProvider hostProvider, IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return true;
+            return IsSupported(project, targetFrameworkId);
         }
 
         public bool IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
