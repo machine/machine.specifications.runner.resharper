@@ -10,14 +10,14 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Elements
 {
     [TestFixture]
-    public class UnitTestElementFactoryTests : WithSingleProject
+    public class UnitTestElementFactoryTests : ReflectionWithSingleProject
     {
         [Test]
         public void CanCreateContext()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var element = factory.GetOrCreateContext(new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
                     new[] {"tag1"}, false);
@@ -31,9 +31,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         [Test]
         public void GetsExistingContextFromElementManager()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var element1 = factory.GetOrCreateContext(new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
                     new[] { "tag1" }, false);
@@ -52,9 +52,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         [Test]
         public void CanCreateContextSpec()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var parent = Substitute.For<IUnitTestElement>();
                 var element = factory.GetOrCreateContextSpecification(parent, new ClrTypeName("MyClass"), "my_field", false);
@@ -67,9 +67,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         [Test]
         public void GetsExistingContextSpecFromElementManager()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var parent = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
                 var element1 = factory.GetOrCreateContextSpecification(parent, new ClrTypeName("MyClass"), "my_field", false);
@@ -87,9 +87,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         [Test]
         public void CanCreateBehavior()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var parent = Substitute.For<IUnitTestElement>();
                 var element = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", "FieldType", false);
@@ -102,9 +102,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         [Test]
         public void GetsExistingBehaviorFromElementManager()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var parent = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
                 var element1 = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", "FieldType", false);
@@ -122,9 +122,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         [Test]
         public void CanCreateBehaviorSpec()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var parent = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
                 var element = factory.GetOrCreateBehaviorSpecification(parent, new ClrTypeName("MyClass"), "my_field", false);
@@ -137,9 +137,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         [Test]
         public void GetsExistingBehaviorSpecFromElementManager()
         {
-            With(() =>
+            With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, Project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var context = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
                 var behavior = factory.GetOrCreateBehavior(context, new ClrTypeName("MyClass"), "my_field", "FieldType", false);

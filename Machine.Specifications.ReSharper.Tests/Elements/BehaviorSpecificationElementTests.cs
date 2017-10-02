@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.ReSharper.Tests.Elements
 {
     [TestFixture]
-    public class BehaviorSpecificationElementTests : WithSingleProject
+    public class BehaviorSpecificationElementTests : ReflectionWithSingleProject
     {
         [Test]
         public void CanGetHashCode()

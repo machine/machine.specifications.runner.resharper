@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.TestFramework;
+using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
+using Machine.Specifications.ReSharperProvider;
 using NuGet.Frameworks;
 using NUnit.Framework;
 
@@ -22,52 +25,76 @@ namespace Machine.Specifications.ReSharper.Tests
 
         protected override string RelativeTestDataPath => "Reflection";
 
+        protected MspecServiceProvider ServiceProvider =>
+            Solution.GetComponent<MspecServiceProvider>();
+
+        protected void With(Action action)
+        {
+            WithSingleProject("none.cs", (lifetime, solution, project) =>
+            {
+                RunGuarded(action);
+            });
+        }
+
+        protected void With(Action<IProject> action)
+        {
+            WithSingleProject("none.cs", (lifetime, solution, project) =>
+            {
+                RunGuarded(() => action(project));
+            });
+        }
+
         protected void WithFile(string filename, Action<MspecContext> action)
         {
             WithSingleProject(filename, (lifetime, solution, project) =>
             {
-                Locks.ReentrancyGuard.Execute(GetType().Name, () =>
+                RunGuarded(() =>
                 {
-                    WithFile(project, filename, action);
+                    var file = GetFile(project, filename);
+                    var assembly = GetAssembly(filename, out var loader);
+
+                    var psiCollector = new MspecElementCollector();
+                    var metadataCollector = new MspecElementCollector();
+
+                    file.ProcessDescendants(psiCollector);
+                    metadataCollector.Explore(assembly);
+
+                    action(psiCollector.GetContext());
+                    action(metadataCollector.GetContext());
+
+                    loader.Dispose();
                 });
             });
         }
 
-        protected void WithPsiFile(string filename, Action<IFile, IProject> action)
+        protected void WithFile(string filename, Action<TestUnitTestElementObserver> action)
         {
             WithSingleProject(filename, (lifetime, solution, project) =>
             {
-                Locks.ReentrancyGuard.Execute(GetType().Name, () =>
+                RunGuarded(() =>
                 {
-                    using (ReadLockCookie.Create())
-                    {
-                        var file = GetFile(project, filename);
+                    var file = GetFile(project, filename);
+                    var assembly = GetAssembly(filename, out var loader);
 
-                        action(file, project);
-                    }
+                    var psiObserver = GetPsiObserver(file, project);
+                    var metadataObserver = GetMetadataObserver(assembly, project);
+
+                    action(psiObserver);
+                    action(metadataObserver);
+
+                    loader.Dispose();
                 });
             });
         }
 
-        private void WithFile(IProject project, string filename, Action<MspecContext> action)
+        protected UnitTestElementId CreateId(string id)
         {
-            using (ReadLockCookie.Create())
-            {
-                WithPsiFile(project, filename, new MspecElementCollector(), action);
-                WithMetadataFile(filename, new MspecElementCollector(), action);
-            }
+            var factory = Solution.GetComponent<IUnitTestElementIdFactory>();
+
+            return factory.Create("Provider", "Project", TargetFrameworkId.Default, id);
         }
 
-        private void WithPsiFile(IProject project, string filename, MspecElementCollector collector, Action<MspecContext> action)
-        {
-            var file = GetFile(project, filename);
-
-            file.ProcessDescendants(collector);
-
-            action(collector.GetContext());
-        }
-
-        private void WithMetadataFile(string filename, MspecElementCollector collector, Action<MspecContext> action)
+        private IMetadataAssembly GetAssembly(string filename, out MetadataLoader loader)
         {
             var references = GetProjectReferences()
                 .ToArray();
@@ -87,16 +114,12 @@ namespace Machine.Specifications.ReSharper.Tests
 
             var assemblyPath = path.Combine(compiledAssembly);
 
-            using (var loader = new MetadataLoader(resolverOnFolders))
-            {
-                var assembly = loader.TryLoadFrom(assemblyPath, x => true);
+            loader = new MetadataLoader(resolverOnFolders);
+            var assembly = loader.TryLoadFrom(assemblyPath, x => true);
 
-                Assert.That(assembly, Is.Not.Null, $"Cannot get metadata assembly: {filename}");
+            Assert.That(assembly, Is.Not.Null, $"Cannot get metadata assembly: {filename}");
 
-                collector.Explore(assembly);
-
-                action(collector.GetContext());
-            }
+            return assembly;
         }
 
         private IFile GetFile(IProject project, string filename)
@@ -109,6 +132,30 @@ namespace Machine.Specifications.ReSharper.Tests
 
             return file.ToSourceFile()?
                 .GetTheOnlyPsiFile<CSharpLanguage>();
+        }
+
+        private TestUnitTestElementObserver GetMetadataObserver(IMetadataAssembly assembly, IProject project)
+        {
+            var serviceProvider = Solution.GetComponent<MspecServiceProvider>();
+            var observer = new TestUnitTestElementObserver();
+            var factory = new UnitTestElementFactory(serviceProvider, project, observer.TargetFrameworkId);
+
+            var explorer = new MspecTestMetadataExplorer(factory, observer);
+            explorer.ExploreAssembly(assembly, CancellationToken.None);
+
+            return observer;
+        }
+
+        private TestUnitTestElementObserver GetPsiObserver(IFile file, IProject project)
+        {
+            var serviceProvider = Solution.GetComponent<MspecServiceProvider>();
+            var observer = new TestUnitTestElementObserver();
+            var factory = new UnitTestElementFactory(serviceProvider, project, observer.TargetFrameworkId);
+
+            var explorer = new MspecPsiFileExplorer(factory, file, observer, () => false);
+            file.ProcessDescendants(explorer);
+
+            return observer;
         }
 
         private string GetAssembly(string filename, string[] references)

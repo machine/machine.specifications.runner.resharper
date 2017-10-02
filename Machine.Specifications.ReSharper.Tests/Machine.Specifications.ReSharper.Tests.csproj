@@ -211,12 +211,13 @@
     <Compile Include="Elements\ContextSpecificationElementTests.cs" />
     <Compile Include="Elements\UnitTestElementFactoryTests.cs" />
     <Compile Include="Explorers\ClrTypeNameTests.cs" />
-    <Compile Include="Explorers\MspecPsiFileExplorerTests.cs" />
-    <Compile Include="Explorers\MspecTestMetadataExplorerTests.cs" />
+    <Compile Include="Explorers\SpecificationTests.cs" />
+    <Compile Include="Explorers\IgnoreTests.cs" />
+    <Compile Include="Explorers\SubjectTests.cs" />
+    <Compile Include="Explorers\TagTests.cs" />
     <Compile Include="MspecContext.cs" />
     <Compile Include="Reflection\BehaviorSpecificationTests.cs" />
     <Compile Include="ReflectionWithSingleProject.cs" />
-    <Compile Include="WithSingleProject.cs" />
     <None Include="Data\Reflection\BaseClassTags.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
