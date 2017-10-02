@@ -46,28 +46,32 @@ namespace Machine.Specifications.ReSharper.Tests
 
         protected void WithFile(string filename, Action<MspecContext> action)
         {
-            WithSingleProject(filename, (lifetime, solution, project) =>
+            Run(filename, (project, file, assembly) =>
             {
-                RunGuarded(() =>
-                {
-                    var file = GetFile(project, filename);
-                    var assembly = GetAssembly(filename, out var loader);
+                var psiCollector = new MspecElementCollector();
+                var metadataCollector = new MspecElementCollector();
 
-                    var psiCollector = new MspecElementCollector();
-                    var metadataCollector = new MspecElementCollector();
+                file.ProcessDescendants(psiCollector);
+                metadataCollector.Explore(assembly);
 
-                    file.ProcessDescendants(psiCollector);
-                    metadataCollector.Explore(assembly);
-
-                    action(psiCollector.GetContext());
-                    action(metadataCollector.GetContext());
-
-                    loader.Dispose();
-                });
+                action(psiCollector.GetContext());
+                action(metadataCollector.GetContext());
             });
         }
 
         protected void WithFile(string filename, Action<TestUnitTestElementObserver> action)
+        {
+            Run(filename, (project, file, assembly) =>
+            {
+                var psiObserver = GetPsiObserver(file, project);
+                var metadataObserver = GetMetadataObserver(assembly, project);
+
+                action(psiObserver);
+                action(metadataObserver);
+            });
+        }
+
+        private void Run(string filename, Action<IProject, IFile, IMetadataAssembly> action)
         {
             WithSingleProject(filename, (lifetime, solution, project) =>
             {
@@ -76,13 +80,8 @@ namespace Machine.Specifications.ReSharper.Tests
                     var file = GetFile(project, filename);
                     var assembly = GetAssembly(filename, out var loader);
 
-                    var psiObserver = GetPsiObserver(file, project);
-                    var metadataObserver = GetMetadataObserver(assembly, project);
-
-                    action(psiObserver);
-                    action(metadataObserver);
-
-                    loader.Dispose();
+                    using (loader)
+                        action(project, file, assembly);
                 });
             });
         }

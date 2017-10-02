@@ -210,6 +210,8 @@
     <Compile Include="Elements\ContextElementTests.cs" />
     <Compile Include="Elements\ContextSpecificationElementTests.cs" />
     <Compile Include="Elements\UnitTestElementFactoryTests.cs" />
+    <Compile Include="Explorers\BehaviorSpecificationTests.cs" />
+    <Compile Include="Explorers\BehaviorTests.cs" />
     <Compile Include="Explorers\ClrTypeNameTests.cs" />
     <Compile Include="Explorers\SpecificationTests.cs" />
     <Compile Include="Explorers\IgnoreTests.cs" />
