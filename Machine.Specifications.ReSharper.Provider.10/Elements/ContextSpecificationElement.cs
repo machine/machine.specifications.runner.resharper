@@ -57,13 +57,5 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                 .And(TypeName?.FullName)
                 .And(FieldName);
         }
-
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, ContextElement contextElement, string fieldName)
-        {
-            var result = new[] { contextElement.Id, fieldName };
-            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-
-            return elementIdFactory.Create(provider, contextElement.Id.Project, consumer.TargetFrameworkId, id);
-        }
     }
 }

@@ -78,13 +78,5 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                 .And(Behavior?.Context?.TypeName)
                 .And(FieldName);
         }
-
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
-        {
-            var result = new[] { behaviorElement.Id, fieldName };
-            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-
-            return elementIdFactory.Create(provider, behaviorElement.Id.Project, consumer.TargetFrameworkId, id);
-        }
     }
 }

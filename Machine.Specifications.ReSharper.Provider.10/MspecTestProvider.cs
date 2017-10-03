@@ -2,7 +2,9 @@
 using JetBrains.Metadata.Utils;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetVsTest;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.ReSharperProvider.Elements;
 using Machine.Specifications.ReSharperRunner;
@@ -10,7 +12,7 @@ using Machine.Specifications.ReSharperRunner;
 namespace Machine.Specifications.ReSharperProvider
 {
     [UnitTestProvider]
-    public class MspecTestProvider : IUnitTestProvider
+    public class MspecTestProvider : IDotNetVsTestBasedUnitTestProvider
     {
         private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(MspecTaskRunner.RunnerId, null);
 
@@ -23,6 +25,11 @@ namespace Machine.Specifications.ReSharperProvider
         public string ID => MspecTaskRunner.RunnerId;
 
         public string Name => ID;
+
+        public string GetExtensionName(IProject project, TargetFrameworkId targetFrameworkId)
+        {
+            return "Machine.TestAdapter.dll";
+        }
 
         public int CompareUnitTestElements(IUnitTestElement x, IUnitTestElement y)
         {
@@ -76,7 +83,10 @@ namespace Machine.Specifications.ReSharperProvider
 
         public bool IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MSpecReferenceName, out AssemblyNameInfo _);
+            using (ReadLockCookie.Create())
+            {
+                return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MSpecReferenceName, out AssemblyNameInfo _);
+            }
         }
     }
 }
