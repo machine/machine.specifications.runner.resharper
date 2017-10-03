@@ -35,7 +35,7 @@ namespace Machine.Specifications.ReSharperProvider
             {
                 var assemblyPath = _project?.GetOutputFilePath(_targetFrameworkId);
                 var typeName = GetType(test);
-                var methodName = GetMethod(test);
+                var fieldName = GetField(test);
                 var subject = GetTraits(test, "Subject").FirstOrDefault();
                 var tags = GetTraits(test, "Tag");
                 var behaviorField = GetTraits(test, "BehaviorField").FirstOrDefault();
@@ -49,10 +49,10 @@ namespace Machine.Specifications.ReSharperProvider
                 {
                     var behavior = _factory.GetOrCreateBehavior(context, type, behaviorField, behaviorType, false);
 
-                    return _factory.GetOrCreateBehaviorSpecification(behavior, type, methodName, false);
+                    return _factory.GetOrCreateBehaviorSpecification(behavior, type, fieldName, false);
                 }
 
-                return _factory.GetOrCreateContextSpecification(context, type, methodName, false);
+                return _factory.GetOrCreateContextSpecification(context, type, fieldName, false);
             }
         }
 
@@ -61,7 +61,7 @@ namespace Machine.Specifications.ReSharperProvider
             return test.FullyQualifiedName.SubstringBeforeLast("::").Trim();
         }
 
-        private string GetMethod(Test test)
+        private string GetField(Test test)
         {
             return test.FullyQualifiedName.SubstringAfterLast("::").Trim();
         }

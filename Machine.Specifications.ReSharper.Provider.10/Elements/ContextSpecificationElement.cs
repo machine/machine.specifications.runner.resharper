@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 using Machine.Specifications.ReSharperRunner.Tasks;
 

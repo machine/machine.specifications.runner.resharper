@@ -59,10 +59,5 @@ namespace Machine.Specifications.ReSharperProvider
         {
             return _elementIdFactory.Create(_provider, project, targetFrameworkId, id);
         }
-
-        public IUnitTestElement GetElementById(IProject project, TargetFrameworkId targetFrameworkId, string id)
-        {
-            return ElementManager.GetElementById(CreateId(project, targetFrameworkId, id));
-        }
     }
 }

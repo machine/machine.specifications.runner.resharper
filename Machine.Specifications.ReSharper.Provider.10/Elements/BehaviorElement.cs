@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Elements
