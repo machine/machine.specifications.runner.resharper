@@ -1,13 +1,13 @@
 ﻿using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
-using Machine.Specifications.ReSharperProvider.Presentation;
+using Machine.Specifications.ReSharperProvider.Elements;
 using NSubstitute;
 using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests.Elements
 {
     [TestFixture]
-    public class BehaviorSpecificationElementTests : WithSingleProject
+    public class BehaviorSpecificationElementTests : ReflectionWithSingleProject
     {
         [Test]
         public void CanGetHashCode()

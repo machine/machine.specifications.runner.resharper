@@ -5,7 +5,7 @@ using JetBrains.ReSharper.Psi.Util;
 using JetBrains.ReSharper.UnitTestFramework;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.ReSharperProvider.Presentation
+namespace Machine.Specifications.ReSharperProvider.Elements
 {
     public abstract class FieldElement : Element
     {

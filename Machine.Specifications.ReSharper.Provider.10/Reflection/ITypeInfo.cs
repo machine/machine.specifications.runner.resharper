@@ -6,7 +6,7 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
     {
         string ShortName { get; }
 
-        string FullName { get; }
+        string FullyQualifiedName { get; }
 
         bool IsAbstract { get; }
 

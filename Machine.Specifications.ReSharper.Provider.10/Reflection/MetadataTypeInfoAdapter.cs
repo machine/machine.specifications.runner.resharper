@@ -17,7 +17,7 @@ namespace Machine.Specifications.ReSharperProvider.Reflection
 
         public string ShortName => _type.Name;
 
-        public string FullName => _type.FullyQualifiedName;
+        public string FullyQualifiedName => _type.FullyQualifiedName;
 
         public bool IsAbstract => _type.IsAbstract;
 
