@@ -43,13 +43,12 @@ namespace Machine.Specifications.ReSharperProvider
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
-            string fieldType,
             bool ignored)
         {
             var id = $"{typeName.FullName}.{fieldName}";
 
             return GetOrCreateElement(id, parent, parent.OwnCategories, x =>
-                new BehaviorElement(x, parent, typeName, _serviceProvider, fieldName, ignored, fieldType));
+                new BehaviorElement(x, parent, typeName, _serviceProvider, fieldName, ignored));
         }
 
         public IUnitTestElement GetOrCreateContextSpecification(

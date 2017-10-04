@@ -19,7 +19,7 @@ namespace Machine.Specifications.ReSharperRunner
 
         public void Add(MspecTestBehaviorTask task)
         {
-            var key = $"{task.ContextTypeName}.{task.BehaviorTypeName}.{task.SpecificationFieldName}";
+            var key = $"{task.ContextTypeName}.{task.BehaviorFieldName}.{task.SpecificationFieldName}";
 
             _remoteTasks[key] = task;
         }

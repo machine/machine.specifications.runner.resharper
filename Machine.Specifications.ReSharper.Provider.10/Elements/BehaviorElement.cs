@@ -13,16 +13,12 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             IClrTypeName typeName,
             MspecServiceProvider serviceProvider,
             string fieldName,
-            bool isIgnored,
-            string fieldType)
+            bool isIgnored)
             : base(id, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
         {
-            FieldType = fieldType;
         }
 
         public ContextElement Context => Parent as ContextElement;
-
-        public string FieldType { get; }
 
         public override string Kind => "Behavior";
 

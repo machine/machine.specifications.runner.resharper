@@ -39,7 +39,6 @@ namespace Machine.Specifications.ReSharperProvider
                 var subject = GetTraits(test, "Subject").FirstOrDefault();
                 var tags = GetTraits(test, "Tag");
                 var behaviorField = GetTraits(test, "BehaviorField").FirstOrDefault();
-                var behaviorType = GetTraits(test, "BehaviorType").FirstOrDefault();
 
                 var type = new ClrTypeName(typeName);
 
@@ -47,7 +46,7 @@ namespace Machine.Specifications.ReSharperProvider
 
                 if (!string.IsNullOrEmpty(behaviorField))
                 {
-                    var behavior = _factory.GetOrCreateBehavior(context, type, behaviorField, behaviorType, false);
+                    var behavior = _factory.GetOrCreateBehavior(context, type, behaviorField, false);
 
                     return _factory.GetOrCreateBehaviorSpecification(behavior, type, fieldName, false);
                 }
@@ -68,15 +67,11 @@ namespace Machine.Specifications.ReSharperProvider
 
         private IEnumerable<string> GetTraits(Test test, string category)
         {
-            var value = test.Traits.GetValueSafe(category);
-
-            if (string.IsNullOrEmpty(value))
-                return Enumerable.Empty<string>();
-
-            var parts = value.Split("],[");
-
-            return parts
-                .Select(x => x.Split(',').LastOrDefault()?.Trim('[', ']'))
+            return test.Traits
+                .GetValueSafe(category, string.Empty)
+                .Split("],[")
+                .Select(x => x.Split(',').LastOrDefault())
+                .Select(x => x?.Trim('[', ']'))
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Select(x => x.Trim());
         }

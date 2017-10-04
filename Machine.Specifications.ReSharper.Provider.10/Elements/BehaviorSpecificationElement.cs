@@ -50,7 +50,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             {
                 new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, context.AssemblyLocation.FullPath)),
                 new UnitTestTask(context, new MspecTestContextTask(Id.ProjectId, fullName)),
-                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName, Behavior.FieldType))
+                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName))
             };
         }
 

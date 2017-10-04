@@ -118,7 +118,6 @@ namespace Machine.Specifications.ReSharperProvider
                     context,
                     containingType,
                     field.ShortName,
-                    behaviorType?.FullyQualifiedName,
                     field.IsIgnored());
 
                 OnUnitTestElement(behavior, declaration);

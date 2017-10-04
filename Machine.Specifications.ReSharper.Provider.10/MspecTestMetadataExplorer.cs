@@ -91,7 +91,6 @@ namespace Machine.Specifications.ReSharperProvider
                 contextElement,
                 new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
-                behaviorType?.FullyQualifiedName,
                 field.IsIgnored());
 
             _observer.OnUnitTestElement(behaviorElement);

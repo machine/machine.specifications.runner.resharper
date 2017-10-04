@@ -28,7 +28,6 @@ namespace Machine.Specifications.ReSharper.Tests.Explorers
 
                 Assert.That(behavior?.Context, Is.SameAs(context));
                 Assert.That(behavior?.ShortName, Is.EqualTo("a_class"));
-                Assert.That(behavior?.FieldType, Is.EqualTo("Data.TestBehavior"));
                 Assert.That(behavior?.GetPresentation(behavior, false), Is.EqualTo("behaves like a class"));
 
                 Assert.That(spec?.Behavior, Is.SameAs(behavior));
