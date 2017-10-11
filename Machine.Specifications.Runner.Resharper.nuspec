@@ -3,7 +3,7 @@
 	<metadata>
 		<id>Machine.Specifications.Runner.Resharper9</id>
 		<version>$version$</version>
-		<title>Machine.Specifications.Runner.Resharper for ReSharper 2017.2.1</title>
+		<title>Machine.Specifications.Runner.Resharper for ReSharper 2017.2.2</title>
 		<authors>Aaron Jensen, Alexander Groß, Daniel Marbach, et al.</authors>
 		<owners>Alexander Groß, Daniel Marbach</owners>
 		<summary>Machine.Specifications Runner Resharper</summary>
