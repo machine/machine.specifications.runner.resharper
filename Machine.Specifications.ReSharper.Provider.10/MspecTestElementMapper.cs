@@ -39,16 +39,17 @@ namespace Machine.Specifications.ReSharperProvider
                 var subject = GetTraits(test, "Subject").FirstOrDefault();
                 var tags = GetTraits(test, "Tag");
                 var behaviorField = GetTraits(test, "BehaviorField").FirstOrDefault();
+                var behaviorType = GetTraits(test, "BehaviorType").FirstOrDefault();
 
                 var type = new ClrTypeName(typeName);
 
                 var context = _factory.GetOrCreateContext(type, assemblyPath, subject, tags.ToArray(), false);
 
-                if (!string.IsNullOrEmpty(behaviorField))
+                if (!string.IsNullOrEmpty(behaviorField) && !string.IsNullOrEmpty(behaviorType))
                 {
                     var behavior = _factory.GetOrCreateBehavior(context, type, behaviorField, false);
 
-                    return _factory.GetOrCreateBehaviorSpecification(behavior, type, fieldName, false);
+                    return _factory.GetOrCreateBehaviorSpecification(behavior, new ClrTypeName(behaviorType), fieldName, false);
                 }
 
                 return _factory.GetOrCreateContextSpecification(context, type, fieldName, false);
