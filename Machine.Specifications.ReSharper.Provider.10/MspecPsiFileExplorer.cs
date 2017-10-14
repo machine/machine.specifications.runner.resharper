@@ -131,7 +131,7 @@ namespace Machine.Specifications.ReSharperProvider
                     {
                         var specification = _factory.GetOrCreateBehaviorSpecification(
                             behavior,
-                            containingType,
+                            new ClrTypeName(specField.DeclaringType), 
                             specField.ShortName,
                             specField.IsIgnored());
 
