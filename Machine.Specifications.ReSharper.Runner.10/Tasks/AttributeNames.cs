@@ -7,5 +7,6 @@
         public const string ContextTypeName = "ContextTypeName";
         public const string SpecificationFieldName = "SpecificationFieldName";
         public const string BehaviorFieldName = "BehaviorFieldName";
+        public const string BehaviorTypeName = "BehaviorTypeName";
     }
 }
