@@ -6,7 +6,7 @@
         public const string AssemblyLocation = "AssemblyLocation";
         public const string ContextTypeName = "ContextTypeName";
         public const string SpecificationFieldName = "SpecificationFieldName";
+        public const string BehaviorFieldName = "BehaviorFieldName";
         public const string BehaviorTypeName = "BehaviorTypeName";
-        public const string SpecificationFieldNameOnContext = "SpecificationFieldNameOnContext";
     }
 }

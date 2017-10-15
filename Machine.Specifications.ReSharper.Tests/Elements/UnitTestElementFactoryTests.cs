@@ -92,7 +92,7 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
                 var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var parent = Substitute.For<IUnitTestElement>();
-                var element = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", "FieldType", false);
+                var element = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element, Is.Not.Null);
                 Assert.That(element.GetPresentation(), Is.EqualTo("behaves like my field"));
@@ -107,11 +107,11 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
                 var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var parent = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
-                var element1 = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", "FieldType", false);
+                var element1 = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 ServiceProvider.ElementManager.AddElements(new HashSet<IUnitTestElement> { element1 });
 
-                var element2 = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", "FieldType", false);
+                var element2 = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element1, Is.Not.Null);
                 Assert.That(element2, Is.Not.Null);
@@ -142,7 +142,7 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
                 var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
 
                 var context = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
-                var behavior = factory.GetOrCreateBehavior(context, new ClrTypeName("MyClass"), "my_field", "FieldType", false);
+                var behavior = factory.GetOrCreateBehavior(context, new ClrTypeName("MyClass"), "my_field", false);
                 var element1 = factory.GetOrCreateBehaviorSpecification(behavior, new ClrTypeName("MyClass"), "my_field", false);
 
                 ServiceProvider.ElementManager.AddElements(new HashSet<IUnitTestElement> { element1 });

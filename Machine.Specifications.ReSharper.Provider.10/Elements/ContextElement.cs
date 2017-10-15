@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Metadata.Reader.API;
-using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
@@ -66,19 +63,6 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                 .Of(Id)
                 .And(TypeName?.FullName)
                 .And(AssemblyLocation);
-        }
-
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, IProject project, string subject, string typeName, IEnumerable<string> tags)
-        {
-            string tagsAsString = null;
-
-            if (tags != null)
-                tagsAsString = tags.AggregateString("", "|", (builder, tag) => builder.Append(tag));
-
-            var result = new[] { subject, typeName, tagsAsString };
-            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-
-            return elementIdFactory.Create(provider, project, consumer.TargetFrameworkId, id);
         }
     }
 }

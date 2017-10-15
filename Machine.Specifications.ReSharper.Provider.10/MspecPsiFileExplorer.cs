@@ -118,7 +118,6 @@ namespace Machine.Specifications.ReSharperProvider
                     context,
                     containingType,
                     field.ShortName,
-                    behaviorType?.FullyQualifiedName,
                     field.IsIgnored());
 
                 OnUnitTestElement(behavior, declaration);
@@ -132,7 +131,7 @@ namespace Machine.Specifications.ReSharperProvider
                     {
                         var specification = _factory.GetOrCreateBehaviorSpecification(
                             behavior,
-                            containingType,
+                            new ClrTypeName(specField.DeclaringType), 
                             specField.ShortName,
                             specField.IsIgnored());
 

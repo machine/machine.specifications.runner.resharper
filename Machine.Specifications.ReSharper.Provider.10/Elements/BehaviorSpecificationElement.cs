@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 using Machine.Specifications.ReSharperRunner.Tasks;
 
@@ -52,7 +50,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             {
                 new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, context.AssemblyLocation.FullPath)),
                 new UnitTestTask(context, new MspecTestContextTask(Id.ProjectId, fullName)),
-                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName, Behavior.FieldType))
+                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, TypeName.FullName, Behavior.FieldName, FieldName))
             };
         }
 
@@ -77,14 +75,6 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                 .And(TypeName?.FullName)
                 .And(Behavior?.Context?.TypeName)
                 .And(FieldName);
-        }
-
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, BehaviorElement behaviorElement, string fieldName)
-        {
-            var result = new[] { behaviorElement.Id, fieldName };
-            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-
-            return elementIdFactory.Create(provider, behaviorElement.Id.Project, consumer.TargetFrameworkId, id);
         }
     }
 }

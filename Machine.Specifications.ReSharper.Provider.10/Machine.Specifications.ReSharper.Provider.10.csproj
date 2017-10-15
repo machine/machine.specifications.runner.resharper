@@ -228,8 +228,12 @@
     </Compile>
     <Compile Include="MspecPsiFileExplorer.cs" />
     <Compile Include="MspecServiceProvider.cs" />
+    <Compile Include="MspecTestArtefactExplorer.cs" />
+    <Compile Include="MspecTestElementMapper.cs" />
+    <Compile Include="MspecTestElementMapperFactory.cs" />
     <Compile Include="MspecTestElementsSource.cs" />
     <Compile Include="MspecTestMetadataExplorer.cs" />
+    <Compile Include="MspecVsTestArtefactExplorer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>
       </SubType>
@@ -254,6 +258,8 @@
     <Compile Include="Reflection\PsiFieldInfoAdapter.cs" />
     <Compile Include="Reflection\PsiTypeInfoAdapter.cs" />
     <Compile Include="Reflection\UnknownTypeInfoAdapter.cs" />
+    <Compile Include="RunStrategies\MspecDotNetTestRunStrategy.cs" />
+    <Compile Include="RunStrategies\MspecDotNetVsTestRunStrategy.cs" />
     <Compile Include="RunStrategies\MspecOutOfProcessUnitTestRunStrategy.cs" />
     <Compile Include="UnitTestElementFactory.cs" />
     <Compile Include="ZoneMarker.cs" />

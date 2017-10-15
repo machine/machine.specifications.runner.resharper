@@ -34,7 +34,7 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
                 var context = new ContextElement(id, Substitute.For<IClrTypeName>(), ServiceProvider, "subject", false);
 
                 var parent = new BehaviorElement(id, context,
-                    Substitute.For<IClrTypeName>(), ServiceProvider, "field", false, "type");
+                    Substitute.For<IClrTypeName>(), ServiceProvider, "field", false);
 
                 var element1 = new BehaviorSpecificationElement(id, parent, type, ServiceProvider, "field", false);
                 var element2 = new BehaviorSpecificationElement(id, parent, type, ServiceProvider, "field", false);

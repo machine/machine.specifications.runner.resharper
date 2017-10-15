@@ -56,10 +56,8 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
 
         public override int GetHashCode()
         {
-            var hashCode = ProjectId != null ? ProjectId.GetHashCode() : 0;
-            hashCode = (hashCode * 397) ^ (ContextTypeName != null ? ContextTypeName.GetHashCode() : 0);
-
-            return hashCode;
+            return HashCode.Of(ProjectId)
+                .And(ContextTypeName);
         }
     }
 }

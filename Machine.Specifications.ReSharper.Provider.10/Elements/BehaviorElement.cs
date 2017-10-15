@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Elements
@@ -15,16 +13,12 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             IClrTypeName typeName,
             MspecServiceProvider serviceProvider,
             string fieldName,
-            bool isIgnored,
-            string fieldType)
+            bool isIgnored)
             : base(id, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
         {
-            FieldType = fieldType;
         }
 
         public ContextElement Context => Parent as ContextElement;
-
-        public string FieldType { get; }
 
         public override string Kind => "Behavior";
 
@@ -52,14 +46,6 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                 .Of(Id)
                 .And(TypeName?.FullName)
                 .And(FieldName);
-        }
-
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, MspecTestProvider provider, ContextElement contextElement, string fieldType, string fieldName)
-        {
-            var result = new[] { contextElement.Id, fieldType, fieldName };
-            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-
-            return elementIdFactory.Create(provider, contextElement.Id.Project, consumer.TargetFrameworkId, id);
         }
     }
 }

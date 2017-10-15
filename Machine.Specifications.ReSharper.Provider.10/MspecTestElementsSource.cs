@@ -31,6 +31,11 @@ namespace Machine.Specifications.ReSharperProvider
             _logger = logger;
         }
 
+        public override bool IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
+        {
+            return !project.IsDotNetCoreProject();
+        }
+
         public override void ProcessProject(
             IProject project, 
             FileSystemPath assemblyPath, 

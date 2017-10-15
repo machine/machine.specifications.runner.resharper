@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 using Machine.Specifications.ReSharperRunner.Tasks;
 
@@ -56,14 +54,6 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                 .Of(Id)
                 .And(TypeName?.FullName)
                 .And(FieldName);
-        }
-
-        public static UnitTestElementId CreateId(IUnitTestElementIdFactory elementIdFactory, IUnitTestElementsObserver consumer, IUnitTestProvider provider, ContextElement contextElement, string fieldName)
-        {
-            var result = new[] { contextElement.Id, fieldName };
-            var id = result.Where(s => !string.IsNullOrEmpty(s)).AggregateString(".");
-
-            return elementIdFactory.Create(provider, contextElement.Id.Project, consumer.TargetFrameworkId, id);
         }
     }
 }
