@@ -1,9 +1,9 @@
 image: Visual Studio 2017
 
 environment:
-  nuget_version: '2.0.0'
+  nuget_version: '2.0.1'
   nuget_prerelease: false
-  assembly_version: '2.0.0'
+  assembly_version: '2.0.1'
 
 version: '$(nuget_version)+{build}'
 configuration: Release
