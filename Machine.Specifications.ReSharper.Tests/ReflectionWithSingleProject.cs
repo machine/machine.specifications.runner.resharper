@@ -8,6 +8,7 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
+using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.TestFramework;
 using JetBrains.ReSharper.UnitTestFramework;
@@ -148,10 +149,11 @@ namespace Machine.Specifications.ReSharper.Tests
         private TestUnitTestElementObserver GetPsiObserver(IFile file, IProject project)
         {
             var serviceProvider = Solution.GetComponent<MspecServiceProvider>();
+            var searchDomainFactory = Solution.GetComponent<SearchDomainFactory>();
             var observer = new TestUnitTestElementObserver();
             var factory = new UnitTestElementFactory(serviceProvider, project, observer.TargetFrameworkId);
 
-            var explorer = new MspecPsiFileExplorer(factory, file, observer, () => false);
+            var explorer = new MspecPsiFileExplorer(searchDomainFactory, factory, observer, () => false);
             file.ProcessDescendants(explorer);
 
             return observer;

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.Metadata.Reader.Impl;
+using JetBrains.ReSharper.Feature.Services.Navigation.Requests;
+using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
 using Machine.Specifications.ReSharperProvider.Reflection;
@@ -12,17 +15,17 @@ namespace Machine.Specifications.ReSharperProvider
 {
     public class MspecPsiFileExplorer : IRecursiveElementProcessor
     {
+        private readonly SearchDomainFactory _searchDomainFactory;
         private readonly UnitTestElementFactory _factory;
-        private readonly IFile _file;
         private readonly IUnitTestElementsObserver _observer;
         private readonly Func<bool> _interrupted;
 
         private readonly Dictionary<ClrTypeName, IUnitTestElement> _contexts = new Dictionary<ClrTypeName, IUnitTestElement>();
 
-        public MspecPsiFileExplorer(UnitTestElementFactory factory, IFile file, IUnitTestElementsObserver observer, Func<bool> interrupted)
+        public MspecPsiFileExplorer(SearchDomainFactory searchDomainFactory, UnitTestElementFactory factory, IUnitTestElementsObserver observer, Func<bool> interrupted)
         {
+            _searchDomainFactory = searchDomainFactory;
             _factory = factory;
-            _file = file;
             _observer = observer;
             _interrupted = interrupted;
         }
@@ -54,7 +57,7 @@ namespace Machine.Specifications.ReSharperProvider
             var declaredElement = declaration.DeclaredElement;
 
             if (declaredElement is IClass type)
-                ProcessType(type.AsTypeInfo(), declaration);
+                ProcessType(type.AsTypeInfo(), declaredElement, declaration);
             else if (declaredElement is IField field)
                 ProcessField(field.AsFieldInfo(), declaration);
         }
@@ -63,13 +66,18 @@ namespace Machine.Specifications.ReSharperProvider
         {
         }
 
-        private void ProcessType(ITypeInfo type, IDeclaration declaration)
+        private void ProcessType(ITypeInfo type, IDeclaredElement element, IDeclaration declaration)
         {
-            if (!type.IsContext())
-                return;
+            if (type.IsContext())
+                ProcessContext(type, declaration, true);
+            else if (type.IsBehaviorContainer())
+                ProcessBehaviorContainer(element);
+        }
 
+        private void ProcessContext(ITypeInfo type, IDeclaration declaration, bool isClear)
+        {
             var name = new ClrTypeName(type.FullyQualifiedName);
-            var assemblyPath = _file.GetProject()?.GetOutputFilePath(_observer.TargetFrameworkId);
+            var assemblyPath = declaration.GetProject()?.GetOutputFilePath(_observer.TargetFrameworkId);
 
             var context = _factory.GetOrCreateContext(
                 name,
@@ -80,10 +88,44 @@ namespace Machine.Specifications.ReSharperProvider
 
             _contexts[name] = context;
 
-            OnUnitTestElement(context, declaration);
+            if (isClear)
+                OnUnitTestElement(context, declaration);
         }
 
-        private void ProcessField(IFieldInfo field, IDeclaration declaration)
+        private void ProcessBehaviorContainer(IDeclaredElement element)
+        {
+            var solution = element.GetSolution();
+
+            var searchDomain = _searchDomainFactory.CreateSearchDomain(solution, false);
+            var consumer = new SearchResultsConsumer();
+            var progress = NullProgressIndicator.Create();
+
+            solution.GetPsiServices()
+                .Finder
+                .Find(new[] {element}, searchDomain, consumer, SearchPattern.FIND_USAGES, progress);
+
+            var contexts = consumer.GetOccurrences()
+                .OfType<ReferenceOccurrence>()
+                .Select(x => x.GetTypeElement().GetValidDeclaredElement())
+                .OfType<IClass>()
+                .Where(x => x.IsContext());
+
+            foreach (var context in contexts)
+            {
+                var type = context.AsTypeInfo();
+                var declaration = context.GetDeclarations().FirstOrDefault();
+
+                if (declaration != null)
+                {
+                    ProcessContext(type, declaration, false);
+
+                    foreach (var field in type.GetFields())
+                        ProcessField(field);
+                }
+            }
+        }
+
+        private void ProcessField(IFieldInfo field, IDeclaration declaration = null)
         {
             if (field.IsSpecification())
                 ProcessSpecificationField(field, declaration);
@@ -91,7 +133,7 @@ namespace Machine.Specifications.ReSharperProvider
                 ProcessBehaviorField(field, declaration);
         }
 
-        private void ProcessSpecificationField(IFieldInfo field, IDeclaration declaration)
+        private void ProcessSpecificationField(IFieldInfo field, IDeclaration declaration = null)
         {
             var containingType = new ClrTypeName(field.DeclaringType);
 
@@ -107,7 +149,7 @@ namespace Machine.Specifications.ReSharperProvider
             }
         }
 
-        private void ProcessBehaviorField(IFieldInfo field, IDeclaration declaration)
+        private void ProcessBehaviorField(IFieldInfo field, IDeclaration declaration = null)
         {
             var behaviorType = field.FieldType.GetGenericArguments().FirstOrDefault();
             var containingType = new ClrTypeName(field.DeclaringType);
@@ -141,9 +183,15 @@ namespace Machine.Specifications.ReSharperProvider
             }
         }
 
-        private void OnUnitTestElement(IUnitTestElement element, IDeclaration declaration)
+        private void OnUnitTestElement(IUnitTestElement element, IDeclaration declaration = null)
         {
-            var project = _file.GetSourceFile().ToProjectFile();
+            if (declaration == null)
+            {
+                _observer.OnUnitTestElementDisposition(UnitTestElementDisposition.NotYetClear(element));
+                return;
+            }
+
+            var project = declaration.GetSourceFile().ToProjectFile();
             var textRange = declaration.GetNameDocumentRange().TextRange;
             var containingRange = declaration.GetDocumentRange().TextRange;
 
