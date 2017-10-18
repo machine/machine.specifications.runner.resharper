@@ -15,6 +15,8 @@ namespace Machine.Specifications.ReSharperProvider
         private readonly IProject _project;
         private readonly TargetFrameworkId _targetFrameworkId;
 
+        private readonly Dictionary<UnitTestElementId, IUnitTestElement> _elements = new Dictionary<UnitTestElementId, IUnitTestElement>();
+
         public UnitTestElementFactory(MspecServiceProvider serviceProvider, IProject project, TargetFrameworkId targetFrameworkId)
         {
             _serviceProvider = serviceProvider;
@@ -78,6 +80,9 @@ namespace Machine.Specifications.ReSharperProvider
         private T GetElementById<T>(UnitTestElementId id)
             where T : Element
         {
+            if (_elements.TryGetValue(id, out var element))
+                return element as T;
+
             return _serviceProvider.ElementManager.GetElementById(id) as T;
         }
 
@@ -93,6 +98,8 @@ namespace Machine.Specifications.ReSharperProvider
 
             element.Parent = parent;
             element.OwnCategories = categories;
+
+            _elements[elementId] = element;
 
             return element;
         }
