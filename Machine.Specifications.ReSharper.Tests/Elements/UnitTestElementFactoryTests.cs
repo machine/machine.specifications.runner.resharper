@@ -17,9 +17,9 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var element = factory.GetOrCreateContext(new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
+                var element = factory.GetOrCreateContext(project, new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
                     new[] {"tag1"}, false);
 
                 Assert.That(element, Is.Not.Null);
@@ -33,14 +33,14 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var element1 = factory.GetOrCreateContext(new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
+                var element1 = factory.GetOrCreateContext(project, new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
                     new[] { "tag1" }, false);
 
                 ServiceProvider.ElementManager.AddElements(new HashSet<IUnitTestElement> {element1});
 
-                var element2 = factory.GetOrCreateContext(new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
+                var element2 = factory.GetOrCreateContext(project, new ClrTypeName("MyClass"), BaseTestDataPath, "subject",
                     new[] { "tag1" }, false);
 
                 Assert.That(element1, Is.Not.Null);
@@ -54,10 +54,10 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
                 var parent = Substitute.For<IUnitTestElement>();
-                var element = factory.GetOrCreateContextSpecification(parent, new ClrTypeName("MyClass"), "my_field", false);
+                var element = factory.GetOrCreateContextSpecification(project, parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element, Is.Not.Null);
                 Assert.That(element.GetPresentation(), Is.EqualTo("my field"));
@@ -69,14 +69,14 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var parent = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
-                var element1 = factory.GetOrCreateContextSpecification(parent, new ClrTypeName("MyClass"), "my_field", false);
+                var parent = factory.GetOrCreateContext(project, new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
+                var element1 = factory.GetOrCreateContextSpecification(project, parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 ServiceProvider.ElementManager.AddElements(new HashSet<IUnitTestElement> {element1});
 
-                var element2 = factory.GetOrCreateContextSpecification(parent, new ClrTypeName("MyClass"), "my_field", false);
+                var element2 = factory.GetOrCreateContextSpecification(project, parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element1, Is.Not.Null);
                 Assert.That(element2, Is.Not.Null);
@@ -89,10 +89,10 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
                 var parent = Substitute.For<IUnitTestElement>();
-                var element = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", false);
+                var element = factory.GetOrCreateBehavior(project, parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element, Is.Not.Null);
                 Assert.That(element.GetPresentation(), Is.EqualTo("behaves like my field"));
@@ -104,14 +104,14 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var parent = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
-                var element1 = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", false);
+                var parent = factory.GetOrCreateContext(project, new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
+                var element1 = factory.GetOrCreateBehavior(project, parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 ServiceProvider.ElementManager.AddElements(new HashSet<IUnitTestElement> { element1 });
 
-                var element2 = factory.GetOrCreateBehavior(parent, new ClrTypeName("MyClass"), "my_field", false);
+                var element2 = factory.GetOrCreateBehavior(project, parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element1, Is.Not.Null);
                 Assert.That(element2, Is.Not.Null);
@@ -124,10 +124,10 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var parent = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
-                var element = factory.GetOrCreateBehaviorSpecification(parent, new ClrTypeName("MyClass"), "my_field", false);
+                var parent = factory.GetOrCreateContext(project, new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
+                var element = factory.GetOrCreateBehaviorSpecification(project, parent, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element, Is.Not.Null);
                 Assert.That(element.GetPresentation(), Is.EqualTo("my field"));
@@ -139,15 +139,15 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
         {
             With(project =>
             {
-                var factory = new UnitTestElementFactory(ServiceProvider, project, TargetFrameworkId.Default);
+                var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var context = factory.GetOrCreateContext(new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
-                var behavior = factory.GetOrCreateBehavior(context, new ClrTypeName("MyClass"), "my_field", false);
-                var element1 = factory.GetOrCreateBehaviorSpecification(behavior, new ClrTypeName("MyClass"), "my_field", false);
+                var context = factory.GetOrCreateContext(project, new ClrTypeName("Parent"), BaseTestDataPath, "subject", new string[0], false);
+                var behavior = factory.GetOrCreateBehavior(project, context, new ClrTypeName("MyClass"), "my_field", false);
+                var element1 = factory.GetOrCreateBehaviorSpecification(project, behavior, new ClrTypeName("MyClass"), "my_field", false);
 
                 ServiceProvider.ElementManager.AddElements(new HashSet<IUnitTestElement> { element1 });
 
-                var element2 = factory.GetOrCreateBehaviorSpecification(behavior, new ClrTypeName("MyClass"), "my_field", false);
+                var element2 = factory.GetOrCreateBehaviorSpecification(project, behavior, new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element1, Is.Not.Null);
                 Assert.That(element2, Is.Not.Null);

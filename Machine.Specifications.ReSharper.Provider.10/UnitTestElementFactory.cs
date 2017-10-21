@@ -12,19 +12,18 @@ namespace Machine.Specifications.ReSharperProvider
     public class UnitTestElementFactory
     {
         private readonly MspecServiceProvider _serviceProvider;
-        private readonly IProject _project;
         private readonly TargetFrameworkId _targetFrameworkId;
 
         private readonly Dictionary<UnitTestElementId, IUnitTestElement> _elements = new Dictionary<UnitTestElementId, IUnitTestElement>();
 
-        public UnitTestElementFactory(MspecServiceProvider serviceProvider, IProject project, TargetFrameworkId targetFrameworkId)
+        public UnitTestElementFactory(MspecServiceProvider serviceProvider, TargetFrameworkId targetFrameworkId)
         {
             _serviceProvider = serviceProvider;
-            _project = project;
             _targetFrameworkId = targetFrameworkId;
         }
 
         public IUnitTestElement GetOrCreateContext(
+            IProject project,
             IClrTypeName typeName,
             FileSystemPath assemblyLocation,
             string subject,
@@ -33,7 +32,7 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var categories = _serviceProvider.CategoryFactory.Create(tags);
 
-            var element = GetOrCreateElement(typeName.FullName, null, categories, x =>
+            var element = GetOrCreateElement(typeName.FullName, project, null, categories, x =>
                 new ContextElement(x, typeName, _serviceProvider, subject, ignored));
 
             element.AssemblyLocation = assemblyLocation;
@@ -42,6 +41,7 @@ namespace Machine.Specifications.ReSharperProvider
         }
 
         public IUnitTestElement GetOrCreateBehavior(
+            IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
@@ -49,11 +49,12 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var id = $"{typeName.FullName}.{fieldName}";
 
-            return GetOrCreateElement(id, parent, parent.OwnCategories, x =>
+            return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
                 new BehaviorElement(x, parent, typeName, _serviceProvider, fieldName, ignored));
         }
 
         public IUnitTestElement GetOrCreateContextSpecification(
+            IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
@@ -61,11 +62,12 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var id = $"{typeName.FullName}.{fieldName}";
 
-            return GetOrCreateElement(id, parent, parent.OwnCategories, x =>
+            return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
                 new ContextSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, ignored || parent.Explicit));
         }
 
         public IUnitTestElement GetOrCreateBehaviorSpecification(
+            IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
@@ -73,7 +75,7 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var id = $"{parent.Id.Id}.{typeName.FullName}.{fieldName}";
 
-            return GetOrCreateElement(id, parent, parent.OwnCategories, x =>
+            return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
                 new BehaviorSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, isIgnored || parent.Explicit));
         }
 
@@ -86,12 +88,15 @@ namespace Machine.Specifications.ReSharperProvider
             return _serviceProvider.ElementManager.GetElementById(id) as T;
         }
 
-        private T GetOrCreateElement<T>(string id, IUnitTestElement parent, ISet<UnitTestElementCategory> categories, Func<UnitTestElementId, T> factory)
+        private T GetOrCreateElement<T>(string id, IProject project, IUnitTestElement parent, ISet<UnitTestElementCategory> categories, Func<UnitTestElementId, T> factory)
             where T : Element
         {
-            var elementId = _serviceProvider.CreateId(_project, _targetFrameworkId, id);
+            var elementId = _serviceProvider.CreateId(project, _targetFrameworkId, id);
 
-            var element = GetElementById<T>(elementId) ?? factory(elementId);
+            var element = GetElementById<T>(elementId);
+
+            if (element == null)
+                element = factory(elementId);
 
             var invalidChildren = element.Children.Where(x => x.State == UnitTestElementState.Invalid);
             _serviceProvider.ElementManager.RemoveElements(invalidChildren.ToSet());

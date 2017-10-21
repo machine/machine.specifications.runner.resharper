@@ -64,8 +64,8 @@ namespace Machine.Specifications.ReSharper.Tests
         {
             Run(filename, (project, file, assembly) =>
             {
-                var psiObserver = GetPsiObserver(file, project);
-                var metadataObserver = GetMetadataObserver(assembly, project);
+                var psiObserver = GetPsiObserver(file);
+                var metadataObserver = GetMetadataObserver(project, assembly);
 
                 action(psiObserver);
                 action(metadataObserver);
@@ -134,24 +134,24 @@ namespace Machine.Specifications.ReSharper.Tests
                 .GetTheOnlyPsiFile<CSharpLanguage>();
         }
 
-        private TestUnitTestElementObserver GetMetadataObserver(IMetadataAssembly assembly, IProject project)
+        private TestUnitTestElementObserver GetMetadataObserver(IProject project, IMetadataAssembly assembly)
         {
             var serviceProvider = Solution.GetComponent<MspecServiceProvider>();
             var observer = new TestUnitTestElementObserver();
-            var factory = new UnitTestElementFactory(serviceProvider, project, observer.TargetFrameworkId);
+            var factory = new UnitTestElementFactory(serviceProvider, observer.TargetFrameworkId);
 
             var explorer = new MspecTestMetadataExplorer(factory, observer);
-            explorer.ExploreAssembly(assembly, CancellationToken.None);
+            explorer.ExploreAssembly(project, assembly, CancellationToken.None);
 
             return observer;
         }
 
-        private TestUnitTestElementObserver GetPsiObserver(IFile file, IProject project)
+        private TestUnitTestElementObserver GetPsiObserver(IFile file)
         {
             var serviceProvider = Solution.GetComponent<MspecServiceProvider>();
             var searchDomainFactory = Solution.GetComponent<SearchDomainFactory>();
             var observer = new TestUnitTestElementObserver();
-            var factory = new UnitTestElementFactory(serviceProvider, project, observer.TargetFrameworkId);
+            var factory = new UnitTestElementFactory(serviceProvider, observer.TargetFrameworkId);
 
             var explorer = new MspecPsiFileExplorer(searchDomainFactory, factory, observer, () => false);
             file.ProcessDescendants(explorer);

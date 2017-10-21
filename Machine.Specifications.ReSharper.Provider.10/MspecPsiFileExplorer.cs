@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.Metadata.Reader.Impl;
+using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Navigation.Requests;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Psi;
@@ -59,7 +60,7 @@ namespace Machine.Specifications.ReSharperProvider
             if (declaredElement is IClass type)
                 ProcessType(type.AsTypeInfo(), declaredElement, declaration);
             else if (declaredElement is IField field)
-                ProcessField(field.AsFieldInfo(), declaration);
+                ProcessField(declaration.GetProject(), field.AsFieldInfo(), declaration);
         }
 
         public void ProcessAfterInterior(ITreeNode element)
@@ -77,9 +78,11 @@ namespace Machine.Specifications.ReSharperProvider
         private void ProcessContext(ITypeInfo type, IDeclaration declaration, bool isClear)
         {
             var name = new ClrTypeName(type.FullyQualifiedName);
-            var assemblyPath = declaration.GetProject()?.GetOutputFilePath(_observer.TargetFrameworkId);
+            var project = declaration.GetProject();
+            var assemblyPath = project?.GetOutputFilePath(_observer.TargetFrameworkId);
 
             var context = _factory.GetOrCreateContext(
+                project,
                 name,
                 assemblyPath,
                 type.GetSubject(),
@@ -120,26 +123,27 @@ namespace Machine.Specifications.ReSharperProvider
                     ProcessContext(type, declaration, false);
 
                     foreach (var field in type.GetFields())
-                        ProcessField(field);
+                        ProcessField(declaration.GetProject(), field);
                 }
             }
         }
 
-        private void ProcessField(IFieldInfo field, IDeclaration declaration = null)
+        private void ProcessField(IProject project, IFieldInfo field, IDeclaration declaration = null)
         {
             if (field.IsSpecification())
-                ProcessSpecificationField(field, declaration);
+                ProcessSpecificationField(project, field, declaration);
             else if (field.IsBehavior())
-                ProcessBehaviorField(field, declaration);
+                ProcessBehaviorField(project, field, declaration);
         }
 
-        private void ProcessSpecificationField(IFieldInfo field, IDeclaration declaration = null)
+        private void ProcessSpecificationField(IProject project, IFieldInfo field, IDeclaration declaration = null)
         {
             var containingType = new ClrTypeName(field.DeclaringType);
 
             if (_contexts.TryGetValue(containingType, out var context))
             {
                 var specification = _factory.GetOrCreateContextSpecification(
+                    project,
                     context,
                     containingType,
                     field.ShortName,
@@ -149,7 +153,7 @@ namespace Machine.Specifications.ReSharperProvider
             }
         }
 
-        private void ProcessBehaviorField(IFieldInfo field, IDeclaration declaration = null)
+        private void ProcessBehaviorField(IProject project, IFieldInfo field, IDeclaration declaration = null)
         {
             var behaviorType = field.FieldType.GetGenericArguments().FirstOrDefault();
             var containingType = new ClrTypeName(field.DeclaringType);
@@ -157,6 +161,7 @@ namespace Machine.Specifications.ReSharperProvider
             if (_contexts.TryGetValue(containingType, out var context))
             {
                 var behavior = _factory.GetOrCreateBehavior(
+                    project,
                     context,
                     containingType,
                     field.ShortName,
@@ -172,6 +177,7 @@ namespace Machine.Specifications.ReSharperProvider
                     foreach (var specField in specFields)
                     {
                         var specification = _factory.GetOrCreateBehaviorSpecification(
+                            project,
                             behavior,
                             new ClrTypeName(specField.DeclaringType), 
                             specField.ShortName,

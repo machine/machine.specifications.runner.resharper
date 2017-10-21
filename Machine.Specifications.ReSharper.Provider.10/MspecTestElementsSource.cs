@@ -47,18 +47,18 @@ namespace Machine.Specifications.ReSharperProvider
             IUnitTestElementsObserver observer, 
             CancellationToken token)
         {
-            var factory = new UnitTestElementFactory(_serviceProvider, project, observer.TargetFrameworkId);
+            var factory = new UnitTestElementFactory(_serviceProvider, observer.TargetFrameworkId);
             var explorer = new MspecTestMetadataExplorer(factory, observer);
 
             MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, _logger, token,
-                assembly => explorer.ExploreAssembly(assembly, token));
+                assembly => explorer.ExploreAssembly(project, assembly, token));
 
             observer.OnCompleted();
         }
 
         public void ProcessFile(IFile psiFile, IUnitTestElementsObserver observer, Func<bool> interrupted)
         {
-            var factory = new UnitTestElementFactory(_serviceProvider, psiFile.GetProject(), observer.TargetFrameworkId);
+            var factory = new UnitTestElementFactory(_serviceProvider, observer.TargetFrameworkId);
             var explorer = new MspecPsiFileExplorer(_searchDomainFactory, factory, observer, interrupted);
 
             psiFile.ProcessDescendants(explorer);
