@@ -99,13 +99,12 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var solution = element.GetSolution();
 
+            var finder = solution.GetPsiServices().Finder;
             var searchDomain = _searchDomainFactory.CreateSearchDomain(solution, false);
             var consumer = new SearchResultsConsumer();
             var progress = NullProgressIndicator.Create();
 
-            solution.GetPsiServices()
-                .Finder
-                .Find(new[] {element}, searchDomain, consumer, SearchPattern.FIND_USAGES, progress);
+            finder.Find(new[] {element}, searchDomain, consumer, SearchPattern.FIND_USAGES, progress);
 
             var contexts = consumer.GetOccurrences()
                 .OfType<ReferenceOccurrence>()
