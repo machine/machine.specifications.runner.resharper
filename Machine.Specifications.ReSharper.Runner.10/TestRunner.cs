@@ -26,8 +26,6 @@ namespace Machine.Specifications.ReSharperRunner
                 _taskServer.SetTempFolderPath(environment.ShadowCopyPath);
             }
 
-            Environment.CurrentDirectory = environment.AssemblyFolder;
-
             var appDomainRunner = new AppDomainRunner(listener, runOptions);
 
             try

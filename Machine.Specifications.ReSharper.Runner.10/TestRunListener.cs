@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using JetBrains.ReSharper.TaskRunnerFramework;
+using Machine.Specifications.ReSharperRunner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperRunner
@@ -23,6 +26,8 @@ namespace Machine.Specifications.ReSharperRunner
 
         public void OnAssemblyStart(Runner.Utility.AssemblyInfo assemblyInfo)
         {
+            Environment.CurrentDirectory = GetWorkingDirectory(_context.AssemblyTask);
+
             _server.TaskStarting(_context.AssemblyTask);
         }
 
@@ -142,6 +147,11 @@ namespace Machine.Specifications.ReSharperRunner
             var exception = result.Flatten().FirstOrDefault();
 
             return exception != null ? $"{exception.FullTypeName}: {exception.Message}" : string.Empty;
+        }
+
+        private string GetWorkingDirectory(MspecTestAssemblyTask task)
+        {
+            return Path.GetDirectoryName(task.AssemblyLocation);
         }
     }
 }
