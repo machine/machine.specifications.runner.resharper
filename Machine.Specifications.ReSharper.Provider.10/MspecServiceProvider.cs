@@ -1,4 +1,6 @@
-﻿using JetBrains.Metadata.Reader.API;
+﻿using System.Linq;
+using JetBrains.DataFlow;
+using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
@@ -22,6 +24,7 @@ namespace Machine.Specifications.ReSharperProvider
             MspecTestProvider provider,
             ISolution solution,
             UnitTestingCachingService cachingService,
+            Lifetime lifetime,
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
             IUnitTestElementCategoryFactory categoryFactory,
@@ -34,6 +37,8 @@ namespace Machine.Specifications.ReSharperProvider
             CategoryFactory = categoryFactory;
             CachingService = cachingService;
             ElementManager = elementManager;
+
+            AddElementHandler(lifetime);
         }
 
         public UnitTestingCachingService CachingService { get; }
@@ -58,6 +63,15 @@ namespace Machine.Specifications.ReSharperProvider
         public UnitTestElementId CreateId(IProject project, TargetFrameworkId targetFrameworkId, string id)
         {
             return _elementIdFactory.Create(_provider, project, targetFrameworkId, id);
+        }
+
+        private void AddElementHandler(Lifetime lifetime)
+        {
+            ElementManager.UnitTestElementsRemoved.Advise(lifetime, set =>
+            {
+                foreach (var element in set)
+                    ElementManager.RemoveElements(element.Children.ToSet());
+            });
         }
     }
 }
