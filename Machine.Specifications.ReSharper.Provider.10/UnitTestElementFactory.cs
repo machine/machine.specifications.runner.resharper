@@ -93,10 +93,7 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var elementId = _serviceProvider.CreateId(project, _targetFrameworkId, id);
 
-            var element = GetElementById<T>(elementId);
-
-            if (element == null)
-                element = factory(elementId);
+            var element = GetElementById<T>(elementId) ?? factory(elementId);
 
             var invalidChildren = element.Children.Where(x => x.State == UnitTestElementState.Invalid);
             _serviceProvider.ElementManager.RemoveElements(invalidChildren.ToSet());
