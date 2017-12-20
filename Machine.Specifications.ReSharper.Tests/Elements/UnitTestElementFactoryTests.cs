@@ -56,8 +56,7 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
             {
                 var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var parent = Substitute.For<IUnitTestElement>();
-                var element = factory.GetOrCreateContextSpecification(project, parent, new ClrTypeName("MyClass"), "my_field", false);
+                var element = factory.GetOrCreateContextSpecification(project, CreateUnitTestElement(), new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element, Is.Not.Null);
                 Assert.That(element.GetPresentation(), Is.EqualTo("my field"));
@@ -91,8 +90,7 @@ namespace Machine.Specifications.ReSharper.Tests.Elements
             {
                 var factory = new UnitTestElementFactory(ServiceProvider, TargetFrameworkId.Default);
 
-                var parent = Substitute.For<IUnitTestElement>();
-                var element = factory.GetOrCreateBehavior(project, parent, new ClrTypeName("MyClass"), "my_field", false);
+                var element = factory.GetOrCreateBehavior(project, CreateUnitTestElement(), new ClrTypeName("MyClass"), "my_field", false);
 
                 Assert.That(element, Is.Not.Null);
                 Assert.That(element.GetPresentation(), Is.EqualTo("behaves like my field"));

@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using JetBrains.TestFramework;
 using NUnit.Framework;
@@ -24,7 +23,9 @@ using NUnit.Framework;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("48bbdc5f-a64d-4315-9338-fba0d0a79938")]
 
+#pragma warning disable 618
 [assembly: TestDataPathBase("Data")]
+#pragma warning restore 618
 [assembly: RequiresSTA]
 
 // Version information for an assembly consists of the following four values:

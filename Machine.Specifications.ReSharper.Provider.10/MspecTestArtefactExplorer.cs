@@ -1,7 +1,7 @@
-﻿using JetBrains.Application.ProcessRunner;
+﻿using JetBrains.Application.Processes;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.UnitTestFramework.Channel.Json;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore.Channel;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetTest;
 using JetBrains.Util;
 
@@ -13,12 +13,12 @@ namespace Machine.Specifications.ReSharperProvider
         public MspecTestArtefactExplorer(
             MspecTestProvider provider, 
             IDotNetCoreSdkResolver sdkResolver, 
-            IDotNetCoreUnitTestServerFactory serverFactory, 
+            IJsonBasedUnitTestServerFactory serverFactory, 
             MspecTestElementMapperFactory mapperFactory, 
-            IProcessRunnerManager processRunnerManager, 
+            ISolutionProcessStartInfoPatcher processStartInfoPatcher,
             IDotNetTestCaseMap testCaseMap, 
             ILogger logger) 
-            : base(provider, sdkResolver, serverFactory, mapperFactory, processRunnerManager, testCaseMap, logger)
+            : base(provider, sdkResolver, serverFactory, mapperFactory, processStartInfoPatcher, testCaseMap, logger)
         {
         }
     }

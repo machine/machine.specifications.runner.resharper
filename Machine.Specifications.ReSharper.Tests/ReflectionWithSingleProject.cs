@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using JetBrains.Application.platforms;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
@@ -14,20 +15,25 @@ using JetBrains.ReSharper.TestFramework;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
 using Machine.Specifications.ReSharperProvider;
+using NSubstitute;
 using NuGet.Frameworks;
 using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
     [MspecReferences]
+    [TestNetFramework35]
     public abstract class ReflectionWithSingleProject : BaseTestWithSingleProject
     {
-        private readonly TargetFrameworkId _framework = new TargetFrameworkId(new NuGetFramework(".NETFramework", Version.Parse("4.5")), true);
+        private readonly TargetFrameworkId _framework = new TargetFrameworkId(new NuGetFramework(".NETFramework", new Version(3, 5)), true);
 
         protected override string RelativeTestDataPath => "Reflection";
 
         protected MspecServiceProvider ServiceProvider =>
             Solution.GetComponent<MspecServiceProvider>();
+
+        protected PlatformManager PlatformManager =>
+            Solution.GetComponent<PlatformManager>();
 
         protected void With(Action action)
         {
@@ -92,6 +98,14 @@ namespace Machine.Specifications.ReSharper.Tests
             var factory = Solution.GetComponent<IUnitTestElementIdFactory>();
 
             return factory.Create("Provider", "Project", TargetFrameworkId.Default, id);
+        }
+
+        protected IUnitTestElement CreateUnitTestElement()
+        {
+            var element = Substitute.For<IUnitTestElement>();
+            element.Id.Returns(CreateId(DateTime.Now.Ticks.ToString()));
+
+            return element;
         }
 
         private IMetadataAssembly GetAssembly(string filename, out MetadataLoader loader)
@@ -164,7 +178,14 @@ namespace Machine.Specifications.ReSharper.Tests
             var source = GetTestDataFilePath2(filename);
             var assembly = source.ChangeExtension("dll");
 
-            CompileUtil.CompileCs(source, assembly, references);
+            CompileUtil.CompileCs(
+                PlatformManager,
+                source,
+                assembly,
+                references,
+                false,
+                false,
+                new Version(_framework.Version.Major, _framework.Version.Minor));
 
             return assembly.Name;
         }
