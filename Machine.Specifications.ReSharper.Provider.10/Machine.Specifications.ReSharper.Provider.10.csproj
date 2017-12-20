@@ -121,7 +121,6 @@
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.MahApps.Metro.1.5.0.1\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Deployment.Compression, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Microsoft.Deployment.Compression.Cab.3.11.0\lib\net20\Microsoft.Deployment.Compression.dll</HintPath>
@@ -227,7 +226,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Globalization" />
     <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Runtime.Serialization" />
