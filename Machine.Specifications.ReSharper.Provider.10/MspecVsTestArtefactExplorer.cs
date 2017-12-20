@@ -23,7 +23,7 @@ namespace Machine.Specifications.ReSharperProvider
             [NotNull] ISolutionProcessStartInfoPatcher processStartInfoPatcher,
             [NotNull] IDotNetVsTestRunSettingsProvider runSettingsProvider,
             [NotNull] IDotNetCoreTestCaseMap testCaseMap,
-            [NotNull] IDotNetVsTestElementMapperFactory mapperFactory,
+            [NotNull] MspecTestElementMapperFactory mapperFactory,
             [NotNull] INugetReferenceChecker nugetChecker,
             [NotNull] IUnitTestingSettings unitTestingSettings,
             [NotNull] ILogger logger)

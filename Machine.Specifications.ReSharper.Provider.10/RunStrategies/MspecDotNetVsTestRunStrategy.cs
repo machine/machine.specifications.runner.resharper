@@ -14,7 +14,7 @@ namespace Machine.Specifications.ReSharperProvider.RunStrategies
     {
         public MspecDotNetVsTestRunStrategy(
             [NotNull] IJsonBasedUnitTestServerFactory serverFactory, 
-            [NotNull] IDotNetVsTestElementMapperFactory mapperFactory, 
+            [NotNull] MspecTestElementMapperFactory mapperFactory, 
             [NotNull] IDotNetVsTestRunSettingsProvider runSettingsProvider, 
             [NotNull] IDotNetVsTestCaseMapProvider testCaseMapProvider, 
             [NotNull] IUnitTestResultManager resultManager, 

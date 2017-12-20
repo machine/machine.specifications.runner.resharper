@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using JetBrains.Application.platforms;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
@@ -13,6 +14,7 @@ using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.TestFramework;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
+using JetBrains.Util.Logging;
 using Machine.Specifications.ReSharperProvider;
 using NuGet.Frameworks;
 using NUnit.Framework;
@@ -161,10 +163,25 @@ namespace Machine.Specifications.ReSharper.Tests
 
         private string GetAssembly(string filename, string[] references)
         {
-            FileSystemPath source = GetTestDataFilePath2(filename);
-            FileSystemPath assembly = source.ChangeExtension("dll");
+            var source = GetTestDataFilePath2(filename);
+            var assembly = source.ChangeExtension("dll");
 
-            //CompileUtil.CompileCs(source, assembly, references);
+            var platformProviders = new[]
+            {
+                new DotNetCorePlatformsProvider(TestFixtureLifetime)
+            };
+
+            var manager = new PlatformManager(
+                TestFixtureLifetime,
+                DummyLogger.Instance,
+                new FrameworkLocationService(TestFixtureLifetime),
+                platformProviders);
+
+            CompileUtil.CompileCs(
+                manager,
+                source,
+                assembly,
+                references);
 
             return assembly.Name;
         }

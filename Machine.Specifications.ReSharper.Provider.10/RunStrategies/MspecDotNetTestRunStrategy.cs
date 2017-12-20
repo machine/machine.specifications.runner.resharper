@@ -13,7 +13,7 @@ namespace Machine.Specifications.ReSharperProvider.RunStrategies
     {
         public MspecDotNetTestRunStrategy(
             [NotNull] IJsonBasedUnitTestServerFactory serverFactory,
-            [NotNull] IDotNetTestElementMapperFactory mapperFactory,
+            [NotNull] MspecTestElementMapperFactory mapperFactory,
             [NotNull] IDotNetTestCaseMap testCaseMap,
             [NotNull] IUnitTestResultManager resultManager,
             [NotNull] ISolutionProcessStartInfoPatcher processStartInfoPatcher,

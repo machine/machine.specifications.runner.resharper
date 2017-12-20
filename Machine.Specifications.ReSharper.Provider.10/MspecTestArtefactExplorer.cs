@@ -15,7 +15,7 @@ namespace Machine.Specifications.ReSharperProvider
             [NotNull] MspecTestProvider provider, 
             [NotNull] IDotNetCoreSdkResolver sdkResolver, 
             [NotNull] IJsonBasedUnitTestServerFactory serverFactory, 
-            [NotNull] IDotNetTestElementMapperFactory mapperFactory, 
+            [NotNull] MspecTestElementMapperFactory mapperFactory, 
             [NotNull] ISolutionProcessStartInfoPatcher processStartInfoPatcher, 
             [NotNull] IDotNetCoreTestCaseMap testCaseMap, 
             [NotNull] ILogger logger) 
