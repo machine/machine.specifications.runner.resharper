@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
-using JetBrains.Application.ProcessRunner;
+using JetBrains.Annotations;
+using JetBrains.Application.Processes;
 using JetBrains.DataFlow;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Channel.Json;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore.Channel;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetVsTest;
 using JetBrains.Util;
 
@@ -14,16 +16,18 @@ namespace Machine.Specifications.ReSharperProvider
     public class MspecVsTestArtefactExplorer : DotNetVsTestArtefactExplorer<MspecTestProvider>
     {
         public MspecVsTestArtefactExplorer(
-            Lifetime lifetime, 
-            MspecTestProvider provider, 
-            IDotNetCoreSdkResolver sdkResolver, 
-            IDotNetCoreUnitTestServerFactory serverFactory, 
-            IProcessRunnerManager processRunnerManager, 
-            IDotNetVsTestCaseMap testCaseMap, 
-            MspecTestElementMapperFactory mapperFactory, 
-            INugetReferenceChecker nugetChecker, 
-            ILogger logger) 
-            : base(lifetime, provider, sdkResolver, serverFactory, processRunnerManager, testCaseMap, mapperFactory, nugetChecker, logger)
+            [NotNull] Lifetime lifetime,
+            [NotNull] MspecTestProvider provider,
+            [NotNull] IDotNetCoreSdkResolver sdkResolver,
+            [NotNull] IJsonBasedUnitTestServerFactory serverFactory,
+            [NotNull] ISolutionProcessStartInfoPatcher processStartInfoPatcher,
+            [NotNull] IDotNetVsTestRunSettingsProvider runSettingsProvider,
+            [NotNull] IDotNetCoreTestCaseMap testCaseMap,
+            [NotNull] IDotNetVsTestElementMapperFactory mapperFactory,
+            [NotNull] INugetReferenceChecker nugetChecker,
+            [NotNull] IUnitTestingSettings unitTestingSettings,
+            [NotNull] ILogger logger)
+            : base(lifetime, provider, sdkResolver, serverFactory, processStartInfoPatcher, runSettingsProvider, testCaseMap, mapperFactory, nugetChecker, unitTestingSettings, logger)
         {
         }
 

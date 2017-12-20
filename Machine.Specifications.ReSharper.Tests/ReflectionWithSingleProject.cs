@@ -161,10 +161,10 @@ namespace Machine.Specifications.ReSharper.Tests
 
         private string GetAssembly(string filename, string[] references)
         {
-            var source = GetTestDataFilePath2(filename);
-            var assembly = source.ChangeExtension("dll");
+            FileSystemPath source = GetTestDataFilePath2(filename);
+            FileSystemPath assembly = source.ChangeExtension("dll");
 
-            CompileUtil.CompileCs(source, assembly, references);
+            //CompileUtil.CompileCs(source, assembly, references);
 
             return assembly.Name;
         }
