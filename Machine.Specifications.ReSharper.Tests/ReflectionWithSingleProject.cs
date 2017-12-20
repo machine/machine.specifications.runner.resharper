@@ -14,22 +14,26 @@ using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.TestFramework;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util;
-using JetBrains.Util.Logging;
 using Machine.Specifications.ReSharperProvider;
+using NSubstitute;
 using NuGet.Frameworks;
 using NUnit.Framework;
 
 namespace Machine.Specifications.ReSharper.Tests
 {
     [MspecReferences]
+    [TestNetFramework35]
     public abstract class ReflectionWithSingleProject : BaseTestWithSingleProject
     {
-        private readonly TargetFrameworkId _framework = new TargetFrameworkId(new NuGetFramework(".NETFramework", Version.Parse("4.5")), true);
+        private readonly TargetFrameworkId _framework = new TargetFrameworkId(new NuGetFramework(".NETFramework", new Version(3, 5)), true);
 
         protected override string RelativeTestDataPath => "Reflection";
 
         protected MspecServiceProvider ServiceProvider =>
             Solution.GetComponent<MspecServiceProvider>();
+
+        protected PlatformManager PlatformManager =>
+            Solution.GetComponent<PlatformManager>();
 
         protected void With(Action action)
         {
@@ -94,6 +98,14 @@ namespace Machine.Specifications.ReSharper.Tests
             var factory = Solution.GetComponent<IUnitTestElementIdFactory>();
 
             return factory.Create("Provider", "Project", TargetFrameworkId.Default, id);
+        }
+
+        protected IUnitTestElement CreateUnitTestElement()
+        {
+            var element = Substitute.For<IUnitTestElement>();
+            element.Id.Returns(CreateId(DateTime.Now.Ticks.ToString()));
+
+            return element;
         }
 
         private IMetadataAssembly GetAssembly(string filename, out MetadataLoader loader)
@@ -166,22 +178,14 @@ namespace Machine.Specifications.ReSharper.Tests
             var source = GetTestDataFilePath2(filename);
             var assembly = source.ChangeExtension("dll");
 
-            var platformProviders = new[]
-            {
-                new DotNetCorePlatformsProvider(TestFixtureLifetime)
-            };
-
-            var manager = new PlatformManager(
-                TestFixtureLifetime,
-                DummyLogger.Instance,
-                new FrameworkLocationService(TestFixtureLifetime),
-                platformProviders);
-
             CompileUtil.CompileCs(
-                manager,
+                PlatformManager,
                 source,
                 assembly,
-                references);
+                references,
+                false,
+                false,
+                new Version(_framework.Version.Major, _framework.Version.Minor));
 
             return assembly.Name;
         }

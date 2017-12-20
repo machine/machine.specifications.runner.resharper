@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using JetBrains.Application.Processes;
+﻿using JetBrains.Application.Processes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Channel.Json;
@@ -12,12 +11,12 @@ namespace Machine.Specifications.ReSharperProvider.RunStrategies
     public class MspecDotNetTestRunStrategy : DotNetTestRunStrategy
     {
         public MspecDotNetTestRunStrategy(
-            [NotNull] IJsonBasedUnitTestServerFactory serverFactory,
-            [NotNull] MspecTestElementMapperFactory mapperFactory,
-            [NotNull] IDotNetTestCaseMap testCaseMap,
-            [NotNull] IUnitTestResultManager resultManager,
-            [NotNull] ISolutionProcessStartInfoPatcher processStartInfoPatcher,
-            [NotNull] ILogger logger)
+            IJsonBasedUnitTestServerFactory serverFactory,
+            MspecTestElementMapperFactory mapperFactory,
+            IDotNetTestCaseMap testCaseMap,
+            IUnitTestResultManager resultManager,
+            ISolutionProcessStartInfoPatcher processStartInfoPatcher,
+            ILogger logger)
             : base(serverFactory, mapperFactory, testCaseMap, resultManager, processStartInfoPatcher, logger)
         {
         }

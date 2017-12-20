@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using JetBrains.Annotations;
 using JetBrains.Application.Processes;
 using JetBrains.DataFlow;
 using JetBrains.Metadata.Reader.API;
@@ -16,17 +15,17 @@ namespace Machine.Specifications.ReSharperProvider
     public class MspecVsTestArtefactExplorer : DotNetVsTestArtefactExplorer<MspecTestProvider>
     {
         public MspecVsTestArtefactExplorer(
-            [NotNull] Lifetime lifetime,
-            [NotNull] MspecTestProvider provider,
-            [NotNull] IDotNetCoreSdkResolver sdkResolver,
-            [NotNull] IJsonBasedUnitTestServerFactory serverFactory,
-            [NotNull] ISolutionProcessStartInfoPatcher processStartInfoPatcher,
-            [NotNull] IDotNetVsTestRunSettingsProvider runSettingsProvider,
-            [NotNull] IDotNetCoreTestCaseMap testCaseMap,
-            [NotNull] MspecTestElementMapperFactory mapperFactory,
-            [NotNull] INugetReferenceChecker nugetChecker,
-            [NotNull] IUnitTestingSettings unitTestingSettings,
-            [NotNull] ILogger logger)
+            Lifetime lifetime,
+            MspecTestProvider provider,
+            IDotNetCoreSdkResolver sdkResolver,
+            IJsonBasedUnitTestServerFactory serverFactory,
+            ISolutionProcessStartInfoPatcher processStartInfoPatcher,
+            DefaultDotNetVsTestRunSettingsProvider runSettingsProvider,
+            IDotNetVsTestCaseMap testCaseMap,
+            MspecTestElementMapperFactory mapperFactory,
+            INugetReferenceChecker nugetChecker,
+            IUnitTestingSettings unitTestingSettings,
+            ILogger logger)
             : base(lifetime, provider, sdkResolver, serverFactory, processStartInfoPatcher, runSettingsProvider, testCaseMap, mapperFactory, nugetChecker, unitTestingSettings, logger)
         {
         }

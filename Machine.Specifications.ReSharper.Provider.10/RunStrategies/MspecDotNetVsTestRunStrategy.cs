@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using JetBrains.Annotations;
 using JetBrains.Application.Processes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
@@ -13,15 +12,15 @@ namespace Machine.Specifications.ReSharperProvider.RunStrategies
     public class MspecDotNetVsTestRunStrategy : DotNetVsTestRunStrategy
     {
         public MspecDotNetVsTestRunStrategy(
-            [NotNull] IJsonBasedUnitTestServerFactory serverFactory, 
-            [NotNull] MspecTestElementMapperFactory mapperFactory, 
-            [NotNull] IDotNetVsTestRunSettingsProvider runSettingsProvider, 
-            [NotNull] IDotNetVsTestCaseMapProvider testCaseMapProvider, 
-            [NotNull] IUnitTestResultManager resultManager, 
-            [NotNull] ISolutionProcessStartInfoPatcher processStartInfoPatcher, 
-            [NotNull] ILogger logger, 
-            [NotNull] IUnitTestingSettings unitTestingSettings, 
-            [NotNull] IEnumerable<IRunSettingsPostProcessor> runSettingsPostProcessors) 
+            IJsonBasedUnitTestServerFactory serverFactory, 
+            MspecTestElementMapperFactory mapperFactory, 
+            DefaultDotNetVsTestRunSettingsProvider runSettingsProvider,
+            IDotNetVsTestCaseMapProvider testCaseMapProvider, 
+            IUnitTestResultManager resultManager, 
+            ISolutionProcessStartInfoPatcher processStartInfoPatcher, 
+            ILogger logger, 
+            IUnitTestingSettings unitTestingSettings, 
+            IEnumerable<IRunSettingsPostProcessor> runSettingsPostProcessors) 
             : base(serverFactory, mapperFactory, runSettingsProvider, testCaseMapProvider, resultManager, processStartInfoPatcher, logger, unitTestingSettings, runSettingsPostProcessors)
         {
         }
