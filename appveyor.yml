@@ -1,7 +1,7 @@
 image: Visual Studio 2017
 
 environment:
-  nuget_version: '2.1.0'
+  nuget_version: '2.1.1'
   nuget_prerelease: false
   assembly_version: '2.1.0'
 
@@ -43,7 +43,7 @@ artifacts:
 deploy:
   - provider: GitHub
     description: |
-      * Added support for R# 2017.3
+      * Added support for R# 2017.3.1
     on:
       appveyor_repo_tag: true
     prerelease: $(nuget_prerelease)
