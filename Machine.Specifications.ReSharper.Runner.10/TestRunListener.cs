@@ -70,8 +70,14 @@ namespace Machine.Specifications.ReSharperRunner
             var task = _context.GetContextTask(contextInfo);
             var message = result == TaskResult.Error ? "One or more tests failed" : string.Empty;
 
-            if (task != null)
-                _server.TaskFinished(task, message, result);
+            if (task == null)
+            {
+                return;
+            }
+
+            Output(task, contextInfo.CapturedOutput);
+
+            _server.TaskFinished(task, message, result);
         }
 
         public void OnSpecificationStart(SpecificationInfo specificationInfo)
