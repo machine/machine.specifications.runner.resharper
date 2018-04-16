@@ -13,7 +13,7 @@ namespace Machine.Specifications.ReSharperProvider
     [SolutionComponent]
     public class MspecServiceProvider
     {
-        private static readonly MspecOutOfProcessUnitTestRunStrategy Default = new MspecOutOfProcessUnitTestRunStrategy();
+        private readonly MspecOutOfProcessUnitTestRunStrategy Default;
 
         private readonly MspecTestProvider _provider;
         private readonly ISolution _solution;
@@ -28,7 +28,9 @@ namespace Machine.Specifications.ReSharperProvider
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
             IUnitTestElementCategoryFactory categoryFactory,
-            IDotNetCoreSdkResolver dotNetCoreSdkResolver)
+            IDotNetCoreSdkResolver dotNetCoreSdkResolver,
+            IUnitTestAgentManager agentManager,
+            IUnitTestResultManager resultManager)
         {
             _provider = provider;
             _solution = solution;
@@ -39,6 +41,7 @@ namespace Machine.Specifications.ReSharperProvider
             ElementManager = elementManager;
 
             AddElementHandler(lifetime);
+            Default = new MspecOutOfProcessUnitTestRunStrategy(agentManager, resultManager);
         }
 
         public UnitTestingCachingService CachingService { get; }

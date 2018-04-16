@@ -1,12 +1,11 @@
 ﻿using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetTest;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetVsTest;
+using JetBrains.ReSharper.UnitTestFramework.DotNetCore.Common;
 
 namespace Machine.Specifications.ReSharperProvider
 {
     [SolutionComponent]
-    public class MspecTestElementMapperFactory : IDotNetVsTestElementMapperFactory, IDotNetTestElementMapperFactory
+    public class MspecTestElementMapperFactory : ITestElementMapperFactory
     {
         private readonly MspecServiceProvider _serviceProvider;
 
@@ -22,12 +21,7 @@ namespace Machine.Specifications.ReSharperProvider
             return new MspecTestElementMapper(project, targetFrameworkId, factory);
         }
 
-        IDotNetVsTestElementMapper IDotNetVsTestElementMapperFactory.Create(IProject project, TargetFrameworkId targetFrameworkId)
-        {
-            return Create(project, targetFrameworkId);
-        }
-
-        IDotNetTestElementMapper IDotNetTestElementMapperFactory.Create(IProject project, TargetFrameworkId targetFrameworkId)
+        ITestElementMapper ITestElementMapperFactory.Create(IProject project, TargetFrameworkId targetFrameworkId)
         {
             return Create(project, targetFrameworkId);
         }
