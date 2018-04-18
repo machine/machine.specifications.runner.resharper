@@ -36,7 +36,7 @@ namespace Machine.Specifications.ReSharperProvider
             get
             {
                 if (_interrupted())
-                    throw new ProcessCancelledException();
+                    throw new OperationCanceledException();
 
                 return false;
             }

@@ -6,13 +6,12 @@ using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore.Common;
 using JetBrains.Util.Extension;
 
 namespace Machine.Specifications.ReSharperProvider
 {
-    public class MspecTestElementMapper : DotNetCoreTestElementMapper
+    public class MspecTestElementMapper : TestElementMapper
     {
         private readonly IProject _project;
         private readonly TargetFrameworkId _targetFrameworkId;
@@ -21,15 +20,36 @@ namespace Machine.Specifications.ReSharperProvider
         public MspecTestElementMapper(
             IProject project,
             TargetFrameworkId targetFrameworkId, 
-            UnitTestElementFactory factory) 
-            : base(project, targetFrameworkId)
+            UnitTestElementFactory factory
+        ) : base(project, targetFrameworkId)
         {
             _project = project;
             _targetFrameworkId = targetFrameworkId;
             _factory = factory;
         }
 
-        protected override IUnitTestElement Map(Test test)
+        private static string GetType(Test test)
+        {
+            return test.FullyQualifiedName.SubstringBeforeLast("::").Trim();
+        }
+
+        private static string GetField(Test test)
+        {
+            return test.FullyQualifiedName.SubstringAfterLast("::").Trim();
+        }
+
+        private IEnumerable<string> GetTraits(Test test, string category)
+        {
+            return test.Traits
+                .GetValueSafe(category, string.Empty)
+                .Split("],[")
+                .Select(x => x.Split(',').LastOrDefault())
+                .Select(x => x?.Trim('[', ']'))
+                .Where(x => !string.IsNullOrEmpty(x))
+                .Select(x => x.Trim());
+        }
+
+        public override IUnitTestElement Map(Test test)
         {
             using (ReadLockCookie.Create())
             {
@@ -54,27 +74,6 @@ namespace Machine.Specifications.ReSharperProvider
 
                 return _factory.GetOrCreateContextSpecification(_project, context, type, fieldName, false);
             }
-        }
-
-        private string GetType(Test test)
-        {
-            return test.FullyQualifiedName.SubstringBeforeLast("::").Trim();
-        }
-
-        private string GetField(Test test)
-        {
-            return test.FullyQualifiedName.SubstringAfterLast("::").Trim();
-        }
-
-        private IEnumerable<string> GetTraits(Test test, string category)
-        {
-            return test.Traits
-                .GetValueSafe(category, string.Empty)
-                .Split("],[")
-                .Select(x => x.Split(',').LastOrDefault())
-                .Select(x => x?.Trim('[', ']'))
-                .Where(x => !string.IsNullOrEmpty(x))
-                .Select(x => x.Trim());
         }
     }
 }
