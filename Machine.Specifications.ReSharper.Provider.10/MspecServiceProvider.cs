@@ -29,8 +29,7 @@ namespace Machine.Specifications.ReSharperProvider
             IUnitTestElementIdFactory elementIdFactory,
             IUnitTestElementCategoryFactory categoryFactory,
             IDotNetCoreSdkResolver dotNetCoreSdkResolver,
-            IUnitTestAgentManager agentManager,
-            IUnitTestResultManager resultManager)
+            MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy)
         {
             _provider = provider;
             _solution = solution;
@@ -41,7 +40,7 @@ namespace Machine.Specifications.ReSharperProvider
             ElementManager = elementManager;
 
             AddElementHandler(lifetime);
-            Default = new MspecOutOfProcessUnitTestRunStrategy(agentManager, resultManager);
+            Default = processUnitTestRunStrategy;
         }
 
         public UnitTestingCachingService CachingService { get; }

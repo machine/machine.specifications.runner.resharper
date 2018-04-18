@@ -14,16 +14,16 @@ namespace Machine.Specifications.ReSharperProvider
             _serviceProvider = serviceProvider;
         }
 
-        private MspecTestElementMapper Create(IProject project, TargetFrameworkId targetFrameworkId)
+        private MspecTestElementMapper CreateMapper(IProject project, TargetFrameworkId targetFrameworkId)
         {
             var factory = new UnitTestElementFactory(_serviceProvider, targetFrameworkId);
 
             return new MspecTestElementMapper(project, targetFrameworkId, factory);
         }
 
-        ITestElementMapper ITestElementMapperFactory.Create(IProject project, TargetFrameworkId targetFrameworkId)
+        public ITestElementMapper Create(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return Create(project, targetFrameworkId);
+            return CreateMapper(project, targetFrameworkId);
         }
     }
 }

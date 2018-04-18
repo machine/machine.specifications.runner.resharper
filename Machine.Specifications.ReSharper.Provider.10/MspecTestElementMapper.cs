@@ -11,7 +11,7 @@ using JetBrains.Util.Extension;
 
 namespace Machine.Specifications.ReSharperProvider
 {
-    public class MspecTestElementMapper : ITestElementMapper
+    public class MspecTestElementMapper : TestElementMapper
     {
         private readonly IProject _project;
         private readonly TargetFrameworkId _targetFrameworkId;
@@ -20,7 +20,7 @@ namespace Machine.Specifications.ReSharperProvider
         public MspecTestElementMapper(
             IProject project,
             TargetFrameworkId targetFrameworkId, 
-            UnitTestElementFactory factory) 
+            UnitTestElementFactory factory) : base(project, targetFrameworkId)
         {
             _project = project;
             _targetFrameworkId = targetFrameworkId;
@@ -48,7 +48,7 @@ namespace Machine.Specifications.ReSharperProvider
                 .Select(x => x.Trim());
         }
 
-        IUnitTestElement ITestElementMapper.Map(Test test)
+        public override IUnitTestElement Map(Test test)
         {
             using (ReadLockCookie.Create())
             {

@@ -10,7 +10,6 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore.Exceptions;
 using Machine.Specifications.ReSharperProvider.Reflection;
 
 namespace Machine.Specifications.ReSharperProvider
@@ -37,7 +36,7 @@ namespace Machine.Specifications.ReSharperProvider
             get
             {
                 if (_interrupted())
-                    throw new ProcessExitedUnexpectedlyException();
+                    throw new OperationCanceledException();
 
                 return false;
             }

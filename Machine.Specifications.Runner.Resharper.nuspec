@@ -15,7 +15,7 @@
 		<iconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</iconUrl>
 		<tags>test unit testing context specification bdd tdd mspec runner resharper</tags>
 		<dependencies>
-			<dependency id="Wave" version="[11.0]" />
+			<dependency id="Wave" version="[12.0]" />
 		</dependencies>
 	</metadata>
 	<files>
