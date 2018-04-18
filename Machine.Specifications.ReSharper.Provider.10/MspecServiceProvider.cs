@@ -13,7 +13,7 @@ namespace Machine.Specifications.ReSharperProvider
     [SolutionComponent]
     public class MspecServiceProvider
     {
-        private readonly MspecOutOfProcessUnitTestRunStrategy Default;
+        private readonly MspecOutOfProcessUnitTestRunStrategy _processUnitTestRunStrategy;
 
         private readonly MspecTestProvider _provider;
         private readonly ISolution _solution;
@@ -40,7 +40,7 @@ namespace Machine.Specifications.ReSharperProvider
             ElementManager = elementManager;
 
             AddElementHandler(lifetime);
-            Default = processUnitTestRunStrategy;
+            _processUnitTestRunStrategy = processUnitTestRunStrategy;
         }
 
         public UnitTestingCachingService CachingService { get; }
@@ -54,7 +54,7 @@ namespace Machine.Specifications.ReSharperProvider
             var project = element.Id.Project;
 
             if (!project.IsDotNetCoreProject() || element.Id.TargetFrameworkId.IsNetFramework)
-                return Default;
+                return _processUnitTestRunStrategy;
 
             if (_dotNetCoreSdkResolver.GetVersion(project) < ImportantSdkVersions.VsTestVersion)
                 return _solution.GetComponent<MspecDotNetTestRunStrategy>();
