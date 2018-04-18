@@ -20,7 +20,8 @@ namespace Machine.Specifications.ReSharperProvider
         public MspecTestElementMapper(
             IProject project,
             TargetFrameworkId targetFrameworkId, 
-            UnitTestElementFactory factory) : base(project, targetFrameworkId)
+            UnitTestElementFactory factory
+        ) : base(project, targetFrameworkId)
         {
             _project = project;
             _targetFrameworkId = targetFrameworkId;
