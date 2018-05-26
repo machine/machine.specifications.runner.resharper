@@ -28,7 +28,7 @@ build:
 
 after_build:
 - cmd: >-
-    nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=$(GitVersion_NuGetVersion)" -outputdirectory Build
+    nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=%GitVersion_NuGetVersion%" -outputdirectory Build
 
 test:
   assemblies:
