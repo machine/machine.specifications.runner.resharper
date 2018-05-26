@@ -1,36 +1,32 @@
 image: Visual Studio 2017
 
-environment:
-  nuget_version: '2.2.0'
-  nuget_prerelease: false
-  assembly_version: '2.2.0'
-
-version: '$(nuget_version)+{build}'
 configuration: Release
 platform: Any CPU
 
-assembly_info:
-  patch: true
-  file: SharedAssemblyInfo.cs
-  assembly_version: '$(assembly_version).{build}'
-  assembly_file_version: '$(assembly_version).{build}'
-  assembly_informational_version: '$(nuget_version)'
+install:
+  - choco install gitversion.portable -pre -y
 
-clone_depth: 5
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: $(GitVersion_NuGetVersion)
+  package_version: $(GitVersion_NuGetVersion)
+  assembly_version: $(GitVersion_MajorMinorPatch)
+  file_version: $(GitVersion_MajorMinorPatch)
+  informational_version: $(GitVersion_MajorMinorPatch)
+
 pull_requests:
   do_not_increment_build_number: true
 
 before_build:
-- cmd: >-
-    nuget restore
+  - cmd: dotnet restore
+  - ps: gitversion /l console /output buildserver
 
-build:
-  project: Machine.Specifications.Runner.Resharper.sln
-  publish_nuget: false
+build_script:
+  - cmd: dotnet build Machine.Specifications.Runner.Resharper.sln --framework net46 --output Build
 
 after_build:
-- cmd: >-
-    nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=%NUGET_VERSION%" -outputdirectory Build
+  - cmd: nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=$(GitVersion_NuGetVersion)" -outputdirectory Build
 
 test:
   assemblies:
@@ -42,8 +38,6 @@ artifacts:
 
 deploy:
   - provider: GitHub
-    description: |
-      * Added support for R# 2018.1
     on:
       appveyor_repo_tag: true
     prerelease: $(nuget_prerelease)
