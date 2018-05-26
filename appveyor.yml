@@ -22,13 +22,11 @@ before_build:
   - cmd: dotnet restore
   - ps: gitversion /l console /output buildserver
 
-build:
-  project: Machine.Specifications.Runner.Resharper.sln
-  publish_nuget: false
+build_script:
+  - cmd: dotnet build Machine.Specifications.Runner.Resharper.sln --framework net46 --output Build
 
 after_build:
-- cmd: >-
-    nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=%GitVersion_NuGetVersion%" -outputdirectory Build
+  - cmd: nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=$(GitVersion_NuGetVersion)" -outputdirectory Build
 
 test:
   assemblies:
