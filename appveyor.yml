@@ -15,7 +15,6 @@ dotnet_csproj:
   file_version: $(GitVersion_MajorMinorPatch)
   informational_version: $(GitVersion_MajorMinorPatch)
 
-clone_depth: 5
 pull_requests:
   do_not_increment_build_number: true
 
