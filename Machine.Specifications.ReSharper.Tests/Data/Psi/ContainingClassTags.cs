@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
     [Tags("Taggy")]
-    public class Specs : BaseClass
+    public class ContainingClassTagsSpecs
     {
         class InnerSpecs
         {

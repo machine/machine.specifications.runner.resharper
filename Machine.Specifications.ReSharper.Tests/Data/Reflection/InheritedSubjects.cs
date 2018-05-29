@@ -1,14 +1,14 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Reflection
 {
-    [Subject(typeof(BaseClass))]
-    public abstract class BaseClass
+    [Subject(typeof(InheritedSubjectsBaseClass))]
+    public abstract class InheritedSubjectsBaseClass
     {
     }
 
     [Subject("specifications")]
-    public class Spec : BaseClass
+    public class InheritedSubjectsSpec : InheritedSubjectsBaseClass
     {
         It is_something;
     }

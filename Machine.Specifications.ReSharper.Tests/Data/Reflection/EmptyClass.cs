@@ -1,4 +1,4 @@
-﻿namespace Data
+﻿namespace Data.Reflection
 {
     public class EmptyClass
     {

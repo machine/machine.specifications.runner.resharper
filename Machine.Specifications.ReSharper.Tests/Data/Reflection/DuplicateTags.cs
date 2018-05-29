@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Reflection
 {
     [Tags("Taggy", "Taggy2", "Taggy2")]
-    public class Specs
+    public class DuplicateTagsSpecs
     {
     }
 }

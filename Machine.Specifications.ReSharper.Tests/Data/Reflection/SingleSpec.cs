@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Reflection
 {
-    [Subject(typeof(Simple))]
-    class Simple
+    [Subject(typeof(SingleSpec))]
+    class SingleSpec
     {
         static bool value;
 

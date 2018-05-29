@@ -1,13 +1,13 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
-    [Subject(typeof(BaseClass))]
-    public abstract class BaseClass
+    [Subject(typeof(ParentBaseSubjectBaseClass))]
+    public abstract class ParentBaseSubjectBaseClass
     {
     }
 
-    public class Specs : BaseClass
+    public class ParentBaseSubjectSpecs : ParentBaseSubjectBaseClass
     {
         class InnerSpecs
         {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Data
+namespace Data.Psi
 {
     public class ClassWithGenericField
     {

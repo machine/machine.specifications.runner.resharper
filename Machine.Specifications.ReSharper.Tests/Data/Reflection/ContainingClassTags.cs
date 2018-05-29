@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Reflection
 {
     [Tags("Taggy")]
-    public class Specs
+    public class ContainingClassTagsSpecs
     {
         class InnerSpecs
         {

@@ -1,8 +1,8 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
-    public class Specs
+    public class IgnoredFieldSpecs
     {
         [Ignore("reason")]
         It is_something;

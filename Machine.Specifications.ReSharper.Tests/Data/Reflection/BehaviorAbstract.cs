@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Reflection
 {
     [Behaviors]
-    public abstract class SingleBehavior
+    public abstract class BehaviorAbstract
     {
         It is_something;
     }

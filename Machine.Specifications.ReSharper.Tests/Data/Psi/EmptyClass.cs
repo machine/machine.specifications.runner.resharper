@@ -1,4 +1,4 @@
-﻿namespace Data
+﻿namespace Data.Psi
 {
     public class EmptyClass
     {

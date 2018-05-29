@@ -1,6 +1,6 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Reflection
 {
     [Subject("name")]
     public abstract class AbstractSpecs

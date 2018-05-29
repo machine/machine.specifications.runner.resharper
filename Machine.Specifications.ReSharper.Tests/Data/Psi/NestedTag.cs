@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
     [Tags("OuterTags")]
-    public class Specs
+    public class NestedTagSpecs
     {
         [Tags("InnerTags")]
         class InnerSpecs

@@ -1,14 +1,14 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
     [Tags("Taggy")]
-    class BaseClass
+    class BaseClassTagsBaseClass
     {
-        static bool value;
+        protected static bool value;
     }
 
-    class Spec : BaseClass
+    class BaseClassTagsSpec : BaseClassTagsBaseClass
     {
         It is_true = () =>
             value.ShouldBeFalse();

@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Reflection
 {
     [Ignore("reason")]
-    public class Specs
+    public class IgnoredClassSpecs
     {
         It is_something;
     }

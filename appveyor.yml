@@ -23,7 +23,7 @@ before_build:
   - ps: gitversion /l console /output buildserver
 
 build_script:
-  - cmd: dotnet build Machine.Specifications.Runner.Resharper.sln --framework net46 --output Build
+  - cmd: dotnet build Machine.Specifications.Runner.Resharper.sln
 
 after_build:
   - cmd: nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=$(GitVersion_NuGetVersion)" -outputdirectory Build

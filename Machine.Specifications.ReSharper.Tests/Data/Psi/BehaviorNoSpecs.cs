@@ -1,6 +1,6 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
     [Behaviors]
     public class BehaviorNoSpecs

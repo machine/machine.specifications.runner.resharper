@@ -1,14 +1,14 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
-    [Subject(typeof(BaseClass))]
-    class BaseClass
+    [Subject(typeof(BaseClassWithSubjectBaseClass))]
+    class BaseClassWithSubjectBaseClass
     {
-        static bool value;
+        protected static bool value;
     }
 
-    class Spec : BaseClass
+    class BaseClassWithSubjectSpec : BaseClassWithSubjectBaseClass
     {
         It is_true = () =>
             value.ShouldBeFalse();

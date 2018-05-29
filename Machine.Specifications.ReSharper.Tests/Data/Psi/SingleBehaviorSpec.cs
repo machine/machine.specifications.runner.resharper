@@ -1,6 +1,6 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
     [Behaviors]
     public class TestBehavior
@@ -10,7 +10,7 @@ namespace Data
         It is_something;
     }
 
-    public class Specs
+    public class SingleBehaviorSpec
     {
         protected static string item;
 

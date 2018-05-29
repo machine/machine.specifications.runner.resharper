@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
     [Behaviors]
-    public abstract class SingleBehavior
+    public abstract class BehaviorAbstractSpecs
     {
         It is_something;
     }

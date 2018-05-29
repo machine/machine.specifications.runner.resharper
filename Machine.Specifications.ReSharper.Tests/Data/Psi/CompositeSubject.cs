@@ -1,9 +1,9 @@
 ﻿using Machine.Specifications;
 
-namespace Data
+namespace Data.Psi
 {
-    [Subject(typeof(Specs), "plus plus")]
-    public class Specs
+    [Subject(typeof(CompositeSubjectSpecs), "plus plus")]
+    public class CompositeSubjectSpecs
     {
         It is_something;
     }
