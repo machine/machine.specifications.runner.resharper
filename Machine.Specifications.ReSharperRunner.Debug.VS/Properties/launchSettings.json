@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Machine.Specifications.ReSharperRunner.Debug.VS": {
+      "commandName": "Executable",
+      "executablePath": "$(DevEnvDir)devenv.exe",
+      "commandLineArgs": "/rootsuffix mspec"
+    }
+  }
+}

@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using JetBrains.DataFlow;
-using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
+using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using Machine.Specifications.ReSharperProvider.RunStrategies;
 
 namespace Machine.Specifications.ReSharperProvider
@@ -18,7 +17,6 @@ namespace Machine.Specifications.ReSharperProvider
         private readonly MspecTestProvider _provider;
         private readonly ISolution _solution;
         private readonly IUnitTestElementIdFactory _elementIdFactory;
-        private readonly IDotNetCoreSdkResolver _dotNetCoreSdkResolver;
 
         public MspecServiceProvider(
             MspecTestProvider provider,
@@ -28,13 +26,11 @@ namespace Machine.Specifications.ReSharperProvider
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
             IUnitTestElementCategoryFactory categoryFactory,
-            IDotNetCoreSdkResolver dotNetCoreSdkResolver,
             MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy)
         {
             _provider = provider;
             _solution = solution;
             _elementIdFactory = elementIdFactory;
-            _dotNetCoreSdkResolver = dotNetCoreSdkResolver;
             CategoryFactory = categoryFactory;
             CachingService = cachingService;
             ElementManager = elementManager;
@@ -55,9 +51,6 @@ namespace Machine.Specifications.ReSharperProvider
 
             if (!project.IsDotNetCoreProject() || element.Id.TargetFrameworkId.IsNetFramework)
                 return _processUnitTestRunStrategy;
-
-            if (_dotNetCoreSdkResolver.GetVersion(project) < ImportantSdkVersions.VsTestVersion)
-                return _solution.GetComponent<MspecDotNetTestRunStrategy>();
 
             return _solution.GetComponent<MspecDotNetVsTestRunStrategy>();
         }

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains;
-using JetBrains.Metadata.Reader.API;
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore.Common;
+using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using JetBrains.Util.Extension;
 
 namespace Machine.Specifications.ReSharperProvider

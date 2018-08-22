@@ -1,6 +1,6 @@
-﻿using JetBrains.Metadata.Reader.API;
-using JetBrains.ProjectModel;
+﻿using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore.Common;
+using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.ReSharperProvider
 {
