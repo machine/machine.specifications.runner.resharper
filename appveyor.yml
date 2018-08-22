@@ -26,7 +26,7 @@ build_script:
   - cmd: dotnet build Machine.Specifications.Runner.Resharper.sln
 
 after_build:
-  - cmd: nuget pack Machine.Specifications.Runner.Resharper.nuspec -properties "Version=$(GitVersion_NuGetVersion)" -outputdirectory Build
+  - cmd: nuget pack Machine.Specifications.Runner.Resharper.nuspec Version="%GitVersion_NuGetVersion%" -outputdirectory Build
 
 test:
   assemblies:
