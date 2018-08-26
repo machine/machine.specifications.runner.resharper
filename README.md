@@ -11,3 +11,7 @@ MSpec provides a Resharper plugin integrate with the ReSharper test runner, cust
 3) Build the project and take note of the warnings `"No installed product MyProductName"`
 4) Modify the provider and runner `.csproj` files to replace `MyProductName` with the product name that matches your experimental ReSharper instance (eg. `ReSharperPlatformVs15_abc123mspec`).
 5) Run and debug from Visual Studio
+
+### Releasing
+
+Releases follow [Semver](https://semver.org) format and are performed via Github's [releases](https://github.com/machine/machine.specifications.runner.resharper/releases) page.
