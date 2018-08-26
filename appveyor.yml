@@ -28,11 +28,6 @@ build_script:
 after_build:
   - cmd: nuget pack Machine.Specifications.Runner.Resharper.nuspec -version "%GitVersion_NuGetVersion%" -outputdirectory Build
 
-test:
-  assemblies:
-    only:
-      - 'Build\Machine.Specifications.ReSharper.Tests.dll'
-
 artifacts:
   - path: Build\*.nupkg
 
@@ -40,9 +35,8 @@ deploy:
   - provider: GitHub
     on:
       appveyor_repo_tag: true
-    prerelease: $(nuget_prerelease)
 
-    release: v$(nuget_version)
+    release: v$(GitVersion_NuGetVersion)
     auth_token:
       secure: VrF5TrpBRN0ims9nJC1LG32O6ga5hsRuGNSufEbatAiIWZ1z68iiCYKZtqnAaT9y
 
