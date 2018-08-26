@@ -6,10 +6,10 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
 using JetBrains.Util;
+using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.ReSharperProvider.Elements
 {

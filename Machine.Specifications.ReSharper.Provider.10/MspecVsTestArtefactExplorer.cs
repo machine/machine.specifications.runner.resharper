@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Application.Processes;
 using JetBrains.DataFlow;
-using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Channel.Json;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetVsTest;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
+using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.ReSharperProvider
 {
@@ -30,10 +31,12 @@ namespace Machine.Specifications.ReSharperProvider
         {
         }
 
-        public override bool IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
+        public override PertinenceResult IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return base.IsSupported(project, targetFrameworkId) &&
-                   (targetFrameworkId.IsNetCoreApp || targetFrameworkId.IsNetFramework);
+            return base.IsSupported(project, targetFrameworkId) == PertinenceResult.Yes &&
+                   (targetFrameworkId.IsNetCoreApp || targetFrameworkId.IsNetFramework)
+                ? PertinenceResult.Yes
+                : PertinenceResult.No;
         }
 
         protected override IEnumerable<string> NugetReferencesToCheck()

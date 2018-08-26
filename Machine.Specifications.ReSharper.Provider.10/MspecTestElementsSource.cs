@@ -10,6 +10,7 @@ using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
+using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.ReSharperProvider
 {
@@ -35,9 +36,9 @@ namespace Machine.Specifications.ReSharperProvider
             _logger = logger;
         }
 
-        public override bool IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
+        public override PertinenceResult IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return !project.IsDotNetCoreProject();
+            return project.IsDotNetCoreProject() ? PertinenceResult.No : PertinenceResult.Yes;
         }
 
         public override void ProcessProject(

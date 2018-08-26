@@ -1,10 +1,10 @@
-﻿using JetBrains.Metadata.Reader.API;
-using JetBrains.Metadata.Utils;
+﻿using JetBrains.Metadata.Utils;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetVsTest;
+using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.ReSharperProvider.Elements;
 using Machine.Specifications.ReSharperRunner;
