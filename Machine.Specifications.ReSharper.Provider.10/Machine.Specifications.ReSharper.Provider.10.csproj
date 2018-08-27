@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <OutputPath>../Build</OutputPath>
-    <HostFullIdentifier>MyProductName</HostFullIdentifier>
+    <!--<HostFullIdentifier>MyProductName</HostFullIdentifier>-->
   </PropertyGroup>
 
   <ItemGroup>
