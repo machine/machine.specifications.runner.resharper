@@ -1,10 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <OutputPath>../Build</OutputPath>
+    <HostFullIdentifier>MyProductName</HostFullIdentifier>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="JetBrains.ReSharper.SDK" Version="2018.2.0" PrivateAssets="All" />
     <PackageReference Include="Machine.Specifications.Runner.Utility" Version="0.9.0" />
   </ItemGroup>
+
 </Project>

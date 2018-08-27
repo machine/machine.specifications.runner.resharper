@@ -48,8 +48,9 @@ namespace Machine.Specifications.ReSharperProvider
         public IUnitTestRunStrategy GetRunStrategy(IUnitTestElement element)
         {
             var project = element.Id.Project;
+            var targetFrameworkId = element.Id.TargetFrameworkId;
 
-            if (!project.IsDotNetCoreProject() || element.Id.TargetFrameworkId.IsNetFramework)
+            if (targetFrameworkId.IsNetFramework || !project.IsDotNetCoreProject() || !targetFrameworkId.IsNetCoreApp)
                 return _processUnitTestRunStrategy;
 
             return _solution.GetComponent<MspecDotNetVsTestRunStrategy>();

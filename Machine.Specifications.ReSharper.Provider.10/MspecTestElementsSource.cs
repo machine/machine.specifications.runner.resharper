@@ -38,7 +38,7 @@ namespace Machine.Specifications.ReSharperProvider
 
         public override PertinenceResult IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return project.IsDotNetCoreProject() ? PertinenceResult.No : PertinenceResult.Yes;
+            return targetFrameworkId.IsNetFramework ? PertinenceResult.Yes : PertinenceResult.No;
         }
 
         public override void ProcessProject(

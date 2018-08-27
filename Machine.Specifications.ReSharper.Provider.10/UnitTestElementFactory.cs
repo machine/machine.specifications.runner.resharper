@@ -31,14 +31,17 @@ namespace Machine.Specifications.ReSharperProvider
             string[] tags,
             bool ignored)
         {
-            var categories = _serviceProvider.CategoryFactory.Create(tags);
+            lock (_elements)
+            {
+                var categories = _serviceProvider.CategoryFactory.Create(tags);
 
-            var element = GetOrCreateElement(typeName.FullName, project, null, categories, x =>
-                new ContextElement(x, typeName, _serviceProvider, subject, ignored));
+                var element = GetOrCreateElement(typeName.FullName, project, null, categories, x =>
+                    new ContextElement(x, typeName, _serviceProvider, subject, ignored));
 
-            element.AssemblyLocation = assemblyLocation;
+                element.AssemblyLocation = assemblyLocation;
 
-            return element;
+                return element;
+            }
         }
 
         public IUnitTestElement GetOrCreateBehavior(
@@ -48,10 +51,13 @@ namespace Machine.Specifications.ReSharperProvider
             string fieldName,
             bool ignored)
         {
-            var id = $"{typeName.FullName}.{fieldName}";
+            lock (_elements)
+            {
+                var id = $"{typeName.FullName}::{fieldName}";
 
-            return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                new BehaviorElement(x, parent, typeName, _serviceProvider, fieldName, ignored));
+                return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
+                    new BehaviorElement(x, parent, typeName, _serviceProvider, fieldName, ignored));
+            }
         }
 
         public IUnitTestElement GetOrCreateContextSpecification(
@@ -61,10 +67,13 @@ namespace Machine.Specifications.ReSharperProvider
             string fieldName,
             bool ignored)
         {
-            var id = $"{typeName.FullName}.{fieldName}";
+            lock (_elements)
+            {
+                var id = $"{typeName.FullName}::{fieldName}";
 
-            return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                new ContextSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, ignored || parent.Explicit));
+                return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
+                    new ContextSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, ignored || parent.Explicit));
+            }
         }
 
         public IUnitTestElement GetOrCreateBehaviorSpecification(
@@ -74,10 +83,13 @@ namespace Machine.Specifications.ReSharperProvider
             string fieldName,
             bool isIgnored)
         {
-            var id = $"{parent.Id.Id}.{typeName.FullName}.{fieldName}";
+            lock (_elements)
+            {
+                var id = $"{parent.Id.Id}::{typeName.FullName}::{fieldName}";
 
-            return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                new BehaviorSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, isIgnored || parent.Explicit));
+                return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
+                    new BehaviorSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, isIgnored || parent.Explicit));
+            }
         }
 
         private T GetElementById<T>(UnitTestElementId id)

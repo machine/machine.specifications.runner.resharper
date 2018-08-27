@@ -33,15 +33,16 @@ namespace Machine.Specifications.ReSharperProvider
 
         public override PertinenceResult IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return base.IsSupported(project, targetFrameworkId) == PertinenceResult.Yes &&
-                   (targetFrameworkId.IsNetCoreApp || targetFrameworkId.IsNetFramework)
-                ? PertinenceResult.Yes
-                : PertinenceResult.No;
+            var result = base.IsSupported(project, targetFrameworkId);
+
+            if (result != PertinenceResult.Yes)
+                return result;
+
+            return targetFrameworkId.IsNetFramework ? PertinenceResult.No : PertinenceResult.Yes;
         }
 
         protected override IEnumerable<string> NugetReferencesToCheck()
         {
-            yield return "Microsoft.NET.Test.Sdk";
             yield return "Machine.Specifications.Runner.VisualStudio";
         }
     }
