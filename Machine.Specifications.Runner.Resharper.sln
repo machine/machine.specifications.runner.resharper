@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		GitVersion.yml = GitVersion.yml
+		install-plugin.ps1 = install-plugin.ps1
 		Machine.Specifications.Runner.Resharper.nuspec = Machine.Specifications.Runner.Resharper.nuspec
 	EndProjectSection
 EndProject
