@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using JetBrains.DataFlow;
-using JetBrains.ProjectModel;
+﻿using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
@@ -22,29 +20,23 @@ namespace Machine.Specifications.ReSharperProvider
             MspecTestProvider provider,
             ISolution solution,
             UnitTestingCachingService cachingService,
-            Lifetime lifetime,
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
-            IUnitTestElementCategoryFactory categoryFactory,
             MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy)
         {
             _provider = provider;
             _solution = solution;
             _elementIdFactory = elementIdFactory;
-            CategoryFactory = categoryFactory;
+            _processUnitTestRunStrategy = processUnitTestRunStrategy;
+
             CachingService = cachingService;
             ElementManager = elementManager;
-
-            AddElementHandler(lifetime);
-            _processUnitTestRunStrategy = processUnitTestRunStrategy;
         }
 
         public UnitTestingCachingService CachingService { get; }
 
         public IUnitTestElementManager ElementManager { get; }
-
-        public IUnitTestElementCategoryFactory CategoryFactory { get; }
-
+        
         public IUnitTestRunStrategy GetRunStrategy(IUnitTestElement element)
         {
             var project = element.Id.Project;
@@ -61,13 +53,9 @@ namespace Machine.Specifications.ReSharperProvider
             return _elementIdFactory.Create(_provider, project, targetFrameworkId, id);
         }
 
-        private void AddElementHandler(Lifetime lifetime)
+        public IUnitTestElement GetElementById(IProject project, TargetFrameworkId targetFrameworkId, string id)
         {
-            ElementManager.UnitTestElementsRemoved.Advise(lifetime, set =>
-            {
-                foreach (var element in set)
-                    ElementManager.RemoveElements(element.Children.ToSet());
-            });
+            return ElementManager.GetElementById(CreateId(project, targetFrameworkId, id));
         }
     }
 }

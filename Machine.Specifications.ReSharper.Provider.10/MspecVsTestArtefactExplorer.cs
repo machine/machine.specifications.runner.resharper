@@ -2,6 +2,7 @@
 using JetBrains.Application.Processes;
 using JetBrains.DataFlow;
 using JetBrains.ProjectModel;
+using JetBrains.ProjectModel.NuGet.Packaging;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Channel.Json;
 using JetBrains.ReSharper.UnitTestFramework.DotNetCore;
@@ -24,7 +25,7 @@ namespace Machine.Specifications.ReSharperProvider
             DefaultDotNetVsTestRunSettingsProvider runSettingsProvider,
             IDotNetVsTestCaseMap testCaseMap,
             MspecTestElementMapperFactory mapperFactory,
-            INugetReferenceChecker nugetChecker,
+            NuGetInstalledPackageChecker nugetChecker,
             IUnitTestingSettings unitTestingSettings,
             ILogger logger)
             : base(lifetime, provider, sdkResolver, serverFactory, processStartInfoPatcher, runSettingsProvider, testCaseMap, mapperFactory, nugetChecker, unitTestingSettings, logger)
@@ -41,8 +42,9 @@ namespace Machine.Specifications.ReSharperProvider
             return targetFrameworkId.IsNetFramework ? PertinenceResult.No : PertinenceResult.Yes;
         }
 
-        protected override IEnumerable<string> NugetReferencesToCheck()
+        protected override IEnumerable<string> RequiredNuGetDependencies()
         {
+            yield return "Microsoft.NET.Test.Sdk";
             yield return "Machine.Specifications.Runner.VisualStudio";
         }
     }

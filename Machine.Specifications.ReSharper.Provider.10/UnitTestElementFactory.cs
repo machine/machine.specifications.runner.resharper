@@ -14,13 +14,15 @@ namespace Machine.Specifications.ReSharperProvider
     {
         private readonly MspecServiceProvider _serviceProvider;
         private readonly TargetFrameworkId _targetFrameworkId;
+        private readonly Action<IUnitTestElement> _elementChangedAction;
 
         private readonly Dictionary<UnitTestElementId, IUnitTestElement> _elements = new Dictionary<UnitTestElementId, IUnitTestElement>();
 
-        public UnitTestElementFactory(MspecServiceProvider serviceProvider, TargetFrameworkId targetFrameworkId)
+        public UnitTestElementFactory(MspecServiceProvider serviceProvider, TargetFrameworkId targetFrameworkId, Action<IUnitTestElement> elementChangedAction = null)
         {
             _serviceProvider = serviceProvider;
             _targetFrameworkId = targetFrameworkId;
+            _elementChangedAction = elementChangedAction;
         }
 
         public IUnitTestElement GetOrCreateContext(
@@ -29,14 +31,16 @@ namespace Machine.Specifications.ReSharperProvider
             FileSystemPath assemblyLocation,
             string subject,
             string[] tags,
-            bool ignored)
+            bool ignored,
+            UnitTestElementCategorySource categorySource,
+            out bool tagsChanged)
         {
             lock (_elements)
             {
-                var categories = _serviceProvider.CategoryFactory.Create(tags);
-
-                var element = GetOrCreateElement(typeName.FullName, project, null, categories, x =>
+                var element = GetOrCreateElement(typeName.FullName, project, null, JetHashSet<UnitTestElementCategory>.Empty, x =>
                     new ContextElement(x, typeName, _serviceProvider, subject, ignored));
+
+                tagsChanged = UpdateCategories(element, tags, categorySource);
 
                 element.AssemblyLocation = assemblyLocation;
 
@@ -117,6 +121,19 @@ namespace Machine.Specifications.ReSharperProvider
             _elements[elementId] = element;
 
             return element;
+        }
+
+        private bool UpdateCategories(Element element, string[] categories, UnitTestElementCategorySource categorySource)
+        {
+            using (UT.WriteLock())
+            {
+                var result = element.UpdateOwnCategoriesFrom(categories, categorySource);
+
+                if (result)
+                    _elementChangedAction?.Invoke(element);
+
+                return result;
+            }
         }
     }
 }

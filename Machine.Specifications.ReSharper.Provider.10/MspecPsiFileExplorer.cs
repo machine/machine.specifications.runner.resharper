@@ -87,7 +87,9 @@ namespace Machine.Specifications.ReSharperProvider
                 assemblyPath,
                 type.GetSubject(),
                 type.GetTags().ToArray(),
-                type.IsIgnored());
+                type.IsIgnored(),
+                UnitTestElementCategorySource.Source,
+                out _);
 
             _contexts[name] = context;
 
