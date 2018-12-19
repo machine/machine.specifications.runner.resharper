@@ -36,7 +36,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
 
         public abstract string Kind { get; }
 
-        public ISet<UnitTestElementCategory> OwnCategories { get; set; } = JetHashSet<UnitTestElementCategory>.Empty;
+        public ISet<UnitTestElementCategory> OwnCategories { get; set; }
 
         public string ExplicitReason { get; }
 

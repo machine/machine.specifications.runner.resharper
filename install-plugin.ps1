@@ -39,7 +39,7 @@ Function Write-User-Proj {
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 $PluginId = "Machine.Specifications.Runner.Resharper9"
 $PluginPrefix = "Machine.Specifications.ReSharper"
-$RootSuffix = "mspec"
+$RootSuffix = "ReSharper"
 $Version = "1.0.0"
 
 # Determine download link
