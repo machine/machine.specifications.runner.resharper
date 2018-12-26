@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
+using Machine.Specifications.ReSharperRunner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.ReSharperProvider.Elements
@@ -44,6 +47,18 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             return GetDeclaredType();
         }
 
+        public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
+        {
+            var task = run.GetRemoteTaskForElement(this) ??
+                       new MspecTestContextTask(Id.ProjectId, TypeName.FullName);
+
+            return new List<UnitTestTask>
+            {
+                new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, AssemblyLocation.FullPath)),
+                new UnitTestTask(this, task)
+            };
+        }
+
         public bool Equals(ContextElement other)
         {
             return other != null &&
@@ -61,7 +76,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         {
             return HashCode
                 .Of(Id)
-                .And(TypeName?.FullName)
+                .And(TypeName)
                 .And(AssemblyLocation);
         }
     }

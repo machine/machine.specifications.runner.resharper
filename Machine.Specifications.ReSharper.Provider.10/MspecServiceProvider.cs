@@ -1,4 +1,5 @@
 ﻿using JetBrains.ProjectModel;
+using JetBrains.ProjectModel.Assemblies.Impl;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
@@ -22,7 +23,8 @@ namespace Machine.Specifications.ReSharperProvider
             UnitTestingCachingService cachingService,
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
-            MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy)
+            MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy,
+            ResolveContextManager resolveContextManager)
         {
             _provider = provider;
             _solution = solution;
@@ -31,12 +33,15 @@ namespace Machine.Specifications.ReSharperProvider
 
             CachingService = cachingService;
             ElementManager = elementManager;
+            ResolveContextManager = resolveContextManager;
         }
 
         public UnitTestingCachingService CachingService { get; }
 
         public IUnitTestElementManager ElementManager { get; }
-        
+
+        public ResolveContextManager ResolveContextManager { get; }
+
         public IUnitTestRunStrategy GetRunStrategy(IUnitTestElement element)
         {
             var project = element.Id.Project;

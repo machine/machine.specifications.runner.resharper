@@ -9,14 +9,11 @@ using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
 using JetBrains.Util;
-using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.ReSharperProvider.Elements
 {
     public abstract class Element : IUnitTestElement
     {
-        private readonly MspecServiceProvider _serviceProvider;
-
         private IUnitTestElement _parent;
 
         protected Element(
@@ -26,14 +23,13 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             MspecServiceProvider serviceProvider,
             bool isIgnored)
         {
-            _serviceProvider = serviceProvider;
-
             Id = id;
             TypeName = typeName;
             Parent = parent;
+            ServiceProvider = serviceProvider;
             ExplicitReason = isIgnored ? "Ignored" : string.Empty;
         }
-
+        
         public abstract string Kind { get; }
 
         public ISet<UnitTestElementCategory> OwnCategories { get; set; }
@@ -41,6 +37,8 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         public string ExplicitReason { get; }
 
         public UnitTestElementId Id { get; }
+
+        public MspecServiceProvider ServiceProvider { get; }
         
         public IUnitTestElement Parent
         {
@@ -59,12 +57,12 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                     _parent?.Children.Add(this);
                 }
 
-                _serviceProvider.ElementManager.FireElementChanged(oldParent);
-                _serviceProvider.ElementManager.FireElementChanged(value);
+                ServiceProvider.ElementManager.FireElementChanged(oldParent);
+                ServiceProvider.ElementManager.FireElementChanged(value);
             }
         }
 
-        public ICollection<IUnitTestElement> Children { get; } = new BindableCollection<IUnitTestElement>(UT.Locks.ReadLock);
+        public ICollection<IUnitTestElement> Children { get; } = new BindableSetCollectionWithoutIndexTracking<IUnitTestElement>(UT.Locks.ReadLock, UnitTestElement.EqualityComparer);
 
         public abstract string ShortName { get; }
 
@@ -105,24 +103,22 @@ namespace Machine.Specifications.ReSharperProvider.Elements
 
         public IEnumerable<IProjectFile> GetProjectFiles()
         {
-            return GetDeclaredType()?
+            return GetDeclaredElement()?
                 .GetSourceFiles()
-                .Select(x => x.ToProjectFile());
+                .SelectNotNull(x => x.ToProjectFile())
+                .ToList();
         }
 
-        public virtual IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
-        {
-            return EmptyArray<UnitTestTask>.Instance;
-        }
+        public abstract IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run);
 
         public IUnitTestRunStrategy GetRunStrategy(IHostProvider hostProvider)
         {
-            return _serviceProvider.GetRunStrategy(this);
+            return ServiceProvider.GetRunStrategy(this);
         }
 
         protected ITypeElement GetDeclaredType()
         {
-            return _serviceProvider.CachingService.GetTypeElement(Id.Project, TargetFrameworkId.Default, TypeName, true, true);
+            return ServiceProvider.CachingService.GetTypeElement(Id.Project, Id.TargetFrameworkId, TypeName, true, true);
         }
 
         public virtual IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)

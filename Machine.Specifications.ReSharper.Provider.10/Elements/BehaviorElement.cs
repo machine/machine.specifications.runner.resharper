@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Launch;
+using JetBrains.Util;
 using Machine.Specifications.ReSharperRunner;
 
 namespace Machine.Specifications.ReSharperProvider.Elements
@@ -19,6 +22,11 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         }
 
         public ContextElement Context => Parent as ContextElement;
+
+        public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
+        {
+            return EmptyArray<UnitTestTask>.Instance;
+        }
 
         public override string Kind => "Behavior";
 
