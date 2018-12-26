@@ -25,8 +25,8 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         {
             Id = id;
             TypeName = typeName;
-            Parent = parent;
             ServiceProvider = serviceProvider;
+            Parent = parent;
             ExplicitReason = isIgnored ? "Ignored" : string.Empty;
         }
         

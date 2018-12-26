@@ -15,19 +15,16 @@ namespace Machine.Specifications.ReSharperProvider
     {
         private readonly IProject _project;
         private readonly TargetFrameworkId _targetFrameworkId;
-        private readonly MspecServiceProvider _serviceProvider;
         private readonly UnitTestElementFactory _factory;
 
         public MspecTestElementMapper(
             IProject project,
             TargetFrameworkId targetFrameworkId,
-            MspecServiceProvider serviceProvider,
             UnitTestElementFactory factory
         ) : base(project, targetFrameworkId)
         {
             _project = project;
             _targetFrameworkId = targetFrameworkId;
-            _serviceProvider = serviceProvider;
             _factory = factory;
         }
 

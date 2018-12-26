@@ -18,7 +18,7 @@ namespace Machine.Specifications.ReSharperProvider
         {
             var factory = new UnitTestElementFactory(_serviceProvider, targetFrameworkId);
 
-            return new MspecTestElementMapper(project, targetFrameworkId, _serviceProvider, factory);
+            return new MspecTestElementMapper(project, targetFrameworkId, factory);
         }
 
         public ITestElementMapper Create(IProject project, TargetFrameworkId targetFrameworkId)
