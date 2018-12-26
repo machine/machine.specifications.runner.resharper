@@ -37,7 +37,7 @@ namespace Machine.Specifications.ReSharperProvider
         {
             lock (_elements)
             {
-                var element = GetOrCreateElement(typeName.FullName, project, null, JetHashSet<UnitTestElementCategory>.Empty, x =>
+                var element = GetOrCreateElement(typeName.FullName, project, null, null, x =>
                     new ContextElement(x, typeName, _serviceProvider, subject, ignored));
 
                 tagsChanged = UpdateCategories(element, tags, categorySource);
