@@ -76,7 +76,7 @@ Write-Output "Installing experimental hive"
 Invoke-Exe $InstallerFile "/VsVersion=15.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
 
 $PluginRepository = "$env:LOCALAPPDATA\JetBrains\plugins"
-$InstallationDirectory = $(Get-ChildItem "$env:APPDATA\JetBrains\ReSharperPlatformVs*\v*_*$RootSuffix\NuGet.Config").Directory
+$InstallationDirectory = $(Get-ChildItem "$env:APPDATA\JetBrains\ReSharperPlatformVs*\v*_*$RootSuffix\NuGet.Config" | Sort-Object | Select-Object -Last 1).Directory
 
 # Adapt packages.config
 if (Test-Path "$InstallationDirectory\packages.config") {
