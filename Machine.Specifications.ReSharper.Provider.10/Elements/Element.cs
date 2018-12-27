@@ -109,7 +109,10 @@ namespace Machine.Specifications.ReSharperProvider.Elements
                 .ToList();
         }
 
-        public abstract IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run);
+        public virtual IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
+        {
+            return EmptyArray<UnitTestTask>.Instance;
+        }
 
         public IUnitTestRunStrategy GetRunStrategy(IHostProvider hostProvider)
         {
