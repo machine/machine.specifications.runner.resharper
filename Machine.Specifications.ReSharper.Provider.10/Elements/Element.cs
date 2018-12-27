@@ -39,7 +39,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         public UnitTestElementId Id { get; }
 
         public MspecServiceProvider ServiceProvider { get; }
-        
+
         public IUnitTestElement Parent
         {
             get => _parent;
