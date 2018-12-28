@@ -14,26 +14,22 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
         {
             ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
             ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
-            BehaviorTypeName = GetXmlAttribute(element, AttributeNames.BehaviorTypeName);
             SpecificationFieldName = GetXmlAttribute(element, AttributeNames.SpecificationFieldName);
             BehaviorFieldName = GetXmlAttribute(element, AttributeNames.BehaviorFieldName);
         }
 
-        public MspecTestBehaviorTask(string projectId, string contextTypeName, string behaviorTypeName, string behaviorFieldName, string behaviorSpecificationFieldName)
+        public MspecTestBehaviorTask(string projectId, string contextTypeName, string behaviorFieldName, string behaviorSpecificationFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
             SpecificationFieldName = behaviorSpecificationFieldName;
-            BehaviorTypeName = behaviorTypeName;
             BehaviorFieldName = behaviorFieldName;
         }
 
         public string ProjectId { get; }
 
         public string ContextTypeName { get; }
-
-        public string BehaviorTypeName { get; }
 
         public string SpecificationFieldName { get; }
 
@@ -49,7 +45,6 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
             SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
             SetXmlAttribute(element, AttributeNames.BehaviorFieldName, BehaviorFieldName);
-            SetXmlAttribute(element, AttributeNames.BehaviorTypeName, BehaviorTypeName);
         }
 
         public bool Equals(MspecTestBehaviorTask other)
@@ -58,7 +53,6 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
                    other.ProjectId == ProjectId &&
                    other.ContextTypeName == ContextTypeName &&
                    other.BehaviorFieldName == BehaviorFieldName &&
-                   other.BehaviorTypeName == BehaviorTypeName &&
                    other.SpecificationFieldName == SpecificationFieldName;
         }
 
@@ -77,7 +71,6 @@ namespace Machine.Specifications.ReSharperRunner.Tasks
             return HashCode.Of(ProjectId)
                 .And(ContextTypeName)
                 .And(BehaviorFieldName)
-                .And(BehaviorTypeName)
                 .And(SpecificationFieldName);
         }
     }

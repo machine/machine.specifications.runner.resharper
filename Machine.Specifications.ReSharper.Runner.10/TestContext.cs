@@ -19,7 +19,7 @@ namespace Machine.Specifications.ReSharperRunner
 
         public void Add(MspecTestBehaviorTask task)
         {
-            var key = $"{task.ContextTypeName}.{task.BehaviorTypeName}.{task.SpecificationFieldName}";
+            var key = $"{task.ContextTypeName}.{task.SpecificationFieldName}";
 
             _remoteTasks[key] = task;
         }
@@ -60,7 +60,7 @@ namespace Machine.Specifications.ReSharperRunner
 
         public RemoteTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
         {
-            var key = $"{context.TypeName}.{specification.ContainingType}.{specification.FieldName}";
+            var key = $"{context.TypeName}.{specification.FieldName}";
 
             return GetRemoteTask(key);
         }

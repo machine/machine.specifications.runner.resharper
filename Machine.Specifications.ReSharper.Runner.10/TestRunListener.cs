@@ -27,13 +27,11 @@ namespace Machine.Specifications.ReSharperRunner
         public void OnAssemblyStart(Runner.Utility.AssemblyInfo assemblyInfo)
         {
             Environment.CurrentDirectory = GetWorkingDirectory(_context.AssemblyTask);
-
-            _server.TaskStarting(_context.AssemblyTask);
         }
 
         public void OnAssemblyEnd(Runner.Utility.AssemblyInfo assemblyInfo)
         {
-            Output(_context.AssemblyTask, assemblyInfo.CapturedOutput);
+            Output(null, assemblyInfo.CapturedOutput);
         }
 
         public void OnRunStart()
@@ -71,9 +69,7 @@ namespace Machine.Specifications.ReSharperRunner
             var message = result == TaskResult.Error ? "One or more tests failed" : string.Empty;
 
             if (task == null)
-            {
                 return;
-            }
 
             Output(task, contextInfo.CapturedOutput);
 
@@ -128,9 +124,9 @@ namespace Machine.Specifications.ReSharperRunner
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
-            _server.TaskOutput(_context.AssemblyTask, "Fatal error: " + exceptionResult.Message, TaskOutputType.STDOUT);
-            _server.TaskException(_context.AssemblyTask, GetExceptions(exceptionResult));
-            _server.TaskFinished(_context.AssemblyTask, GetExceptionMessage(exceptionResult), TaskResult.Exception);
+            _server.TaskOutput(null, "Fatal error: " + exceptionResult.Message, TaskOutputType.STDOUT);
+            _server.TaskException(null, GetExceptions(exceptionResult));
+            _server.TaskFinished(null, GetExceptionMessage(exceptionResult), TaskResult.Exception);
 
             _errors += 1;
         }

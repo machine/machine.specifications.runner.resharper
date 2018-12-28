@@ -89,7 +89,7 @@ namespace Machine.Specifications.ReSharperProvider
         {
             lock (_elements)
             {
-                var id = $"{parent.Id.Id}::{typeName.FullName}::{fieldName}";
+                var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
                     new BehaviorSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, isIgnored || parent.Explicit));

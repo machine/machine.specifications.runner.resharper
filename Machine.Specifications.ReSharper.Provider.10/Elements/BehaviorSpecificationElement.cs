@@ -50,7 +50,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             {
                 new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, context.AssemblyLocation.FullPath)),
                 new UnitTestTask(context, new MspecTestContextTask(Id.ProjectId, fullName)),
-                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, TypeName.FullName, Behavior.FieldName, FieldName))
+                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName))
             };
         }
 
@@ -59,7 +59,6 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             return other != null &&
                    Equals(Id, other.Id) &&
                    Equals(TypeName, other.TypeName) &&
-                   Equals(Behavior?.Context?.TypeName, other.Behavior?.Context?.TypeName) &&
                    Equals(FieldName, other.FieldName);
         }
 
@@ -73,7 +72,6 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             return HashCode
                 .Of(Id)
                 .And(TypeName?.FullName)
-                .And(Behavior?.Context?.TypeName)
                 .And(FieldName);
         }
     }

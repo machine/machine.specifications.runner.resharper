@@ -35,7 +35,7 @@ namespace Machine.Specifications.ReSharperRunner
             catch (Exception e)
             {
                 _taskServer.ShowNotification("Unable to run tests: " + e.Message, string.Empty);
-                _taskServer.TaskException(context.AssemblyTask, new[] {new TaskException(e)});
+                _taskServer.TaskException(null, new[] {new TaskException(e)});
             }
         }
     }

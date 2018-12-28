@@ -69,7 +69,7 @@ namespace Machine.Specifications.ReSharperProvider
                 {
                     var behavior = _factory.GetOrCreateBehavior(_project, context, type, behaviorField, false);
 
-                    return _factory.GetOrCreateBehaviorSpecification(_project, behavior, new ClrTypeName(behaviorType), fieldName, false);
+                    return _factory.GetOrCreateBehaviorSpecification(_project, behavior, type, fieldName, false);
                 }
 
                 return _factory.GetOrCreateContextSpecification(_project, context, type, fieldName, false);

@@ -180,7 +180,7 @@ namespace Machine.Specifications.ReSharperProvider
                         var specification = _factory.GetOrCreateBehaviorSpecification(
                             project,
                             behavior,
-                            new ClrTypeName(specField.DeclaringType), 
+                            containingType,
                             specField.ShortName,
                             specField.IsIgnored());
 

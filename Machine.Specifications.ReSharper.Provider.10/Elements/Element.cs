@@ -29,7 +29,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
             Parent = parent;
             ExplicitReason = isIgnored ? "Ignored" : string.Empty;
         }
-        
+
         public abstract string Kind { get; }
 
         public ISet<UnitTestElementCategory> OwnCategories { get; set; }
