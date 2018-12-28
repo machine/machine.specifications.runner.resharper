@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using JetBrains.DataFlow;
-using JetBrains.ProjectModel;
+﻿using JetBrains.ProjectModel;
+using JetBrains.ProjectModel.Assemblies.Impl;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
@@ -22,28 +21,26 @@ namespace Machine.Specifications.ReSharperProvider
             MspecTestProvider provider,
             ISolution solution,
             UnitTestingCachingService cachingService,
-            Lifetime lifetime,
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
-            IUnitTestElementCategoryFactory categoryFactory,
-            MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy)
+            MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy,
+            ResolveContextManager resolveContextManager)
         {
             _provider = provider;
             _solution = solution;
             _elementIdFactory = elementIdFactory;
-            CategoryFactory = categoryFactory;
+            _processUnitTestRunStrategy = processUnitTestRunStrategy;
+
             CachingService = cachingService;
             ElementManager = elementManager;
-
-            AddElementHandler(lifetime);
-            _processUnitTestRunStrategy = processUnitTestRunStrategy;
+            ResolveContextManager = resolveContextManager;
         }
 
         public UnitTestingCachingService CachingService { get; }
 
         public IUnitTestElementManager ElementManager { get; }
 
-        public IUnitTestElementCategoryFactory CategoryFactory { get; }
+        public ResolveContextManager ResolveContextManager { get; }
 
         public IUnitTestRunStrategy GetRunStrategy(IUnitTestElement element)
         {
@@ -59,15 +56,6 @@ namespace Machine.Specifications.ReSharperProvider
         public UnitTestElementId CreateId(IProject project, TargetFrameworkId targetFrameworkId, string id)
         {
             return _elementIdFactory.Create(_provider, project, targetFrameworkId, id);
-        }
-
-        private void AddElementHandler(Lifetime lifetime)
-        {
-            ElementManager.UnitTestElementsRemoved.Advise(lifetime, set =>
-            {
-                foreach (var element in set)
-                    ElementManager.RemoveElements(element.Children.ToSet());
-            });
         }
     }
 }

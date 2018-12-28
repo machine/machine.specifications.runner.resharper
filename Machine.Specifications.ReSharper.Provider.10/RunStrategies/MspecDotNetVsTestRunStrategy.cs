@@ -15,13 +15,14 @@ namespace Machine.Specifications.ReSharperProvider.RunStrategies
             IJsonBasedUnitTestServerFactory serverFactory, 
             MspecTestElementMapperFactory mapperFactory, 
             DefaultDotNetVsTestRunSettingsProvider runSettingsProvider,
-            IDotNetVsTestCaseMapProvider testCaseMapProvider, 
+            IDotNetVsTestCaseMapProvider testCaseMapProvider,
+            IUnitTestElementRepository elementRepository,
             IUnitTestResultManager resultManager, 
             ISolutionProcessStartInfoPatcher processStartInfoPatcher, 
             ILogger logger, 
             IUnitTestingSettings unitTestingSettings, 
             IEnumerable<IRunSettingsPostProcessor> runSettingsPostProcessors) 
-            : base(serverFactory, mapperFactory, runSettingsProvider, testCaseMapProvider, resultManager, processStartInfoPatcher, logger, unitTestingSettings, runSettingsPostProcessors)
+            : base(serverFactory, mapperFactory, runSettingsProvider, testCaseMapProvider, elementRepository, resultManager, processStartInfoPatcher, logger, unitTestingSettings, runSettingsPostProcessors)
         {
         }
     }

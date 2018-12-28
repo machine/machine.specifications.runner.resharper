@@ -39,10 +39,18 @@ namespace Machine.Specifications.ReSharperProvider.Elements
 
         public override IDeclaredElement GetDeclaredElement()
         {
-            return GetDeclaredType()?
-                .EnumerateMembers(FieldName, true)
-                .OfType<IField>()
-                .FirstOrDefault();
+            var type = GetDeclaredType();
+
+            if (type == null)
+                return null;
+
+            using (CompilationContextCookie.OverrideOrCreate(ServiceProvider.ResolveContextManager.GetOrCreateProjectResolveContext(Id.Project, Id.TargetFrameworkId)))
+            {
+                return type
+                    .EnumerateMembers(FieldName, type.CaseSensitiveName)
+                    .OfType<IField>()
+                    .FirstOrDefault();
+            }
         }
     }
 }

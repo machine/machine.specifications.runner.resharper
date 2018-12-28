@@ -61,7 +61,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         {
             return HashCode
                 .Of(Id)
-                .And(TypeName?.FullName)
+                .And(TypeName)
                 .And(AssemblyLocation);
         }
     }

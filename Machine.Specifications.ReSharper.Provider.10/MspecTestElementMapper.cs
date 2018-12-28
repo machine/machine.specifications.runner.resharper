@@ -19,7 +19,7 @@ namespace Machine.Specifications.ReSharperProvider
 
         public MspecTestElementMapper(
             IProject project,
-            TargetFrameworkId targetFrameworkId, 
+            TargetFrameworkId targetFrameworkId,
             UnitTestElementFactory factory
         ) : base(project, targetFrameworkId)
         {
@@ -49,7 +49,7 @@ namespace Machine.Specifications.ReSharperProvider
                 .Select(x => x.Trim());
         }
 
-        public override IUnitTestElement Map(Test test)
+        public override IUnitTestElement Map(Test test, out bool wasChanged)
         {
             using (ReadLockCookie.Create())
             {
@@ -63,13 +63,13 @@ namespace Machine.Specifications.ReSharperProvider
 
                 var type = new ClrTypeName(typeName);
 
-                var context = _factory.GetOrCreateContext(_project, type, assemblyPath, subject, tags.ToArray(), false);
+                var context = _factory.GetOrCreateContext(_project, type, assemblyPath, subject, tags.ToArray(), false, UnitTestElementCategorySource.Artefact, out wasChanged);
 
                 if (!string.IsNullOrEmpty(behaviorField) && !string.IsNullOrEmpty(behaviorType))
                 {
                     var behavior = _factory.GetOrCreateBehavior(_project, context, type, behaviorField, false);
 
-                    return _factory.GetOrCreateBehaviorSpecification(_project, behavior, new ClrTypeName(behaviorType), fieldName, false);
+                    return _factory.GetOrCreateBehaviorSpecification(_project, behavior, type, fieldName, false);
                 }
 
                 return _factory.GetOrCreateContextSpecification(_project, context, type, fieldName, false);

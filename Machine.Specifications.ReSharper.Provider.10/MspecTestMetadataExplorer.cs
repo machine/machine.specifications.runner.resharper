@@ -54,7 +54,9 @@ namespace Machine.Specifications.ReSharperProvider
                 assembly.Location,
                 type.GetSubject(),
                 type.GetTags().ToArray(),
-                type.IsIgnored());
+                type.IsIgnored(),
+                UnitTestElementCategorySource.Artefact,
+                out _);
 
             _observer.OnUnitTestElement(contextElement);
 
@@ -104,16 +106,16 @@ namespace Machine.Specifications.ReSharperProvider
                     .Where(x => x.IsSpecification());
 
                 foreach (var behaviorSpecification in behaviorSpecifications)
-                    ExploreBehaviorSpecification(project, behaviorElement, behaviorSpecification);
+                    ExploreBehaviorSpecification(project, behaviorElement, type, behaviorSpecification);
             }
         }
 
-        private void ExploreBehaviorSpecification(IProject project, IUnitTestElement behaviorElement, IFieldInfo field)
+        private void ExploreBehaviorSpecification(IProject project, IUnitTestElement behaviorElement, ITypeInfo type, IFieldInfo field)
         {
             var specificationElement = _factory.GetOrCreateBehaviorSpecification(
                 project,
                 behaviorElement,
-                new ClrTypeName(field.DeclaringType),
+                new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
                 field.IsIgnored());
 

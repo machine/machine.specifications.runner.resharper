@@ -27,11 +27,17 @@ namespace Machine.Specifications.ReSharperProvider.Elements
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            return new[]
+            var contextTask = run.GetRemoteTaskForElement(Context) ??
+                              new MspecTestContextTask(Id.ProjectId, Context.TypeName.FullName);
+
+            var task = run.GetRemoteTaskForElement(this) ??
+                       new MspecTestSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
+
+            return new List<UnitTestTask>
             {
                 new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, Context.AssemblyLocation.FullPath)),
-                new UnitTestTask(Context, new MspecTestContextTask(Id.ProjectId, Context.TypeName.FullName)),
-                new UnitTestTask(this, new MspecTestSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName))
+                new UnitTestTask(Context, contextTask),
+                new UnitTestTask(this, task)
             };
         }
 
@@ -39,7 +45,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         {
             return other != null &&
                    Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName) &&
+                   Equals(TypeName.FullName, other.TypeName.FullName) &&
                    Equals(FieldName, other.FieldName);
         }
 

@@ -10,7 +10,7 @@ namespace Machine.Specifications.ReSharperRunner
         {
             AssemblyFolder = GetAssemblyFolder(TaskExecutor.Configuration, assemblyTask);
             AssemblyPath = Path.Combine(AssemblyFolder, GetFileName(assemblyTask.AssemblyLocation));
-            ShouldShadowCopy = TaskExecutor.Configuration.ShadowCopy;
+            ShouldShadowCopy = TaskExecutor.Configuration.ShadowCopy != ShadowCopyOption.None;
             ShadowCopyPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         }
 

@@ -87,7 +87,9 @@ namespace Machine.Specifications.ReSharperProvider
                 assemblyPath,
                 type.GetSubject(),
                 type.GetTags().ToArray(),
-                type.IsIgnored());
+                type.IsIgnored(),
+                UnitTestElementCategorySource.Source,
+                out _);
 
             _contexts[name] = context;
 
@@ -178,7 +180,7 @@ namespace Machine.Specifications.ReSharperProvider
                         var specification = _factory.GetOrCreateBehaviorSpecification(
                             project,
                             behavior,
-                            new ClrTypeName(specField.DeclaringType), 
+                            containingType,
                             specField.ShortName,
                             specField.IsIgnored());
 
