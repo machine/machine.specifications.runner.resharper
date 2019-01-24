@@ -110,7 +110,7 @@ Task("Publish")
     {
         DotNetCoreNuGetPush(package.FullPath, new DotNetCoreNuGetPushSettings
         {
-            Source = "https://www.nuget.org/api/v2/package",
+            Source = "https://resharper-plugins.jetbrains.com",
             ApiKey = nugetApiKey
         });
     }
