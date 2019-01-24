@@ -1,48 +1,13 @@
 image: Visual Studio 2017
 
-configuration: Release
-platform: Any CPU
-
-install:
-  - choco install gitversion.portable -pre -y
-
-dotnet_csproj:
-  patch: true
-  file: '**\*.csproj'
-  version: $(GitVersion_NuGetVersion)
-  package_version: $(GitVersion_NuGetVersion)
-  assembly_version: $(GitVersion_MajorMinorPatch)
-  file_version: $(GitVersion_MajorMinorPatch)
-  informational_version: $(GitVersion_MajorMinorPatch)
-
-pull_requests:
-  do_not_increment_build_number: true
-
-before_build:
-  - cmd: dotnet restore
-  - ps: gitversion /l console /output buildserver
+environment:
+  NUGET_API_KEY:
+    secure: TL0dRg5VvDEghNB05X4nTEOECXqoNiuhVIhCFYrFg3pcaK8jNybRuruK8+S8KdJN
 
 build_script:
-  - cmd: dotnet build Machine.Specifications.Runner.Resharper.sln
+  - ps: .\build.ps1
 
-after_build:
-  - cmd: nuget pack Machine.Specifications.Runner.Resharper.nuspec -version "%GitVersion_NuGetVersion%" -outputdirectory Build
+test: off
 
 artifacts:
-  - path: Build\*.nupkg
-
-deploy:
-  - provider: GitHub
-    on:
-      appveyor_repo_tag: true
-
-    release: v$(GitVersion_NuGetVersion)
-    auth_token:
-      secure: VrF5TrpBRN0ims9nJC1LG32O6ga5hsRuGNSufEbatAiIWZ1z68iiCYKZtqnAaT9y
-
-  - provider: NuGet
-    server: https://resharper-plugins.jetbrains.com/
-    api_key:
-      secure: P92SdOXEnaXceqfYz+92EPkPqpccTuUQGD/AN11OYlr1pOY6+Ebrpj4hrapt1exy
-    on:
-      appveyor_repo_tag: true
+  - path: artifacts\*.nupkg

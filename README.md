@@ -6,5 +6,5 @@ To open an issue, please visit the [core issue tracker](https://github.com/machi
 ### Debugging
 
 1) Run the `install-plugin.ps` script the first time to install ReSharper to an experimental hive and deploy the plugin
-2) Set the startup project to `Machine.Specifications.ReSharperRunner.Debug.VS`
+2) Set the startup project to `Machine.Specifications.Runner.Resharper`
 3) Run and debug from Visual Studio
