@@ -27,10 +27,10 @@ namespace Machine.Specifications.ReSharperProvider.Elements
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            var contextTask = run.GetRemoteTaskForElement(Context) ??
+            var contextTask = run.GetRemoteTaskForElement<MspecTestContextTask>(Context) ??
                               new MspecTestContextTask(Id.ProjectId, Context.TypeName.FullName);
 
-            var task = run.GetRemoteTaskForElement(this) ??
+            var task = run.GetRemoteTaskForElement<MspecTestSpecificationTask>(this) ??
                        new MspecTestSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
 
             return new List<UnitTestTask>

@@ -26,6 +26,8 @@ namespace Machine.Specifications.ReSharperProvider
 
         public string Name => ID;
 
+        public string ExecutorUri { get; } = "executor://machine.vstestadapter";
+
         public string GetExtensionName(IProject project, TargetFrameworkId targetFrameworkId)
         {
             return "Machine.TestAdapter.dll";
@@ -87,6 +89,11 @@ namespace Machine.Specifications.ReSharperProvider
             {
                 return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MSpecReferenceName, out AssemblyNameInfo _);
             }
+        }
+
+        public bool SupportsResultEventsForParentOf(IUnitTestElement element)
+        {
+            return true;
         }
     }
 }

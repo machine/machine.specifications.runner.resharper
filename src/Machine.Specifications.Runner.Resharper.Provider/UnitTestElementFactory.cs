@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
@@ -32,7 +31,7 @@ namespace Machine.Specifications.ReSharperProvider
             string subject,
             string[] tags,
             bool ignored,
-            UnitTestElementCategorySource categorySource,
+            UnitTestElementOrigin categorySource,
             out bool tagsChanged)
         {
             lock (_elements)
@@ -112,9 +111,6 @@ namespace Machine.Specifications.ReSharperProvider
 
             var element = GetElementById<T>(elementId) ?? factory(elementId);
 
-            var invalidChildren = element.Children.Where(x => x.State == UnitTestElementState.Invalid);
-            _serviceProvider.ElementManager.RemoveElements(invalidChildren.ToSet());
-
             element.Parent = parent;
             element.OwnCategories = categories;
 
@@ -123,7 +119,7 @@ namespace Machine.Specifications.ReSharperProvider
             return element;
         }
 
-        private bool UpdateCategories(Element element, string[] categories, UnitTestElementCategorySource categorySource)
+        private bool UpdateCategories(Element element, string[] categories, UnitTestElementOrigin categorySource)
         {
             using (UT.WriteLock())
             {

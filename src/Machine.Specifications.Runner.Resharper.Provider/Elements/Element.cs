@@ -68,7 +68,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
 
         public bool Explicit => !string.IsNullOrEmpty(ExplicitReason);
 
-        public UnitTestElementState State { get; set; }
+        public UnitTestElementOrigin Origin { get; set; }
 
         public IClrTypeName TypeName { get; }
 
