@@ -1,0 +1,16 @@
+<idea-plugin>
+  <id>com.intellij.resharper.machine.specifications</id>
+  <name>Machine.Specifications for Rider</name>
+  <version>2.4.0</version>
+  <category>Unit testing</category>
+  <vendor url="https://github.com/machine/machine.specifications">Machine Specifications</vendor>
+  <idea-version since-build="183.4886" until-build="183.*"/>
+  <extensions defaultExtensionNs="com.intellij" />
+  <depends>com.intellij.modules.rider</depends>
+
+  <description>
+&lt;p&gt;This plugin adds test discovery and runner support for the Machine.Specifications framework. Tests can be run from the unit test window or using the gutter marks. A sub-menu will give you options to run tests in debug mode or for different .NET framework targets.&lt;/p&gt;
+
+&lt;p&gt;For issues with this plugin, please head to &lt;a href="https://github.com/machine/machine.specifications/issues"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+  </description>
+</idea-plugin>

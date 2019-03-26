@@ -1,3 +1,5 @@
+#addin nuget:?package=SharpZipLib&version=1.1.0
+#addin nuget:?package=Cake.Compression&version=0.2.2
 #tool nuget:?package=GitVersion.CommandLine&version=4.0.0
 
 //////////////////////////////////////////////////////////////////////
@@ -88,14 +90,20 @@ Task("Package")
     .IsDependentOn("Test")
     .Does(() => 
 {
+    var path = artifacts + "machine-specifications";
+    
+    CreateDirectory(path);
+    
     DotNetCorePack(solution, new DotNetCorePackSettings
     {
         Configuration = configuration,
-        OutputDirectory = artifacts,
+        OutputDirectory = path,
         NoBuild = true,
         ArgumentCustomization = x => x
             .Append("/p:Version={0}", version)
     });
+
+    Zip(path, "machine-specifications.zip")
 });
 
 Task("Publish")
@@ -110,7 +118,7 @@ Task("Publish")
     {
         DotNetCoreNuGetPush(package.FullPath, new DotNetCoreNuGetPushSettings
         {
-            Source = "https://resharper-plugins.jetbrains.com",
+            Source = "https://resharper-plugins.jetbrains.com/api/v2/package",
             ApiKey = nugetApiKey
         });
     }
