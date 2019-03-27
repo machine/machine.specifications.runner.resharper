@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-var nugetApiKey = Argument("nugetapikey", EnvironmentVariable("NUGET_API_KEY"));
+var pluginApiKey = Argument("pluginapikey", EnvironmentVariable("PLUGIN_API_KEY"));
 
 //////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
@@ -146,8 +146,8 @@ Task("Publish")
     {
         DotNetCoreNuGetPush(package.FullPath, new DotNetCoreNuGetPushSettings
         {
-            Source = "https://resharper-plugins.jetbrains.com/api/v2/package",
-            ApiKey = nugetApiKey
+            Source = "https://plugins.jetbrains.com",
+            ApiKey = pluginApiKey
         });
     }
 });

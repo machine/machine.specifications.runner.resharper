@@ -1,8 +1,8 @@
 image: Visual Studio 2017
 
 environment:
-  NUGET_API_KEY:
-    secure: P92SdOXEnaXceqfYz+92EPkPqpccTuUQGD/AN11OYlr1pOY6+Ebrpj4hrapt1exy
+  PLUGIN_API_KEY:
+    secure: uRR/ys2Y9h+kLZKmAr8fm/UhYDZffZmEHVgZnijG/52zcuD8rdtgLCTbDorQ9ZfN/9dFzCqzjVPVurfYLUHTgvowsUbleSxOvxJQZdDjmjvdwt/4lNrldSoOuiMnruPs
 
 build_script:
   - ps: .\build.ps1
@@ -10,4 +10,5 @@ build_script:
 test: off
 
 artifacts:
-  - path: artifacts\*.nupkg
+  - path: artifacts\**\*.nupkg
+  - path: artifacts\**\*.zip
