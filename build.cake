@@ -12,6 +12,7 @@ var nugetApiKey = Argument("nugetapikey", EnvironmentVariable("NUGET_API_KEY"));
 //////////////////////////////////////////////////////////////////////
 var version = "0.1.0";
 var versionNumber = "0.1.0";
+var waveVersion = string.Empty;
 
 var artifacts = Directory("./artifacts");
 var solution = File("./Machine.Specifications.Runner.Resharper.sln");
@@ -32,6 +33,27 @@ Task("Restore")
     .Does(() => 
 {
     DotNetCoreRestore(solution);
+});
+
+Task("Wave")
+    .IsDependentOn("Clean")
+    .Does(() =>
+{
+    var projects = GetFiles("./src/**/*.csproj");
+
+    foreach (var project in projects)
+    {
+        var value = XmlPeek(project, "/Project/PropertyGroup/SdkVersion/text()", new XmlPeekSettings
+        {
+            SuppressWarning = true
+        });
+
+        if (!string.IsNullOrEmpty(value))
+        {
+            waveVersion = $"{value.Substring(2,2)}{value.Substring(5,1)}.*";
+            break;
+        }
+    }
 });
 
 Task("Versioning")
@@ -58,6 +80,7 @@ Task("Versioning")
 Task("Build")
     .IsDependentOn("Clean")
     .IsDependentOn("Versioning")
+    .IsDependentOn("Wave")
     .Does(() => 
 {
     CreateDirectory(artifacts);
@@ -86,16 +109,29 @@ Task("Test")
 Task("Package")
     .IsDependentOn("Build")
     .IsDependentOn("Test")
+    .WithCriteria(() => !string.IsNullOrEmpty(waveVersion))
     .Does(() => 
 {
+    var path = artifacts + Directory("machine-specifications");
+    var metaPath = path + Directory("META-INF");    
+    
+    CreateDirectory(metaPath);
+
+    TransformTextFile("plugin.xml")
+        .WithToken("build", waveVersion)
+        .WithToken("version", version)
+        .Save(metaPath + File("plugin.xml"));
+    
     DotNetCorePack(solution, new DotNetCorePackSettings
     {
         Configuration = configuration,
-        OutputDirectory = artifacts,
+        OutputDirectory = path,
         NoBuild = true,
         ArgumentCustomization = x => x
             .Append("/p:Version={0}", version)
     });
+
+    Zip(artifacts, artifacts + File($"machine-specifications-{version}.zip"));
 });
 
 Task("Publish")
@@ -110,7 +146,7 @@ Task("Publish")
     {
         DotNetCoreNuGetPush(package.FullPath, new DotNetCoreNuGetPushSettings
         {
-            Source = "https://resharper-plugins.jetbrains.com",
+            Source = "https://resharper-plugins.jetbrains.com/api/v2/package",
             ApiKey = nugetApiKey
         });
     }
