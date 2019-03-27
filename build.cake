@@ -1,3 +1,4 @@
+#addin "nuget:?package=Cake.Http&version=0.5.0"
 #tool nuget:?package=GitVersion.CommandLine&version=4.0.0
 
 //////////////////////////////////////////////////////////////////////
@@ -141,6 +142,7 @@ Task("Publish")
     .Does(() =>
 {
     var packages = GetFiles("./artifacts/**/*.nupkg");
+    var plugins = GetFiles("./artifacts/**/*.zip");
 
     foreach (var package in packages)
     {
@@ -149,6 +151,16 @@ Task("Publish")
             Source = "https://plugins.jetbrains.com",
             ApiKey = pluginApiKey
         });
+    }
+
+    foreach (var plugin in plugins)
+    {
+        HttpPost("https://plugins.jetbrains.com/plugin/uploadPlugin", 
+            new HttpSettings { RequestBody = System.IO.File.ReadAllBytes(plugin.FullPath) }
+                .EnsureSuccessStatusCode()
+                .UseBearerAuthorization(pluginApiKey)
+                .AppendHeader("xmlId", "com.intellij.resharper.machine.specifications")
+                .SetContentType("application/octet-stream"));
     }
 });
 
