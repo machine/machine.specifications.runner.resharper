@@ -1,5 +1,5 @@
-#addin nuget:?package=SharpZipLib&version=1.1.0
-#addin nuget:?package=Cake.Compression&version=0.2.2
+using System.Net.Http;
+
 #tool nuget:?package=GitVersion.CommandLine&version=4.0.0
 
 //////////////////////////////////////////////////////////////////////
@@ -7,13 +7,14 @@
 //////////////////////////////////////////////////////////////////////
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-var nugetApiKey = Argument("nugetapikey", EnvironmentVariable("NUGET_API_KEY"));
+var pluginApiKey = Argument("pluginapikey", EnvironmentVariable("PLUGIN_API_KEY"));
 
 //////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////
 var version = "0.1.0";
 var versionNumber = "0.1.0";
+var waveVersion = string.Empty;
 
 var artifacts = Directory("./artifacts");
 var solution = File("./Machine.Specifications.Runner.Resharper.sln");
@@ -34,6 +35,27 @@ Task("Restore")
     .Does(() => 
 {
     DotNetCoreRestore(solution);
+});
+
+Task("Wave")
+    .IsDependentOn("Clean")
+    .Does(() =>
+{
+    var projects = GetFiles("./src/**/*.csproj");
+
+    foreach (var project in projects)
+    {
+        var value = XmlPeek(project, "/Project/PropertyGroup/SdkVersion/text()", new XmlPeekSettings
+        {
+            SuppressWarning = true
+        });
+
+        if (!string.IsNullOrEmpty(value))
+        {
+            waveVersion = $"{value.Substring(2,2)}{value.Substring(5,1)}";
+            break;
+        }
+    }
 });
 
 Task("Versioning")
@@ -60,6 +82,7 @@ Task("Versioning")
 Task("Build")
     .IsDependentOn("Clean")
     .IsDependentOn("Versioning")
+    .IsDependentOn("Wave")
     .Does(() => 
 {
     CreateDirectory(artifacts);
@@ -88,11 +111,19 @@ Task("Test")
 Task("Package")
     .IsDependentOn("Build")
     .IsDependentOn("Test")
+    .WithCriteria(() => !string.IsNullOrEmpty(waveVersion))
     .Does(() => 
 {
-    var path = artifacts + "machine-specifications";
+    var path = artifacts + Directory("machine-specifications");
+    var metaPath = path + Directory("META-INF");    
     
-    CreateDirectory(path);
+    CreateDirectory(metaPath);
+
+    TransformTextFile("plugin.xml", "${", "}")
+        .WithToken("Version", version)
+        .WithToken("SinceBuild", waveVersion + ".0")
+        .WithToken("UntilBuild", waveVersion + ".*")
+        .Save(metaPath + File("plugin.xml"));
     
     DotNetCorePack(solution, new DotNetCorePackSettings
     {
@@ -103,7 +134,7 @@ Task("Package")
             .Append("/p:Version={0}", version)
     });
 
-    Zip(path, "machine-specifications.zip")
+    Zip(artifacts, artifacts + File($"machine-specifications-{version}.zip"));
 });
 
 Task("Publish")
@@ -113,14 +144,35 @@ Task("Publish")
     .Does(() =>
 {
     var packages = GetFiles("./artifacts/**/*.nupkg");
+    var plugins = GetFiles("./artifacts/**/*.zip");
 
     foreach (var package in packages)
     {
         DotNetCoreNuGetPush(package.FullPath, new DotNetCoreNuGetPushSettings
         {
-            Source = "https://resharper-plugins.jetbrains.com/api/v2/package",
-            ApiKey = nugetApiKey
+            Source = "https://plugins.jetbrains.com",
+            ApiKey = pluginApiKey
         });
+    }
+
+    foreach (var plugin in plugins)
+    {
+        using (var client = new HttpClient())
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "https://plugins.jetbrains.com/plugin/uploadPlugin"))
+            {
+                var content = new MultipartFormDataContent
+                {
+                    { new StringContent("com.intellij.resharper.machine.specifications"), "xmlId" },
+                    { new ByteArrayContent(System.IO.File.ReadAllBytes(plugin.FullPath)), "file", plugin.GetFilename().ToString() }
+                };
+
+                request.Content = content;
+                request.Headers.Add("Authorization", $"Bearer {pluginApiKey}");
+
+                client.SendAsync(request).Wait();
+            }
+        }
     }
 });
 
