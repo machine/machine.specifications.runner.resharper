@@ -1,3 +1,6 @@
+using System.IO;
+using System.Net.Http;
+
 #addin "nuget:?package=Cake.Http&version=0.5.0"
 #tool nuget:?package=GitVersion.CommandLine&version=4.0.0
 
@@ -155,12 +158,22 @@ Task("Publish")
 
     foreach (var plugin in plugins)
     {
-        HttpPost("https://plugins.jetbrains.com/plugin/uploadPlugin", 
-            new HttpSettings { RequestBody = System.IO.File.ReadAllBytes(plugin.FullPath) }
-                .EnsureSuccessStatusCode()
-                .UseBearerAuthorization(pluginApiKey)
-                .AppendHeader("xmlId", "com.intellij.resharper.machine.specifications")
-                .SetContentType("application/octet-stream"));
+        using (var client = new HttpClient())
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "https://plugins.jetbrains.com/plugin/uploadPlugin"))
+            {
+                var content = new MultipartFormDataContent
+                {
+                    { new StringContent("com.intellij.resharper.machine.specifications"), "xmlId" },
+                    { new ByteArrayContent(File.ReadAllBytes(plugin.FullPath)), "file", plugin.GetFilename().ToString() }
+                };
+
+                request.Content = content;
+                request.Headers.Add("Authorization", $"Bearer {pluginApiKey}");
+
+                client.SendAsync(request).Wait();
+            }
+        }
     }
 });
 
