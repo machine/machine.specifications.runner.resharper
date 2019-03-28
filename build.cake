@@ -52,7 +52,7 @@ Task("Wave")
 
         if (!string.IsNullOrEmpty(value))
         {
-            waveVersion = $"{value.Substring(2,2)}{value.Substring(5,1)}.*";
+            waveVersion = $"{value.Substring(2,2)}{value.Substring(5,1)}";
             break;
         }
     }
@@ -119,9 +119,10 @@ Task("Package")
     
     CreateDirectory(metaPath);
 
-    TransformTextFile("plugin.xml")
-        .WithToken("build", waveVersion)
-        .WithToken("version", version)
+    TransformTextFile("plugin.xml", "${", "}")
+        .WithToken("Version", version)
+        .WithToken("SinceBuild", waveVersion + ".0")
+        .WithToken("UntilBuild", waveVersion + ".*")
         .Save(metaPath + File("plugin.xml"));
     
     DotNetCorePack(solution, new DotNetCorePackSettings
