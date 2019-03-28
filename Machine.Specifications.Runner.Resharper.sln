@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{9725D2B9
 		build.cake = build.cake
 		CONTRIBUTING.md = CONTRIBUTING.md
 		install-plugin.ps1 = install-plugin.ps1
+		plugin.xml = plugin.xml
 		README.md = README.md
 	EndProjectSection
 EndProject
