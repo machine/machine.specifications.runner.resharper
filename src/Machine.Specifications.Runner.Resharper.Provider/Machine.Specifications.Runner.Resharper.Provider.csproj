@@ -16,13 +16,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SdkVersion>2019.1.0-eap03</SdkVersion>
+    <SdkVersion>2019.1.0-eap02</SdkVersion>
     <WaveVersionBase>$(SdkVersion.Substring(2,2))$(SdkVersion.Substring(5,1))</WaveVersionBase>
     <WaveVersion>$(WaveVersionBase).0.0$(SdkVersion.Substring(8))</WaveVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2019.1.0-eap03" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2019.1.0-eap02" PrivateAssets="All" />
     <PackageReference Include="Machine.Specifications.Runner.Utility" Version="0.9.0" PrivateAssets="All" />
     <PackageReference Include="Wave" Version="$(WaveVersion)" />
   </ItemGroup>
