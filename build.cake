@@ -1,7 +1,5 @@
-using System.IO;
 using System.Net.Http;
 
-#addin "nuget:?package=Cake.Http&version=0.5.0"
 #tool nuget:?package=GitVersion.CommandLine&version=4.0.0
 
 //////////////////////////////////////////////////////////////////////
@@ -165,7 +163,7 @@ Task("Publish")
                 var content = new MultipartFormDataContent
                 {
                     { new StringContent("com.intellij.resharper.machine.specifications"), "xmlId" },
-                    { new ByteArrayContent(File.ReadAllBytes(plugin.FullPath)), "file", plugin.GetFilename().ToString() }
+                    { new ByteArrayContent(System.IO.File.ReadAllBytes(plugin.FullPath)), "file", plugin.GetFilename().ToString() }
                 };
 
                 request.Content = content;
