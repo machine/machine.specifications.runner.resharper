@@ -45,7 +45,7 @@ namespace Machine.Specifications.ReSharperProvider
         public IUnitTestRunStrategy GetRunStrategy(IUnitTestElement element)
         {
             var project = element.Id.Project;
-            var targetFrameworkId = element.Id.TargetFrameworkId; 
+            var targetFrameworkId = element.Id.TargetFrameworkId;
 
             if (targetFrameworkId.IsNetFramework || !project.IsDotNetCoreProject() || !targetFrameworkId.IsNetCoreApp)
                 return _processUnitTestRunStrategy;
