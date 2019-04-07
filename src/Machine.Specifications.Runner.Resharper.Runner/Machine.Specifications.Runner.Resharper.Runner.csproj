@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>0.1.0</Version>
     <TargetFramework>net461</TargetFramework>
-    <AssemblyName>Machine.Specifications.ReSharper.Runner.10</AssemblyName>
+    <AssemblyName>Machine.Specifications.ReSharper.Runner</AssemblyName>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
