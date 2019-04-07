@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>0.1.0</Version>
     <TargetFrameworks>net461</TargetFrameworks>
-    <PackageId>Machine.Specifications.Runner.Resharper</PackageId>
+    <PackageId>Machine.Specifications.Runner.Resharper9</PackageId>
     <Title>Machine.Specifications for ReSharper</Title>
     <AssemblyName>Machine.Specifications.ReSharper.Provider</AssemblyName>
     <Description>A ReSharper runner for the Context/Specification framework Machine.Specifications</Description>
