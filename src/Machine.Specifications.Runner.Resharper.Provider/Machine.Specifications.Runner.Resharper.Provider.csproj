@@ -4,6 +4,7 @@
     <Version>0.1.0</Version>
     <TargetFrameworks>net461</TargetFrameworks>
     <PackageId>Machine.Specifications.Runner.Resharper</PackageId>
+    <Title>Machine.Specifications for ReSharper</Title>
     <AssemblyName>Machine.Specifications.ReSharper.Provider</AssemblyName>
     <Description>A ReSharper runner for the Context/Specification framework Machine.Specifications</Description>
     <Authors>Machine Specifications</Authors>
@@ -37,8 +38,8 @@
 
   <Target Name="PackageItems">
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.ReSharper.Provider.10.dll" PackagePath="DotFiles" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.ReSharper.Runner.10.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.ReSharper.Provider.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.ReSharper.Runner.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.Utility.dll" PackagePath="DotFiles" />
     </ItemGroup>
   </Target>
