@@ -91,6 +91,7 @@ Task("Build")
     {
         Configuration = configuration,
         ArgumentCustomization = x => x
+            .Append("/p:HostFullIdentifier={0}", "")
             .Append("/p:Version={0}", version)
             .Append("/p:AssemblyVersion={0}", versionNumber)
             .Append("/p:FileVersion={0}", versionNumber)

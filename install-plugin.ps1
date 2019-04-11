@@ -27,7 +27,7 @@ Function Write-User-Proj {
     )
 
     if (!(Test-Path "$UserProjectXmlFile")) {
-        Set-Content -Path "$UserProjectXmlFile" -Value "<Project><PropertyGroup><HostFullIdentifier></HostFullIdentifier></PropertyGroup></Project>"
+        Set-Content -Path "$UserProjectXmlFile" -Value "<Project><PropertyGroup Condition=`"'`$(Configuration)' == 'Debug'`"><HostFullIdentifier></HostFullIdentifier></PropertyGroup></Project>"
     }
 
     $ProjectXml = [xml] (Get-Content "$UserProjectXmlFile")
@@ -36,9 +36,37 @@ Function Write-User-Proj {
     $ProjectXml.Save("$UserProjectXmlFile")
 }
 
+Function Write-Nuspec {
+    param(
+        [parameter(mandatory=$true)] [string] $NuspecFile
+    )
+
+    $nuspec = @'
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Machine.Specifications.Runner.Resharper9</id>
+    <version>$version$</version>
+    <authors>Machine Specifications</authors>
+    <description>Machine Specifications</description>
+    <dependencies>
+      <dependency id="Wave" version="[183.0, 184.0)" />
+    </dependencies>
+  </metadata>
+
+  <files>
+    <file src="..\src\Machine.Specifications.Runner.Resharper.Provider\bin\Debug\net461\Machine.Specifications.ReSharper.Runner.dll" target="DotFiles" />
+    <file src="..\src\Machine.Specifications.Runner.Resharper.Provider\bin\Debug\net461\Machine.Specifications.ReSharper.Provider.dll" target="DotFiles" />
+    <file src="..\src\Machine.Specifications.Runner.Resharper.Provider\bin\Debug\net461\Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
+  </files>
+</package>
+'@
+
+    Set-Content -Path "$NuspecFile" -Value $nuspec
+}
+
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 $PluginId = "Machine.Specifications.Runner.Resharper9"
-$PluginPrefix = "Machine.Specifications.ReSharper"
 $RootSuffix = "ReSharper"
 $Version = "1.0.0"
 
@@ -73,7 +101,7 @@ if (!(Test-Path $NugetFile)) {
 
 # Execute installer
 Write-Output "Installing experimental hive"
-Invoke-Exe $InstallerFile "/VsVersion=15.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
+Invoke-Exe $InstallerFile "/VsVersion=16.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
 
 $PluginRepository = "$env:LOCALAPPDATA\JetBrains\plugins"
 $InstallationDirectory = $(Get-ChildItem "$env:APPDATA\JetBrains\ReSharperPlatformVs*\v*_*$RootSuffix\NuGet.Config" | Sort-Object | Select-Object -Last 1).Directory
@@ -97,22 +125,24 @@ if ($null -eq $PackagesXml.SelectSingleNode(".//package[@id='$PluginId']/@id")) 
 }
 
 # Install plugin
-$OutputDirectory = "$PSScriptRoot\Build"
+$OutputDirectory = "$PSScriptRoot\artifacts"
+
+Write-Nuspec "$OutputDirectory\Package.nuspec"
 
 Invoke-Exe dotnet build "$PSScriptRoot\Machine.Specifications.Runner.Resharper.sln" /p:Version=$Version /p:HostFullIdentifier=""
-Invoke-Exe "$NugetFile" pack "$PSScriptRoot\Machine.Specifications.Runner.Resharper.nuspec" -version $Version -outputDirectory "$OutputDirectory"
+Invoke-Exe "$NugetFile" pack "$OutputDirectory\Package.nuspec" -version $Version -outputDirectory "$OutputDirectory"
 Invoke-Exe "$NugetFile" install $PluginId -OutputDirectory "$PluginRepository" -Source "$OutputDirectory" -DependencyVersion Ignore
 
 Write-Output "Re-installing experimental hive"
-Invoke-Exe "$InstallerFile" "/VsVersion=15.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
+Invoke-Exe "$InstallerFile" "/VsVersion=16.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
 
 # Adapt user project file
 $HostIdentifier = "$($InstallationDirectory.Parent.Name)_$($InstallationDirectory.Name.Split('_')[-1])"
 
-Write-User-Proj $HostIdentifier "$PSScriptRoot\$PluginPrefix.Provider.10\$PluginPrefix.Provider.10.csproj.user"
-Write-User-Proj $HostIdentifier "$PSScriptRoot\$PluginPrefix.Runner.10\$PluginPrefix.Runner.10.csproj.user"
+Write-User-Proj $HostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Provider\Machine.Specifications.Runner.Resharper.Provider.csproj.user"
+Write-User-Proj $HostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Runner\Machine.Specifications.Runner.Resharper.Runner.csproj.user"
 
 Write-Output "Installed $PluginId to hive $HostIdentifier"
-Write-Output "  Set the startup project to 'Machine.Specifications.ReSharperRunner.Debug.VS'"
+Write-Output "  Set the startup project to 'Machine.Specifications.Runner.Resharper'"
 Write-Output "  and ensure that the launch parameters specify:"
-Write-Output "  devenv.exe /rootsuffix $RootSuffix /ReSharper.Internal"
+Write-Output "  devenv.exe /RootSuffix $RootSuffix /ReSharper.Internal"
