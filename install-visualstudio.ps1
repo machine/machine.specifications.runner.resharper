@@ -8,6 +8,8 @@ $RootSuffix = "ReSharper"
 $ResharperUrl = "https://data.services.jetbrains.com/products/releases?code=RSU&type=release"
 $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $Version = "1.0.0"
+$MainProject = "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Provider\Machine.Specifications.Runner.Resharper.Provider.csproj"
+$NugetExe = "$PSScriptRoot\tools\nuget.exe"
 
 Function Invoke-Exe {
     param(
@@ -51,21 +53,11 @@ Function Write-User-Settings {
 }
 
 Function Read-SdkVersion {
-    param(
-        [Parameter(Mandatory=$true)]
-        [String]
-        $ProjectFile
-    )
-
-    if (!(Test-Path "$ProjectFile")) {
-        throw "Project file '$ProjectFile' not found"
-    }
-
-    $xml = [xml] (Get-Content "$ProjectFile")
+    $xml = [xml] (Get-Content "$MainProject")
     $node = $xml.SelectSingleNode(".//SdkVersion")
 
     if ($null -eq $node) {
-        throw "SdkVersion not found in '$ProjectFile'"
+        throw "SdkVersion not found in '$MainProject'"
     }
 
     $version = $node.InnerText
@@ -77,14 +69,11 @@ Function Write-Nuspec {
     param(
         [Parameter(Mandatory=$true)]
         [String]
-        $NuspecFile,
-
-        [Parameter(Mandatory=$true)]
-        [String]
-        $SdkVersion
+        $NuspecFile
     )
 
-    $nextVersion = [int]$SdkVersion + 1
+    $sdkVersion = Read-SdkVersion
+    $nextSdkVersion = [int]$sdkVersion + 1
 
     $nuspec = @'
 <?xml version="1.0" encoding="utf-8"?>
@@ -105,7 +94,7 @@ Function Write-Nuspec {
     <file src="..\src\Machine.Specifications.Runner.Resharper.Provider\bin\Debug\net461\Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
   </files>
 </package>
-'@ -f $Version,$SdkVersion,$nextVersion
+'@ -f $Version,$sdkVersion,$nextSdkVersion
 
     Set-Content -Path "$NuspecFile" -Value $nuspec
 }
@@ -152,33 +141,10 @@ Function Install-Hive {
     Invoke-Exe $InstallerFile "/VsVersion=15.0;16.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
 }
 
-Function Invoke-Nuget {
-    param(
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [String[]]
-        $Arguments
-    )
-
-    Invoke-Exe "$PSScriptRoot\tools\nuget.exe" $Arguments
-}
-
 Function Get-InstallationPath {
-    $vs = Get-VisualStudio
+    $version = Read-SdkVersion
 
-    $vsVersion = ($vs.installationVersion -split '\.')[0]
-    $vsInstance = $vs.instanceId
-
-    return $(Get-ChildItem "$env:APPDATA\JetBrains\ReSharperPlatformVs$vsVersion\v*_$vsInstance$RootSuffix\NuGet.Config" | Sort-Object | Select-Object -Last 1).Directory
-}
-
-Function Get-VisualStudio {
-    $path = "${Env:Programfiles(x86)}\Microsoft Visual Studio\Installer"
-
-    $output = [xml] (& "$path\vswhere.exe" -format xml)
-
-    $vs = $output.instances.instance | Where-Object { $_.channelId -match "Release" } | Select-Object -Last 1
-
-    return $vs
+    return $(Get-ChildItem "$env:APPDATA\JetBrains\ReSharperPlatformVs*\v$version`_*$RootSuffix\NuGet.Config" | Sort-Object | Select-Object -Last 1).Directory
 }
 
 Function Save-PackagesConfig {
@@ -205,10 +171,16 @@ Function Save-PackagesConfig {
 # Download tools
 $url = [uri] $(Invoke-WebRequest -UseBasicParsing $ResharperUrl | ConvertFrom-Json).RSU[0].downloads.windows.link
 $resharperTool = Get-ToolPath $url
-$resharperSdkVersion = Read-SdkVersion "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Provider\Machine.Specifications.Runner.Resharper.Provider.csproj"
 
 Get-Tool $url
 Get-Tool $NugetUrl
+
+# Build plugin
+$artifacts = "$PSScriptRoot\artifacts"
+
+Write-Nuspec "$artifacts\Package.nuspec"
+Invoke-Exe dotnet build "$PSScriptRoot\Machine.Specifications.Runner.Resharper.sln" /p:Version=$Version /p:HostFullIdentifier="" /p:UseSharedCompilation=false
+Invoke-Exe $NugetExe pack "$artifacts\Package.nuspec" -version $Version -outputDirectory "$artifacts"
 
 # Install hive
 Install-Hive $resharperTool
@@ -217,12 +189,7 @@ Install-Hive $resharperTool
 Save-PackagesConfig
 
 # Install plugin
-$artifacts = "$PSScriptRoot\artifacts"
-
-Write-Nuspec "$artifacts\Package.nuspec" $resharperSdkVersion
-Invoke-Exe dotnet build "$PSScriptRoot\Machine.Specifications.Runner.Resharper.sln" /p:Version=$Version /p:HostFullIdentifier=""
-Invoke-Nuget pack "$artifacts\Package.nuspec" -version $Version -outputDirectory "$artifacts"
-Invoke-Nuget install $PluginId -OutputDirectory "$env:LOCALAPPDATA\JetBrains\plugins" -Source "$artifacts" -DependencyVersion Ignore
+Invoke-Exe $NugetExe install $PluginId -OutputDirectory "$env:LOCALAPPDATA\JetBrains\plugins" -Source "$artifacts" -DependencyVersion Ignore
 
 # Reinstall hive
 Install-Hive $resharperTool
