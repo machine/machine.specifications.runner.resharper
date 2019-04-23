@@ -138,7 +138,7 @@ Function Install-Hive {
     )
 
     Write-Output "Installing experimental hive"
-    Invoke-Exe $InstallerFile "/VsVersion=16.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
+    Invoke-Exe $InstallerFile "/VsVersion=15.0;16.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
 }
 
 Function Get-InstallationPath {
