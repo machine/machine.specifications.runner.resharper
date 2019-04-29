@@ -15,6 +15,7 @@ var pluginApiKey = Argument("pluginapikey", EnvironmentVariable("PLUGIN_API_KEY"
 var version = "0.1.0";
 var versionNumber = "0.1.0";
 var waveVersion = string.Empty;
+var isPreRelease = false;
 
 var artifacts = Directory("./artifacts");
 var solution = File("./Machine.Specifications.Runner.Resharper.sln");
@@ -77,6 +78,7 @@ Task("Versioning")
 
     version = result.NuGetVersion;
     versionNumber = result.MajorMinorPatch;
+    isPreRelease = !string.IsNullOrEmpty(result.PreReleaseTag);
 });
 
 Task("Build")
@@ -167,6 +169,11 @@ Task("Publish")
                     { new StringContent("com.intellij.resharper.machine.specifications"), "xmlId" },
                     { new ByteArrayContent(System.IO.File.ReadAllBytes(plugin.FullPath)), "file", plugin.GetFilename().ToString() }
                 };
+
+                if (isPreRelease)
+                {
+                    content.Add(new StringContent("channel"), "Beta");
+                }
 
                 request.Content = content;
                 request.Headers.Add("Authorization", $"Bearer {pluginApiKey}");
