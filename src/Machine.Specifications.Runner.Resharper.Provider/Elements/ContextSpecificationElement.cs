@@ -53,6 +53,7 @@ namespace Machine.Specifications.ReSharperProvider.Elements
         {
             return Equals(obj as ContextSpecificationElement);
         }
+        
 
         public override int GetHashCode()
         {
