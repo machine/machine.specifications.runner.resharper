@@ -162,10 +162,12 @@ Task("Publish")
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "https://plugins.jetbrains.com/plugin/uploadPlugin"))
             {
+                var filename = plugin.GetFilename().ToString();
+
                 var content = new MultipartFormDataContent
                 {
                     { new StringContent("com.intellij.resharper.machine.specifications"), "xmlId" },
-                    { new ByteArrayContent(System.IO.File.ReadAllBytes(plugin.FullPath)), "file", plugin.GetFilename().ToString() }
+                    { new ByteArrayContent(System.IO.File.ReadAllBytes(plugin.FullPath)), "file", filename }
                 };
 
                 if (isPreRelease)
@@ -177,6 +179,8 @@ Task("Publish")
                 request.Headers.Add("Authorization", $"Bearer {pluginApiKey}");
 
                 client.SendAsync(request).Wait();
+
+                Information($"Published plugin {filename} to JetBrains hub");
             }
         }
     }
