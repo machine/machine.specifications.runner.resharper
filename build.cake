@@ -15,6 +15,7 @@ var pluginApiKey = Argument("pluginapikey", EnvironmentVariable("PLUGIN_API_KEY"
 var version = "0.1.0";
 var versionNumber = "0.1.0";
 var waveVersion = string.Empty;
+var changeNotes = string.Empty;
 var isPreRelease = false;
 
 var artifacts = Directory("./artifacts");
@@ -42,21 +43,16 @@ Task("Wave")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    var projects = GetFiles("./src/**/*.csproj");
+    var value = GetXmlValue("SdkVersion");
 
-    foreach (var project in projects)
-    {
-        var value = XmlPeek(project, "/Project/PropertyGroup/SdkVersion/text()", new XmlPeekSettings
-        {
-            SuppressWarning = true
-        });
+    waveVersion = $"{value.Substring(2,2)}{value.Substring(5,1)}";
+});
 
-        if (!string.IsNullOrEmpty(value))
-        {
-            waveVersion = $"{value.Substring(2,2)}{value.Substring(5,1)}";
-            break;
-        }
-    }
+Task("Notes")
+    .IsDependentOn("Clean")
+    .Does(() =>
+{
+    changeNotes = GetXmlValue("PackageReleaseNotes");
 });
 
 Task("Versioning")
@@ -85,6 +81,7 @@ Task("Build")
     .IsDependentOn("Clean")
     .IsDependentOn("Versioning")
     .IsDependentOn("Wave")
+    .IsDependentOn("Notes")
     .Does(() => 
 {
     CreateDirectory(artifacts);
@@ -126,6 +123,7 @@ Task("Package")
         .WithToken("Version", version)
         .WithToken("SinceBuild", waveVersion + ".0")
         .WithToken("UntilBuild", waveVersion + ".*")
+        .WithToken("ChangeNotes", changeNotes)
         .Save(metaPath + File("plugin.xml"));
     
     DotNetCorePack(solution, new DotNetCorePackSettings
@@ -183,6 +181,29 @@ Task("Publish")
         }
     }
 });
+
+//////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////
+string GetXmlValue(string name)
+{
+    var projects = GetFiles("./src/**/*.csproj");
+
+    foreach (var project in projects)
+    {
+        var value = XmlPeek(project, $"/Project/PropertyGroup/{name}/text()", new XmlPeekSettings
+        {
+            SuppressWarning = true
+        });
+
+        if (!string.IsNullOrEmpty(value))
+        {
+            return value;
+        }
+    }
+
+    return string.Empty;
+}
 
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS

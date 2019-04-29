@@ -15,4 +15,10 @@
 <p>For issues with this plugin, please head to <a href="https://github.com/machine/machine.specifications/issues">GitHub</a>.</p>
 ]]>
   </description>
+  
+  <change-notes>
+<![CDATA[
+${ChangeNotes}
+]]>
+  </change-notes>
 </idea-plugin>
