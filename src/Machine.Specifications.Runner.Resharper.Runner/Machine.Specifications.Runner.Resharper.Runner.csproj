@@ -3,13 +3,13 @@
   <PropertyGroup>
     <Version>0.1.0</Version>
     <TargetFramework>net461</TargetFramework>
-    <AssemblyName>Machine.Specifications.ReSharper.Runner.10</AssemblyName>
+    <AssemblyName>Machine.Specifications.ReSharper.Runner</AssemblyName>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.ReSharper.SDK" Version="2019.1.0-eap07" PrivateAssets="All" />
-    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="0.9.0" />
+    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.0-beta2" />
   </ItemGroup>
 
 </Project>
