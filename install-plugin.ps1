@@ -65,10 +65,6 @@ Function Read-SdkVersion {
     return $value.Substring(2, 2) + $value.Substring(5, 1)
 }
 
-Function Read-PackageVersion {
-
-}
-
 Function Write-Nuspec {
     param(
         [Parameter(Mandatory=$true)]
@@ -142,7 +138,7 @@ Function Install-Hive {
     )
 
     Write-Output "Installing experimental hive"
-    Invoke-Exe $InstallerFile "/VsVersion=15.0;16.0" "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/Silent=True"
+    Invoke-Exe $InstallerFile "/SpecificProductNames=ReSharper" "/Hive=$RootSuffix" "/VsVersion=15.0;16.0" "/Silent=True"
 }
 
 Function Get-InstallationPath {
