@@ -7,7 +7,7 @@ $PluginId = "Machine.Specifications.Runner.Resharper9"
 $RootSuffix = "ReSharper"
 $ResharperUrl = "https://data.services.jetbrains.com/products/releases?code=RSU&type=release"
 $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
-$Version = "1.0.0"
+$Version = "0.1.0"
 $MainProject = "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Provider\Machine.Specifications.Runner.Resharper.Provider.csproj"
 $NugetExe = "$PSScriptRoot\tools\nuget.exe"
 
@@ -60,9 +60,13 @@ Function Read-SdkVersion {
         throw "SdkVersion not found in '$MainProject'"
     }
 
-    $version = $node.InnerText
+    $value = $node.InnerText
 
-    return $version.Substring(2, 2) + $version.Substring(5, 1)
+    return $value.Substring(2, 2) + $value.Substring(5, 1)
+}
+
+Function Read-PackageVersion {
+
 }
 
 Function Write-Nuspec {
