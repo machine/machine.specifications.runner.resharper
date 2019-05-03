@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="JetBrains.ReSharper.SDK" Version="2018.3.4" PrivateAssets="All" />
     <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="Wave" Version="$(WaveVersion)" />
+    <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
   </ItemGroup>
 
   <ItemGroup>
