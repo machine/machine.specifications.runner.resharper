@@ -9,7 +9,10 @@
     <Description>A ReSharper runner for the Context/Specification framework Machine.Specifications</Description>
     <Authors>Machine Specifications</Authors>
     <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
-    <PackageReleaseNotes>- Support for 2018.3</PackageReleaseNotes>
+    <PackageReleaseNotes>
+      - Support for 2019.1
+      - Requires Machine.Specifications.Runner.VisualStudio v2.8.2 for .NET Core test projects
+    </PackageReleaseNotes>
     <PackageIconUrl>http://github.com/machine/media/raw/master/Machine.Specifications-128x128.png</PackageIconUrl>
     <PackageProjectUrl>http://github.com/machine/machine.specifications.runner.resharper</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
