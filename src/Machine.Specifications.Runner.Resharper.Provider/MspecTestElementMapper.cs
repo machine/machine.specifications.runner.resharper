@@ -14,16 +14,19 @@ namespace Machine.Specifications.ReSharperProvider
     public class MspecTestElementMapper : TestElementMapper
     {
         private readonly IProject _project;
+        private readonly UnitTestElementOrigin _origin;
         private readonly TargetFrameworkId _targetFrameworkId;
         private readonly UnitTestElementFactory _factory;
 
         public MspecTestElementMapper(
             IProject project,
+            UnitTestElementOrigin origin,
             TargetFrameworkId targetFrameworkId,
             UnitTestElementFactory factory
         ) : base(project, targetFrameworkId)
         {
             _project = project;
+            _origin = origin;
             _targetFrameworkId = targetFrameworkId;
             _factory = factory;
         }
@@ -49,7 +52,7 @@ namespace Machine.Specifications.ReSharperProvider
                 .Select(x => x.Trim());
         }
 
-        public override IUnitTestElement Map(Test test, out bool wasChanged)
+        public override IUnitTestElement Map(Test test, bool isDiscovery, out bool wasChanged)
         {
             using (ReadLockCookie.Create())
             {
@@ -63,7 +66,7 @@ namespace Machine.Specifications.ReSharperProvider
 
                 var type = new ClrTypeName(typeName);
 
-                var context = _factory.GetOrCreateContext(_project, type, assemblyPath, subject, tags.ToArray(), false, UnitTestElementCategorySource.Artefact, out wasChanged);
+                var context = _factory.GetOrCreateContext(_project, type, assemblyPath, subject, tags.ToArray(), false, _origin, out wasChanged);
 
                 if (!string.IsNullOrEmpty(behaviorField) && !string.IsNullOrEmpty(behaviorType))
                 {

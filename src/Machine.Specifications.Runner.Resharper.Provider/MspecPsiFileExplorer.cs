@@ -88,7 +88,7 @@ namespace Machine.Specifications.ReSharperProvider
                 type.GetSubject(),
                 type.GetTags().ToArray(),
                 type.IsIgnored(),
-                UnitTestElementCategorySource.Source,
+                _observer.Origin,
                 out _);
 
             _contexts[name] = context;

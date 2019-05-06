@@ -55,7 +55,7 @@ namespace Machine.Specifications.ReSharperProvider
                 type.GetSubject(),
                 type.GetTags().ToArray(),
                 type.IsIgnored(),
-                UnitTestElementCategorySource.Artefact,
+                _observer.Origin,
                 out _);
 
             _observer.OnUnitTestElement(contextElement);

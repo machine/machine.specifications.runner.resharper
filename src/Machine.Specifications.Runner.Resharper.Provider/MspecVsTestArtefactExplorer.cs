@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Application.Processes;
-using JetBrains.DataFlow;
+using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.NuGet.Packaging;
 using JetBrains.ReSharper.UnitTestFramework;
@@ -14,7 +14,7 @@ using JetBrains.Util.Dotnet.TargetFrameworkIds;
 namespace Machine.Specifications.ReSharperProvider
 {
     [SolutionComponent]
-    public class MspecVsTestArtefactExplorer : DotNetVsTestArtefactExplorer<MspecTestProvider>
+    public class MspecVsTestArtefactExplorer : DotNetVsTestArtifactExplorer<MspecTestProvider>
     {
         public MspecVsTestArtefactExplorer(
             Lifetime lifetime,

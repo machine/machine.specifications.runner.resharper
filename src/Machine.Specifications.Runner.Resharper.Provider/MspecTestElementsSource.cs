@@ -15,7 +15,7 @@ using JetBrains.Util.Dotnet.TargetFrameworkIds;
 namespace Machine.Specifications.ReSharperProvider
 {
     [SolutionComponent]
-    public class MspecTestElementsSource : UnitTestExplorerFrom.DotNetArtefacts, IUnitTestExplorerFromFile
+    public class MspecTestElementsSource : UnitTestExplorerFrom.DotNetArtifacts, IUnitTestExplorerFromFile
     {
         private readonly SearchDomainFactory _searchDomainFactory;
         private readonly MspecServiceProvider _serviceProvider;
@@ -24,12 +24,11 @@ namespace Machine.Specifications.ReSharperProvider
         public MspecTestElementsSource(
             MspecTestProvider provider,
             SearchDomainFactory searchDomainFactory,
-            ISolution solution,
             AssemblyToAssemblyReferencesResolveManager resolveManager,
             ResolveContextManager contextManager,
             MspecServiceProvider serviceProvider,
             ILogger logger)
-            : base(solution, provider, resolveManager, contextManager, logger)
+            : base(provider, resolveManager, contextManager, logger)
         {
             _searchDomainFactory = searchDomainFactory;
             _serviceProvider = serviceProvider;
@@ -41,7 +40,7 @@ namespace Machine.Specifications.ReSharperProvider
             return targetFrameworkId.IsNetFramework ? PertinenceResult.Yes : PertinenceResult.No;
         }
 
-        public override void ProcessProject(
+        protected override void ProcessProject(
             IProject project, 
             FileSystemPath assemblyPath, 
             MetadataLoader loader,
@@ -53,8 +52,6 @@ namespace Machine.Specifications.ReSharperProvider
 
             MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, _logger, token,
                 assembly => explorer.ExploreAssembly(project, assembly, token));
-
-            observer.OnCompleted();
         }
 
         public void ProcessFile(IFile psiFile, IUnitTestElementsObserver observer, Func<bool> interrupted)
@@ -63,8 +60,6 @@ namespace Machine.Specifications.ReSharperProvider
             var explorer = new MspecPsiFileExplorer(_searchDomainFactory, factory, observer, interrupted);
 
             psiFile.ProcessDescendants(explorer);
-
-            observer.OnCompleted();
         }
     }
 }
