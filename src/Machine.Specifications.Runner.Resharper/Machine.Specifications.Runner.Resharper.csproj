@@ -2,8 +2,41 @@
 
   <PropertyGroup>
     <Version>0.1.0</Version>
-    <TargetFramework>net461</TargetFramework>
-    <IsPackable>false</IsPackable>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <PackageId>Machine.Specifications.Runner.Resharper9</PackageId>
+    <Title>Machine.Specifications for ReSharper</Title>
+    <AssemblyName>Machine.Specifications.Runner.ReSharper</AssemblyName>
+    <Description>A ReSharper runner for the Context/Specification framework Machine.Specifications</Description>
+    <Authors>Machine Specifications</Authors>
+    <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
+    <PackageReleaseNotes>Adds support for R# 2019.1. Note that this update requires Machine.Specifications.Runner.VisualStudio v2.8.2 for .NET Core test projects.</PackageReleaseNotes>
+    <PackageIconUrl>http://github.com/machine/media/raw/master/Machine.Specifications-128x128.png</PackageIconUrl>
+    <PackageProjectUrl>http://github.com/machine/machine.specifications.runner.resharper</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <SdkVersion>2019.1.0</SdkVersion>
+    <WaveVersionBase>$(SdkVersion.Substring(2,2))$(SdkVersion.Substring(5,1))</WaveVersionBase>
+    <WaveVersion>$(WaveVersionBase).0.0</WaveVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2019.1.2" PrivateAssets="All" />
+    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackageItems</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <Target Name="PackageItems">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.Utility.dll" PackagePath="DotFiles" />
+    </ItemGroup>
+  </Target>
 
 </Project>
