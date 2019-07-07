@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runner.Resharper.Provider", "src\Machine.Specifications.Runner.Resharper.Provider\Machine.Specifications.Runner.Resharper.Provider.csproj", "{0AC9AC80-D8CC-4CB7-BB85-312168096781}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runner.Resharper.Runner", "src\Machine.Specifications.Runner.Resharper.Runner\Machine.Specifications.Runner.Resharper.Runner.csproj", "{585AE31B-2361-4A4E-8E9E-32B808D280A0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runner.Resharper", "src\Machine.Specifications.Runner.Resharper\Machine.Specifications.Runner.Resharper.csproj", "{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runner.ReSharper", "src\Machine.Specifications.Runner.ReSharper\Machine.Specifications.Runner.ReSharper.csproj", "{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{9725D2B9-232B-45A2-92CC-4F7CDE717C94}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,14 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0AC9AC80-D8CC-4CB7-BB85-312168096781}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0AC9AC80-D8CC-4CB7-BB85-312168096781}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0AC9AC80-D8CC-4CB7-BB85-312168096781}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0AC9AC80-D8CC-4CB7-BB85-312168096781}.Release|Any CPU.Build.0 = Release|Any CPU
-		{585AE31B-2361-4A4E-8E9E-32B808D280A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{585AE31B-2361-4A4E-8E9E-32B808D280A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{585AE31B-2361-4A4E-8E9E-32B808D280A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{585AE31B-2361-4A4E-8E9E-32B808D280A0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79A3A8CA-CAEF-4DC6-83C9-E19A0C720B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
