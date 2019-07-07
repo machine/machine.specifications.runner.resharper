@@ -19,7 +19,7 @@ var changeNotes = string.Empty;
 var isPreRelease = false;
 
 var artifacts = Directory("./artifacts");
-var solution = File("./Machine.Specifications.Runner.Resharper.sln");
+var solution = File("./Machine.Specifications.Runner.ReSharper.sln");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
