@@ -149,11 +149,11 @@ Task("Publish")
 
     foreach (var package in packages)
     {
-        DotNetCoreNuGetPush(package.FullPath, new DotNetCoreNuGetPushSettings
-        {
-            Source = "https://plugins.jetbrains.com",
-            ApiKey = pluginApiKey
-        });
+        //DotNetCoreNuGetPush(package.FullPath, new DotNetCoreNuGetPushSettings
+        //{
+        //    Source = "https://plugins.jetbrains.com",
+        //    ApiKey = pluginApiKey
+        //});
     }
 
     foreach (var plugin in plugins)
@@ -178,7 +178,7 @@ Task("Publish")
                 request.Content = content;
                 request.Headers.Add("Authorization", $"Bearer {pluginApiKey}");
 
-                client.SendAsync(request).Wait();
+                //client.SendAsync(request).Wait();
 
                 Information($"Published plugin {filename} to JetBrains hub");
             }
