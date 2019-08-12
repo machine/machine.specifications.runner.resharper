@@ -7,7 +7,7 @@ using System.Net.Http;
 //////////////////////////////////////////////////////////////////////
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-var pluginApiKey = Argument("pluginapikey", EnvironmentVariable("PLUGIN_API_KEY"));
+var pluginApiKey = "perm:" + Argument("pluginapikey", EnvironmentVariable("PLUGIN_API_KEY"));
 
 //////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
