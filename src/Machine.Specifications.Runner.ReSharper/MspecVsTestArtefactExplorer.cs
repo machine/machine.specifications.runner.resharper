@@ -39,7 +39,7 @@ namespace Machine.Specifications.Runner.ReSharper
             if (result != PertinenceResult.Yes)
                 return result;
 
-            return targetFrameworkId.IsNetFramework ? PertinenceResult.No : PertinenceResult.Yes;
+            return targetFrameworkId.IsNetFramework ? PertinenceResult.No() : PertinenceResult.Yes;
         }
 
         protected override IEnumerable<string> RequiredNuGetDependencies()

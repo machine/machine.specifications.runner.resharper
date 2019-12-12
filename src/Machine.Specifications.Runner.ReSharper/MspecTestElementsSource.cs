@@ -37,7 +37,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public override PertinenceResult IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return targetFrameworkId.IsNetFramework ? PertinenceResult.Yes : PertinenceResult.No;
+            return targetFrameworkId.IsNetFramework ? PertinenceResult.Yes : PertinenceResult.No();
         }
 
         protected override void ProcessProject(
