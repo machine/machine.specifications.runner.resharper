@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Application.UI.BindableLinq.Collections;
+using JetBrains.Application.UI.BindableLinq.Interfaces;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
@@ -62,7 +63,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             }
         }
 
-        public ICollection<IUnitTestElement> Children { get; } = new BindableSetCollectionWithoutIndexTracking<IUnitTestElement>(UT.Locks.ReadLock, UnitTestElement.EqualityComparer);
+        public IBindableCollection<IUnitTestElement> Children { get; } = new BindableSetCollectionWithoutIndexTracking<IUnitTestElement>(UT.Locks.ReadLock, UnitTestElement.EqualityComparer);
 
         public abstract string ShortName { get; }
 
