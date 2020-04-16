@@ -2,7 +2,7 @@ image: Visual Studio 2017
 
 environment:
   PLUGIN_API_KEY:
-    secure: uRR/ys2Y9h+kLZKmAr8fm3HpQ+irhfangDguwwRkXmQy8eq1Jn0PMdTIxuZotJBZLB1ClhT2mOmm9oUn1TwUIUEGgSg+kod5RMQ0c6YvgZA=
+    secure: 1dXrY7H3Z6jE+Kz5Ow9VVrr4lk9cyIpcNgYt7Y3T+Ot96LT8Ajm38beDVSPoxZ0I
 
 build_script:
   - ps: .\build.ps1
