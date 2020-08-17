@@ -50,7 +50,7 @@ namespace Machine.Specifications.Runner.ReSharper
             if (targetFrameworkId.IsNetFramework || !project.IsDotNetCoreProject() || !targetFrameworkId.IsNetCoreApp)
                 return _processUnitTestRunStrategy;
 
-            return _solution.GetComponent<MspecDotNetVsTestRunStrategy>();
+            return _solution.GetComponent<MspecTestRunnerRunStrategy>();
         }
 
         public UnitTestElementId CreateId(IProject project, TargetFrameworkId targetFrameworkId, string id)

@@ -8,7 +8,7 @@ $RootSuffix = "ReSharper"
 $ResharperUrl = "https://data.services.jetbrains.com/products/releases?code=RSU&type=release"
 $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $Version = "0.1.0"
-$MainProject = "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Provider\Machine.Specifications.Runner.Resharper.Provider.csproj"
+$MainProject = "$PSScriptRoot\src\Machine.Specifications.Runner.ReSharper\Machine.Specifications.Runner.ReSharper.csproj"
 $NugetExe = "$PSScriptRoot\tools\nuget.exe"
 
 Function Invoke-Exe {
@@ -89,9 +89,8 @@ Function Write-Nuspec {
   </metadata>
 
   <files>
-    <file src="..\src\Machine.Specifications.Runner.Resharper.Provider\bin\Debug\net461\Machine.Specifications.ReSharper.Runner.dll" target="DotFiles" />
-    <file src="..\src\Machine.Specifications.Runner.Resharper.Provider\bin\Debug\net461\Machine.Specifications.ReSharper.Provider.dll" target="DotFiles" />
-    <file src="..\src\Machine.Specifications.Runner.Resharper.Provider\bin\Debug\net461\Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
+    <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.dll" target="DotFiles" />
+    <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
   </files>
 </package>
 '@ -f $Version,$sdkVersion,$nextSdkVersion
@@ -198,7 +197,6 @@ Install-Hive $resharperTool
 $installPath = Get-InstallationPath
 $hostIdentifier = "$($installPath.Parent.Name)_$($installPath.Name.Split('_')[-1])"
 
-Write-User-Settings $hostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Provider\Machine.Specifications.Runner.Resharper.Provider.csproj.user"
-Write-User-Settings $hostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.Resharper.Runner\Machine.Specifications.Runner.Resharper.Runner.csproj.user"
+Write-User-Settings $hostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.ReSharper\Machine.Specifications.Runner.ReSharper.csproj.user"
 
 Write-Output "Installed plugin to hive"

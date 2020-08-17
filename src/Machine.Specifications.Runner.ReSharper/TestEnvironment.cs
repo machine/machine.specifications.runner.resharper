@@ -25,7 +25,9 @@ namespace Machine.Specifications.Runner.ReSharper
         private string GetAssemblyFolder(TaskExecutorConfiguration config, MspecTestAssemblyTask assemblyTask)
         {
             if (!string.IsNullOrEmpty(config.AssemblyFolder))
+            {
                 return config.AssemblyFolder;
+            }
 
             return Path.GetDirectoryName(assemblyTask.AssemblyLocation);
         }

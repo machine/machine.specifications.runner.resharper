@@ -7,12 +7,12 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         public const string RunnerId = "Machine.Specifications";
 
-        private readonly TestRunner _testRunner;
+        private readonly TestRunner testRunner;
 
         public MspecTaskRunner(IRemoteTaskServer server)
             : base(server)
         {
-            _testRunner = new TestRunner(server);
+            testRunner = new TestRunner(server);
         }
 
         public override void ExecuteRecursive(TaskExecutionNode node)
@@ -26,7 +26,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
             PopulateContext(context, node);
             
-            _testRunner.Run(context);
+            testRunner.Run(context);
         }
 
         private void PopulateContext(TestContext context, TaskExecutionNode node)

@@ -7,8 +7,9 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class TestContext
     {
-        private readonly Dictionary<string, RemoteTask> _remoteTasks = new Dictionary<string, RemoteTask>();
-        private readonly List<string> _contextNames = new List<string>();
+        private readonly Dictionary<string, RemoteTask> remoteTasks = new Dictionary<string, RemoteTask>();
+
+        private readonly List<string> contextNames = new List<string>();
 
         public TestContext(MspecTestAssemblyTask assemblyTask)
         {
@@ -21,27 +22,27 @@ namespace Machine.Specifications.Runner.ReSharper
         {
             var key = $"{task.ContextTypeName}.{task.SpecificationFieldName}";
 
-            _remoteTasks[key] = task;
+            remoteTasks[key] = task;
         }
 
         public void Add(MspecTestContextTask task)
         {
             var key = task.ContextTypeName;
 
-            _remoteTasks[key] = task;
-            _contextNames.Add(key);
+            remoteTasks[key] = task;
+            contextNames.Add(key);
         }
 
         public void Add(MspecTestSpecificationTask task)
         {
             var key = $"{task.ContextTypeName}.{task.SpecificationFieldName}";
 
-            _remoteTasks[key] = task;
+            remoteTasks[key] = task;
         }
 
         public IEnumerable<string> GetContextNames()
         {
-            return _contextNames;
+            return contextNames;
         }
 
         public RemoteTask GetContextTask(ContextInfo context)
@@ -67,7 +68,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private RemoteTask GetRemoteTask(string key)
         {
-            _remoteTasks.TryGetValue(key, out RemoteTask task);
+            remoteTasks.TryGetValue(key, out RemoteTask task);
 
             return task;
         }

@@ -7,16 +7,16 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public class MetadataAttributeInfoAdapter : IAttributeInfo
     {
-        private readonly IMetadataCustomAttribute _attribute;
+        private readonly IMetadataCustomAttribute attribute;
 
         public MetadataAttributeInfoAdapter(IMetadataCustomAttribute attribute)
         {
-            _attribute = attribute;
+            this.attribute = attribute;
         }
 
         public IEnumerable<string> GetParameters()
         {
-            var arguments = _attribute.ConstructorArguments
+            var arguments = attribute.ConstructorArguments
                 .Where(x => !x.IsBadValue())
                 .ToArray();
 

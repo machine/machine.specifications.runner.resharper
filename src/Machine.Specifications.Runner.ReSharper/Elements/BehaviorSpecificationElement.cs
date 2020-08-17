@@ -29,10 +29,9 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
             var valid = Behavior?.GetDeclaredElement()?.IsValid();
 
-            if (!valid.GetValueOrDefault())
-                return UnitTestElementDisposition.InvalidDisposition;
-
-            return base.GetDisposition();
+            return valid.GetValueOrDefault()
+                ? base.GetDisposition()
+                : UnitTestElementDisposition.InvalidDisposition;
         }
 
         public override IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
@@ -47,7 +46,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
             return new List<UnitTestTask>
             {
-                new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, context.AssemblyLocation.FullPath)),
+                new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, context.Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
                 new UnitTestTask(context, new MspecTestContextTask(Id.ProjectId, fullName)),
                 new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName))
             };

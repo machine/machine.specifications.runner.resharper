@@ -2,14 +2,13 @@
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.Util;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public class ContextElement : Element, IEquatable<ContextElement>
     {
-        private readonly string _subject;
+        private readonly string subject;
 
         public ContextElement(
             UnitTestElementId id,
@@ -19,12 +18,10 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             bool isIgnored)
             : base(id, null, typeName, serviceProvider, isIgnored)
         {
-            _subject = subject;
+            this.subject = subject;
         }
 
         public override string ShortName => Kind + GetPresentation();
-
-        public FileSystemPath AssemblyLocation { get; set; }
 
         public override string Kind => "Context";
 
@@ -32,10 +29,9 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
             var display = TypeName.ShortName.ToFormat();
 
-            if (string.IsNullOrEmpty(_subject))
-                return display;
-
-            return $"{_subject}, {display}";
+            return string.IsNullOrEmpty(subject)
+                ? display
+                : $"{subject}, {display}";
         }
 
         public override IDeclaredElement GetDeclaredElement()
@@ -47,8 +43,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
             return other != null &&
                    Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName) &&
-                   Equals(AssemblyLocation, other.AssemblyLocation);
+                   Equals(TypeName, other.TypeName);
         }
 
         public override bool Equals(object obj)
@@ -60,8 +55,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
             return HashCode
                 .Of(Id)
-                .And(TypeName)
-                .And(AssemblyLocation);
+                .And(TypeName);
         }
     }
 }

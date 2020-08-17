@@ -6,40 +6,43 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public class MetadataTypeInfoAdapter : ITypeInfo
     {
-        private readonly IMetadataTypeInfo _type;
-        private readonly IMetadataClassType _classType;
+        private readonly IMetadataTypeInfo type;
+
+        private readonly IMetadataClassType classType;
 
         public MetadataTypeInfoAdapter(IMetadataTypeInfo type, IMetadataClassType classType = null)
         {
-            _type = type;
-            _classType = classType;
+            this.type = type;
+            this.classType = classType;
         }
 
-        public string ShortName => _type.Name;
+        public string ShortName => type.Name;
 
-        public string FullyQualifiedName => _type.FullyQualifiedName;
+        public string FullyQualifiedName => type.FullyQualifiedName;
 
-        public bool IsAbstract => _type.IsAbstract;
+        public bool IsAbstract => type.IsAbstract;
 
         public ITypeInfo GetContainingType()
         {
-            return _type.DeclaringType?.AsTypeInfo();
+            return type.DeclaringType?.AsTypeInfo();
         }
 
         public IEnumerable<IFieldInfo> GetFields()
         {
-            return _type.GetFields()
+            return type.GetFields()
                 .Where(x => !x.IsStatic)
                 .Select(x => x.AsFieldInfo());
         }
 
         public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
         {
-            var attributes = _type.GetCustomAttributes(typeName)
+            var attributes = type.GetCustomAttributes(typeName)
                 .Select(x => x.AsAttributeInfo());
 
             if (!inherit)
+            {
                 return attributes;
+            }
 
             var baseAttributes = GetBaseTypes()
                 .SelectMany(x => x.GetCustomAttributes(typeName, false));
@@ -49,23 +52,25 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 
         public IEnumerable<ITypeInfo> GetGenericArguments()
         {
-            if (_classType == null)
-                return _type.GenericParameters.Select(x => UnknownTypeInfoAdapter.Default);
+            if (classType == null)
+            {
+                return type.GenericParameters.Select(x => UnknownTypeInfoAdapter.Default);
+            }
 
-            return _classType.Arguments
+            return classType.Arguments
                 .OfType<IMetadataClassType>()
                 .Select(x => x.Type.AsTypeInfo());
         }
 
         private IEnumerable<ITypeInfo> GetBaseTypes()
         {
-            var type = _type;
+            var current = type;
 
-            while (type.Base != null)
+            while (current.Base != null)
             {
-                yield return type.Base.Type.AsTypeInfo();
+                yield return current.Base.Type.AsTypeInfo();
 
-                type = type.Base.Type;
+                current = current.Base.Type;
             }
         }
     }

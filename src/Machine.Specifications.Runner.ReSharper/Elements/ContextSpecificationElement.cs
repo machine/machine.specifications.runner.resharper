@@ -34,7 +34,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
             return new List<UnitTestTask>
             {
-                new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, Context.AssemblyLocation.FullPath)),
+                new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
                 new UnitTestTask(Context, contextTask),
                 new UnitTestTask(this, task)
             };

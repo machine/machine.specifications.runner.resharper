@@ -32,9 +32,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         protected override string GetPresentation()
         {
-            var value = $"{GetTitlePrefix()} {FieldName.ToFormat()}";
-
-            return value.Trim();
+            return $"{GetTitlePrefix()} {FieldName.ToFormat()}".Trim();
         }
 
         public override IDeclaredElement GetDeclaredElement()
@@ -42,7 +40,9 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             var type = GetDeclaredType();
 
             if (type == null)
+            {
                 return null;
+            }
 
             using (CompilationContextCookie.OverrideOrCreate(ServiceProvider.ResolveContextManager.GetOrCreateProjectResolveContext(Id.Project, Id.TargetFrameworkId)))
             {

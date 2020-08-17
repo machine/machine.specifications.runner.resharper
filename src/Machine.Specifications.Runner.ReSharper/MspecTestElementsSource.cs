@@ -17,9 +17,11 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecTestElementsSource : UnitTestExplorerFrom.DotNetArtifacts, IUnitTestExplorerFromFile
     {
-        private readonly SearchDomainFactory _searchDomainFactory;
-        private readonly MspecServiceProvider _serviceProvider;
-        private readonly ILogger _logger;
+        private readonly SearchDomainFactory searchDomainFactory;
+
+        private readonly MspecServiceProvider serviceProvider;
+
+        private readonly ILogger logger;
 
         public MspecTestElementsSource(
             MspecTestProvider provider,
@@ -30,14 +32,14 @@ namespace Machine.Specifications.Runner.ReSharper
             ILogger logger)
             : base(provider, resolveManager, contextManager, logger)
         {
-            _searchDomainFactory = searchDomainFactory;
-            _serviceProvider = serviceProvider;
-            _logger = logger;
+            this.searchDomainFactory = searchDomainFactory;
+            this.serviceProvider = serviceProvider;
+            this.logger = logger;
         }
 
         public override PertinenceResult IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return targetFrameworkId.IsNetFramework ? PertinenceResult.Yes : PertinenceResult.No();
+            return PertinenceResult.Yes;
         }
 
         protected override void ProcessProject(
@@ -47,17 +49,17 @@ namespace Machine.Specifications.Runner.ReSharper
             IUnitTestElementsObserver observer, 
             CancellationToken token)
         {
-            var factory = new UnitTestElementFactory(_serviceProvider, observer.TargetFrameworkId, observer.OnUnitTestElementChanged);
+            var factory = new UnitTestElementFactory(serviceProvider, observer.TargetFrameworkId, observer.OnUnitTestElementChanged, UnitTestElementOrigin.Artifact);
             var explorer = new MspecTestMetadataExplorer(factory, observer);
 
-            MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, _logger, token,
+            MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, logger, token,
                 assembly => explorer.ExploreAssembly(project, assembly, token));
         }
 
         public void ProcessFile(IFile psiFile, IUnitTestElementsObserver observer, Func<bool> interrupted)
         {
-            var factory = new UnitTestElementFactory(_serviceProvider, observer.TargetFrameworkId, observer.OnUnitTestElementChanged);
-            var explorer = new MspecPsiFileExplorer(_searchDomainFactory, factory, observer, interrupted);
+            var factory = new UnitTestElementFactory(serviceProvider, observer.TargetFrameworkId, observer.OnUnitTestElementChanged, UnitTestElementOrigin.Source);
+            var explorer = new MspecPsiFileExplorer(searchDomainFactory, factory, observer, interrupted);
 
             psiFile.ProcessDescendants(explorer);
         }

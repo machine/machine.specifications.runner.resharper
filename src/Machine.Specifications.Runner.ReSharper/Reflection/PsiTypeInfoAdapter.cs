@@ -7,47 +7,50 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public class PsiTypeInfoAdapter : ITypeInfo
     {
-        private readonly ITypeElement _type;
-        private readonly IDeclaredType _declaredType;
+        private readonly ITypeElement type;
+
+        private readonly IDeclaredType declaredType;
 
         public PsiTypeInfoAdapter(ITypeElement type, IDeclaredType declaredType = null)
         {
-            _type = type;
-            _declaredType = declaredType;
+            this.type = type;
+            this.declaredType = declaredType;
         }
 
-        public string ShortName => _type.ShortName;
+        public string ShortName => type.ShortName;
 
-        public string FullyQualifiedName => _type.GetClrName().FullName;
+        public string FullyQualifiedName => type.GetClrName().FullName;
 
-        public bool IsAbstract => _type is IModifiersOwner owner && owner.IsAbstract;
+        public bool IsAbstract => type is IModifiersOwner owner && owner.IsAbstract;
 
         public ITypeInfo GetContainingType()
         {
-            return _type.GetContainingType()?.AsTypeInfo();
+            return type.GetContainingType()?.AsTypeInfo();
         }
 
         public IEnumerable<IFieldInfo> GetFields()
         {
-            if (!(_type is IClass type))
+            if (!(type is IClass classType))
+            {
                 return Enumerable.Empty<IFieldInfo>();
+            }
 
-            return type.Fields
+            return classType.Fields
                 .Where(x => !x.IsStatic)
                 .Select(x => x.AsFieldInfo());
         }
 
         public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
         {
-            return _type.GetAttributeInstances(new ClrTypeName(typeName), inherit)
+            return type.GetAttributeInstances(new ClrTypeName(typeName), inherit)
                 .Select(x => x.AsAttributeInfo());
         }
 
         public IEnumerable<ITypeInfo> GetGenericArguments()
         {
-            if (_declaredType != null)
+            if (declaredType != null)
             {
-                var substitution = _declaredType.GetSubstitution();
+                var substitution = declaredType.GetSubstitution();
 
                 return substitution.Domain
                     .Select(x => substitution.Apply(x).GetScalarType())
@@ -57,8 +60,10 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
                     .Select(x => x.AsTypeInfo());
             }
 
-            if (_type is ITypeParametersOwner owner)
+            if (type is ITypeParametersOwner owner)
+            {
                 return owner.TypeParameters.Select(x => x.AsTypeInfo());
+            }
 
             return Enumerable.Empty<ITypeInfo>();
         }

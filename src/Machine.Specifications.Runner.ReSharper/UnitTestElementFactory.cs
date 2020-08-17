@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.Util;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using Machine.Specifications.Runner.ReSharper.Elements;
 
@@ -11,37 +10,42 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class UnitTestElementFactory
     {
-        private readonly MspecServiceProvider _serviceProvider;
-        private readonly TargetFrameworkId _targetFrameworkId;
-        private readonly Action<IUnitTestElement> _elementChangedAction;
+        private readonly MspecServiceProvider serviceProvider;
 
-        private readonly Dictionary<UnitTestElementId, IUnitTestElement> _elements = new Dictionary<UnitTestElementId, IUnitTestElement>();
+        private readonly TargetFrameworkId targetFrameworkId;
 
-        public UnitTestElementFactory(MspecServiceProvider serviceProvider, TargetFrameworkId targetFrameworkId, Action<IUnitTestElement> elementChangedAction = null)
+        private readonly Action<IUnitTestElement> elementChangedAction;
+
+        private readonly UnitTestElementOrigin origin;
+
+        private readonly Dictionary<UnitTestElementId, IUnitTestElement> elements = new Dictionary<UnitTestElementId, IUnitTestElement>();
+
+        public UnitTestElementFactory(
+            MspecServiceProvider serviceProvider,
+            TargetFrameworkId targetFrameworkId,
+            Action<IUnitTestElement> elementChangedAction,
+            UnitTestElementOrigin origin)
         {
-            _serviceProvider = serviceProvider;
-            _targetFrameworkId = targetFrameworkId;
-            _elementChangedAction = elementChangedAction;
+            this.serviceProvider = serviceProvider;
+            this.targetFrameworkId = targetFrameworkId;
+            this.elementChangedAction = elementChangedAction;
+            this.origin = origin;
         }
 
-        public IUnitTestElement GetOrCreateContext(
+        public ContextElement GetOrCreateContext(
             IProject project,
             IClrTypeName typeName,
-            FileSystemPath assemblyLocation,
             string subject,
             string[] tags,
             bool ignored,
-            UnitTestElementOrigin categorySource,
             out bool tagsChanged)
         {
-            lock (_elements)
+            lock (elements)
             {
                 var element = GetOrCreateElement(typeName.FullName, project, null, null, x =>
-                    new ContextElement(x, typeName, _serviceProvider, subject, ignored));
+                    new ContextElement(x, typeName, serviceProvider, subject, ignored));
 
-                tagsChanged = UpdateCategories(element, tags, categorySource);
-
-                element.AssemblyLocation = assemblyLocation;
+                tagsChanged = UpdateCategories(element, tags);
 
                 return element;
             }
@@ -54,28 +58,28 @@ namespace Machine.Specifications.Runner.ReSharper
             string fieldName,
             bool ignored)
         {
-            lock (_elements)
+            lock (elements)
             {
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new BehaviorElement(x, parent, typeName, _serviceProvider, fieldName, ignored));
+                    new BehaviorElement(x, parent, typeName, serviceProvider, fieldName, ignored));
             }
         }
 
-        public IUnitTestElement GetOrCreateContextSpecification(
+        public ContextSpecificationElement GetOrCreateContextSpecification(
             IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
             bool ignored)
         {
-            lock (_elements)
+            lock (elements)
             {
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new ContextSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, ignored || parent.Explicit));
+                    new ContextSpecificationElement(x, parent, typeName, serviceProvider, fieldName, ignored || parent.Explicit));
             }
         }
 
@@ -86,47 +90,51 @@ namespace Machine.Specifications.Runner.ReSharper
             string fieldName,
             bool isIgnored)
         {
-            lock (_elements)
+            lock (elements)
             {
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new BehaviorSpecificationElement(x, parent, typeName, _serviceProvider, fieldName, isIgnored || parent.Explicit));
+                    new BehaviorSpecificationElement(x, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit));
             }
         }
 
         private T GetElementById<T>(UnitTestElementId id)
             where T : Element
         {
-            if (_elements.TryGetValue(id, out var element))
+            if (elements.TryGetValue(id, out var element))
+            {
                 return element as T;
+            }
 
-            return _serviceProvider.ElementManager.GetElementById(id) as T;
+            return serviceProvider.ElementManager.GetElementById<T>(id);
         }
 
         private T GetOrCreateElement<T>(string id, IProject project, IUnitTestElement parent, ISet<UnitTestElementCategory> categories, Func<UnitTestElementId, T> factory)
             where T : Element
         {
-            var elementId = _serviceProvider.CreateId(project, _targetFrameworkId, id);
+            var elementId = serviceProvider.CreateId(project, targetFrameworkId, id);
 
             var element = GetElementById<T>(elementId) ?? factory(elementId);
 
             element.Parent = parent;
             element.OwnCategories = categories;
 
-            _elements[elementId] = element;
+            elements[elementId] = element;
 
             return element;
         }
 
-        private bool UpdateCategories(Element element, string[] categories, UnitTestElementOrigin categorySource)
+        private bool UpdateCategories(Element element, string[] categories)
         {
             using (UT.WriteLock())
             {
-                var result = element.UpdateOwnCategoriesFrom(categories, categorySource);
+                var result = element.UpdateOwnCategoriesFrom(categories, origin);
 
                 if (result)
-                    _elementChangedAction?.Invoke(element);
+                {
+                    elementChangedAction?.Invoke(element);
+                }
 
                 return result;
             }

@@ -2,16 +2,16 @@
 {
     public struct HashCode
     {
-        private readonly int _value;
+        private readonly int value;
 
         private HashCode(int value)
         {
-            _value = value;
+            this.value = value;
         }
 
         public static implicit operator int(HashCode hashCode)
         {
-            return hashCode._value;
+            return hashCode.value;
         }
 
         public static implicit operator HashCode(int value)
@@ -26,7 +26,7 @@
 
         public HashCode And<T>(T item)
         {
-            return CombineHashCodes(_value, GetHashCode(item));
+            return CombineHashCodes(value, GetHashCode(item));
         }
 
         private static int CombineHashCodes(int h1, int h2)
