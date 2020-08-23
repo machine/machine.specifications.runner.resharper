@@ -3,6 +3,7 @@ using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
 using Machine.Specifications.Runner.ReSharper.Adapters;
+using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
 using Machine.Specifications.Runner.ReSharper.Elements;
 
 namespace Machine.Specifications.Runner.ReSharper.Mappings

@@ -90,7 +90,14 @@ Function Write-Nuspec {
 
   <files>
     <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.dll" target="DotFiles" />
+    <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.Tasks.dll" target="DotFiles" />
     <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
+    
+    <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\Debug\net40\Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" target="DotFiles/TestRunner/Adapters/MSpec/net40" />
+    <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\bin\Debug\net40\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.net40.dll" target="DotFiles/TestRunner/Adapters/MSpec/net40" />
+
+    <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\Debug\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.netstandard20.dll" target="DotFiles/TestRunner/Adapters/MSpec/netstandard2.0" />
+    <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\bin\Debug\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.netstandard20.dll" target="DotFiles/TestRunner/Adapters/MSpec/netstandard2.0" />
   </files>
 </package>
 '@ -f $Version,$sdkVersion,$nextSdkVersion
@@ -198,5 +205,7 @@ $installPath = Get-InstallationPath
 $hostIdentifier = "$($installPath.Parent.Name)_$($installPath.Name.Split('_')[-1])"
 
 Write-User-Settings $hostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.ReSharper\Machine.Specifications.Runner.ReSharper.csproj.user"
+Write-User-Settings $hostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.ReSharper.Adapters\Machine.Specifications.Runner.ReSharper.Adapters.csproj.user"
+Write-User-Settings $hostIdentifier "$PSScriptRoot\src\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.csproj.user"
 
 Write-Output "Installed plugin to hive"

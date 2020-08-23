@@ -20,16 +20,18 @@ namespace Machine.Specifications.Runner.ReSharper
             var assemblyTask = node.RemoteTask as MspecTestAssemblyTask;
 
             if (assemblyTask == null)
+            {
                 return;
+            }
 
-            var context = new TestContext(assemblyTask);
+            var context = new TestContext<RemoteTask>(assemblyTask.AssemblyLocation);
 
             PopulateContext(context, node);
             
             testRunner.Run(context);
         }
 
-        private void PopulateContext(TestContext context, TaskExecutionNode node)
+        private void PopulateContext(TestContext<RemoteTask> context, TaskExecutionNode node)
         {
             var childNodes = node.Children.Flatten(x => x.Children);
 
@@ -38,15 +40,15 @@ namespace Machine.Specifications.Runner.ReSharper
                 switch (childNode.RemoteTask)
                 {
                     case MspecTestContextTask task:
-                        context.Add(task);
+                        context.AddContext(task.GetId(), task);
                         break;
 
                     case MspecTestBehaviorTask task:
-                        context.Add(task);
+                        context.AddSpecification(task.GetId(), task);
                         break;
 
                     case MspecTestSpecificationTask task:
-                        context.Add(task);
+                        context.AddSpecification(task.GetId(), task);
                         break;
                 }
             }

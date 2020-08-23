@@ -2,10 +2,9 @@
 using System.IO;
 using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Reporting;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class TestRunListener<TTask> : ISpecificationRunListener
         where TTask : class

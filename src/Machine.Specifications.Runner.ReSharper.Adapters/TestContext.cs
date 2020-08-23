@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class TestContext<TTask>
     {

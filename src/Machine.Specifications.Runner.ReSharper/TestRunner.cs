@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using JetBrains.ReSharper.TaskRunnerFramework;
+using Machine.Specifications.Runner.ReSharper.Reporting;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper
@@ -13,10 +15,13 @@ namespace Machine.Specifications.Runner.ReSharper
             this.taskServer = taskServer;
         }
 
-        public void Run(TestContext context)
+        public void Run(TestContext<RemoteTask> context)
         {
-            var environment = new TestEnvironment(context.AssemblyTask);
-            var listener = new TestRunListener(taskServer, context);
+            Debugger.Launch();
+
+            var environment = new TestEnvironment(context.AssemblyLocation, TaskExecutor.Configuration.ShadowCopy != ShadowCopyOption.None);
+            var server = new TaskServerAdapter(taskServer);
+            var listener = new TestRunListener<RemoteTask>(server, context);
 
             var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
 

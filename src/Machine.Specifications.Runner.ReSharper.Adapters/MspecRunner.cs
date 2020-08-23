@@ -1,7 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -37,20 +40,26 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             Debugger.Launch();
             logger.Info("Execution started");
 
-            request
+            discoverySink.TestsDiscovered(request.Selection);
 
-            var listener = new TestRunListener(taskServer, context);
+            var context = GetContext(request);
+
+            var environment = new TestEnvironment(context.AssemblyLocation, request.Container.ShadowCopy != ShadowCopy.None);
+            var server = new ExecutionSinkServerAdapter(executionSink);
+            var listener = new TestRunListener<RemoteTask>(server, context);
+
+            var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
 
             var runner = new AppDomainRunner(listener, runOptions);
 
             try
             {
-                appDomainRunner.RunAssembly(new AssemblyPath(environment.AssemblyPath));
+                runner.RunAssembly(new AssemblyPath(environment.AssemblyPath));
             }
             catch (Exception e)
             {
-                taskServer.ShowNotification("Unable to run tests: " + e.Message, string.Empty);
-                taskServer.TaskException(null, new[] {new TaskException(e)});
+                executionSink.TestOutput(null, "Unable to run tests: " + e.Message, TestOutputType.STDERR);
+                executionSink.TestException(null, new[] { new ExceptionInfo(e) });
             }
 
             logger.Info("Execution completed");
@@ -60,6 +69,25 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             Debugger.Launch();
             executionToken.Cancel();
+        }
+
+        private TestContext<RemoteTask> GetContext(TestRunRequest request)
+        {
+            var context = new TestContext<RemoteTask>(request.Container.Location);
+
+            foreach (var task in request.Selection.OfType<MspecElementRemoteTask>())
+            {
+                if (task is MspecTestContextRemoteTask contextTask)
+                {
+                    context.AddContext(contextTask.TestId, task);
+                }
+                else
+                {
+                    context.AddSpecification(task.TestId, task);
+                }
+            }
+
+            return context;
         }
     }
 }

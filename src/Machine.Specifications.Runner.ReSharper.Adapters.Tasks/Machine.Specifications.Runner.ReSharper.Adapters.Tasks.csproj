@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40;net461</TargetFrameworks>
+
+    <AssemblyName Condition="'$(TargetFramework)' == 'net40'">Machine.Specifications.Runner.ReSharper.Adapters.Tasks.net40</AssemblyName>
+    <AssemblyName Condition="'$(TargetFramework)' == 'netstandard2.0'">Machine.Specifications.Runner.ReSharper.Adapters.Tasks.netstandard20</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.ReSharper.TestRunner.Abstractions" Version="1.2.3" />
+  </ItemGroup>
+
+</Project>

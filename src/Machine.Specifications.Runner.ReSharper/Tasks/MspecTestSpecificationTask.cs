@@ -6,7 +6,7 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 namespace Machine.Specifications.Runner.ReSharper.Tasks
 {
     [Serializable]
-    public class MspecTestSpecificationTask : RemoteTask, IEquatable<MspecTestSpecificationTask>
+    public class MspecTestSpecificationTask : RemoteTask, IEquatable<MspecTestSpecificationTask>, ITaskIdentifiable
     {
         [UsedImplicitly]
         public MspecTestSpecificationTask(XmlElement element)
@@ -65,6 +65,16 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             return HashCode.Of(ProjectId)
                 .And(ContextTypeName)
                 .And(SpecificationFieldName);
+        }
+
+        public string GetId()
+        {
+            return $"{ContextTypeName}.{SpecificationFieldName}";
+        }
+
+        public bool IsContext()
+        {
+            return false;
         }
     }
 }

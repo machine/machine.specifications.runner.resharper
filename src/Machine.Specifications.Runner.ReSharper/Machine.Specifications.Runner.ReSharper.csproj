@@ -23,9 +23,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2020.2.0" PrivateAssets="All" />
-    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2020.2.1" PrivateAssets="All" />
+    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.1-add-netstandard-uti1" PrivateAssets="All" />
     <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -35,7 +39,14 @@
   <Target Name="PackageItems">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.Utility.dll" PackagePath="DotFiles" />
+
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/net40" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/net40" />
+
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/netstandard2.0" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/netstandard2.0" />
     </ItemGroup>
   </Target>
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
 {
     [Serializable]
     public class MspecTestContextRemoteTask : MspecElementRemoteTask

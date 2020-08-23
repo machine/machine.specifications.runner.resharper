@@ -6,7 +6,7 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 namespace Machine.Specifications.Runner.ReSharper.Tasks
 {
     [Serializable]
-    public class MspecTestBehaviorTask : RemoteTask, IEquatable<MspecTestBehaviorTask>
+    public class MspecTestBehaviorTask : RemoteTask, IEquatable<MspecTestBehaviorTask>, ITaskIdentifiable
     {
         [UsedImplicitly]
         public MspecTestBehaviorTask(XmlElement element)
@@ -72,6 +72,16 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
                 .And(ContextTypeName)
                 .And(BehaviorFieldName)
                 .And(SpecificationFieldName);
+        }
+
+        public string GetId()
+        {
+            return $"{ContextTypeName}.{SpecificationFieldName}";
+        }
+
+        public bool IsContext()
+        {
+            return false;
         }
     }
 }
