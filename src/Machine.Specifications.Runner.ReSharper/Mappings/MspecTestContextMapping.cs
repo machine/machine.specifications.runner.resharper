@@ -2,7 +2,6 @@
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Adapters;
 using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
 using Machine.Specifications.Runner.ReSharper.Elements;
 
@@ -18,9 +17,11 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
 
         public override MspecTestContextRemoteTask ToRemoteTask(ContextElement element, IUnitTestRun run)
         {
+            var elements = run.Elements.ToSet();
+
             return MspecTestContextRemoteTask.ToClient(
                 element.Id.Id,
-                element.Children.All(x => run.Launch.Criterion.Criterion.Matches(x)),
+                element.Children.All(x => elements.Contains(x)),
                 run.Launch.Criterion.Explicit.Contains(element));
         }
 

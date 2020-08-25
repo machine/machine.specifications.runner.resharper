@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Machine.Specifications.Runner.Utility;
+using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
-    public class TestContext<TTask>
+    public class TestContext
     {
-        private readonly Dictionary<string, TTask> remoteTasks = new Dictionary<string, TTask>();
+        private readonly Dictionary<string, MspecElementRemoteTask> remoteTasks = new Dictionary<string, MspecElementRemoteTask>();
 
         private readonly List<string> contextNames = new List<string>();
 
@@ -16,13 +16,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public string AssemblyLocation { get; }
 
-        public void AddContext(string key, TTask task)
+        public void AddContext(string key, MspecElementRemoteTask task)
         {
             remoteTasks[key] = task;
             contextNames.Add(key);
         }
 
-        public void AddSpecification(string key, TTask task)
+        public void AddSpecification(string key, MspecElementRemoteTask task)
         {
             remoteTasks[key] = task;
         }
@@ -32,30 +32,30 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return contextNames;
         }
 
-        public TTask GetContextTask(ContextInfo context)
+        public MspecElementRemoteTask GetContextTask(Utility.ContextInfo context)
         {
             var key = context.TypeName;
 
             return GetRemoteTask(key);
         }
 
-        public TTask GetSpecificationTask(SpecificationInfo specification)
+        public MspecElementRemoteTask GetSpecificationTask(Utility.SpecificationInfo specification)
         {
-            var key = $"{specification.ContainingType}.{specification.FieldName}";
+            var key = $"{specification.ContainingType}::{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        public TTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
+        public MspecElementRemoteTask GetBehaviorTask(Utility.ContextInfo context, Utility.SpecificationInfo specification)
         {
-            var key = $"{context.TypeName}.{specification.FieldName}";
+            var key = $"{context.TypeName}::{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        private TTask GetRemoteTask(string key)
+        private MspecElementRemoteTask GetRemoteTask(string key)
         {
-            remoteTasks.TryGetValue(key, out TTask task);
+            remoteTasks.TryGetValue(key, out MspecElementRemoteTask task);
 
             return task;
         }

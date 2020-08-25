@@ -2,14 +2,14 @@
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
-    public interface IServerAdapter<in TTask>
+    public interface IServerAdapter
     {
-        void TaskStarting(TTask task);
+        void TaskStarting(RemoteTask task);
 
-        void TaskFinished(TTask task, string message, TestResult result);
+        void TaskFinished(RemoteTask task, string message, TestResult result);
 
-        void TaskException(TTask task, ExceptionInfo[] exceptions);
+        void TaskException(RemoteTask task, ExceptionInfo[] exceptions);
 
-        void TaskOutput(TTask task, string message, TestOutputType outputType);
+        void TaskOutput(RemoteTask task, string message, TestOutputType outputType);
     }
 }

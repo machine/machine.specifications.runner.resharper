@@ -11,17 +11,20 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class MspecTestMetadataExplorer
     {
+        private readonly IProject project;
+
         private readonly UnitTestElementFactory factory;
 
         private readonly IUnitTestElementsObserver observer;
 
-        public MspecTestMetadataExplorer(UnitTestElementFactory factory, IUnitTestElementsObserver observer)
+        public MspecTestMetadataExplorer(IProject project, UnitTestElementFactory factory, IUnitTestElementsObserver observer)
         {
+            this.project = project;
             this.factory = factory;
             this.observer = observer;
         }
 
-        public void ExploreAssembly(IProject project, IMetadataAssembly assembly, CancellationToken token)
+        public void ExploreAssembly(IMetadataAssembly assembly, CancellationToken token)
         {
             using (ReadLockCookie.Create())
             {
@@ -35,22 +38,22 @@ namespace Machine.Specifications.Runner.ReSharper
                         break;
                     }
 
-                    ExploreType(project, assembly, type.AsTypeInfo());
+                    ExploreType(type.AsTypeInfo());
                 }
             }
         }
 
-        private void ExploreType(IProject project, IMetadataAssembly assembly, ITypeInfo type)
+        private void ExploreType(ITypeInfo type)
         {
             if (!type.IsContext())
             {
                 return;
             }
 
-            ExploreContext(project, assembly, type);
+            ExploreContext(type);
         }
 
-        private void ExploreContext(IProject project, IMetadataAssembly assembly, ITypeInfo type)
+        private void ExploreContext(ITypeInfo type)
         {
             var contextElement = factory.GetOrCreateContext(
                 project,
@@ -69,18 +72,18 @@ namespace Machine.Specifications.Runner.ReSharper
 
             foreach (var specification in specifications)
             {
-                ExploreSpecification(project, contextElement, type, specification);
+                ExploreSpecification(contextElement, type, specification);
             }
 
             foreach (var behavior in behaviors)
             {
-                ExploreBehavior(project, contextElement, type, behavior);
+                ExploreBehavior(contextElement, type, behavior);
             }
 
             observer.OnUnitTestElementChanged(contextElement);
         }
 
-        private void ExploreSpecification(IProject project, IUnitTestElement contextElement, ITypeInfo type, IFieldInfo field)
+        private void ExploreSpecification(IUnitTestElement contextElement, ITypeInfo type, IFieldInfo field)
         {
             var specificationElement = factory.GetOrCreateContextSpecification(
                 project,
@@ -92,7 +95,7 @@ namespace Machine.Specifications.Runner.ReSharper
             observer.OnUnitTestElement(specificationElement);
         }
 
-        private void ExploreBehavior(IProject project, IUnitTestElement contextElement, ITypeInfo type, IFieldInfo field)
+        private void ExploreBehavior(IUnitTestElement contextElement, ITypeInfo type, IFieldInfo field)
         {
             var behaviorType = field.FieldType.GetGenericArguments()
                 .FirstOrDefault();
@@ -113,12 +116,12 @@ namespace Machine.Specifications.Runner.ReSharper
 
                 foreach (var behaviorSpecification in behaviorSpecifications)
                 {
-                    ExploreBehaviorSpecification(project, behaviorElement, type, behaviorSpecification);
+                    ExploreBehaviorSpecification(behaviorElement, type, behaviorSpecification);
                 }
             }
         }
 
-        private void ExploreBehaviorSpecification(IProject project, IUnitTestElement behaviorElement, ITypeInfo type, IFieldInfo field)
+        private void ExploreBehaviorSpecification(IUnitTestElement behaviorElement, ITypeInfo type, IFieldInfo field)
         {
             var specificationElement = factory.GetOrCreateBehaviorSpecification(
                 project,

@@ -1,6 +1,4 @@
-﻿using Machine.Specifications.Runner.Utility;
-
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecRunnerListener : ISpecificationRunListener
     {

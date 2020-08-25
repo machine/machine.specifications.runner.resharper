@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public static class ExceptionResultExtensions
     {
-        public static IEnumerable<ExceptionResult> Flatten(this ExceptionResult result)
+        public static IEnumerable<Utility.ExceptionResult> Flatten(this Utility.ExceptionResult result)
         {
             var exception = result;
 

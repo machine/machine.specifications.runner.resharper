@@ -3,7 +3,7 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
-    public class ExecutionSinkServerAdapter : IServerAdapter<RemoteTask>
+    public class ExecutionSinkServerAdapter : IServerAdapter
     {
         private readonly ITestExecutionSink server;
 

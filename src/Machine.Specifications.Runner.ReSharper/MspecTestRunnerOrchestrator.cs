@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner.Extensions;
@@ -12,6 +13,15 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecTestRunnerOrchestrator : TestRunnerOrchestrator
     {
+        private const string Namespace = "Machine.Specifications.Runner.ReSharper.Adapters";
+
+        private readonly IUnitTestProjectArtifactResolver artifactResolver;
+
+        public MspecTestRunnerOrchestrator(IUnitTestProjectArtifactResolver artifactResolver)
+        {
+            this.artifactResolver = artifactResolver;
+        }
+
         public override Assembly AdapterAssembly { get; } = typeof(MspecAssemblyRemoteTask).Assembly;
 
         public override TestAdapterInfo GetTestAdapter(IUnitTestRun ctx)
@@ -20,16 +30,25 @@ namespace Machine.Specifications.Runner.ReSharper
                 ? "netstandard2.0"
                 : "net40";
 
-            var adapters = TestRunnerInfo.Directory.Adapters.Combine($"MSpec\\{framework}\\Machine.Specifications.Runner.ReSharper.Adapters.{framework.Replace(".", string.Empty)}.dll");
+            var suffix = framework.Replace(".", string.Empty);
 
-            var type = new TypeInfo("Machine.Specifications.Runner.ReSharper.Adapters.MspecRunner", adapters.FullPath);
+            var adapters = TestRunnerInfo.Directory.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.{suffix}.dll");
+            var tasks = TestRunnerInfo.Directory.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.Tasks.{suffix}.dll");
 
-            return new TestAdapterInfo(type, type);
+            var type = new TypeInfo($"{Namespace}.MspecRunner", adapters.FullPath);
+
+            return new TestAdapterInfo(type, type)
+            {
+                AdditionalAssemblies = new[]
+                {
+                    tasks.FullPath
+                }
+            };
         }
 
         public override TestContainer GetTestContainer(IUnitTestRun ctx)
         {
-            var outputPath = ctx.GetEnvironment().Project.GetOutputFilePath(ctx.TargetFrameworkId);
+            var outputPath = artifactResolver.GetArtifactFilePath(ctx.GetEnvironment().Project, ctx.TargetFrameworkId);
 
             return new MspecAssemblyRemoteTask(outputPath.FullPath, ctx.Launch.Settings.TestRunner.ToShadowCopy());
         }

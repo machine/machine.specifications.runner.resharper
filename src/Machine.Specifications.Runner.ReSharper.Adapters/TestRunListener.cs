@@ -2,18 +2,17 @@
 using System.IO;
 using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.Utility;
+using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
-    public class TestRunListener<TTask> : ISpecificationRunListener
-        where TTask : class
+    public class TestRunListener : Utility.ISpecificationRunListener
     {
-        private readonly IServerAdapter<TTask> server;
+        private readonly IServerAdapter server;
 
-        private readonly TestContext<TTask> context;
+        private readonly TestContext context;
 
-        private ContextInfo currentContext;
+        private Utility.ContextInfo currentContext;
 
         private int specifications;
 
@@ -21,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private int errors;
 
-        public TestRunListener(IServerAdapter<TTask> server, TestContext<TTask> context)
+        public TestRunListener(IServerAdapter server, TestContext context)
         {
             this.server = server;
             this.context = context;
@@ -45,7 +44,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
         }
 
-        public void OnContextStart(ContextInfo contextInfo)
+        public void OnContextStart(Utility.ContextInfo contextInfo)
         {
             specifications = 0;
             errors = 0;
@@ -61,7 +60,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public void OnContextEnd(ContextInfo contextInfo)
+        public void OnContextEnd(Utility.ContextInfo contextInfo)
         {
             var result = TestResult.Inconclusive;
 
@@ -87,7 +86,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             server.TaskFinished(task, message, result);
         }
 
-        public void OnSpecificationStart(SpecificationInfo specificationInfo)
+        public void OnSpecificationStart(Utility.SpecificationInfo specificationInfo)
         {
             var task = context.GetBehaviorTask(currentContext, specificationInfo) ??
                        context.GetSpecificationTask(specificationInfo);
@@ -102,7 +101,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             specifications += 1;
         }
 
-        public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
+        public void OnSpecificationEnd(Utility.SpecificationInfo specificationInfo, Utility.Result result)
         {
             var task = context.GetBehaviorTask(currentContext, specificationInfo) ??
                        context.GetSpecificationTask(specificationInfo);
@@ -114,30 +113,30 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             Output(task, specificationInfo.CapturedOutput);
 
-            if (result.Status == Status.Failing)
+            if (result.Status == Utility.Status.Failing)
             {
                 errors++;
                 server.TaskException(task, GetExceptions(result.Exception));
                 server.TaskFinished(task, GetExceptionMessage(result.Exception), TestResult.Failed); // Exception?
             }
-            else if (result.Status == Status.Passing)
+            else if (result.Status == Utility.Status.Passing)
             {
                 successes++;
                 server.TaskFinished(task, string.Empty, TestResult.Success);
             }
-            else if (result.Status == Status.NotImplemented)
+            else if (result.Status == Utility.Status.NotImplemented)
             {
                 Output(task, "Not implemented");
                 server.TaskFinished(task, "Not implemented", TestResult.Inconclusive);
             }
-            else if (result.Status == Status.Ignored)
+            else if (result.Status == Utility.Status.Ignored)
             {
                 Output(task, "Ignored");
                 server.TaskFinished(task, string.Empty, TestResult.Ignored);
             }
         }
 
-        public void OnFatalError(ExceptionResult exceptionResult)
+        public void OnFatalError(Utility.ExceptionResult exceptionResult)
         {
             server.TaskOutput(null, "Fatal error: " + exceptionResult.Message, TestOutputType.STDOUT);
             server.TaskException(null, GetExceptions(exceptionResult));
@@ -146,7 +145,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             errors += 1;
         }
 
-        private void Output(TTask task, string output)
+        private void Output(MspecElementRemoteTask task, string output)
         {
             if (!string.IsNullOrEmpty(output))
             {
@@ -154,14 +153,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        private ExceptionInfo[] GetExceptions(ExceptionResult result)
+        private ExceptionInfo[] GetExceptions(Utility.ExceptionResult result)
         {
             return result.Flatten()
                 .Select(x => new ExceptionInfo(x.FullTypeName, x.Message, x.StackTrace))
                 .ToArray();
         }
 
-        private string GetExceptionMessage(ExceptionResult result)
+        private string GetExceptionMessage(Utility.ExceptionResult result)
         {
             var exception = result.Flatten().FirstOrDefault();
 

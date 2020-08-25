@@ -16,6 +16,7 @@ namespace Machine.Specifications.Runner.ReSharper
         private readonly MspecTestProvider _provider;
         private readonly ISolution _solution;
         private readonly IUnitTestElementIdFactory _elementIdFactory;
+        private readonly IUnitTestingSettings _settings;
 
         public MspecServiceProvider(
             MspecTestProvider provider,
@@ -23,12 +24,14 @@ namespace Machine.Specifications.Runner.ReSharper
             UnitTestingCachingService cachingService,
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
+            IUnitTestingSettings settings,
             MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy,
             ResolveContextManager resolveContextManager)
         {
             _provider = provider;
             _solution = solution;
             _elementIdFactory = elementIdFactory;
+            _settings = settings;
             _processUnitTestRunStrategy = processUnitTestRunStrategy;
 
             CachingService = cachingService;
@@ -47,8 +50,12 @@ namespace Machine.Specifications.Runner.ReSharper
             var project = element.Id.Project;
             var targetFrameworkId = element.Id.TargetFrameworkId;
 
-            if (targetFrameworkId.IsNetFramework || !project.IsDotNetCoreProject() || !targetFrameworkId.IsNetCoreApp)
+            var isNetFramework = targetFrameworkId.IsNetFramework || !project.IsDotNetCoreProject() || !targetFrameworkId.IsNetCoreApp;
+
+            if (isNetFramework && _settings.TestRunner.UseLegacyRunner.Value)
+            {
                 return _processUnitTestRunStrategy;
+            }
 
             return _solution.GetComponent<MspecTestRunnerRunStrategy>();
         }

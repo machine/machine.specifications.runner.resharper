@@ -40,21 +40,30 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             Debugger.Launch();
             logger.Info("Execution started");
 
-            discoverySink.TestsDiscovered(request.Selection);
+            var discovered = request.Selection
+                .Select(RemoteTaskBuilder.GetRemoteTask)
+                .ToArray();
+
+            if (discovered.Any())
+            {
+                logger.Debug("Sending discovery results to server...");
+                discoverySink.TestsDiscovered(discovered);
+            }
 
             var context = GetContext(request);
 
             var environment = new TestEnvironment(context.AssemblyLocation, request.Container.ShadowCopy != ShadowCopy.None);
             var server = new ExecutionSinkServerAdapter(executionSink);
-            var listener = new TestRunListener<RemoteTask>(server, context);
+            var listener = new TestRunListener(server, context);
 
-            var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
+            var runOptions = Utility.RunOptions.Custom.FilterBy(context.GetContextNames());
 
             var runner = new AppDomainRunner(listener, runOptions);
 
             try
             {
                 runner.RunAssembly(new AssemblyPath(environment.AssemblyPath));
+
             }
             catch (Exception e)
             {
@@ -71,9 +80,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             executionToken.Cancel();
         }
 
-        private TestContext<RemoteTask> GetContext(TestRunRequest request)
+        private TestContext GetContext(TestRunRequest request)
         {
-            var context = new TestContext<RemoteTask>(request.Container.Location);
+            var context = new TestContext(request.Container.Location);
 
             foreach (var task in request.Selection.OfType<MspecElementRemoteTask>())
             {

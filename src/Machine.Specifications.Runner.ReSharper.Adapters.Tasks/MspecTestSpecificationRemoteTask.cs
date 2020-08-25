@@ -17,7 +17,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
             string displayName,
             string subject,
             string[] tags)
-            : base(parentId + "." + specificationFieldName)
+            : base(parentId + "::" + specificationFieldName)
         {
             ParentId = parentId;
             ContextTypeName = contextTypeName;
@@ -27,11 +27,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
             Tags = tags;
         }
 
-        public string ParentId { get; }
+        public string ParentId { get; set; }
 
-        public string ContextTypeName { get; }
+        public string ContextTypeName { get; set; }
 
-        public string SpecificationFieldName { get; }
+        public string SpecificationFieldName { get; set; }
 
         public string DisplayName { get; }
 
