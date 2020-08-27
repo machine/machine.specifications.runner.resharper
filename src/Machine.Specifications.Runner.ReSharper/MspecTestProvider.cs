@@ -6,6 +6,7 @@ using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.Runner.ReSharper.Elements;
+using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper
 {

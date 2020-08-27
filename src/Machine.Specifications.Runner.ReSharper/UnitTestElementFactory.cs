@@ -51,7 +51,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        public IUnitTestElement GetOrCreateBehavior(
+        public BehaviorElement GetOrCreateBehavior(
             IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
@@ -83,7 +83,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        public IUnitTestElement GetOrCreateBehaviorSpecification(
+        public BehaviorSpecificationElement GetOrCreateBehaviorSpecification(
             IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,

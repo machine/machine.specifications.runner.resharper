@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.csproj" />
+    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Runner\Machine.Specifications.Runner.ReSharper.Runner.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -40,6 +41,7 @@
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.Runner.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.Utility.dll" PackagePath="DotFiles" />
 
       <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/net40" />

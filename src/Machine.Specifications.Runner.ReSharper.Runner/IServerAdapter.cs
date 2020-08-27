@@ -1,6 +1,6 @@
 ﻿using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
-namespace Machine.Specifications.Runner.ReSharper.Reporting
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public interface IServerAdapter<in TTask>
     {

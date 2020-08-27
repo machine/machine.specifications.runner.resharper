@@ -1,7 +1,7 @@
 ﻿using JetBrains.ReSharper.TaskRunnerFramework;
-using Machine.Specifications.Runner.ReSharper.Tasks;
+using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public class MspecTaskRunner : RecursiveRemoteTaskRunner
     {
@@ -17,21 +17,21 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public override void ExecuteRecursive(TaskExecutionNode node)
         {
-            var assemblyTask = node.RemoteTask as MspecTestAssemblyTask;
+            var assemblyTask = node.RemoteTask as MspecAssemblyTask;
 
             if (assemblyTask == null)
             {
                 return;
             }
 
-            var context = new TestContext<RemoteTask>(assemblyTask.AssemblyLocation);
+            var context = new TestContext(assemblyTask.AssemblyLocation);
 
             PopulateContext(context, node);
             
             testRunner.Run(context);
         }
 
-        private void PopulateContext(TestContext<RemoteTask> context, TaskExecutionNode node)
+        private void PopulateContext(TestContext context, TaskExecutionNode node)
         {
             var childNodes = node.Children.Flatten(x => x.Children);
 
@@ -39,15 +39,15 @@ namespace Machine.Specifications.Runner.ReSharper
             {
                 switch (childNode.RemoteTask)
                 {
-                    case MspecTestContextTask task:
+                    case MspecContextTask task:
                         context.AddContext(task.GetId(), task);
                         break;
 
-                    case MspecTestBehaviorTask task:
+                    case MspecBehaviorTask task:
                         context.AddSpecification(task.GetId(), task);
                         break;
 
-                    case MspecTestSpecificationTask task:
+                    case MspecSpecificationTask task:
                         context.AddSpecification(task.GetId(), task);
                         break;
                 }

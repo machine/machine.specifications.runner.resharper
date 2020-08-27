@@ -3,13 +3,13 @@ using System.Xml;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
-namespace Machine.Specifications.Runner.ReSharper.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecTestSpecificationTask : RemoteTask, IEquatable<MspecTestSpecificationTask>, ITaskIdentifiable
+    public class MspecSpecificationTask : RemoteTask, IEquatable<MspecSpecificationTask>
     {
         [UsedImplicitly]
-        public MspecTestSpecificationTask(XmlElement element)
+        public MspecSpecificationTask(XmlElement element)
             : base(element)
         {
             ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
@@ -17,7 +17,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             SpecificationFieldName = GetXmlAttribute(element, AttributeNames.SpecificationFieldName);
         }
 
-        public MspecTestSpecificationTask(string projectId, string contextTypeName, string specificationFieldName)
+        public MspecSpecificationTask(string projectId, string contextTypeName, string specificationFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
@@ -42,7 +42,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
         }
 
-        public bool Equals(MspecTestSpecificationTask other)
+        public bool Equals(MspecSpecificationTask other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&
@@ -52,12 +52,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecTestSpecificationTask);
+            return Equals(other as MspecSpecificationTask);
         }
 
         public override bool Equals(object other)
         {
-            return Equals(other as MspecTestSpecificationTask);
+            return Equals(other as MspecSpecificationTask);
         }
 
         public override int GetHashCode()

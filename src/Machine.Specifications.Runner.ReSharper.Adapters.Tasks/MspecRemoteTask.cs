@@ -4,9 +4,9 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
 {
     [Serializable]
-    public abstract class MspecElementRemoteTask : RemoteTask
+    public abstract class MspecRemoteTask : RemoteTask
     {
-        protected MspecElementRemoteTask(string testId, bool runAllChildren = true, bool runExplicitly = false)
+        protected MspecRemoteTask(string testId, bool runAllChildren = true, bool runExplicitly = false)
         {
             TestId = testId;
             RunAllChildren = runAllChildren;

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2020.2.1" PrivateAssets="All" />
+    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.1-add-netstandard-uti1" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>

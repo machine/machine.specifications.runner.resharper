@@ -3,20 +3,20 @@ using System.Xml;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
-namespace Machine.Specifications.Runner.ReSharper.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecTestAssemblyTask : RemoteTask, IEquatable<MspecTestAssemblyTask>
+    public class MspecAssemblyTask : RemoteTask, IEquatable<MspecAssemblyTask>
     {
         [UsedImplicitly]
-        public MspecTestAssemblyTask(XmlElement element)
+        public MspecAssemblyTask(XmlElement element)
             : base(element)
         {
             AssemblyLocation = GetXmlAttribute(element, AttributeNames.AssemblyLocation);
             ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
         }
 
-        public MspecTestAssemblyTask(string projectId, string assemblyLocation)
+        public MspecAssemblyTask(string projectId, string assemblyLocation)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
@@ -39,17 +39,17 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecTestAssemblyTask);
+            return Equals(other as MspecAssemblyTask);
         }
 
-        public bool Equals(MspecTestAssemblyTask other)
+        public bool Equals(MspecAssemblyTask other)
         {
             return other != null && other.ProjectId == ProjectId;
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as MspecTestAssemblyTask);
+            return Equals(obj as MspecAssemblyTask);
         }
 
         public override int GetHashCode()

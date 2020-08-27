@@ -1,4 +1,4 @@
-﻿namespace Machine.Specifications.Runner.ReSharper
+﻿namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public struct HashCode
     {

@@ -4,6 +4,7 @@ using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
+using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper.RunStrategies
 {

@@ -2,14 +2,13 @@
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
+using Machine.Specifications.Runner.ReSharper.Runner;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public class ContextElement : Element, IEquatable<ContextElement>
     {
-        private readonly string subject;
-
         public ContextElement(
             UnitTestElementId id,
             IClrTypeName typeName,
@@ -18,20 +17,22 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             bool isIgnored)
             : base(id, null, typeName, serviceProvider, isIgnored)
         {
-            this.subject = subject;
+            Subject = subject;
         }
 
         public override string ShortName => Kind + GetPresentation();
 
         public override string Kind => "Context";
 
+        public string Subject { get; }
+
         protected override string GetPresentation()
         {
             var display = TypeName.ShortName.ToFormat();
 
-            return string.IsNullOrEmpty(subject)
+            return string.IsNullOrEmpty(Subject)
                 ? display
-                : $"{subject}, {display}";
+                : $"{Subject}, {display}";
         }
 
         public override IDeclaredElement GetDeclaredElement()

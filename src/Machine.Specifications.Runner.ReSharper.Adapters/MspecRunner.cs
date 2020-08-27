@@ -84,9 +84,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             var context = new TestContext(request.Container.Location);
 
-            foreach (var task in request.Selection.OfType<MspecElementRemoteTask>())
+            foreach (var task in request.Selection.OfType<MspecRemoteTask>())
             {
-                if (task is MspecTestContextRemoteTask contextTask)
+                if (task is MspecContextRemoteTask contextTask)
                 {
                     context.AddContext(contextTask.TestId, task);
                 }

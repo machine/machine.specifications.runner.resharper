@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using JetBrains.ReSharper.TaskRunnerFramework;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
-    public class TestContext<TTask>
+    public class TestContext
     {
-        private readonly Dictionary<string, TTask> remoteTasks = new Dictionary<string, TTask>();
+        private readonly Dictionary<string, RemoteTask> remoteTasks = new Dictionary<string, RemoteTask>();
 
         private readonly List<string> contextNames = new List<string>();
 
@@ -16,13 +17,13 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public string AssemblyLocation { get; }
 
-        public void AddContext(string key, TTask task)
+        public void AddContext(string key, RemoteTask task)
         {
             remoteTasks[key] = task;
             contextNames.Add(key);
         }
 
-        public void AddSpecification(string key, TTask task)
+        public void AddSpecification(string key, RemoteTask task)
         {
             remoteTasks[key] = task;
         }
@@ -32,30 +33,30 @@ namespace Machine.Specifications.Runner.ReSharper
             return contextNames;
         }
 
-        public TTask GetContextTask(ContextInfo context)
+        public RemoteTask GetContextTask(ContextInfo context)
         {
             var key = context.TypeName;
 
             return GetRemoteTask(key);
         }
 
-        public TTask GetSpecificationTask(SpecificationInfo specification)
+        public RemoteTask GetSpecificationTask(SpecificationInfo specification)
         {
             var key = $"{specification.ContainingType}.{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        public TTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
+        public RemoteTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
         {
             var key = $"{context.TypeName}.{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        private TTask GetRemoteTask(string key)
+        private RemoteTask GetRemoteTask(string key)
         {
-            remoteTasks.TryGetValue(key, out TTask task);
+            remoteTasks.TryGetValue(key, out RemoteTask task);
 
             return task;
         }

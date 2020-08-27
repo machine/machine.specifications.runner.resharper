@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public class TestEnvironment
     {

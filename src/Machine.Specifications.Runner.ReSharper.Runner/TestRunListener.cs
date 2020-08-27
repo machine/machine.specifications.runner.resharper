@@ -1,18 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Reporting;
+using JetBrains.ReSharper.TaskRunnerFramework;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
-    public class TestRunListener<TTask> : ISpecificationRunListener
-        where TTask : class
+    public class TestRunListener : ISpecificationRunListener
     {
-        private readonly IServerAdapter<TTask> server;
+        private readonly IRemoteTaskServer server;
 
-        private readonly TestContext<TTask> context;
+        private readonly TestContext context;
 
         private ContextInfo currentContext;
 
@@ -22,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private int errors;
 
-        public TestRunListener(IServerAdapter<TTask> server, TestContext<TTask> context)
+        public TestRunListener(IRemoteTaskServer server, TestContext context)
         {
             this.server = server;
             this.context = context;
@@ -64,19 +62,18 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public void OnContextEnd(ContextInfo contextInfo)
         {
-            var result = TestResult.Inconclusive;
+            var result = TaskResult.Inconclusive;
 
             if (errors > 0)
             {
-                result = TestResult.Failed;
+                result = TaskResult.Error;
             }
             else if (specifications == successes)
             {
-                result = TestResult.Success;
+                result = TaskResult.Success;
             }
 
             var task = context.GetContextTask(contextInfo);
-            var message = result == TestResult.Failed ? "One or more tests failed" : string.Empty;
 
             if (task == null)
             {
@@ -84,6 +81,10 @@ namespace Machine.Specifications.Runner.ReSharper
             }
 
             Output(task, contextInfo.CapturedOutput);
+
+            var message = result == TaskResult.Error
+                ? "One or more tests failed"
+                : string.Empty;
 
             server.TaskFinished(task, message, result);
         }
@@ -109,9 +110,7 @@ namespace Machine.Specifications.Runner.ReSharper
                        context.GetSpecificationTask(specificationInfo);
 
             if (task == null)
-            {
                 return;
-            }
 
             Output(task, specificationInfo.CapturedOutput);
 
@@ -119,46 +118,46 @@ namespace Machine.Specifications.Runner.ReSharper
             {
                 errors++;
                 server.TaskException(task, GetExceptions(result.Exception));
-                server.TaskFinished(task, GetExceptionMessage(result.Exception), TestResult.Failed); // Exception?
+                server.TaskFinished(task, GetExceptionMessage(result.Exception), TaskResult.Exception);
             }
             else if (result.Status == Status.Passing)
             {
                 successes++;
-                server.TaskFinished(task, string.Empty, TestResult.Success);
+                server.TaskFinished(task, string.Empty, TaskResult.Success);
             }
             else if (result.Status == Status.NotImplemented)
             {
                 Output(task, "Not implemented");
-                server.TaskFinished(task, "Not implemented", TestResult.Inconclusive);
+                server.TaskFinished(task, "Not implemented", TaskResult.Inconclusive);
             }
             else if (result.Status == Status.Ignored)
             {
                 Output(task, "Ignored");
-                server.TaskFinished(task, string.Empty, TestResult.Ignored);
+                server.TaskFinished(task, string.Empty, TaskResult.Skipped);
             }
         }
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
-            server.TaskOutput(null, "Fatal error: " + exceptionResult.Message, TestOutputType.STDOUT);
+            server.TaskOutput(null, "Fatal error: " + exceptionResult.Message, TaskOutputType.STDOUT);
             server.TaskException(null, GetExceptions(exceptionResult));
-            server.TaskFinished(null, GetExceptionMessage(exceptionResult), TestResult.Failed); // Exception?
+            server.TaskFinished(null, GetExceptionMessage(exceptionResult), TaskResult.Exception);
 
             errors += 1;
         }
 
-        private void Output(TTask task, string output)
+        private void Output(RemoteTask task, string output)
         {
             if (!string.IsNullOrEmpty(output))
             {
-                server.TaskOutput(task, output, TestOutputType.STDOUT);
+                server.TaskOutput(task, output, TaskOutputType.STDOUT);
             }
         }
 
-        private ExceptionInfo[] GetExceptions(ExceptionResult result)
+        private TaskException[] GetExceptions(ExceptionResult result)
         {
             return result.Flatten()
-                .Select(x => new ExceptionInfo(x.FullTypeName, x.Message, x.StackTrace))
+                .Select(x => new TaskException(x.FullTypeName, x.Message, x.StackTrace))
                 .ToArray();
         }
 
@@ -166,7 +165,9 @@ namespace Machine.Specifications.Runner.ReSharper
         {
             var exception = result.Flatten().FirstOrDefault();
 
-            return exception != null ? $"{exception.FullTypeName}: {exception.Message}" : string.Empty;
+            return exception != null
+                ? $"{exception.FullTypeName}: {exception.Message}"
+                : string.Empty;
         }
 
         private string GetWorkingDirectory(string assemblyLocation)

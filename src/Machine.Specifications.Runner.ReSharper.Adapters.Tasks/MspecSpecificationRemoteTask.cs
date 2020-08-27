@@ -3,31 +3,27 @@
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
 {
     [Serializable]
-    public class MspecTestSpecificationRemoteTask : MspecElementRemoteTask
+    public class MspecSpecificationRemoteTask : MspecRemoteTask
     {
-        public MspecTestSpecificationRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
+        public MspecSpecificationRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
             : base(testId, runAllChildren, runExplicitly)
         {
         }
 
-        public MspecTestSpecificationRemoteTask(
-            string parentId,
+        public MspecSpecificationRemoteTask(
             string contextTypeName,
             string specificationFieldName,
             string displayName,
             string subject,
             string[] tags)
-            : base(parentId + "::" + specificationFieldName)
+            : base(contextTypeName + "::" + specificationFieldName)
         {
-            ParentId = parentId;
             ContextTypeName = contextTypeName;
             SpecificationFieldName = specificationFieldName;
             DisplayName = displayName;
             Subject = subject;
             Tags = tags;
         }
-
-        public string ParentId { get; set; }
 
         public string ContextTypeName { get; set; }
 
@@ -39,20 +35,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
 
         public string[] Tags { get; set; }
 
-        public static MspecTestSpecificationRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
+        public static MspecSpecificationRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
         {
-            return new MspecTestSpecificationRemoteTask(testId, runAllChildren, runExplicitly);
+            return new MspecSpecificationRemoteTask(testId, runAllChildren, runExplicitly);
         }
 
-        public static MspecTestSpecificationRemoteTask ToServer(
-            string parentId,
+        public static MspecSpecificationRemoteTask ToServer(
             string contextTypeName,
             string specificationFieldName,
             string displayName,
             string subject,
             string[] tags)
         {
-            return new MspecTestSpecificationRemoteTask(parentId, contextTypeName, specificationFieldName, displayName, subject, tags);
+            return new MspecSpecificationRemoteTask(contextTypeName, specificationFieldName, displayName, subject, tags);
         }
     }
 }

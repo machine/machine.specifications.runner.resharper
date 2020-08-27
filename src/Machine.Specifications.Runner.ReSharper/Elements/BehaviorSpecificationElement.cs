@@ -4,7 +4,8 @@ using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Tasks;
+using Machine.Specifications.Runner.ReSharper.Runner;
+using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
@@ -46,9 +47,9 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
             return new List<UnitTestTask>
             {
-                new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, context.Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
-                new UnitTestTask(context, new MspecTestContextTask(Id.ProjectId, fullName)),
-                new UnitTestTask(this, new MspecTestBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName))
+                new UnitTestTask(null, new MspecAssemblyTask(Id.ProjectId, context.Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
+                new UnitTestTask(context, new MspecContextTask(Id.ProjectId, fullName)),
+                new UnitTestTask(this, new MspecBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName))
             };
         }
 

@@ -2,7 +2,7 @@
 using System.Reflection;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public static class ExceptionResultExtensions
     {

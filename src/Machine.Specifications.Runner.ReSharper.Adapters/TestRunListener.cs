@@ -145,7 +145,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             errors += 1;
         }
 
-        private void Output(MspecElementRemoteTask task, string output)
+        private void Output(MspecRemoteTask task, string output)
         {
             if (!string.IsNullOrEmpty(output))
             {
