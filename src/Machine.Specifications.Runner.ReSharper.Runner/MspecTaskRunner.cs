@@ -43,11 +43,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
                         context.AddContext(task.GetId(), task);
                         break;
 
-                    case MspecBehaviorTask task:
+                    case MspecBehaviorSpecificationTask task:
                         context.AddSpecification(task.GetId(), task);
                         break;
 
-                    case MspecSpecificationTask task:
+                    case MspecContextSpecificationTask task:
                         context.AddSpecification(task.GetId(), task);
                         break;
                 }

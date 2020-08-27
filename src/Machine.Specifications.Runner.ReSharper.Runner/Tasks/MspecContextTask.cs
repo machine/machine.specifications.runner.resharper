@@ -12,8 +12,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
         public MspecContextTask(XmlElement element)
             : base(element)
         {
-            ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
-            ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
         }
 
         public MspecContextTask(string projectId, string contextTypeName)
@@ -33,8 +33,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, AttributeNames.ProjectId, ProjectId);
-            SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
+            SetXmlAttribute(element, nameof(ProjectId), ProjectId);
+            SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
         }
 
         public bool Equals(MspecContextTask other)
@@ -63,11 +63,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
         public string GetId()
         {
             return ContextTypeName;
-        }
-
-        public bool IsContext()
-        {
-            return true;
         }
     }
 }

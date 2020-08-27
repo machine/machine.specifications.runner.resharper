@@ -16,8 +16,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                         contextTask.Subject,
                         contextTask.Tags);
 
-                case MspecSpecificationRemoteTask specificationTask:
-                    return MspecSpecificationRemoteTask.ToServer(
+                case MspecContextSpecificationRemoteTask specificationTask:
+                    return MspecContextSpecificationRemoteTask.ToServer(
                         specificationTask.ContextTypeName,
                         specificationTask.SpecificationFieldName,
                         specificationTask.DisplayName,
@@ -27,8 +27,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 case MspecBehaviorRemoteTask behaviorTask:
                     return MspecBehaviorRemoteTask.ToServer(
                         behaviorTask.ContextTypeName,
-                        behaviorTask.BehaviorFieldName,
-                        behaviorTask.SpecificationFieldName);
+                        behaviorTask.BehaviorFieldName);
+
+                case MspecBehaviorSpecificationRemoteTask behaviorSpecificationTask:
+                    return MspecBehaviorSpecificationRemoteTask.ToServer(
+                        behaviorSpecificationTask.ContextTypeName,
+                        behaviorSpecificationTask.BehaviorFieldName,
+                        behaviorSpecificationTask.SpecificationFieldName);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(task));

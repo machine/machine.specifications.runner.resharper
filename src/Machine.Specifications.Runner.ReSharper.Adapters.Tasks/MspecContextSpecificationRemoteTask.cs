@@ -3,14 +3,14 @@
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
 {
     [Serializable]
-    public class MspecSpecificationRemoteTask : MspecRemoteTask
+    public class MspecContextSpecificationRemoteTask : MspecRemoteTask
     {
-        public MspecSpecificationRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
+        public MspecContextSpecificationRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
             : base(testId, runAllChildren, runExplicitly)
         {
         }
 
-        public MspecSpecificationRemoteTask(
+        public MspecContextSpecificationRemoteTask(
             string contextTypeName,
             string specificationFieldName,
             string displayName,
@@ -35,19 +35,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
 
         public string[] Tags { get; set; }
 
-        public static MspecSpecificationRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
+        public static MspecContextSpecificationRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
         {
-            return new MspecSpecificationRemoteTask(testId, runAllChildren, runExplicitly);
+            return new MspecContextSpecificationRemoteTask(testId, runAllChildren, runExplicitly);
         }
 
-        public static MspecSpecificationRemoteTask ToServer(
+        public static MspecContextSpecificationRemoteTask ToServer(
             string contextTypeName,
             string specificationFieldName,
             string displayName,
             string subject,
             string[] tags)
         {
-            return new MspecSpecificationRemoteTask(contextTypeName, specificationFieldName, displayName, subject, tags);
+            return new MspecContextSpecificationRemoteTask(contextTypeName, specificationFieldName, displayName, subject, tags);
         }
     }
 }

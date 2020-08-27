@@ -43,13 +43,23 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
             var context = Behavior.Context;
-            var fullName = context.TypeName.FullName;
+            var contextName = context.TypeName.FullName;
+
+            var contextTask = run.GetRemoteTaskForElement<MspecContextTask>(Behavior.Context) ??
+                              new MspecContextTask(Id.ProjectId, contextName);
+
+            var behaviorTask = run.GetRemoteTaskForElement<MspecBehaviorTask>(Behavior) ??
+                               new MspecBehaviorTask(Id.ProjectId, contextName, Behavior.FieldName);
+
+            var behaviorSpecificationTask = run.GetRemoteTaskForElement<MspecBehaviorSpecificationTask>(this) ??
+                                            new MspecBehaviorSpecificationTask(Id.ProjectId, contextName, Behavior.FieldName, FieldName);
 
             return new List<UnitTestTask>
             {
                 new UnitTestTask(null, new MspecAssemblyTask(Id.ProjectId, context.Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
-                new UnitTestTask(context, new MspecContextTask(Id.ProjectId, fullName)),
-                new UnitTestTask(this, new MspecBehaviorTask(Id.ProjectId, fullName, Behavior.FieldName, FieldName))
+                new UnitTestTask(context, contextTask),
+                new UnitTestTask(Behavior, behaviorTask),
+                new UnitTestTask(this, behaviorSpecificationTask)
             };
         }
 

@@ -9,16 +9,16 @@ using Machine.Specifications.Runner.ReSharper.Elements;
 namespace Machine.Specifications.Runner.ReSharper.Mappings
 {
     [SolutionComponent]
-    public class MspecSpecificationMapping : MspecElementMapping<ContextSpecificationElement, MspecSpecificationRemoteTask>
+    public class MspecSpecificationMapping : MspecElementMapping<ContextSpecificationElement, MspecContextSpecificationRemoteTask>
     {
         public MspecSpecificationMapping(MspecServiceProvider serviceProvider)
             : base(serviceProvider)
         {
         }
 
-        protected override MspecSpecificationRemoteTask ToRemoteTask(ContextSpecificationElement element, IUnitTestRun run)
+        protected override MspecContextSpecificationRemoteTask ToRemoteTask(ContextSpecificationElement element, IUnitTestRun run)
         {
-            var task = MspecSpecificationRemoteTask.ToClient(
+            var task = MspecContextSpecificationRemoteTask.ToClient(
                 element.Id.Id,
                 element.Children.All(x => run.Launch.Criterion.Criterion.Matches(x)),
                 run.Launch.Criterion.Explicit.Contains(element));
@@ -29,7 +29,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return task;
         }
 
-        protected override ContextSpecificationElement ToElement(MspecSpecificationRemoteTask task, IUnitTestRun run, IProject project, UnitTestElementFactory factory)
+        protected override ContextSpecificationElement ToElement(MspecContextSpecificationRemoteTask task, IUnitTestRun run, IProject project, UnitTestElementFactory factory)
         {
             if (task.ContextTypeName == null)
             {

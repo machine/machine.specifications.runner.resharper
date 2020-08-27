@@ -30,8 +30,8 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             var contextTask = run.GetRemoteTaskForElement<MspecContextTask>(Context) ??
                               new MspecContextTask(Id.ProjectId, Context.TypeName.FullName);
 
-            var task = run.GetRemoteTaskForElement<MspecSpecificationTask>(this) ??
-                       new MspecSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
+            var task = run.GetRemoteTaskForElement<MspecContextSpecificationTask>(this) ??
+                       new MspecContextSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
 
             return new List<UnitTestTask>
             {

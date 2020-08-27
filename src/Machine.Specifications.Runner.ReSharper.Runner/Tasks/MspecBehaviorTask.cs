@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Xml;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
@@ -12,18 +12,16 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
         public MspecBehaviorTask(XmlElement element)
             : base(element)
         {
-            ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
-            ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
-            SpecificationFieldName = GetXmlAttribute(element, AttributeNames.SpecificationFieldName);
-            BehaviorFieldName = GetXmlAttribute(element, AttributeNames.BehaviorFieldName);
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
+            BehaviorFieldName = GetXmlAttribute(element, nameof(BehaviorFieldName));
         }
 
-        public MspecBehaviorTask(string projectId, string contextTypeName, string behaviorFieldName, string behaviorSpecificationFieldName)
+        public MspecBehaviorTask(string projectId, string contextTypeName, string behaviorFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
-            SpecificationFieldName = behaviorSpecificationFieldName;
             BehaviorFieldName = behaviorFieldName;
         }
 
@@ -31,20 +29,13 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
         public string ContextTypeName { get; }
 
-        public string SpecificationFieldName { get; }
-
         public string BehaviorFieldName { get; }
 
-        public override bool IsMeaningfulTask => true;
+        public override bool IsMeaningfulTask { get; } = false;
 
-        public override void SaveXml(XmlElement element)
+        public override bool Equals(RemoteTask other)
         {
-            base.SaveXml(element);
-
-            SetXmlAttribute(element, AttributeNames.ProjectId, ProjectId);
-            SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
-            SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
-            SetXmlAttribute(element, AttributeNames.BehaviorFieldName, BehaviorFieldName);
+            return Equals(other as MspecBehaviorTask);
         }
 
         public bool Equals(MspecBehaviorTask other)
@@ -52,13 +43,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             return other != null &&
                    other.ProjectId == ProjectId &&
                    other.ContextTypeName == ContextTypeName &&
-                   other.BehaviorFieldName == BehaviorFieldName &&
-                   other.SpecificationFieldName == SpecificationFieldName;
-        }
-
-        public override bool Equals(RemoteTask other)
-        {
-            return Equals(other as MspecBehaviorTask);
+                   other.BehaviorFieldName == BehaviorFieldName;
         }
 
         public override bool Equals(object other)
@@ -68,20 +53,10 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
         public override int GetHashCode()
         {
-            return HashCode.Of(ProjectId)
+            return HashCode
+                .Of(ProjectId)
                 .And(ContextTypeName)
-                .And(BehaviorFieldName)
-                .And(SpecificationFieldName);
-        }
-
-        public string GetId()
-        {
-            return $"{ContextTypeName}.{SpecificationFieldName}";
-        }
-
-        public bool IsContext()
-        {
-            return false;
+                .And(BehaviorFieldName);
         }
     }
 }

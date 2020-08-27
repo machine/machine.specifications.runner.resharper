@@ -12,8 +12,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
         public MspecAssemblyTask(XmlElement element)
             : base(element)
         {
-            AssemblyLocation = GetXmlAttribute(element, AttributeNames.AssemblyLocation);
-            ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
+            AssemblyLocation = GetXmlAttribute(element, nameof(AssemblyLocation));
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
         }
 
         public MspecAssemblyTask(string projectId, string assemblyLocation)
@@ -33,8 +33,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, AttributeNames.AssemblyLocation, AssemblyLocation);
-            SetXmlAttribute(element, AttributeNames.ProjectId, ProjectId);
+            SetXmlAttribute(element, nameof(AssemblyLocation), AssemblyLocation);
+            SetXmlAttribute(element, nameof(ProjectId), ProjectId);
         }
 
         public override bool Equals(RemoteTask other)
