@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
 
@@ -8,7 +9,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class TestRunListener : Utility.ISpecificationRunListener
     {
-        private readonly IServerAdapter server;
+        private readonly ITestExecutionSink server;
 
         private readonly TestContext context;
 
@@ -20,7 +21,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private int errors;
 
-        public TestRunListener(IServerAdapter server, TestContext context)
+        public TestRunListener(ITestExecutionSink server, TestContext context)
         {
             this.server = server;
             this.context = context;
@@ -56,7 +57,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             if (task != null)
             {
-                server.TaskStarting(task);
+                server.TestStarting(task);
             }
         }
 
@@ -83,7 +84,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             Output(task, contextInfo.CapturedOutput);
 
-            server.TaskFinished(task, message, result);
+            server.TestFinished(task, message, result);
         }
 
         public void OnSpecificationStart(Utility.SpecificationInfo specificationInfo)
@@ -96,7 +97,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 return;
             }
 
-            server.TaskStarting(task);
+            server.TestStarting(task);
 
             specifications += 1;
         }
@@ -116,31 +117,31 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             if (result.Status == Utility.Status.Failing)
             {
                 errors++;
-                server.TaskException(task, GetExceptions(result.Exception));
-                server.TaskFinished(task, GetExceptionMessage(result.Exception), TestResult.Failed); // Exception?
+                server.TestException(task, GetExceptions(result.Exception));
+                server.TestFinished(task, GetExceptionMessage(result.Exception), TestResult.Failed);
             }
             else if (result.Status == Utility.Status.Passing)
             {
                 successes++;
-                server.TaskFinished(task, string.Empty, TestResult.Success);
+                server.TestFinished(task, string.Empty, TestResult.Success);
             }
             else if (result.Status == Utility.Status.NotImplemented)
             {
                 Output(task, "Not implemented");
-                server.TaskFinished(task, "Not implemented", TestResult.Inconclusive);
+                server.TestFinished(task, "Not implemented", TestResult.Inconclusive);
             }
             else if (result.Status == Utility.Status.Ignored)
             {
                 Output(task, "Ignored");
-                server.TaskFinished(task, string.Empty, TestResult.Ignored);
+                server.TestFinished(task, string.Empty, TestResult.Ignored);
             }
         }
 
         public void OnFatalError(Utility.ExceptionResult exceptionResult)
         {
-            server.TaskOutput(null, "Fatal error: " + exceptionResult.Message, TestOutputType.STDOUT);
-            server.TaskException(null, GetExceptions(exceptionResult));
-            server.TaskFinished(null, GetExceptionMessage(exceptionResult), TestResult.Failed); // Exception?
+            server.TestOutput(null, "Fatal error: " + exceptionResult.Message, TestOutputType.STDOUT);
+            server.TestException(null, GetExceptions(exceptionResult));
+            server.TestFinished(null, GetExceptionMessage(exceptionResult), TestResult.Failed);
 
             errors += 1;
         }
@@ -149,7 +150,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             if (!string.IsNullOrEmpty(output))
             {
-                server.TaskOutput(task, output, TestOutputType.STDOUT);
+                server.TestOutput(task, output, TestOutputType.STDOUT);
             }
         }
 

@@ -49,8 +49,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             var context = GetContext(request);
 
             var environment = new TestEnvironment(context.AssemblyLocation, request.Container.ShadowCopy != ShadowCopy.None);
-            var server = new ExecutionSinkServerAdapter(executionSink);
-            var listener = new TestRunListener(server, context);
+            var listener = new TestRunListener(executionSink, context);
 
             var runOptions = Utility.RunOptions.Custom.FilterBy(context.GetContextNames());
 
