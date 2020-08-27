@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using JetBrains.ReSharper.TaskRunnerFramework;
 using Machine.Specifications.Runner.Utility;
 
@@ -16,8 +15,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         public void Run(TestContext context)
         {
-            Debugger.Launch();
-
             var environment = new TestEnvironment(context.AssemblyLocation, TaskExecutor.Configuration.ShadowCopy != ShadowCopyOption.None);
             var listener = new TestRunListener(taskServer, context);
 
