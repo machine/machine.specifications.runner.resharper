@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
@@ -24,7 +23,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
         {
-            Debugger.Launch();
             logger.Info("Exploration started");
             logger.Info("Exploration completed");
         }
@@ -36,7 +34,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void RunTests(TestRunRequest request, ITestDiscoverySink discoverySink, ITestExecutionSink executionSink)
         {
-            Debugger.Launch();
             logger.Info("Execution started");
 
             var discovered = request.Selection
