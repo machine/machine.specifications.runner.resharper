@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
@@ -32,21 +33,21 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return contextNames;
         }
 
-        public MspecRemoteTask GetContextTask(Utility.ContextInfo context)
+        public MspecRemoteTask GetContextTask(ContextInfo context)
         {
             var key = context.TypeName;
 
             return GetRemoteTask(key);
         }
 
-        public MspecRemoteTask GetSpecificationTask(Utility.SpecificationInfo specification)
+        public MspecRemoteTask GetSpecificationTask(SpecificationInfo specification)
         {
             var key = $"{specification.ContainingType}::{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        public MspecRemoteTask GetBehaviorTask(Utility.ContextInfo context, Utility.SpecificationInfo specification)
+        public MspecRemoteTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
         {
             var key = $"{context.TypeName}::{specification.FieldName}";
 

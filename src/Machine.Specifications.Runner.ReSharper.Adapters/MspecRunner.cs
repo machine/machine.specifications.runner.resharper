@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
@@ -23,6 +24,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
         {
+            Debugger.Launch();
             logger.Info("Exploration started");
             logger.Info("Exploration completed");
         }
@@ -34,6 +36,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void RunTests(TestRunRequest request, ITestDiscoverySink discoverySink, ITestExecutionSink executionSink)
         {
+            Debugger.Launch();
             logger.Info("Execution started");
 
             var discovered = request.Selection
@@ -51,7 +54,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             var environment = new TestEnvironment(context.AssemblyLocation, request.Container.ShadowCopy != ShadowCopy.None);
             var listener = new TestRunListener(executionSink, context);
 
-            var runOptions = Utility.RunOptions.Custom.FilterBy(context.GetContextNames());
+            var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
 
             var runner = new AppDomainRunner(listener, runOptions);
 
