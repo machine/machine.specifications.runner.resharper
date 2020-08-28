@@ -3,22 +3,22 @@ using System.Xml;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
-namespace Machine.Specifications.Runner.ReSharper.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecTestBehaviorTask : RemoteTask, IEquatable<MspecTestBehaviorTask>
+    public class MspecBehaviorSpecificationTask : RemoteTask, IEquatable<MspecBehaviorSpecificationTask>
     {
         [UsedImplicitly]
-        public MspecTestBehaviorTask(XmlElement element)
+        public MspecBehaviorSpecificationTask(XmlElement element)
             : base(element)
         {
-            ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
-            ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
-            SpecificationFieldName = GetXmlAttribute(element, AttributeNames.SpecificationFieldName);
-            BehaviorFieldName = GetXmlAttribute(element, AttributeNames.BehaviorFieldName);
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
+            SpecificationFieldName = GetXmlAttribute(element, nameof(SpecificationFieldName));
+            BehaviorFieldName = GetXmlAttribute(element, nameof(BehaviorFieldName));
         }
 
-        public MspecTestBehaviorTask(string projectId, string contextTypeName, string behaviorFieldName, string behaviorSpecificationFieldName)
+        public MspecBehaviorSpecificationTask(string projectId, string contextTypeName, string behaviorFieldName, string behaviorSpecificationFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
@@ -41,13 +41,13 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, AttributeNames.ProjectId, ProjectId);
-            SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
-            SetXmlAttribute(element, AttributeNames.SpecificationFieldName, SpecificationFieldName);
-            SetXmlAttribute(element, AttributeNames.BehaviorFieldName, BehaviorFieldName);
+            SetXmlAttribute(element, nameof(ProjectId), ProjectId);
+            SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
+            SetXmlAttribute(element, nameof(SpecificationFieldName), SpecificationFieldName);
+            SetXmlAttribute(element, nameof(BehaviorFieldName), BehaviorFieldName);
         }
 
-        public bool Equals(MspecTestBehaviorTask other)
+        public bool Equals(MspecBehaviorSpecificationTask other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&
@@ -58,12 +58,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecTestBehaviorTask);
+            return Equals(other as MspecBehaviorSpecificationTask);
         }
 
         public override bool Equals(object other)
         {
-            return Equals(other as MspecTestBehaviorTask);
+            return Equals(other as MspecBehaviorSpecificationTask);
         }
 
         public override int GetHashCode()
@@ -72,6 +72,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
                 .And(ContextTypeName)
                 .And(BehaviorFieldName)
                 .And(SpecificationFieldName);
+        }
+
+        public string GetId()
+        {
+            return $"{ContextTypeName}.{SpecificationFieldName}";
         }
     }
 }

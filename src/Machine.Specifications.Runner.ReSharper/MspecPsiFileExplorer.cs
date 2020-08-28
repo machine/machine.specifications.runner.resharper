@@ -16,27 +16,32 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class MspecPsiFileExplorer : IRecursiveElementProcessor
     {
-        private readonly SearchDomainFactory _searchDomainFactory;
-        private readonly UnitTestElementFactory _factory;
-        private readonly IUnitTestElementsObserver _observer;
-        private readonly Func<bool> _interrupted;
+        private readonly SearchDomainFactory searchDomainFactory;
 
-        private readonly Dictionary<ClrTypeName, IUnitTestElement> _contexts = new Dictionary<ClrTypeName, IUnitTestElement>();
+        private readonly UnitTestElementFactory factory;
+
+        private readonly IUnitTestElementsObserver observer;
+
+        private readonly Func<bool> interrupted;
+
+        private readonly Dictionary<ClrTypeName, IUnitTestElement> recentContexts = new Dictionary<ClrTypeName, IUnitTestElement>();
 
         public MspecPsiFileExplorer(SearchDomainFactory searchDomainFactory, UnitTestElementFactory factory, IUnitTestElementsObserver observer, Func<bool> interrupted)
         {
-            _searchDomainFactory = searchDomainFactory;
-            _factory = factory;
-            _observer = observer;
-            _interrupted = interrupted;
+            this.searchDomainFactory = searchDomainFactory;
+            this.factory = factory;
+            this.observer = observer;
+            this.interrupted = interrupted;
         }
 
         public bool ProcessingIsFinished
         {
             get
             {
-                if (_interrupted())
+                if (interrupted())
+                {
                     throw new OperationCanceledException();
+                }
 
                 return false;
             }
@@ -45,7 +50,9 @@ namespace Machine.Specifications.Runner.ReSharper
         public bool InteriorShouldBeProcessed(ITreeNode element)
         {
             if (element is ITypeMemberDeclaration)
+            {
                 return element is ITypeDeclaration;
+            }
 
             return true;
         }
@@ -53,14 +60,20 @@ namespace Machine.Specifications.Runner.ReSharper
         public void ProcessBeforeInterior(ITreeNode element)
         {
             if (!(element is IDeclaration declaration))
+            {
                 return;
+            }
 
             var declaredElement = declaration.DeclaredElement;
 
             if (declaredElement is IClass type)
+            {
                 ProcessType(type.AsTypeInfo(), declaredElement, declaration);
+            }
             else if (declaredElement is IField field)
+            {
                 ProcessField(declaration.GetProject(), field.AsFieldInfo(), declaration);
+            }
         }
 
         public void ProcessAfterInterior(ITreeNode element)
@@ -70,31 +83,34 @@ namespace Machine.Specifications.Runner.ReSharper
         private void ProcessType(ITypeInfo type, IDeclaredElement element, IDeclaration declaration)
         {
             if (type.IsContext())
+            {
                 ProcessContext(type, declaration, true);
+            }
             else if (type.IsBehaviorContainer())
+            {
                 ProcessBehaviorContainer(element);
+            }
         }
 
         private void ProcessContext(ITypeInfo type, IDeclaration declaration, bool isClear)
         {
             var name = new ClrTypeName(type.FullyQualifiedName);
             var project = declaration.GetProject();
-            var assemblyPath = project?.GetOutputFilePath(_observer.TargetFrameworkId);
 
-            var context = _factory.GetOrCreateContext(
+            var context = factory.GetOrCreateContext(
                 project,
                 name,
-                assemblyPath,
                 type.GetSubject(),
                 type.GetTags().ToArray(),
                 type.IsIgnored(),
-                _observer.Origin,
                 out _);
 
-            _contexts[name] = context;
+            recentContexts[name] = context;
 
             if (isClear)
+            {
                 OnUnitTestElement(context, declaration);
+            }
         }
 
         private void ProcessBehaviorContainer(IDeclaredElement element)
@@ -102,7 +118,7 @@ namespace Machine.Specifications.Runner.ReSharper
             var solution = element.GetSolution();
 
             var finder = solution.GetPsiServices().Finder;
-            var searchDomain = _searchDomainFactory.CreateSearchDomain(solution, false);
+            var searchDomain = searchDomainFactory.CreateSearchDomain(solution, false);
             var consumer = new SearchResultsConsumer();
             var progress = NullProgressIndicator.Create();
 
@@ -110,7 +126,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
             var contexts = consumer.GetOccurrences()
                 .OfType<ReferenceOccurrence>()
-                .Select(x => x.GetTypeElement().GetValidDeclaredElement())
+                .Select(x => x.GetTypeElement()?.GetValidDeclaredElement())
                 .OfType<IClass>()
                 .Where(x => x.IsContext());
 
@@ -124,7 +140,9 @@ namespace Machine.Specifications.Runner.ReSharper
                     ProcessContext(type, declaration, false);
 
                     foreach (var field in type.GetFields())
+                    {
                         ProcessField(declaration.GetProject(), field);
+                    }
                 }
             }
         }
@@ -132,18 +150,22 @@ namespace Machine.Specifications.Runner.ReSharper
         private void ProcessField(IProject project, IFieldInfo field, IDeclaration declaration = null)
         {
             if (field.IsSpecification())
+            {
                 ProcessSpecificationField(project, field, declaration);
+            }
             else if (field.IsBehavior())
+            {
                 ProcessBehaviorField(project, field, declaration);
+            }
         }
 
         private void ProcessSpecificationField(IProject project, IFieldInfo field, IDeclaration declaration = null)
         {
             var containingType = new ClrTypeName(field.DeclaringType);
 
-            if (_contexts.TryGetValue(containingType, out var context))
+            if (recentContexts.TryGetValue(containingType, out var context))
             {
-                var specification = _factory.GetOrCreateContextSpecification(
+                var specification = factory.GetOrCreateContextSpecification(
                     project,
                     context,
                     containingType,
@@ -159,9 +181,9 @@ namespace Machine.Specifications.Runner.ReSharper
             var behaviorType = field.FieldType.GetGenericArguments().FirstOrDefault();
             var containingType = new ClrTypeName(field.DeclaringType);
 
-            if (_contexts.TryGetValue(containingType, out var context))
+            if (recentContexts.TryGetValue(containingType, out var context))
             {
-                var behavior = _factory.GetOrCreateBehavior(
+                var behavior = factory.GetOrCreateBehavior(
                     project,
                     context,
                     containingType,
@@ -177,7 +199,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
                     foreach (var specField in specFields)
                     {
-                        var specification = _factory.GetOrCreateBehaviorSpecification(
+                        var specification = factory.GetOrCreateBehaviorSpecification(
                             project,
                             behavior,
                             containingType,
@@ -194,7 +216,7 @@ namespace Machine.Specifications.Runner.ReSharper
         {
             if (declaration == null)
             {
-                _observer.OnUnitTestElementDisposition(UnitTestElementDisposition.NotYetClear(element));
+                observer.OnUnitTestElementDisposition(UnitTestElementDisposition.NotYetClear(element));
                 return;
             }
 
@@ -204,7 +226,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
             var disposition = new UnitTestElementDisposition(element, project, textRange, containingRange);
 
-            _observer.OnUnitTestElementDisposition(disposition);
+            observer.OnUnitTestElementDisposition(disposition);
         }
     }
 }

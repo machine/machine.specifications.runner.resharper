@@ -3,19 +3,19 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.DotNetCore.DotNetVsTest;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.Runner.ReSharper.Elements;
+using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
     [UnitTestProvider]
-    public class MspecTestProvider : IDotNetVsTestBasedUnitTestProvider
+    public class MspecTestProvider : IDotNetArtifactBasedUnitTestProvider
     {
         private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(MspecTaskRunner.RunnerId, null);
 
-        private readonly UnitTestElementComparer _unitTestElementComparer = new UnitTestElementComparer(
+        private readonly UnitTestElementComparer unitTestElementComparer = new UnitTestElementComparer(
             typeof(ContextElement),
             typeof(BehaviorElement),
             typeof(BehaviorSpecificationElement),
@@ -25,16 +25,9 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public string Name => ID;
 
-        public string ExecutorUri { get; } = "executor://machine.vstestadapter";
-
-        public string GetExtensionName(IProject project, TargetFrameworkId targetFrameworkId)
-        {
-            return "Machine.TestAdapter.dll";
-        }
-
         public int CompareUnitTestElements(IUnitTestElement x, IUnitTestElement y)
         {
-            return _unitTestElementComparer.Compare(x, y);
+            return unitTestElementComparer.Compare(x, y);
         }
 
         public bool IsElementOfKind(IUnitTestElement element, UnitTestElementKind elementKind)

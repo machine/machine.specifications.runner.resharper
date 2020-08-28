@@ -15,7 +15,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public abstract class Element : IUnitTestElement
     {
-        private IUnitTestElement _parent;
+        private IUnitTestElement parent;
 
         protected Element(
             UnitTestElementId id,
@@ -43,19 +43,21 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public IUnitTestElement Parent
         {
-            get => _parent;
+            get => parent;
             set
             {
-                if (Equals(_parent, value))
+                if (Equals(parent, value))
+                {
                     return;
+                }
 
-                var oldParent = _parent;
+                var oldParent = parent;
 
                 using (UT.WriteLock())
                 {
-                    _parent?.Children.Remove(this);
-                    _parent = value;
-                    _parent?.Children.Add(this);
+                    parent?.Children.Remove(this);
+                    parent = value;
+                    parent?.Children.Add(this);
                 }
 
                 ServiceProvider.ElementManager.FireElementChanged(oldParent);
@@ -83,7 +85,9 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             var element = GetDeclaredElement();
 
             if (element == null || !element.IsValid())
+            {
                 return UnitTestElementDisposition.InvalidDisposition;
+            }
 
             var locations = GetLocations(element);
 
@@ -94,10 +98,9 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public string GetPresentation(IUnitTestElement unitTestElement, bool full)
         {
-            if (full)
-                return Id.Id;
-
-            return GetPresentation();
+            return full
+                ? Id.Id
+                : GetPresentation();
         }
 
         public abstract IDeclaredElement GetDeclaredElement();

@@ -3,20 +3,20 @@ using System.Xml;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
-namespace Machine.Specifications.Runner.ReSharper.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecTestContextTask : RemoteTask, IEquatable<MspecTestContextTask>
+    public class MspecContextTask : RemoteTask, IEquatable<MspecContextTask>
     {
         [UsedImplicitly]
-        public MspecTestContextTask(XmlElement element)
+        public MspecContextTask(XmlElement element)
             : base(element)
         {
-            ProjectId = GetXmlAttribute(element, AttributeNames.ProjectId);
-            ContextTypeName = GetXmlAttribute(element, AttributeNames.ContextTypeName);
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
         }
 
-        public MspecTestContextTask(string projectId, string contextTypeName)
+        public MspecContextTask(string projectId, string contextTypeName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
@@ -33,11 +33,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         {
             base.SaveXml(element);
 
-            SetXmlAttribute(element, AttributeNames.ProjectId, ProjectId);
-            SetXmlAttribute(element, AttributeNames.ContextTypeName, ContextTypeName);
+            SetXmlAttribute(element, nameof(ProjectId), ProjectId);
+            SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
         }
 
-        public bool Equals(MspecTestContextTask other)
+        public bool Equals(MspecContextTask other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&
@@ -46,18 +46,23 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecTestContextTask);
+            return Equals(other as MspecContextTask);
         }
 
         public override bool Equals(object other)
         {
-            return Equals(other as MspecTestContextTask);
+            return Equals(other as MspecContextTask);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Of(ProjectId)
                 .And(ContextTypeName);
+        }
+
+        public string GetId()
+        {
+            return ContextTypeName;
         }
     }
 }

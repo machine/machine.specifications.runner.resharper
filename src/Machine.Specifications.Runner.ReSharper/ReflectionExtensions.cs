@@ -21,7 +21,9 @@ namespace Machine.Specifications.Runner.ReSharper
                 .ToArray();
 
             if (!attributes.Any())
+            {
                 return type.GetContainingType()?.GetSubject() ?? string.Empty;
+            }
 
             return attributes.First()
                 .GetParameters()

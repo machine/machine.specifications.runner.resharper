@@ -7,23 +7,25 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public class PsiFieldInfoAdapter : IFieldInfo
     {
-        private readonly IField _field;
+        private readonly IField field;
 
         public PsiFieldInfoAdapter(IField field)
         {
-            _field = field;
+            this.field = field;
         }
 
-        public string DeclaringType => _field.GetContainingType()?.GetClrName().FullName;
+        public string DeclaringType => field.GetContainingType()?.GetClrName().FullName;
 
-        public string ShortName => _field.ShortName;
+        public string ShortName => field.ShortName;
 
         public ITypeInfo FieldType
         {
             get
             {
-                if (_field.Type is IDeclaredType type && type.IsResolved)
+                if (field.Type is IDeclaredType type && type.IsResolved)
+                {
                     return type.GetTypeElement().AsTypeInfo(type);
+                }
 
                 return UnknownTypeInfoAdapter.Default;
             }
@@ -31,7 +33,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 
         public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
         {
-            return _field.GetAttributeInstances(new ClrTypeName(typeName), inherit)
+            return field.GetAttributeInstances(new ClrTypeName(typeName), inherit)
                 .Select(x => x.AsAttributeInfo());
         }
     }

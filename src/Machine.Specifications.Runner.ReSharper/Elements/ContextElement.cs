@@ -2,15 +2,13 @@
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.Util;
+using Machine.Specifications.Runner.ReSharper.Runner;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public class ContextElement : Element, IEquatable<ContextElement>
     {
-        private readonly string _subject;
-
         public ContextElement(
             UnitTestElementId id,
             IClrTypeName typeName,
@@ -19,23 +17,22 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             bool isIgnored)
             : base(id, null, typeName, serviceProvider, isIgnored)
         {
-            _subject = subject;
+            Subject = subject;
         }
 
         public override string ShortName => Kind + GetPresentation();
 
-        public FileSystemPath AssemblyLocation { get; set; }
-
         public override string Kind => "Context";
+
+        public string Subject { get; }
 
         protected override string GetPresentation()
         {
             var display = TypeName.ShortName.ToFormat();
 
-            if (string.IsNullOrEmpty(_subject))
-                return display;
-
-            return $"{_subject}, {display}";
+            return string.IsNullOrEmpty(Subject)
+                ? display
+                : $"{Subject}, {display}";
         }
 
         public override IDeclaredElement GetDeclaredElement()
@@ -47,8 +44,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
             return other != null &&
                    Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName) &&
-                   Equals(AssemblyLocation, other.AssemblyLocation);
+                   Equals(TypeName, other.TypeName);
         }
 
         public override bool Equals(object obj)
@@ -60,8 +56,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
             return HashCode
                 .Of(Id)
-                .And(TypeName)
-                .And(AssemblyLocation);
+                .And(TypeName);
         }
     }
 }

@@ -1,32 +1,34 @@
 ﻿using JetBrains.ReSharper.TaskRunnerFramework;
-using Machine.Specifications.Runner.ReSharper.Tasks;
+using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public class MspecTaskRunner : RecursiveRemoteTaskRunner
     {
         public const string RunnerId = "Machine.Specifications";
 
-        private readonly TestRunner _testRunner;
+        private readonly TestRunner testRunner;
 
         public MspecTaskRunner(IRemoteTaskServer server)
             : base(server)
         {
-            _testRunner = new TestRunner(server);
+            testRunner = new TestRunner(server);
         }
 
         public override void ExecuteRecursive(TaskExecutionNode node)
         {
-            var assemblyTask = node.RemoteTask as MspecTestAssemblyTask;
+            var assemblyTask = node.RemoteTask as MspecAssemblyTask;
 
             if (assemblyTask == null)
+            {
                 return;
+            }
 
-            var context = new TestContext(assemblyTask);
+            var context = new TestContext(assemblyTask.AssemblyLocation);
 
             PopulateContext(context, node);
             
-            _testRunner.Run(context);
+            testRunner.Run(context);
         }
 
         private void PopulateContext(TestContext context, TaskExecutionNode node)
@@ -37,16 +39,16 @@ namespace Machine.Specifications.Runner.ReSharper
             {
                 switch (childNode.RemoteTask)
                 {
-                    case MspecTestContextTask task:
-                        context.Add(task);
+                    case MspecContextTask task:
+                        context.AddContext(task.GetId(), task);
                         break;
 
-                    case MspecTestBehaviorTask task:
-                        context.Add(task);
+                    case MspecBehaviorSpecificationTask task:
+                        context.AddSpecification(task.GetId(), task);
                         break;
 
-                    case MspecTestSpecificationTask task:
-                        context.Add(task);
+                    case MspecContextSpecificationTask task:
+                        context.AddSpecification(task.GetId(), task);
                         break;
                 }
             }

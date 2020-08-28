@@ -6,23 +6,25 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public class MetadataFieldInfoAdapter : IFieldInfo
     {
-        private readonly IMetadataField _field;
+        private readonly IMetadataField field;
 
         public MetadataFieldInfoAdapter(IMetadataField field)
         {
-            _field = field;
+            this.field = field;
         }
 
-        public string DeclaringType => _field.DeclaringType.FullyQualifiedName;
+        public string DeclaringType => field.DeclaringType.FullyQualifiedName;
 
-        public string ShortName => _field.Name;
+        public string ShortName => field.Name;
 
         public ITypeInfo FieldType
         {
             get
             {
-                if (_field.Type is IMetadataClassType classType)
+                if (field.Type is IMetadataClassType classType)
+                {
                     return classType.Type.AsTypeInfo(classType);
+                }
 
                 return UnknownTypeInfoAdapter.Default;
             }
@@ -30,7 +32,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 
         public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
         {
-            return _field.GetCustomAttributes(typeName)
+            return field.GetCustomAttributes(typeName)
                 .Select(x => x.AsAttributeInfo());
         }
     }

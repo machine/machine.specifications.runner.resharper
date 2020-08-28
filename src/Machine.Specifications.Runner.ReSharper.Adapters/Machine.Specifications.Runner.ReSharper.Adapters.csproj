@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <IsPackable>false</IsPackable>
+
+    <AssemblyName Condition="'$(TargetFramework)' == 'net40'">Machine.Specifications.Runner.ReSharper.Adapters.net40</AssemblyName>
+    <AssemblyName Condition="'$(TargetFramework)' == 'netstandard2.0'">Machine.Specifications.Runner.ReSharper.Adapters.netstandard20</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ILRepack" Version="2.0.18" PrivateAssets="All" />
+    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.1" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.csproj" />
+  </ItemGroup>
+
+  <Target Name="ILRepack" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
+    <PropertyGroup>
+      <ILRepackCommand>"$(ILRepack)" --internalize --norepackres --out:"$(OutputPath)$(AssemblyName).dll" "$(TargetPath)" "$(OutputPath)Machine.Specifications.Runner.Utility.dll"</ILRepackCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(ILRepackCommand)" />
+  </Target>
+
+</Project>

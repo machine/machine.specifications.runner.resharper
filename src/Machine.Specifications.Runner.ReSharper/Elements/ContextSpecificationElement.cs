@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Tasks;
+using Machine.Specifications.Runner.ReSharper.Runner;
+using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
@@ -26,15 +27,15 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            var contextTask = run.GetRemoteTaskForElement<MspecTestContextTask>(Context) ??
-                              new MspecTestContextTask(Id.ProjectId, Context.TypeName.FullName);
+            var contextTask = run.GetRemoteTaskForElement<MspecContextTask>(Context) ??
+                              new MspecContextTask(Id.ProjectId, Context.TypeName.FullName);
 
-            var task = run.GetRemoteTaskForElement<MspecTestSpecificationTask>(this) ??
-                       new MspecTestSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
+            var task = run.GetRemoteTaskForElement<MspecContextSpecificationTask>(this) ??
+                       new MspecContextSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
 
             return new List<UnitTestTask>
             {
-                new UnitTestTask(null, new MspecTestAssemblyTask(Id.ProjectId, Context.AssemblyLocation.FullPath)),
+                new UnitTestTask(null, new MspecAssemblyTask(Id.ProjectId, Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
                 new UnitTestTask(Context, contextTask),
                 new UnitTestTask(this, task)
             };
