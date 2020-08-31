@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
@@ -49,22 +48,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             var context = GetContext(request);
 
             var environment = new TestEnvironment(context.AssemblyLocation, request.Container.ShadowCopy != ShadowCopy.None);
-            var listener = new TestRunListener(executionSink, context);
+            var listener = new TestRunListener(executionSink, context, logger);
 
             var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
 
             var runner = new AppDomainRunner(listener, runOptions);
-
-            try
-            {
-                runner.RunAssembly(new AssemblyPath(environment.AssemblyPath));
-
-            }
-            catch (Exception e)
-            {
-                executionSink.TestOutput(null, "Unable to run tests: " + e.Message, TestOutputType.STDERR);
-                executionSink.TestException(null, new[] { new ExceptionInfo(e) });
-            }
+            runner.RunAssembly(new AssemblyPath(environment.AssemblyPath));
 
             logger.Info("Execution completed");
         }

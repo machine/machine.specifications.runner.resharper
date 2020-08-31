@@ -14,7 +14,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private readonly TestContext context;
 
+        private readonly ILogger logger;
+
         private ContextInfo currentContext;
+
+        private RemoteTask currentTask;
 
         private int specifications;
 
@@ -22,10 +26,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private int errors;
 
-        public TestRunListener(ITestExecutionSink server, TestContext context)
+        public TestRunListener(ITestExecutionSink server, TestContext context, ILogger logger)
         {
             this.server = server;
             this.context = context;
+            this.logger = logger;
         }
 
         public void OnAssemblyStart(AssemblyInfo assemblyInfo)
@@ -58,7 +63,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             if (task != null)
             {
-                server.TestStarting(task);
+                currentTask = task;
+
+                logger.Catch(() => server.TestStarting(task));
             }
         }
 
@@ -83,9 +90,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 return;
             }
 
+            currentTask = task;
+
             Output(task, contextInfo.CapturedOutput);
 
-            server.TestFinished(task, message, result);
+            logger.Catch(() => server.TestFinished(task, message, result));
         }
 
         public void OnSpecificationStart(SpecificationInfo specificationInfo)
@@ -98,7 +107,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 return;
             }
 
-            server.TestStarting(task);
+            currentTask = task;
+
+            logger.Catch(() => server.TestStarting(task));
 
             specifications += 1;
         }
@@ -113,36 +124,41 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 return;
             }
 
+            currentTask = task;
+
             Output(task, specificationInfo.CapturedOutput);
 
             if (result.Status == Status.Failing)
             {
                 errors++;
-                server.TestException(task, GetExceptions(result.Exception));
-                server.TestFinished(task, GetExceptionMessage(result.Exception), TestResult.Failed);
+                logger.Catch(() => server.TestException(task, GetExceptions(result.Exception)));
+                logger.Catch(() => server.TestFinished(task, GetExceptionMessage(result.Exception), TestResult.Failed));
             }
             else if (result.Status == Status.Passing)
             {
                 successes++;
-                server.TestFinished(task, string.Empty, TestResult.Success);
+                logger.Catch(() => server.TestFinished(task, string.Empty, TestResult.Success));
             }
             else if (result.Status == Status.NotImplemented)
             {
                 Output(task, "Not implemented");
-                server.TestFinished(task, "Not implemented", TestResult.Inconclusive);
+                logger.Catch(() => server.TestFinished(task, "Not implemented", TestResult.Inconclusive));
             }
             else if (result.Status == Status.Ignored)
             {
                 Output(task, "Ignored");
-                server.TestFinished(task, string.Empty, TestResult.Ignored);
+                logger.Catch(() => server.TestFinished(task, string.Empty, TestResult.Ignored));
             }
         }
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
-            server.TestOutput(null, "Fatal error: " + exceptionResult.Message, TestOutputType.STDOUT);
-            server.TestException(null, GetExceptions(exceptionResult));
-            server.TestFinished(null, GetExceptionMessage(exceptionResult), TestResult.Failed);
+            if (currentTask != null)
+            {
+                logger.Catch(() => server.TestOutput(currentTask, "Fatal error: " + exceptionResult.Message, TestOutputType.STDOUT));
+                logger.Catch(() => server.TestException(currentTask, GetExceptions(exceptionResult)));
+                logger.Catch(() => server.TestFinished(currentTask, GetExceptionMessage(exceptionResult), TestResult.Failed));
+            }
 
             errors += 1;
         }
@@ -151,7 +167,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             if (!string.IsNullOrEmpty(output))
             {
-                server.TestOutput(task, output, TestOutputType.STDOUT);
+                logger.Catch(() => server.TestOutput(task, output, TestOutputType.STDOUT));
             }
         }
 
