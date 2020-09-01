@@ -23,3 +23,7 @@ jobs:
           JETBRAINS_API_KEY: ${{ secrets.JETBRAINS_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./build.ps1 deploy
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: artifacts/*
