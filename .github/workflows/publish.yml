@@ -1,4 +1,4 @@
-name: Publish
+name: publish
 
 on:
   push:
@@ -9,8 +9,8 @@ env:
   DOTNET_NOLOGO: true
 
 jobs:
-  deploy:
-    name: Deploy
+  publish:
+    name: publish
     runs-on: windows-latest
 
     steps:
