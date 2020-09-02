@@ -32,8 +32,8 @@ namespace Machine.Specifications.Runner.ReSharper
 
             var suffix = framework.Replace(".", string.Empty);
 
-            var adapters = TestRunnerInfo.Directory.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.{suffix}.dll");
-            var tasks = TestRunnerInfo.Directory.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.Tasks.{suffix}.dll");
+            var adapters = MspecTestRunnerInfo.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.{suffix}.dll");
+            var tasks = MspecTestRunnerInfo.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.Tasks.{suffix}.dll");
 
             var type = new TypeInfo($"{Namespace}.MspecRunner", adapters.FullPath);
 
