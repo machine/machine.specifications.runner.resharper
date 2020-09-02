@@ -1,0 +1,24 @@
+name: update
+
+on: 
+  schedule:
+    - cron: '0 8 * * 5'
+
+jobs:
+  update:
+    name: update
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: dotnet restore
+      - uses: MeilCli/nuget-update-check-action@v3
+        id: outdated
+        with:
+          include_prerelease: true
+      - uses: juztcode/gitter-github-action@v1
+        if: steps.outdated.outputs.has_nuget_update != 'false'
+        with:
+          room-id: ${{ secrets.GITTER_ROOM_ID }}
+          token: ${{ secrets.GITTER_API_KEY }}
+          text: ${{ steps.outdated.outputs.nuget_update_text }}

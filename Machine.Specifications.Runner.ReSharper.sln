@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{9725D2B9
 		plugin.xml = plugin.xml
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 		README.md = README.md
+		.github\workflows\update.yml = .github\workflows\update.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runner.ReSharper.Adapters", "src\Machine.Specifications.Runner.ReSharper.Adapters\Machine.Specifications.Runner.ReSharper.Adapters.csproj", "{49062A8E-B51E-4DE6-AD81-9CEE62BBB25B}"
