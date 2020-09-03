@@ -5,7 +5,7 @@ using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner.Extensions;
-using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
+using Machine.Specifications.Runner.ReSharper.Tasks;
 using TypeInfo = JetBrains.ReSharper.TestRunner.Abstractions.Objects.TypeInfo;
 
 namespace Machine.Specifications.Runner.ReSharper
@@ -13,7 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecTestRunnerOrchestrator : TestRunnerOrchestrator
     {
-        private const string Namespace = "Machine.Specifications.Runner.ReSharper.Adapters";
+        private const string Namespace = "Machine.Specifications.Runner.ReSharper";
 
         private readonly IUnitTestProjectArtifactResolver artifactResolver;
 
@@ -32,10 +32,10 @@ namespace Machine.Specifications.Runner.ReSharper
 
             var suffix = framework.Replace(".", string.Empty);
 
-            var adapters = MspecTestRunnerInfo.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.{suffix}.dll");
-            var tasks = MspecTestRunnerInfo.Adapters.Combine($"MSpec\\{framework}\\{Namespace}.Tasks.{suffix}.dll");
+            var adapters = MspecTestRunnerInfo.Root.Combine($"{Namespace}.Adapters.{suffix}.dll");
+            var tasks = MspecTestRunnerInfo.Root.Combine($"{Namespace}.Tasks.{suffix}.dll");
 
-            var type = new TypeInfo($"{Namespace}.MspecRunner", adapters.FullPath);
+            var type = new TypeInfo($"{Namespace}.Adapters.MspecRunner", adapters.FullPath);
 
             return new TestAdapterInfo(type, type)
             {

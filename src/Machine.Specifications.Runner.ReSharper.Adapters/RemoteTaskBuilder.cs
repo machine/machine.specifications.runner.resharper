@@ -1,6 +1,6 @@
 ﻿using System;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
+using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {

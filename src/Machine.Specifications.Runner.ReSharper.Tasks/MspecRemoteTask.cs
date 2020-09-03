@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Tasks
 {
     [Serializable]
     public abstract class MspecRemoteTask : RemoteTask
