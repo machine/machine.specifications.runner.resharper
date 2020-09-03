@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Tasks
 {
     [Serializable]
     public class MspecBehaviorRemoteTask : MspecRemoteTask

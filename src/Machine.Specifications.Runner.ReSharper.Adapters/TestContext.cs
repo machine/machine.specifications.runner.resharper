@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Machine.Specifications.Runner.ReSharper.Adapters.Tasks;
+using Machine.Specifications.Runner.ReSharper.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters

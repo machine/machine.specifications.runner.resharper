@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.csproj" />
+    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Tasks\Machine.Specifications.Runner.ReSharper.Tasks.csproj" />
   </ItemGroup>
 
   <Target Name="ILRepack" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">

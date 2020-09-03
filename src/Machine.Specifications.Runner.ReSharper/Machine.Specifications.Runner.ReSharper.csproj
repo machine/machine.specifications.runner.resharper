@@ -12,6 +12,7 @@
     <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
     <PackageReleaseNotes>Adds support for R# and Rider 2020.2</PackageReleaseNotes>
     <PackageIcon>Machine.png</PackageIcon>
+    <PackageIconUrl>http://github.com/machine/media/raw/master/Machine.Specifications-128x128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/machine/machine.specifications.runner.resharper</RepositoryUrl>
     <PackageProjectUrl>http://github.com/machine/machine.specifications.runner.resharper</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -34,12 +35,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Tasks\Machine.Specifications.Runner.ReSharper.Tasks.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Runner\Machine.Specifications.Runner.ReSharper.Runner.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Resources\Machine.png" Pack="true" PackagePath="\"/>
+    <None Include="Resources\Machine.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -49,15 +50,15 @@
   <Target Name="PackageItems">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.dll" PackagePath="DotFiles" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.Tasks.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.Runner.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.Utility.dll" PackagePath="DotFiles" />
 
-      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/net40" />
-      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.net40.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/net40" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Tasks.net40.dll" PackagePath="DotFiles" />
 
-      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.netstandard20.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/netstandard2.0" />
-      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters.Tasks\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.Tasks.netstandard20.dll" PackagePath="DotFiles/TestRunner/Adapters/MSpec/netstandard2.0" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.netstandard20.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Tasks.netstandard20.dll" PackagePath="DotFiles" />
     </ItemGroup>
   </Target>
 
