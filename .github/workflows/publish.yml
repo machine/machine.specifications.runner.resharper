@@ -33,12 +33,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          targets: 'artifacts/*.nupkg'
-          upload_url: ${{ github.event.release.upload_url }}
-      - uses: NBTX/upload-release-assets@v1
-        if: github.event_name == 'release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          targets: 'artifacts/*.zip'
+          targets: 'artifacts/*.*'
           upload_url: ${{ github.event.release.upload_url }}
