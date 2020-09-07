@@ -16,8 +16,9 @@ jobs:
         id: outdated
         with:
           include_prerelease: true
+          frameworks: net461
       - uses: juztcode/gitter-github-action@v1
-        if: steps.outdated.outputs.has_nuget_update != 'false'
+        if: steps.outdated.outputs.has_nuget_update != 'false' && contains(fromJson(steps.outdated.outputs.nuget_update_json).name, 'JetBrains.ReSharper.SDK')
         with:
           room-id: ${{ secrets.GITTER_ROOM_ID }}
           token: ${{ secrets.GITTER_API_KEY }}
