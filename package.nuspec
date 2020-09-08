@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Machine.Specifications.Runner.Resharper9</id>
+    <version>$version$</version>
+    <title>Machine.Specifications for ReSharper</title>
+    <authors>Machine</authors>
+    <owners>Machine</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>icon.png</icon>
+    <projectUrl>http://github.com/machine/machine.specifications</projectUrl>
+    <iconUrl>http://github.com/machine/machine.specifications.runner.resharper/raw/master/images/icon.png</iconUrl>
+    <description>A ReSharper runner for the Context/Specification framework Machine.Specifications</description>
+    <releaseNotes>$releaseNotes$</releaseNotes>
+    <tags>test unit testing context specification bdd tdd mspec runner resharper</tags>
+    <repository url="https://github.com/machine/machine.specifications.runner.resharper" />
+
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.1">
+        <dependency id="Wave" version="[$waveVersion$]" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+
+  <files>
+    <file src="images/icon.png" target="" />
+
+    <file src="src/Machine.Specifications.Runner.ReSharper/bin/$configuration$/net461/Machine.Specifications.Runner.ReSharper.dll" target="DotFiles" />
+    <file src="src/Machine.Specifications.Runner.ReSharper/bin/$configuration$/net461/Machine.Specifications.Runner.ReSharper.Tasks.dll" target="DotFiles" />
+    <file src="src/Machine.Specifications.Runner.ReSharper/bin/$configuration$/net461/Machine.Specifications.Runner.ReSharper.Runner.dll" target="DotFiles" />
+    <file src="src/Machine.Specifications.Runner.ReSharper/bin/$configuration$/net461/Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
+
+    <file src="src/Machine.Specifications.Runner.ReSharper.Adapters/bin/$configuration$/net40/Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" target="DotFiles" />
+    <file src="src/Machine.Specifications.Runner.ReSharper.Tasks/bin/$configuration$/net40/Machine.Specifications.Runner.ReSharper.Tasks.net40.dll" target="DotFiles" />
+
+    <file src="src/Machine.Specifications.Runner.ReSharper.Adapters/bin/$configuration$/netstandard2.0/Machine.Specifications.Runner.ReSharper.Adapters.netstandard20.dll" target="DotFiles" />
+    <file src="src/Machine.Specifications.Runner.ReSharper.Tasks/bin/$configuration$/netstandard2.0/Machine.Specifications.Runner.ReSharper.Tasks.netstandard20.dll" target="DotFiles" />
+  </files>
+</package>
