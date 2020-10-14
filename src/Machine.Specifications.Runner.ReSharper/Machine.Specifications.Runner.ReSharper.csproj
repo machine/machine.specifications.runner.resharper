@@ -12,7 +12,7 @@
     <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
     <PackageReleaseNotes>Adds support for R# and Rider 2020.2</PackageReleaseNotes>
     <PackageIcon>Machine.png</PackageIcon>
-    <PackageIconUrl>http://github.com/machine/media/raw/master/Machine.Specifications-128x128.png</PackageIconUrl>
+    <PackageIconUrl>http://github.com/machine/machine.specifications.runner.resharper/raw/master/images/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/machine/machine.specifications.runner.resharper</RepositoryUrl>
     <PackageProjectUrl>http://github.com/machine/machine.specifications.runner.resharper</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
