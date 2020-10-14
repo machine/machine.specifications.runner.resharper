@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{9725D2B9
 		CONTRIBUTING.md = CONTRIBUTING.md
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		install-plugin.ps1 = install-plugin.ps1
-		package.nuspec = package.nuspec
 		plugin.xml = plugin.xml
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 		README.md = README.md
