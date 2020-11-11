@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using JetBrains.ReSharper.UnitTestFramework.Exploration;
-using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner.Extensions;
 using Machine.Specifications.Runner.ReSharper.Tasks;
@@ -11,22 +9,15 @@ using TypeInfo = JetBrains.ReSharper.TestRunner.Abstractions.Objects.TypeInfo;
 namespace Machine.Specifications.Runner.ReSharper
 {
     [SolutionComponent]
-    public class MspecTestRunnerOrchestrator : TestRunnerOrchestrator
+    public class MspecTestRunnerOrchestrator : ITestRunnerAdapter
     {
         private const string Namespace = "Machine.Specifications.Runner.ReSharper";
 
-        private readonly IUnitTestProjectArtifactResolver artifactResolver;
+        public Assembly InProcessAdapterAssembly => typeof (MspecAssemblyRemoteTask).Assembly;
 
-        public MspecTestRunnerOrchestrator(IUnitTestProjectArtifactResolver artifactResolver)
+        public TestAdapterLoader GetTestAdapterLoader(ITestRunnerContext ctx)
         {
-            this.artifactResolver = artifactResolver;
-        }
-
-        public override Assembly AdapterAssembly { get; } = typeof(MspecAssemblyRemoteTask).Assembly;
-
-        public override TestAdapterInfo GetTestAdapter(IUnitTestRun ctx)
-        {
-            var framework = ctx.GetEnvironment().TargetFrameworkId.IsNetCoreSdk()
+            var framework = ctx.RuntimeEnvironment.TargetFrameworkId.IsNetCoreSdk()
                 ? "netstandard2.0"
                 : "net40";
 
@@ -46,11 +37,9 @@ namespace Machine.Specifications.Runner.ReSharper
             };
         }
 
-        public override TestContainer GetTestContainer(IUnitTestRun ctx)
+        public TestContainer GetTestContainer(ITestRunnerContext ctx)
         {
-            var outputPath = artifactResolver.GetArtifactFilePath(ctx.GetEnvironment().Project, ctx.TargetFrameworkId);
-
-            return new MspecAssemblyRemoteTask(outputPath.FullPath, ctx.Launch.Settings.TestRunner.ToShadowCopy());
+            return new MspecAssemblyRemoteTask(ctx.GetOutputPath().FullPath, ctx.Settings.TestRunner.ToShadowCopy());
         }
     }
 }

@@ -1,42 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.Assemblies.AssemblyToAssemblyResolvers;
 using JetBrains.ProjectModel.Assemblies.Impl;
 using JetBrains.ProjectModel.NuGet.Packaging;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Search;
-using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.Util;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
     [SolutionComponent]
-    public class MspecTestElementsSource : TestRunnerArtifactExplorer, IUnitTestExplorerFromFile
+    public class MspecTestExplorerFromMetadata : UnitTestExplorerFrom.Metadata
     {
-        private readonly SearchDomainFactory searchDomainFactory;
-
         private readonly MspecServiceProvider serviceProvider;
 
         private readonly ILogger logger;
 
-        public MspecTestElementsSource(
-            MspecTestProvider provider,
+        public MspecTestExplorerFromMetadata(
             MspecServiceProvider serviceProvider,
-            SearchDomainFactory searchDomainFactory,
+            IUnitTestProvider provider,
             AssemblyToAssemblyReferencesResolveManager resolveManager,
+            ResolveContextManager resolveContextManager,
             NuGetInstalledPackageChecker installedPackageChecker,
-            ResolveContextManager contextManager,
             ILogger logger)
-            : base(provider, resolveManager, contextManager, installedPackageChecker, logger)
+            : base(provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
         {
-            this.searchDomainFactory = searchDomainFactory;
             this.serviceProvider = serviceProvider;
             this.logger = logger;
         }
@@ -63,24 +54,6 @@ namespace Machine.Specifications.Runner.ReSharper
 
             MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, logger, token,
                 assembly => explorer.ExploreAssembly(assembly, token));
-        }
-
-        public void ProcessFile(IFile psiFile, IUnitTestElementsObserver observer, Func<bool> interrupted)
-        {
-            if (!IsProjectFile(psiFile))
-            {
-                return;
-            }
-
-            var factory = new UnitTestElementFactory(serviceProvider, observer.TargetFrameworkId, observer.OnUnitTestElementChanged, UnitTestElementOrigin.Source);
-            var explorer = new MspecPsiFileExplorer(searchDomainFactory, factory, observer, interrupted);
-
-            psiFile.ProcessDescendants(explorer);
-        }
-
-        private static bool IsProjectFile(IFile psiFile)
-        {
-            return psiFile.GetSourceFile().ToProjectFile() != null;
         }
     }
 }

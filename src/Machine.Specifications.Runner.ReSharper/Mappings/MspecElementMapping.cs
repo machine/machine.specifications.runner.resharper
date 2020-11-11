@@ -1,7 +1,5 @@
-﻿using JetBrains.ProjectModel;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+﻿using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 
 namespace Machine.Specifications.Runner.ReSharper.Mappings
@@ -17,28 +15,25 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
 
         protected MspecServiceProvider ServiceProvider { get; }
 
-        protected abstract TTask ToRemoteTask(TElement element, IUnitTestRun run);
+        protected abstract TTask ToRemoteTask(TElement element, ITestRunnerExecutionContext context);
 
-        protected abstract TElement ToElement(TTask task, IUnitTestRun run, IProject project, UnitTestElementFactory factory);
+        protected abstract TElement ToElement(TTask task, ITestRunnerDiscoveryContext context);
 
-        public RemoteTask GetRemoteTask(TElement element, IUnitTestRun run)
+        public RemoteTask GetRemoteTask(TElement element, ITestRunnerExecutionContext context)
         {
-            return ToRemoteTask(element, run);
+            return ToRemoteTask(element, context);
         }
 
-        public IUnitTestElement GetElement(TTask task, IUnitTestRun run)
+        public IUnitTestElement GetElement(TTask task, ITestRunnerDiscoveryContext context)
         {
-            var environment = run.GetEnvironment();
-            var factory = GetFactory(run);
-
-            return ToElement(task, run, environment.Project, factory);
+            return ToElement(task, context);
         }
 
-        private UnitTestElementFactory GetFactory(IUnitTestRun run)
+        protected UnitTestElementFactory GetFactory(ITestRunnerDiscoveryContext context)
         {
-            return run.GetOrCreateDataUnderLock(
+            return context.GetOrCreateDataUnderLock(
                 MspecElementMappingKeys.ElementFactoryKey,
-                () => new UnitTestElementFactory(ServiceProvider, run.TargetFrameworkId, null, UnitTestElementOrigin.Dynamic));
+                () => new UnitTestElementFactory(ServiceProvider, context.TargetFrameworkId, null, context.Origin));
         }
     }
 }
