@@ -11,12 +11,13 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecServiceProvider
     {
-        private readonly MspecOutOfProcessUnitTestRunStrategy _processUnitTestRunStrategy;
+        private readonly MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy;
 
-        private readonly MspecTestProvider _provider;
-        private readonly ISolution _solution;
-        private readonly IUnitTestElementIdFactory _elementIdFactory;
-        private readonly IUnitTestingSettings _settings;
+        private readonly ISolution solution;
+
+        private readonly IUnitTestElementIdFactory elementIdFactory;
+
+        private readonly IUnitTestingSettings settings;
 
         public MspecServiceProvider(
             MspecTestProvider provider,
@@ -28,16 +29,18 @@ namespace Machine.Specifications.Runner.ReSharper
             MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy,
             ResolveContextManager resolveContextManager)
         {
-            _provider = provider;
-            _solution = solution;
-            _elementIdFactory = elementIdFactory;
-            _settings = settings;
-            _processUnitTestRunStrategy = processUnitTestRunStrategy;
+            this.solution = solution;
+            this.elementIdFactory = elementIdFactory;
+            this.settings = settings;
+            this.processUnitTestRunStrategy = processUnitTestRunStrategy;
 
+            Provider = provider;
             CachingService = cachingService;
             ElementManager = elementManager;
             ResolveContextManager = resolveContextManager;
         }
+
+        public MspecTestProvider Provider { get; }
 
         public UnitTestingCachingService CachingService { get; }
 
@@ -52,17 +55,17 @@ namespace Machine.Specifications.Runner.ReSharper
 
             var isNetFramework = targetFrameworkId.IsNetFramework || !project.IsDotNetCoreProject() || !targetFrameworkId.IsNetCoreApp;
 
-            if (isNetFramework && _settings.TestRunner.UseLegacyRunner.Value)
+            if (isNetFramework && settings.TestRunner.UseLegacyRunner.Value)
             {
-                return _processUnitTestRunStrategy;
+                return processUnitTestRunStrategy;
             }
 
-            return _solution.GetComponent<MspecTestRunnerRunStrategy>();
+            return solution.GetComponent<MspecTestRunnerRunStrategy>();
         }
 
         public UnitTestElementId CreateId(IProject project, TargetFrameworkId targetFrameworkId, string id)
         {
-            return _elementIdFactory.Create(_provider, project, targetFrameworkId, id);
+            return elementIdFactory.Create(Provider, project, targetFrameworkId, id);
         }
     }
 }
