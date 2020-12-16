@@ -15,15 +15,13 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private readonly MspecServiceProvider serviceProvider;
 
-        public MspecTestExplorerFromFile(MspecTestProvider provider, MspecServiceProvider serviceProvider, SearchDomainFactory searchDomainFactory)
+        public MspecTestExplorerFromFile(MspecServiceProvider serviceProvider, SearchDomainFactory searchDomainFactory)
         {
             this.searchDomainFactory = searchDomainFactory;
             this.serviceProvider = serviceProvider;
-
-            Provider = provider;
         }
 
-        public IUnitTestProvider Provider { get; }
+        public IUnitTestProvider Provider => serviceProvider.Provider;
 
         public void ProcessFile(IFile psiFile, IUnitTestElementsObserver observer, Func<bool> interrupted)
         {

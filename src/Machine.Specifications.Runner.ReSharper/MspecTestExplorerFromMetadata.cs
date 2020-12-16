@@ -21,12 +21,11 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public MspecTestExplorerFromMetadata(
             MspecServiceProvider serviceProvider,
-            IUnitTestProvider provider,
             AssemblyToAssemblyReferencesResolveManager resolveManager,
             ResolveContextManager resolveContextManager,
             NuGetInstalledPackageChecker installedPackageChecker,
             ILogger logger)
-            : base(provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
+            : base(serviceProvider.Provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
         {
             this.serviceProvider = serviceProvider;
             this.logger = logger;

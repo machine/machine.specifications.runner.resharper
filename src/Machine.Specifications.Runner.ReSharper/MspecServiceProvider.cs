@@ -13,8 +13,6 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private readonly MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy;
 
-        private readonly MspecTestProvider provider;
-
         private readonly ISolution solution;
 
         private readonly IUnitTestElementIdFactory elementIdFactory;
@@ -31,16 +29,18 @@ namespace Machine.Specifications.Runner.ReSharper
             MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy,
             ResolveContextManager resolveContextManager)
         {
-            this.provider = provider;
             this.solution = solution;
             this.elementIdFactory = elementIdFactory;
             this.settings = settings;
             this.processUnitTestRunStrategy = processUnitTestRunStrategy;
 
+            Provider = provider;
             CachingService = cachingService;
             ElementManager = elementManager;
             ResolveContextManager = resolveContextManager;
         }
+
+        public MspecTestProvider Provider { get; }
 
         public UnitTestingCachingService CachingService { get; }
 
@@ -65,7 +65,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public UnitTestElementId CreateId(IProject project, TargetFrameworkId targetFrameworkId, string id)
         {
-            return elementIdFactory.Create(provider, project, targetFrameworkId, id);
+            return elementIdFactory.Create(Provider, project, targetFrameworkId, id);
         }
     }
 }
