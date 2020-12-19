@@ -7,7 +7,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
-    public class MspecRunner : ITestDiscoverer, ITestExecutor
+    public class MspecRunner : LongLivedMarshalByRefObject, ITestDiscoverer, ITestExecutor
     {
         private readonly ILogger logger;
 
