@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2020.3.1" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2020.3.2" PrivateAssets="All" />
     <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="All" />
   </ItemGroup>
 
