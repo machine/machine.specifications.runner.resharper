@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.TestRunner.Abstractions" Version="1.2.7" />
+    <PackageReference Include="JetBrains.ReSharper.TestRunner.Abstractions" Version="1.2.9" />
   </ItemGroup>
 
 </Project>
