@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2021.1.0-eap05" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2021.1.0-eap07" PrivateAssets="All" />
     <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="All" />
     <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
   </ItemGroup>
