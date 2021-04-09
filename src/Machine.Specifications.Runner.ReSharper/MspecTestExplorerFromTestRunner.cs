@@ -1,11 +1,8 @@
-﻿using JetBrains.Application.Infra;
-using JetBrains.Application.platforms;
-using JetBrains.Application.Processes;
-using JetBrains.ProjectModel;
+﻿using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.NuGet.Packaging;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.Util.Collections;
-using IUnitTestAgentManager = JetBrains.ReSharper.UnitTestFramework.TestRunner.IUnitTestAgentManager;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
@@ -14,13 +11,10 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         public MspecTestExplorerFromTestRunner(
             MspecTestProvider provider,
-            IUnitTestAgentManager agentManager,
+            ITestRunnerAgentManager agentManager,
             MspecTestRunnerOrchestrator adapter,
-            IPlatformManager platformManager,
-            IAssemblyInfoDatabase assemblyInfoDatabase,
-            ISolutionProcessStartInfoPatcher processStartInfoPatcher,
             NuGetInstalledPackageChecker installedPackageChecker)
-            : base(provider, agentManager, adapter, platformManager, assemblyInfoDatabase, processStartInfoPatcher, installedPackageChecker, 30.Minutes())
+            : base(provider, agentManager, adapter, installedPackageChecker, 1.Minute())
         {
         }
     }
