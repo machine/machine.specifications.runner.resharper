@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner.Extensions;
@@ -14,6 +16,8 @@ namespace Machine.Specifications.Runner.ReSharper
         private const string Namespace = "Machine.Specifications.Runner.ReSharper";
 
         public Assembly InProcessAdapterAssembly => typeof (MspecAssemblyRemoteTask).Assembly;
+
+        public int Priority => 10;
 
         public TestAdapterLoader GetTestAdapterLoader(ITestRunnerContext ctx)
         {
@@ -40,6 +44,11 @@ namespace Machine.Specifications.Runner.ReSharper
         public TestContainer GetTestContainer(ITestRunnerContext ctx)
         {
             return new MspecAssemblyRemoteTask(ctx.GetOutputPath().FullPath, ctx.Settings.TestRunner.ToShadowCopy());
+        }
+
+        public IEnumerable<IMessageHandlerMarker> GetMessageHandlers(ITestRunnerContext context)
+        {
+            yield break;
         }
     }
 }

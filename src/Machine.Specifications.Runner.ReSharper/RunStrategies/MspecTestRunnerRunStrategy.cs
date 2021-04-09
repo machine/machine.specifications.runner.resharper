@@ -1,11 +1,8 @@
-﻿using JetBrains.Application.Infra;
-using JetBrains.Application.platforms;
-using JetBrains.ProjectModel;
+﻿using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.DotNetCore;
-using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner.DataCollection;
-using IUnitTestAgentManager = JetBrains.ReSharper.UnitTestFramework.TestRunner.IUnitTestAgentManager;
 
 namespace Machine.Specifications.Runner.ReSharper.RunStrategies
 {
@@ -13,14 +10,13 @@ namespace Machine.Specifications.Runner.ReSharper.RunStrategies
     public class MspecTestRunnerRunStrategy : TestRunnerRunStrategy
     {
         public MspecTestRunnerRunStrategy(
-            IPlatformManager platformManager,
-            IAssemblyInfoDatabase assemblyInfoDatabase,
             IDataCollectorFactory dataCollectorFactory,
-            IUnitTestAgentManager agentManager,
-            IUnitTestResultManager resultManager,
-            MspecTestRunnerOrchestrator orchestrator,
-            DotNetCoreLaunchSettingsJsonProfileProvider launchSettings) 
-            : base(platformManager, assemblyInfoDatabase, dataCollectorFactory, agentManager, resultManager, orchestrator, launchSettings)
+            ITestRunnerAgentManager agentManager,
+            ITestRunnerHostSource testRunnerHostSource,
+            MspecTestRunnerOrchestrator adapter,
+            IUnitTestProjectArtifactResolver artifactResolver,
+            DotNetCoreLaunchSettingsJsonProfileProvider launchSettingsProvider)
+            : base(dataCollectorFactory, agentManager, testRunnerHostSource, adapter, artifactResolver, launchSettingsProvider)
         {
         }
     }
