@@ -1,0 +1,13 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: JetBrains.ReSharper.SDK
+    versions:
+    - 2020.3.3
+    - 2021.1.0
+  rebase-strategy: disabled
