@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net40;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
+    <PackageId>Machine.Specifications.Runner.ReSharper.Tasks</PackageId>
     <IsPackable>false</IsPackable>
 
     <AssemblyName Condition="'$(TargetFramework)' == 'net40'">Machine.Specifications.Runner.ReSharper.Tasks.net40</AssemblyName>
@@ -9,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.TestRunner.Abstractions" Version="1.2.9" />
+    <PackageReference Include="JetBrains.ReSharper.TestRunner.Abstractions" Version="1.3.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
