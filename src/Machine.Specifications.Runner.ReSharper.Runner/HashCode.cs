@@ -1,6 +1,6 @@
 ﻿namespace Machine.Specifications.Runner.ReSharper.Runner
 {
-    public struct HashCode
+    public readonly struct HashCode
     {
         private readonly int value;
 
@@ -16,7 +16,7 @@
 
         public static implicit operator HashCode(int value)
         {
-            return new HashCode(value);
+            return new(value);
         }
 
         public static HashCode Of<T>(T item)
@@ -36,7 +36,9 @@
 
         private static int GetHashCode<T>(T item)
         {
-            return item == null ? 0 : item.GetHashCode();
+            return item == null
+                ? 0
+                : item.GetHashCode();
         }
     }
 }

@@ -1,8 +1,10 @@
-﻿using JetBrains.ProjectModel;
+﻿using System;
+using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.Assemblies.Impl;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
+using JetBrains.Util;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using Machine.Specifications.Runner.ReSharper.RunStrategies;
 
@@ -11,13 +13,13 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecServiceProvider
     {
-        private readonly MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy;
-
-        private readonly ISolution solution;
-
         private readonly IUnitTestElementIdFactory elementIdFactory;
 
         private readonly IUnitTestingSettings settings;
+
+        private readonly Lazy<MspecOutOfProcessUnitTestRunStrategy> legacyRunStrategy;
+
+        private readonly Lazy<MspecTestRunnerRunStrategy> runStrategy;
 
         public MspecServiceProvider(
             MspecTestProvider provider,
@@ -26,13 +28,13 @@ namespace Machine.Specifications.Runner.ReSharper
             IUnitTestElementManager elementManager,
             IUnitTestElementIdFactory elementIdFactory,
             IUnitTestingSettings settings,
-            MspecOutOfProcessUnitTestRunStrategy processUnitTestRunStrategy,
             ResolveContextManager resolveContextManager)
         {
-            this.solution = solution;
             this.elementIdFactory = elementIdFactory;
             this.settings = settings;
-            this.processUnitTestRunStrategy = processUnitTestRunStrategy;
+
+            legacyRunStrategy = Lazy.Of(solution.GetComponent<MspecOutOfProcessUnitTestRunStrategy>, true);
+            runStrategy = Lazy.Of(solution.GetComponent<MspecTestRunnerRunStrategy>, true);
 
             Provider = provider;
             CachingService = cachingService;
@@ -57,10 +59,10 @@ namespace Machine.Specifications.Runner.ReSharper
 
             if (isNetFramework && settings.TestRunner.UseLegacyRunner.Value)
             {
-                return processUnitTestRunStrategy;
+                return legacyRunStrategy.Value;
             }
 
-            return solution.GetComponent<MspecTestRunnerRunStrategy>();
+            return runStrategy.Value;
         }
 
         public UnitTestElementId CreateId(IProject project, TargetFrameworkId targetFrameworkId, string id)

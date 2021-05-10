@@ -1,26 +1,24 @@
 using System;
 using System.Xml;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecContextTask : RemoteTask, IEquatable<MspecContextTask>
+    public class MspecContextTask : RemoteTask, IEquatable<MspecContextTask>, IKeyedTask
     {
-        [UsedImplicitly]
-        public MspecContextTask(XmlElement element)
-            : base(element)
-        {
-            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
-            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
-        }
-
         public MspecContextTask(string projectId, string contextTypeName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
+        }
+
+        public MspecContextTask(XmlElement element)
+            : base(element)
+        {
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
         }
 
         public string ProjectId { get; }
@@ -56,13 +54,19 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
         public override int GetHashCode()
         {
-            return HashCode.Of(ProjectId)
+            return HashCode
+                .Of(ProjectId)
                 .And(ContextTypeName);
         }
 
-        public string GetId()
+        public string GetKey()
         {
             return ContextTypeName;
+        }
+
+        public RemoteTask AsRemoteTask()
+        {
+            return this;
         }
     }
 }

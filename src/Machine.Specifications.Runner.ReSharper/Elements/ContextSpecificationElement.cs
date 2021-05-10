@@ -27,18 +27,14 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            var contextTask = run.GetRemoteTaskForElement<MspecContextTask>(Context) ??
-                              new MspecContextTask(Id.ProjectId, Context.TypeName.FullName);
+            var sequence = Context.GetTaskSequence(explicitElements, run);
 
             var task = run.GetRemoteTaskForElement<MspecContextSpecificationTask>(this) ??
                        new MspecContextSpecificationTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
 
-            return new List<UnitTestTask>
-            {
-                new UnitTestTask(null, new MspecAssemblyTask(Id.ProjectId, Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
-                new UnitTestTask(Context, contextTask),
-                new UnitTestTask(this, task)
-            };
+            sequence.Add(new UnitTestTask(this, task));
+
+            return sequence;
         }
 
         public bool Equals(ContextSpecificationElement other)

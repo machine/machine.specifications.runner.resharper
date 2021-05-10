@@ -1,28 +1,26 @@
 using System;
 using System.Xml;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecContextSpecificationTask : RemoteTask, IEquatable<MspecContextSpecificationTask>
+    public class MspecContextSpecificationTask : RemoteTask, IEquatable<MspecContextSpecificationTask>, IKeyedTask
     {
-        [UsedImplicitly]
-        public MspecContextSpecificationTask(XmlElement element)
-            : base(element)
-        {
-            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
-            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
-            SpecificationFieldName = GetXmlAttribute(element, nameof(SpecificationFieldName));
-        }
-
         public MspecContextSpecificationTask(string projectId, string contextTypeName, string specificationFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
             SpecificationFieldName = specificationFieldName;
+        }
+
+        public MspecContextSpecificationTask(XmlElement element)
+            : base(element)
+        {
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
+            SpecificationFieldName = GetXmlAttribute(element, nameof(SpecificationFieldName));
         }
 
         public string ProjectId { get; }
@@ -62,14 +60,20 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
         public override int GetHashCode()
         {
-            return HashCode.Of(ProjectId)
+            return HashCode
+                .Of(ProjectId)
                 .And(ContextTypeName)
                 .And(SpecificationFieldName);
         }
 
-        public string GetId()
+        public string GetKey()
         {
             return $"{ContextTypeName}.{SpecificationFieldName}";
+        }
+
+        public RemoteTask AsRemoteTask()
+        {
+            return this;
         }
     }
 }

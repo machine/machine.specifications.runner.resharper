@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using JetBrains.ReSharper.TaskRunnerFramework;
 using Machine.Specifications.Runner.Utility;
 
@@ -10,7 +8,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
     {
         private readonly IRemoteTaskServer server;
 
-        private readonly TestContext context;
+        private readonly RunContext context;
 
         private ContextInfo currentContext;
 
@@ -20,7 +18,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         private int errors;
 
-        public TestRunListener(IRemoteTaskServer server, TestContext context)
+        public TestRunListener(IRemoteTaskServer server, RunContext context)
         {
             this.server = server;
             this.context = context;
@@ -28,7 +26,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         public void OnAssemblyStart(Utility.AssemblyInfo assemblyInfo)
         {
-            Environment.CurrentDirectory = GetWorkingDirectory(context.AssemblyLocation);
         }
 
         public void OnAssemblyEnd(Utility.AssemblyInfo assemblyInfo)
@@ -168,11 +165,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             return exception != null
                 ? $"{exception.FullTypeName}: {exception.Message}"
                 : string.Empty;
-        }
-
-        private string GetWorkingDirectory(string assemblyLocation)
-        {
-            return Path.GetDirectoryName(assemblyLocation);
         }
     }
 }

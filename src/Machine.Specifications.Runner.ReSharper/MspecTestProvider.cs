@@ -15,20 +15,9 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(MspecTaskRunner.RunnerId, null);
 
-        private readonly UnitTestElementComparer unitTestElementComparer = new UnitTestElementComparer(
-            typeof(ContextElement),
-            typeof(BehaviorElement),
-            typeof(BehaviorSpecificationElement),
-            typeof(ContextSpecificationElement));
-
         public string ID => MspecTaskRunner.RunnerId;
 
         public string Name => ID;
-
-        public int CompareUnitTestElements(IUnitTestElement x, IUnitTestElement y)
-        {
-            return unitTestElementComparer.Compare(x, y);
-        }
 
         public bool IsElementOfKind(IUnitTestElement element, UnitTestElementKind elementKind)
         {

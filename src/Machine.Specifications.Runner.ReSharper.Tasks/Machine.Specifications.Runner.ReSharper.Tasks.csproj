@@ -4,6 +4,7 @@
     <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
     <PackageId>Machine.Specifications.Runner.ReSharper.Tasks</PackageId>
     <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
 
     <AssemblyName Condition="'$(TargetFramework)' == 'net40'">Machine.Specifications.Runner.ReSharper.Tasks.net40</AssemblyName>
     <AssemblyName Condition="'$(TargetFramework)' == 'netstandard2.0'">Machine.Specifications.Runner.ReSharper.Tasks.netstandard20</AssemblyName>

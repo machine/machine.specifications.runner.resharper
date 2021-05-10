@@ -42,25 +42,14 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            var context = Behavior.Context;
-            var contextName = context.TypeName.FullName;
-
-            var contextTask = run.GetRemoteTaskForElement<MspecContextTask>(Behavior.Context) ??
-                              new MspecContextTask(Id.ProjectId, contextName);
-
-            var behaviorTask = run.GetRemoteTaskForElement<MspecBehaviorTask>(Behavior) ??
-                               new MspecBehaviorTask(Id.ProjectId, contextName, Behavior.FieldName);
+            var sequence = Behavior.GetTaskSequence(explicitElements, run);
 
             var behaviorSpecificationTask = run.GetRemoteTaskForElement<MspecBehaviorSpecificationTask>(this) ??
-                                            new MspecBehaviorSpecificationTask(Id.ProjectId, contextName, Behavior.FieldName, FieldName);
+                                            new MspecBehaviorSpecificationTask(Id.ProjectId, Behavior.Context.TypeName.FullName, Behavior.FieldName, FieldName);
 
-            return new List<UnitTestTask>
-            {
-                new UnitTestTask(null, new MspecAssemblyTask(Id.ProjectId, context.Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
-                new UnitTestTask(context, contextTask),
-                new UnitTestTask(Behavior, behaviorTask),
-                new UnitTestTask(this, behaviorSpecificationTask)
-            };
+            sequence.Add(new UnitTestTask(this, behaviorSpecificationTask));
+
+            return sequence;
         }
 
         public bool Equals(BehaviorSpecificationElement other)

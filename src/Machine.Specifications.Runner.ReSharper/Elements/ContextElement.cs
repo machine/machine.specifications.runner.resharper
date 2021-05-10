@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Launch;
 using Machine.Specifications.Runner.ReSharper.Runner;
+using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
@@ -25,6 +28,19 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         public override string Kind => "Context";
 
         public string Subject { get; }
+
+        public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
+        {
+            var task = run.GetRemoteTaskForElement<MspecContextTask>(this) ??
+                       new MspecContextTask(Id.ProjectId, TypeName.FullName);
+
+            return new List<UnitTestTask>
+            {
+                new(null, new MspecBootstrapTask(Id.ProjectId)),
+                new(null, new MspecAssemblyTask(Id.ProjectId, Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
+                new(this, task)
+            };
+        }
 
         protected override string GetPresentation()
         {

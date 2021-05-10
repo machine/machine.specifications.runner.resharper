@@ -1,4 +1,6 @@
-﻿using JetBrains.ReSharper.TaskRunnerFramework;
+﻿using System.Diagnostics;
+using System.IO;
+using JetBrains.ReSharper.TaskRunnerFramework;
 using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner
@@ -7,51 +9,45 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
     {
         public const string RunnerId = "Machine.Specifications";
 
-        private readonly TestRunner testRunner;
-
         public MspecTaskRunner(IRemoteTaskServer server)
             : base(server)
         {
-            testRunner = new TestRunner(server);
         }
 
         public override void ExecuteRecursive(TaskExecutionNode node)
         {
-            var assemblyTask = node.RemoteTask as MspecAssemblyTask;
+#if DEBUG
+            Debugger.Launch();
+#endif
 
-            if (assemblyTask == null)
+            foreach (var child in node.Children)
             {
-                return;
-            }
-
-            var context = new TestContext(assemblyTask.AssemblyLocation);
-
-            PopulateContext(context, node);
-            
-            testRunner.Run(context);
-        }
-
-        private void PopulateContext(TestContext context, TaskExecutionNode node)
-        {
-            var childNodes = node.Children.Flatten(x => x.Children);
-
-            foreach (var childNode in childNodes)
-            {
-                switch (childNode.RemoteTask)
+                if (child.RemoteTask is MspecAssemblyTask assemblyTask)
                 {
-                    case MspecContextTask task:
-                        context.AddContext(task.GetId(), task);
-                        break;
-
-                    case MspecBehaviorSpecificationTask task:
-                        context.AddSpecification(task.GetId(), task);
-                        break;
-
-                    case MspecContextSpecificationTask task:
-                        context.AddSpecification(task.GetId(), task);
-                        break;
+                    Execute(child, assemblyTask);
                 }
             }
+        }
+
+        private void Execute(TaskExecutionNode node, MspecAssemblyTask assemblyTask)
+        {
+            var assemblyLocation = TaskExecutor.Configuration.GetAssemblyLocation(assemblyTask.AssemblyLocation);
+            var directoryName = Path.GetDirectoryName(assemblyLocation);
+            var config = Path.GetFullPath(assemblyLocation) + ".config";
+
+            using var loader = new AssemblyLoader().WithDefaultTypes();
+            using var shadowCopyCookie = ShadowCopy.SetupFor(directoryName);
+            using var appDomain = AppDomainBuilder.Setup(assemblyLocation, config, shadowCopyCookie);
+            using var unwrappedLoader = appDomain.CreateAndUnwrapFrom<AssemblyLoader>().WithDefaultTypes();
+
+            unwrappedLoader.RegisterPathOf<TestRunner>();
+
+            loader.RegisterPathOf<TestRunner>();
+            loader.RegisterPath(shadowCopyCookie.TargetLocation);
+
+            var runner = appDomain.CreateAndUnwrapFrom<TestRunner>();
+
+            runner.Run(Server, TaskExecutor.Configuration, TaskExecutor.Logger, node, assemblyTask, shadowCopyCookie);
         }
     }
 }

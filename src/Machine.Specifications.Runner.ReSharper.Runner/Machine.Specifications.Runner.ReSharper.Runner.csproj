@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net461</TargetFrameworks>
     <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

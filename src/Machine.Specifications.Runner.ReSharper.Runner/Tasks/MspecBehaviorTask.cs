@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
@@ -8,15 +7,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
     [Serializable]
     public class MspecBehaviorTask : RemoteTask, IEquatable<MspecBehaviorTask>
     {
-        [UsedImplicitly]
-        public MspecBehaviorTask(XmlElement element)
-            : base(element)
-        {
-            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
-            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
-            BehaviorFieldName = GetXmlAttribute(element, nameof(BehaviorFieldName));
-        }
-
         public MspecBehaviorTask(string projectId, string contextTypeName, string behaviorFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
@@ -25,17 +15,29 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             BehaviorFieldName = behaviorFieldName;
         }
 
+        public MspecBehaviorTask(XmlElement element)
+            : base(element)
+        {
+            ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
+            BehaviorFieldName = GetXmlAttribute(element, nameof(BehaviorFieldName));
+        }
+
         public string ProjectId { get; }
 
         public string ContextTypeName { get; }
 
         public string BehaviorFieldName { get; }
 
-        public override bool IsMeaningfulTask { get; } = false;
+        public override bool IsMeaningfulTask => false;
 
-        public override bool Equals(RemoteTask other)
+        public override void SaveXml(XmlElement element)
         {
-            return Equals(other as MspecBehaviorTask);
+            base.SaveXml(element);
+
+            SetXmlAttribute(element, nameof(ProjectId), ProjectId);
+            SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
+            SetXmlAttribute(element, nameof(BehaviorFieldName), BehaviorFieldName);
         }
 
         public bool Equals(MspecBehaviorTask other)
@@ -44,6 +46,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
                    other.ProjectId == ProjectId &&
                    other.ContextTypeName == ContextTypeName &&
                    other.BehaviorFieldName == BehaviorFieldName;
+        }
+
+        public override bool Equals(RemoteTask other)
+        {
+            return Equals(other as MspecBehaviorTask);
         }
 
         public override bool Equals(object other)

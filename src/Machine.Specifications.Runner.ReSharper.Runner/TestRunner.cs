@@ -1,30 +1,29 @@
 ﻿using System;
 using JetBrains.ReSharper.TaskRunnerFramework;
+using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public class TestRunner : MarshalByRefObject
     {
-        private readonly IRemoteTaskServer taskServer;
-
-        public TestRunner(IRemoteTaskServer taskServer)
+        public void Run(
+            IRemoteTaskServer server,
+            TaskExecutorConfiguration configuration,
+            SimpleLogger logger,
+            TaskExecutionNode node,
+            MspecAssemblyTask assemblyTask,
+            IShadowCopyCookie shadowCopy)
         {
-            this.taskServer = taskServer;
-        }
+            TaskExecutor.Configuration = configuration;
+            TaskExecutor.Logger = logger;
 
-        public void Run(TestContext context)
-        {
-            var environment = new TestEnvironment(context.AssemblyLocation, TaskExecutor.Configuration.ShadowCopy != ShadowCopyOption.None);
-            var listener = new TestRunListener(taskServer, context);
+            var environment = new TestEnvironment(assemblyTask, shadowCopy);
+            var context = new RunContext(node);
+
+            var listener = new TestRunListener(server, context);
 
             var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
-
-            if (environment.ShouldShadowCopy)
-            {
-                runOptions.ShadowCopyTo(environment.ShadowCopyPath);
-                taskServer.SetTempFolderPath(environment.ShadowCopyPath);
-            }
 
             var appDomainRunner = new AppDomainRunner(listener, runOptions);
 
@@ -32,10 +31,10 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             {
                 appDomainRunner.RunAssembly(new AssemblyPath(environment.AssemblyPath));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                taskServer.ShowNotification("Unable to run tests: " + e.Message, string.Empty);
-                taskServer.TaskException(null, new[] {new TaskException(e)});
+                server.ShowNotification("Unable to run tests: " + ex.Message, string.Empty);
+                server.TaskException(null, new[] {new TaskException(ex)});
             }
         }
     }
