@@ -5,7 +5,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public class UnknownTypeInfoAdapter : ITypeInfo
     {
-        public static readonly UnknownTypeInfoAdapter Default = new UnknownTypeInfoAdapter();
+        public static readonly UnknownTypeInfoAdapter Default = new();
 
         public string ShortName => string.Empty;
 

@@ -18,7 +18,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private readonly UnitTestElementOrigin origin;
 
-        private readonly Dictionary<UnitTestElementId, IUnitTestElement> elements = new Dictionary<UnitTestElementId, IUnitTestElement>();
+        private readonly Dictionary<UnitTestElementId, IUnitTestElement> elements = new();
 
         public UnitTestElementFactory(
             MspecServiceProvider serviceProvider,

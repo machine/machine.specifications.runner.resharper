@@ -54,7 +54,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
         {
             if (classType == null)
             {
-                return type.TypeParameters.Select(x => UnknownTypeInfoAdapter.Default);
+                return type.TypeParameters.Select(_ => UnknownTypeInfoAdapter.Default);
             }
 
             return classType.Arguments

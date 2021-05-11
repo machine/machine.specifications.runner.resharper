@@ -24,7 +24,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private readonly Func<bool> interrupted;
 
-        private readonly Dictionary<ClrTypeName, IUnitTestElement> recentContexts = new Dictionary<ClrTypeName, IUnitTestElement>();
+        private readonly Dictionary<ClrTypeName, IUnitTestElement> recentContexts = new();
 
         public MspecPsiFileExplorer(SearchDomainFactory searchDomainFactory, UnitTestElementFactory factory, IUnitTestElementsObserver observer, Func<bool> interrupted)
         {
@@ -59,7 +59,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public void ProcessBeforeInterior(ITreeNode element)
         {
-            if (!(element is IDeclaration declaration))
+            if (element is not IDeclaration declaration)
             {
                 return;
             }
