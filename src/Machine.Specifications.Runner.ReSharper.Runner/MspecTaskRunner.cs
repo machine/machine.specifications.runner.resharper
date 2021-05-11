@@ -22,14 +22,14 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
             foreach (var child in node.Children)
             {
-                if (child.RemoteTask is MspecAssemblyTask assemblyTask)
+                if (child.RemoteTask is MspecAssemblyRunnerTask assemblyTask)
                 {
                     Execute(child, assemblyTask);
                 }
             }
         }
 
-        private void Execute(TaskExecutionNode node, MspecAssemblyTask assemblyTask)
+        private void Execute(TaskExecutionNode node, MspecAssemblyRunnerTask assemblyTask)
         {
             var assemblyLocation = TaskExecutor.Configuration.GetAssemblyLocation(assemblyTask.AssemblyLocation);
             var directoryName = Path.GetDirectoryName(assemblyLocation);

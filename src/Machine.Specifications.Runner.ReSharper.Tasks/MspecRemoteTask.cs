@@ -18,10 +18,5 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         public bool RunAllChildren { get; }
 
         public bool RunExplicitly { get; }
-
-        public override string ToString()
-        {
-            return GetType().Name + "(" + TestId + ")";
-        }
     }
 }

@@ -15,7 +15,7 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private const string Namespace = "Machine.Specifications.Runner.ReSharper";
 
-        public Assembly InProcessAdapterAssembly => typeof (MspecAssemblyRemoteTask).Assembly;
+        public Assembly InProcessAdapterAssembly => typeof (MspecTestContainer).Assembly;
 
         public int Priority => 10;
 
@@ -43,7 +43,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public TestContainer GetTestContainer(ITestRunnerContext ctx)
         {
-            return new MspecAssemblyRemoteTask(ctx.GetOutputPath().FullPath, ctx.Settings.TestRunner.ToShadowCopy());
+            return new MspecTestContainer(ctx.GetOutputPath().FullPath, ctx.Settings.TestRunner.ToShadowCopy());
         }
 
         public IEnumerable<IMessageHandlerMarker> GetMessageHandlers(ITestRunnerContext context)

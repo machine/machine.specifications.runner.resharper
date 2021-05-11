@@ -1,31 +1,35 @@
-using System;
+﻿using System;
 using System.Xml;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecContextTask : RemoteTask, IEquatable<MspecContextTask>, IKeyedTask
+    public class MspecBehaviorRunnerTask : RemoteTask, IEquatable<MspecBehaviorRunnerTask>
     {
-        public MspecContextTask(string projectId, string contextTypeName)
+        public MspecBehaviorRunnerTask(string projectId, string contextTypeName, string behaviorFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
+            BehaviorFieldName = behaviorFieldName;
         }
 
-        public MspecContextTask(XmlElement element)
+        public MspecBehaviorRunnerTask(XmlElement element)
             : base(element)
         {
             ProjectId = GetXmlAttribute(element, nameof(ProjectId));
             ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
+            BehaviorFieldName = GetXmlAttribute(element, nameof(BehaviorFieldName));
         }
 
         public string ProjectId { get; }
 
         public string ContextTypeName { get; }
 
-        public override bool IsMeaningfulTask => true;
+        public string BehaviorFieldName { get; }
+
+        public override bool IsMeaningfulTask => false;
 
         public override void SaveXml(XmlElement element)
         {
@@ -33,40 +37,33 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
             SetXmlAttribute(element, nameof(ProjectId), ProjectId);
             SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
+            SetXmlAttribute(element, nameof(BehaviorFieldName), BehaviorFieldName);
         }
 
-        public bool Equals(MspecContextTask other)
+        public bool Equals(MspecBehaviorRunnerTask other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&
-                   other.ContextTypeName == ContextTypeName;
+                   other.ContextTypeName == ContextTypeName &&
+                   other.BehaviorFieldName == BehaviorFieldName;
         }
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecContextTask);
+            return Equals(other as MspecBehaviorRunnerTask);
         }
 
         public override bool Equals(object other)
         {
-            return Equals(other as MspecContextTask);
+            return Equals(other as MspecBehaviorRunnerTask);
         }
 
         public override int GetHashCode()
         {
             return HashCode
                 .Of(ProjectId)
-                .And(ContextTypeName);
-        }
-
-        public string GetKey()
-        {
-            return ContextTypeName;
-        }
-
-        public RemoteTask AsRemoteTask()
-        {
-            return this;
+                .And(ContextTypeName)
+                .And(BehaviorFieldName);
         }
     }
 }

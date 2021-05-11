@@ -35,9 +35,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public string[] Tags { get; set; }
 
-        public static MspecContextSpecificationRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
+        public static MspecContextSpecificationRemoteTask ToClient(
+            string testId,
+            bool runAllChildren,
+            bool runExplicitly)
         {
-            return new MspecContextSpecificationRemoteTask(testId, runAllChildren, runExplicitly);
+            return new(testId, runAllChildren, runExplicitly);
         }
 
         public static MspecContextSpecificationRemoteTask ToServer(
@@ -47,7 +50,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             string subject,
             string[] tags)
         {
-            return new MspecContextSpecificationRemoteTask(contextTypeName, specificationFieldName, displayName, subject, tags);
+            return new(contextTypeName, specificationFieldName, displayName, subject, tags);
         }
     }
 }

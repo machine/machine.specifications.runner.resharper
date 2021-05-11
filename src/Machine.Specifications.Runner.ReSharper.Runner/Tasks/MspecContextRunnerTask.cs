@@ -5,29 +5,25 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecContextSpecificationTask : RemoteTask, IEquatable<MspecContextSpecificationTask>, IKeyedTask
+    public class MspecContextRunnerTask : RemoteTask, IEquatable<MspecContextRunnerTask>, IKeyedTask
     {
-        public MspecContextSpecificationTask(string projectId, string contextTypeName, string specificationFieldName)
+        public MspecContextRunnerTask(string projectId, string contextTypeName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
-            SpecificationFieldName = specificationFieldName;
         }
 
-        public MspecContextSpecificationTask(XmlElement element)
+        public MspecContextRunnerTask(XmlElement element)
             : base(element)
         {
             ProjectId = GetXmlAttribute(element, nameof(ProjectId));
             ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
-            SpecificationFieldName = GetXmlAttribute(element, nameof(SpecificationFieldName));
         }
 
         public string ProjectId { get; }
 
         public string ContextTypeName { get; }
-
-        public string SpecificationFieldName { get; }
 
         public override bool IsMeaningfulTask => true;
 
@@ -37,38 +33,35 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
             SetXmlAttribute(element, nameof(ProjectId), ProjectId);
             SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
-            SetXmlAttribute(element, nameof(SpecificationFieldName), SpecificationFieldName);
         }
 
-        public bool Equals(MspecContextSpecificationTask other)
+        public bool Equals(MspecContextRunnerTask other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&
-                   other.ContextTypeName == ContextTypeName &&
-                   other.SpecificationFieldName == SpecificationFieldName;
+                   other.ContextTypeName == ContextTypeName;
         }
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecContextSpecificationTask);
+            return Equals(other as MspecContextRunnerTask);
         }
 
         public override bool Equals(object other)
         {
-            return Equals(other as MspecContextSpecificationTask);
+            return Equals(other as MspecContextRunnerTask);
         }
 
         public override int GetHashCode()
         {
             return HashCode
                 .Of(ProjectId)
-                .And(ContextTypeName)
-                .And(SpecificationFieldName);
+                .And(ContextTypeName);
         }
 
         public string GetKey()
         {
-            return $"{ContextTypeName}.{SpecificationFieldName}";
+            return ContextTypeName;
         }
 
         public RemoteTask AsRemoteTask()

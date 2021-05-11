@@ -5,9 +5,9 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecBehaviorSpecificationTask : RemoteTask, IEquatable<MspecBehaviorSpecificationTask>, IKeyedTask
+    public class MspecBehaviorSpecificationRunnerTask : RemoteTask, IEquatable<MspecBehaviorSpecificationRunnerTask>, IKeyedTask
     {
-        public MspecBehaviorSpecificationTask(string projectId, string contextTypeName, string behaviorFieldName, string behaviorSpecificationFieldName)
+        public MspecBehaviorSpecificationRunnerTask(string projectId, string contextTypeName, string behaviorFieldName, string behaviorSpecificationFieldName)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
@@ -16,7 +16,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             BehaviorSpecificationFieldName = behaviorSpecificationFieldName;
         }
 
-        public MspecBehaviorSpecificationTask(XmlElement element)
+        public MspecBehaviorSpecificationRunnerTask(XmlElement element)
             : base(element)
         {
             ProjectId = GetXmlAttribute(element, nameof(ProjectId));
@@ -45,7 +45,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(BehaviorSpecificationFieldName), BehaviorSpecificationFieldName);
         }
 
-        public bool Equals(MspecBehaviorSpecificationTask other)
+        public bool Equals(MspecBehaviorSpecificationRunnerTask other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&
@@ -56,12 +56,12 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecBehaviorSpecificationTask);
+            return Equals(other as MspecBehaviorSpecificationRunnerTask);
         }
 
         public override bool Equals(object other)
         {
-            return Equals(other as MspecBehaviorSpecificationTask);
+            return Equals(other as MspecBehaviorSpecificationRunnerTask);
         }
 
         public override int GetHashCode()

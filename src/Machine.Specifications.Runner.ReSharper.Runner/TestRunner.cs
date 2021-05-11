@@ -12,7 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             TaskExecutorConfiguration configuration,
             SimpleLogger logger,
             TaskExecutionNode node,
-            MspecAssemblyTask assemblyTask,
+            MspecAssemblyRunnerTask assemblyTask,
             IShadowCopyCookie shadowCopy)
         {
             TaskExecutor.Configuration = configuration;

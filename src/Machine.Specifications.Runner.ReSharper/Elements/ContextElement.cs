@@ -31,13 +31,13 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            var task = run.GetRemoteTaskForElement<MspecContextTask>(this) ??
-                       new MspecContextTask(Id.ProjectId, TypeName.FullName);
+            var task = run.GetRemoteTaskForElement<MspecContextRunnerTask>(this) ??
+                       new MspecContextRunnerTask(Id.ProjectId, TypeName.FullName);
 
             return new List<UnitTestTask>
             {
-                new(null, new MspecBootstrapTask(Id.ProjectId)),
-                new(null, new MspecAssemblyTask(Id.ProjectId, Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
+                new(null, new MspecBootstrapRunnerTask(Id.ProjectId)),
+                new(null, new MspecAssemblyRunnerTask(Id.ProjectId, Id.Project.GetOutputFilePath(Id.TargetFrameworkId).FullPath)),
                 new(this, task)
             };
         }

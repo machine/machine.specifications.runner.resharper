@@ -7,7 +7,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public class TestEnvironment
     {
-        public TestEnvironment(MspecAssemblyTask assemblyTask, IShadowCopyCookie shadowCopyCookie)
+        public TestEnvironment(MspecAssemblyRunnerTask assemblyTask, IShadowCopyCookie shadowCopyCookie)
         {
             var assembly = TaskExecutor.Configuration.GetAssemblyLocation(assemblyTask.AssemblyLocation);
 

@@ -1,25 +1,29 @@
-﻿using System;
+using System;
 using System.Xml;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecBootstrapTask : RemoteTask, IEquatable<MspecBootstrapTask>
+    public class MspecAssemblyRunnerTask : RemoteTask, IEquatable<MspecAssemblyRunnerTask>
     {
-        public MspecBootstrapTask(string projectId)
+        public MspecAssemblyRunnerTask(string projectId, string assemblyLocation)
             : base(MspecTaskRunner.RunnerId)
         {
             ProjectId = projectId;
+            AssemblyLocation = assemblyLocation;
         }
 
-        public MspecBootstrapTask(XmlElement element)
+        public MspecAssemblyRunnerTask(XmlElement element)
             : base(element)
         {
             ProjectId = GetXmlAttribute(element, nameof(ProjectId));
+            AssemblyLocation = GetXmlAttribute(element, nameof(AssemblyLocation));
         }
 
         public string ProjectId { get; }
+
+        public string AssemblyLocation { get; }
 
         public override bool IsMeaningfulTask => false;
 
@@ -28,21 +32,22 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             base.SaveXml(element);
 
             SetXmlAttribute(element, nameof(ProjectId), ProjectId);
+            SetXmlAttribute(element, nameof(AssemblyLocation), AssemblyLocation);
         }
 
-        public bool Equals(MspecBootstrapTask other)
+        public bool Equals(MspecAssemblyRunnerTask other)
         {
             return other != null && other.ProjectId == ProjectId;
         }
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecBootstrapTask);
+            return Equals(other as MspecAssemblyRunnerTask);
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as MspecBootstrapTask);
+            return Equals(obj as MspecAssemblyRunnerTask);
         }
 
         public override int GetHashCode()

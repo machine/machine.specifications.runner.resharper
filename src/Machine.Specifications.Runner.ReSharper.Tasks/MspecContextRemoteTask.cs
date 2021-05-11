@@ -25,12 +25,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public static MspecContextRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
         {
-            return new MspecContextRemoteTask(testId, runAllChildren, runExplicitly);
+            return new(testId, runAllChildren, runExplicitly);
         }
 
         public static MspecContextRemoteTask ToServer(string typeName, string subject, string[] tags)
         {
-            return new MspecContextRemoteTask(typeName, subject, tags);
+            return new(typeName, subject, tags);
         }
     }
 }

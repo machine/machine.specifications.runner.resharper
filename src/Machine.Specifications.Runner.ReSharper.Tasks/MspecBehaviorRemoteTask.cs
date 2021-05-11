@@ -23,14 +23,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public static MspecBehaviorRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
         {
-            return new MspecBehaviorRemoteTask(testId, runAllChildren, runExplicitly);
+            return new(testId, runAllChildren, runExplicitly);
         }
 
-        public static MspecBehaviorRemoteTask ToServer(
-            string contextTypeName,
-            string behaviorFieldName)
+        public static MspecBehaviorRemoteTask ToServer(string contextTypeName, string behaviorFieldName)
         {
-            return new MspecBehaviorRemoteTask(contextTypeName, behaviorFieldName);
+            return new(contextTypeName, behaviorFieldName);
         }
     }
 }

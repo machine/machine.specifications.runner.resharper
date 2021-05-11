@@ -69,7 +69,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             {
                 remoteTasks[key] = remote;
 
-                if (remote is MspecContextTask)
+                if (remote is MspecContextRunnerTask)
                 {
                     contextNames.Add(key);
                 }
