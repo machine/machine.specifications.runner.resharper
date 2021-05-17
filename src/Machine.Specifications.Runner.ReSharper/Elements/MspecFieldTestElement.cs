@@ -8,9 +8,9 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public abstract class FieldElement : MspecTestElement
+    public abstract class MspecFieldTestElement : MspecTestElement
     {
-        protected FieldElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
+        protected MspecFieldTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
             : base(services, id, typeName, explicitReason)
         {
             FieldName = fieldName;

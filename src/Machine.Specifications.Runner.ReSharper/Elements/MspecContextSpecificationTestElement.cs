@@ -7,7 +7,7 @@ using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecContextSpecificationTestElement : FieldElement, IEquatable<MspecContextSpecificationTestElement>
+    public class MspecContextSpecificationTestElement : MspecFieldTestElement, IEquatable<MspecContextSpecificationTestElement>
     {
         public MspecContextSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
             : base(services, id, typeName, fieldName, explicitReason)
