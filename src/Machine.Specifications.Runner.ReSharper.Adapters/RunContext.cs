@@ -58,12 +58,24 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private MspecRemoteTask CreateTask(object value)
         {
-            return RemoteTaskBuilder.GetRemoteTask(value);
+            var task = RemoteTaskBuilder.GetRemoteTask(value);
+
+            return ProcessDynamic(task);
         }
 
         private MspecRemoteTask CreateTask(object context, object specification)
         {
-            return RemoteTaskBuilder.GetRemoteTask(context, specification);
+            var task = RemoteTaskBuilder.GetRemoteTask(context, specification);
+
+            return ProcessDynamic(task);
+        }
+
+        private MspecRemoteTask ProcessDynamic(MspecRemoteTask task)
+        {
+            sink.DynamicTestDiscovered(task);
+            depot.Add(task);
+
+            return task;
         }
     }
 }
