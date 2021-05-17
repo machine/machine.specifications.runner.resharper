@@ -32,6 +32,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             Id = $"{specification.ContextTypeName}::{specification.SpecificationFieldName}";
         }
 
+        public MspecReSharperId(MspecBehaviorRemoteTask behavior)
+        {
+            Id = $"{behavior.ContextTypeName}::{behavior.BehaviorFieldName}";
+        }
+
         public MspecReSharperId(MspecBehaviorSpecificationRemoteTask specification)
         {
             Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
@@ -60,6 +65,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             {
                 MspecContextRemoteTask context => new MspecReSharperId(context),
                 MspecContextSpecificationRemoteTask specification => new MspecReSharperId(specification),
+                MspecBehaviorRemoteTask behavior => new MspecReSharperId(behavior),
+                MspecBehaviorSpecificationRemoteTask specification => new MspecReSharperId(specification),
                 _ => throw new ArgumentOutOfRangeException(nameof(task))
             };
         }

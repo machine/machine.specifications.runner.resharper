@@ -17,7 +17,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             string subject,
             string[] tags,
             string ignoreReason)
-            : base(contextTypeName + "::" + specificationFieldName, ignoreReason)
+            : base($"{contextTypeName}::{specificationFieldName}", ignoreReason)
         {
             ContextTypeName = contextTypeName;
             SpecificationFieldName = specificationFieldName;

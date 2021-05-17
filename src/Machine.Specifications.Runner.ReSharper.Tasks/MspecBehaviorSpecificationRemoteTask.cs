@@ -11,7 +11,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         }
 
         public MspecBehaviorSpecificationRemoteTask(string contextTypeName, string behaviorFieldName, string specificationFieldName, string ignoreReason)
-            : base(contextTypeName + "::" + specificationFieldName, ignoreReason)
+            : base($"{contextTypeName}::{specificationFieldName}", ignoreReason)
         {
             ContextTypeName = contextTypeName;
             BehaviorFieldName = behaviorFieldName;
