@@ -16,8 +16,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private readonly ConcurrentDictionary<MspecReSharperId, TaskWrapper> specifications = new();
 
-        private readonly ConcurrentDictionary<MspecReSharperId, TaskWrapper> behaviorSpecifications = new();
-
         public RunContext(RemoteTaskDepot depot, ITestExecutionSink sink)
         {
             this.depot = depot;
@@ -41,28 +39,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             });
         }
 
-        public TaskWrapper GetTask(SpecificationInfo specification)
-        {
-            var key = new MspecReSharperId(specification);
-
-            return specifications.GetOrAdd(key, x =>
-            {
-                var task = depot[x] ?? CreateTask(specification);
-
-                return new TaskWrapper(task, sink);
-            });
-        }
-
         public TaskWrapper GetTask(ContextInfo context, SpecificationInfo specification)
         {
             var key = new MspecReSharperId(context, specification);
 
             if (depot[key] == null)
             {
-                return GetTask(specification);
+                key = new MspecReSharperId(specification);
             }
 
-            return behaviorSpecifications.GetOrAdd(key, x =>
+            return specifications.GetOrAdd(key, x =>
             {
                 var task = depot[x] ?? CreateTask(context, specification);
 
