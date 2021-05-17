@@ -3,25 +3,18 @@ using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Runner;
 using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class BehaviorElement : FieldElement, IEquatable<BehaviorElement>
+    public class MspecBehaviorTestElement : FieldElement, IEquatable<MspecBehaviorTestElement>
     {
-        public BehaviorElement(
-            UnitTestElementId id,
-            IUnitTestElement parent,
-            IClrTypeName typeName,
-            MspecServiceProvider serviceProvider,
-            string fieldName,
-            bool isIgnored)
-            : base(id, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
+        public MspecBehaviorTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
+            : base(services, id, typeName, fieldName, explicitReason)
         {
         }
 
-        public ContextElement Context => Parent as ContextElement;
+        public MspecContextTestElement Context => Parent as MspecContextTestElement;
 
         public override string Kind => "Behavior";
 
@@ -42,25 +35,12 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return "behaves like";
         }
 
-        public bool Equals(BehaviorElement other)
+        public bool Equals(MspecBehaviorTestElement other)
         {
             return other != null &&
                    Equals(Id, other.Id) &&
                    Equals(TypeName, other.TypeName) &&
                    Equals(FieldName, other.FieldName);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as BehaviorElement);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode
-                .Of(Id)
-                .And(TypeName?.FullName)
-                .And(FieldName);
         }
     }
 }

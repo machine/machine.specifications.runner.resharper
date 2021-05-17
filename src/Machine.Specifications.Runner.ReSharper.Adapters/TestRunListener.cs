@@ -1,24 +1,25 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
+using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class TestRunListener : ISpecificationRunListener
     {
-        private readonly ITestExecutionSink server;
+        private readonly RunContext context;
 
-        private readonly TestContext context;
+        private readonly string assemblyPath;
 
-        private readonly ILogger logger;
+        private readonly CancellationToken token;
+
+        private readonly ILogger logger = Logger.GetLogger<TestRunListener>();
+
+        private readonly ManualResetEvent waitEvent = new(false);
 
         private ContextInfo currentContext;
 
-        private RemoteTask currentTask;
+        private TaskWrapper currentTask;
 
         private int specifications;
 
@@ -26,29 +27,37 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private int errors;
 
-        public TestRunListener(ITestExecutionSink server, TestContext context, ILogger logger)
+        public TestRunListener(RunContext context, string assemblyPath, CancellationToken token)
         {
-            this.server = server;
             this.context = context;
-            this.logger = logger;
+            this.assemblyPath = assemblyPath;
+            this.token = token;
         }
+
+        public WaitHandle Finished => waitEvent;
 
         public void OnAssemblyStart(AssemblyInfo assemblyInfo)
         {
-            Environment.CurrentDirectory = GetWorkingDirectory(context.AssemblyLocation);
+            logger.Trace($"OnAssemblyStart: {assemblyInfo.Location}");
+
+            Environment.CurrentDirectory = assemblyPath;
         }
 
         public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
         {
-            Output(default, assemblyInfo.CapturedOutput);
+            logger.Trace($"OnAssemblyEnd: {assemblyInfo.Location}");
+
+            waitEvent.Set();
         }
 
         public void OnRunStart()
         {
+            logger.Trace("OnRunStart");
         }
 
         public void OnRunEnd()
         {
+            logger.Trace("OnRunEnd");
         }
 
         public void OnContextStart(ContextInfo contextInfo)
@@ -59,135 +68,121 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             currentContext = contextInfo;
 
-            var task = context.GetContextTask(contextInfo);
+            logger.Trace($"OnContextStart: {MspecReSharperId.Self(contextInfo)}");
 
-            if (task != null)
+            logger.Catch(() =>
             {
-                currentTask = task;
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
 
-                logger.Catch(() => server.TestStarting(task));
-            }
+                currentTask = context.GetTask(contextInfo);
+
+                currentTask.Starting();
+            });
         }
 
         public void OnContextEnd(ContextInfo contextInfo)
         {
-            var result = TestResult.Inconclusive;
+            logger.Trace($"OnContextEnd: {MspecReSharperId.Self(contextInfo)}");
 
-            if (errors > 0)
+            logger.Catch(() =>
             {
-                result = TestResult.Failed;
-            }
-            else if (specifications == successes)
-            {
-                result = TestResult.Success;
-            }
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
 
-            var task = context.GetContextTask(contextInfo);
-            var message = result == TestResult.Failed ? "One or more tests failed" : string.Empty;
+                currentTask = context.GetTask(contextInfo);
 
-            if (task == null)
-            {
-                return;
-            }
+                if (successes == specifications && errors == 0)
+                {
+                    currentTask.Passed();
+                }
 
-            currentTask = task;
-
-            Output(task, contextInfo.CapturedOutput);
-
-            logger.Catch(() => server.TestFinished(task, message, result));
+                currentTask.Output(contextInfo.CapturedOutput);
+                currentTask.Finished(errors > 0);
+            });
         }
 
         public void OnSpecificationStart(SpecificationInfo specificationInfo)
         {
-            var task = context.GetBehaviorTask(currentContext, specificationInfo) ??
-                       context.GetSpecificationTask(specificationInfo);
+            specifications++;
 
-            if (task == null)
+            logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(specificationInfo)}");
+
+            logger.Catch(() =>
             {
-                return;
-            }
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
 
-            currentTask = task;
+                currentTask = context.GetTask(currentContext, specificationInfo);
 
-            logger.Catch(() => server.TestStarting(task));
-
-            specifications += 1;
+                currentTask.Starting();
+            });
         }
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
         {
-            var task = context.GetBehaviorTask(currentContext, specificationInfo) ??
-                       context.GetSpecificationTask(specificationInfo);
+            logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(specificationInfo)}");
 
-            if (task == null)
+            logger.Catch(() =>
             {
-                return;
-            }
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
 
-            currentTask = task;
+                currentTask = context.GetTask(currentContext, specificationInfo);
 
-            Output(task, specificationInfo.CapturedOutput);
+                currentTask.Output(specificationInfo.CapturedOutput);
 
-            if (result.Status == Status.Failing)
-            {
-                errors++;
-                logger.Catch(() => server.TestException(task, GetExceptions(result.Exception)));
-                logger.Catch(() => server.TestFinished(task, GetExceptionMessage(result.Exception), TestResult.Failed));
-            }
-            else if (result.Status == Status.Passing)
-            {
-                successes++;
-                logger.Catch(() => server.TestFinished(task, string.Empty, TestResult.Success));
-            }
-            else if (result.Status == Status.NotImplemented)
-            {
-                Output(task, "Not implemented");
-                logger.Catch(() => server.TestFinished(task, "Not implemented", TestResult.Inconclusive));
-            }
-            else if (result.Status == Status.Ignored)
-            {
-                Output(task, "Ignored");
-                logger.Catch(() => server.TestFinished(task, string.Empty, TestResult.Ignored));
-            }
+                if (result.Status == Status.Failing)
+                {
+                    errors++;
+                    currentTask.Failed(result.Exception.GetExceptions(), result.Exception.GetExceptionMessage());
+                    currentTask.Finished();
+                }
+                else if (result.Status == Status.Passing)
+                {
+                    successes++;
+                    currentTask.Passed();
+                    currentTask.Finished();
+                }
+                else if (result.Status == Status.NotImplemented)
+                {
+                    currentTask.Skipped("Not implemented");
+                }
+                else if (result.Status == Status.Ignored)
+                {
+                    currentTask.Skipped("Ignored");
+                }
+            });
         }
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
             if (currentTask != null)
             {
-                logger.Catch(() => server.TestOutput(currentTask, "Fatal error: " + exceptionResult.Message, TestOutputType.STDOUT));
-                logger.Catch(() => server.TestException(currentTask, GetExceptions(exceptionResult)));
-                logger.Catch(() => server.TestFinished(currentTask, GetExceptionMessage(exceptionResult), TestResult.Failed));
+                logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
+
+                logger.Catch(() =>
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    currentTask.Output($"Fatal error: {exceptionResult.Message}");
+                    currentTask.Failed(exceptionResult.GetExceptions(), exceptionResult.GetExceptionMessage());
+                    currentTask.Finished(true);
+                });
             }
 
-            errors += 1;
-        }
-
-        private void Output(MspecRemoteTask task, string output)
-        {
-            if (!string.IsNullOrEmpty(output))
-            {
-                logger.Catch(() => server.TestOutput(task, output, TestOutputType.STDOUT));
-            }
-        }
-
-        private ExceptionInfo[] GetExceptions(ExceptionResult result)
-        {
-            return result.Flatten()
-                .Select(x => new ExceptionInfo(x.FullTypeName, x.Message, x.StackTrace))
-                .ToArray();
-        }
-
-        private string GetExceptionMessage(ExceptionResult result)
-        {
-            var exception = result.Flatten().FirstOrDefault();
-
-            return exception != null ? $"{exception.FullTypeName}: {exception.Message}" : string.Empty;
-        }
-
-        private string GetWorkingDirectory(string assemblyLocation)
-        {
-            return Path.GetDirectoryName(assemblyLocation);
+            errors++;
         }
     }
 }

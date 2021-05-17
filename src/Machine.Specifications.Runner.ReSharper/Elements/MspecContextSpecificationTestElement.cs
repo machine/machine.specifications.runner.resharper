@@ -3,25 +3,18 @@ using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Runner;
 using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class ContextSpecificationElement : FieldElement, IEquatable<ContextSpecificationElement>
+    public class MspecContextSpecificationTestElement : FieldElement, IEquatable<MspecContextSpecificationTestElement>
     {
-        public ContextSpecificationElement(
-            UnitTestElementId id,
-            IUnitTestElement parent,
-            IClrTypeName typeName,
-            MspecServiceProvider serviceProvider,
-            string fieldName,
-            bool isIgnored)
-            : base(id, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
+        public MspecContextSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
+            : base(services, id, typeName, fieldName, explicitReason)
         {
         }
 
-        public ContextElement Context => Parent as ContextElement;
+        public MspecContextTestElement Context => Parent as MspecContextTestElement;
 
         public override string Kind => "Specification";
 
@@ -37,25 +30,12 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return sequence;
         }
 
-        public bool Equals(ContextSpecificationElement other)
+        public bool Equals(MspecContextSpecificationTestElement other)
         {
             return other != null &&
                    Equals(Id, other.Id) &&
                    Equals(TypeName.FullName, other.TypeName.FullName) &&
                    Equals(FieldName, other.FieldName);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as ContextSpecificationElement);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode
-                .Of(Id)
-                .And(TypeName?.FullName)
-                .And(FieldName);
         }
     }
 }

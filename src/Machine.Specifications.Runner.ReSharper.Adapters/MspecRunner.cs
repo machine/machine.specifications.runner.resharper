@@ -1,27 +1,24 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Tasks;
-using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecRunner : LongLivedMarshalByRefObject, ITestDiscoverer, ITestExecutor
     {
-        private readonly ILogger logger;
+        private readonly ILogger logger = Logger.GetLogger<MspecRunner>();
 
-        private readonly CancellationTokenSource discoveryToken = new CancellationTokenSource();
+        private readonly CancellationTokenSource discoveryToken = new();
 
-        private readonly CancellationTokenSource executionToken = new CancellationTokenSource();
-
-        public MspecRunner(ILogger logger)
-        {
-            this.logger = logger;
-        }
+        private readonly CancellationTokenSource executionToken = new();
 
         public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
         {
+#if DEBUG
+            Debugger.Launch();
+#endif
+
             logger.Info("Exploration started");
             logger.Info("Exploration completed");
         }
@@ -33,27 +30,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void RunTests(TestRunRequest request, ITestDiscoverySink discoverySink, ITestExecutionSink executionSink)
         {
+#if DEBUG
+            Debugger.Launch();
+#endif
+
             logger.Info("Execution started");
 
-            var discovered = request.Selection
-                .Select(RemoteTaskBuilder.GetRemoteTask)
-                .ToArray();
+            var depot = new RemoteTaskDepot(request.Selection);
 
-            if (discovered.Any())
-            {
-                logger.Debug("Sending discovery results to server...");
-                discoverySink.TestsDiscovered(discovered);
-            }
+            var discoverer = new Discoverer(request, discoverySink, depot, discoveryToken.Token);
+            discoverer.Discover();
 
-            var context = GetContext(request);
-
-            var environment = new TestEnvironment(context.AssemblyLocation, request.Container.ShadowCopy != ShadowCopy.None);
-            var listener = new TestRunListener(executionSink, context, logger);
-
-            var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
-
-            var runner = new AppDomainRunner(listener, runOptions);
-            runner.RunAssembly(new AssemblyPath(environment.AssemblyPath));
+            var executor = new Executor(executionSink, request, depot, executionToken.Token);
+            executor.Execute();
 
             logger.Info("Execution completed");
         }
@@ -61,25 +50,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void AbortRun()
         {
             executionToken.Cancel();
-        }
-
-        private TestContext GetContext(TestRunRequest request)
-        {
-            var context = new TestContext(request.Container.Location);
-
-            foreach (var task in request.Selection.OfType<MspecRemoteTask>())
-            {
-                if (task is MspecContextRemoteTask contextTask)
-                {
-                    context.AddContext(contextTask.TestId, task);
-                }
-                else
-                {
-                    context.AddSpecification(task.TestId, task);
-                }
-            }
-
-            return context;
         }
     }
 }

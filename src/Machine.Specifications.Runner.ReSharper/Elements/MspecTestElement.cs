@@ -13,22 +13,20 @@ using JetBrains.Util;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public abstract class Element : IUnitTestElement
+    public abstract class MspecTestElement : IUnitTestElement
     {
         private IUnitTestElement parent;
 
-        protected Element(
-            UnitTestElementId id,
-            IUnitTestElement parent,
-            IClrTypeName typeName,
-            MspecServiceProvider serviceProvider,
-            bool isIgnored)
+        private string shortName;
+
+        private IClrTypeName typeName;
+
+        protected MspecTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string explicitReason)
         {
+            Services = services;
             Id = id;
             TypeName = typeName;
-            ServiceProvider = serviceProvider;
-            Parent = parent;
-            ExplicitReason = isIgnored ? "Ignored" : string.Empty;
+            ExplicitReason = explicitReason;
         }
 
         public abstract string Kind { get; }
@@ -39,19 +37,17 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public UnitTestElementId Id { get; }
 
-        public MspecServiceProvider ServiceProvider { get; }
+        public MspecServiceProvider Services { get; }
 
         public IUnitTestElement Parent
         {
             get => parent;
             set
             {
-                if (Equals(parent, value))
+                if (Equals(parent, value) || Equals(this, value))
                 {
                     return;
                 }
-
-                var oldParent = parent;
 
                 using (UT.WriteLock())
                 {
@@ -60,20 +56,45 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
                     parent?.Children.Add(this);
                 }
 
-                ServiceProvider.ElementManager.FireElementChanged(oldParent);
-                ServiceProvider.ElementManager.FireElementChanged(value);
+                Services.ElementManager.FireElementChanged(this);
             }
         }
 
         public IBindableCollection<IUnitTestElement> Children { get; } = new BindableSetCollectionWithoutIndexTracking<IUnitTestElement>(UT.Locks.ReadLock, UnitTestElement.EqualityComparer);
 
-        public abstract string ShortName { get; }
+        public string ShortName
+        {
+            get => shortName;
+            protected set
+            {
+                if (value == shortName)
+                {
+                    return;
+                }
+
+                shortName = value;
+                Services.ElementManager.FireElementChanged(this);
+            }
+        }
 
         public bool Explicit => !string.IsNullOrEmpty(ExplicitReason);
 
         public UnitTestElementOrigin Origin { get; set; }
 
-        public IClrTypeName TypeName { get; }
+        public IClrTypeName TypeName
+        {
+            get => typeName;
+            private set
+            {
+                if (Equals(value, typeName))
+                {
+                    return;
+                }
+
+                typeName = value;
+                Services.ElementManager.FireElementChanged(this);
+            }
+        }
 
         public UnitTestElementNamespace GetNamespace()
         {
@@ -103,29 +124,39 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
                 : GetPresentation();
         }
 
-        public abstract IDeclaredElement GetDeclaredElement();
+        public virtual IDeclaredElement GetDeclaredElement()
+        {
+            return Services.CachingService.GetTypeElement(Id.Project, Id.TargetFrameworkId, TypeName, true, true);
+        }
 
         public IEnumerable<IProjectFile> GetProjectFiles()
         {
-            return GetDeclaredElement()?
+            var declaredElement = GetDeclaredElement();
+
+            if (declaredElement == null)
+            {
+                return EmptyList<IProjectFile>.InstanceList;
+            }
+
+            return declaredElement
                 .GetSourceFiles()
                 .SelectNotNull(x => x.ToProjectFile())
-                .ToList();
+                .ToArray();
         }
 
         public virtual IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            return EmptyArray<UnitTestTask>.Instance;
+            return EmptyList<UnitTestTask>.Instance;
         }
 
         public IUnitTestRunStrategy GetRunStrategy(IHostProvider hostProvider)
         {
-            return ServiceProvider.GetRunStrategy(this);
+            return Services.GetRunStrategy(this);
         }
 
         protected ITypeElement GetDeclaredType()
         {
-            return ServiceProvider.CachingService.GetTypeElement(Id.Project, Id.TargetFrameworkId, TypeName, true, true);
+            return Services.CachingService.GetTypeElement(Id.Project, Id.TargetFrameworkId, TypeName, true, true);
         }
 
         public virtual IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
@@ -137,6 +168,26 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
                     x.file.GetSourceFile().ToProjectFile(),
                     x.declaration.GetNameDocumentRange().TextRange,
                     x.declaration.GetDocumentRange().TextRange));
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as IUnitTestElement);
+        }
+
+        public bool Equals(IUnitTestElement other)
+        {
+            return other != null && other.Id.Equals(Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"{GetType().Name} - {Id}";
         }
     }
 }

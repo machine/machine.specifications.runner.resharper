@@ -16,8 +16,6 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
             this.classType = classType;
         }
 
-        public string ShortName => type.Name;
-
         public string FullyQualifiedName => type.FullyQualifiedName;
 
         public bool IsAbstract => type.IsAbstract;

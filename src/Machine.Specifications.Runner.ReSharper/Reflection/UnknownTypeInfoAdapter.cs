@@ -7,8 +7,6 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
     {
         public static readonly UnknownTypeInfoAdapter Default = new();
 
-        public string ShortName => string.Empty;
-
         public string FullyQualifiedName => string.Empty;
 
         public bool IsAbstract => false;

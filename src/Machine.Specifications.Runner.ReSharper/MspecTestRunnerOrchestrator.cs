@@ -22,13 +22,11 @@ namespace Machine.Specifications.Runner.ReSharper
         public TestAdapterLoader GetTestAdapterLoader(ITestRunnerContext ctx)
         {
             var framework = ctx.RuntimeEnvironment.TargetFrameworkId.IsNetCoreSdk()
-                ? "netstandard2.0"
+                ? "netstandard20"
                 : "net40";
 
-            var suffix = framework.Replace(".", string.Empty);
-
-            var adapters = MspecTestRunnerInfo.Root.Combine($"{Namespace}.Adapters.{suffix}.dll");
-            var tasks = MspecTestRunnerInfo.Root.Combine($"{Namespace}.Tasks.{suffix}.dll");
+            var adapters = MspecTestRunnerInfo.Root.Combine($"{Namespace}.Adapters.{framework}.dll");
+            var tasks = MspecTestRunnerInfo.Root.Combine($"{Namespace}.Tasks.{framework}.dll");
 
             var type = new TypeInfo($"{Namespace}.Adapters.MspecRunner", adapters.FullPath);
 

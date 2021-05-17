@@ -27,10 +27,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             }
         }
 
-        public void Abort()
-        {
-        }
-
         public IReadOnlyList<string> GetContextNames()
         {
             lock (sync)

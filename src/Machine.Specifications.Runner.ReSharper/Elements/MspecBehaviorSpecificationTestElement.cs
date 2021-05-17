@@ -4,25 +4,18 @@ using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Runner;
 using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class BehaviorSpecificationElement : FieldElement, IEquatable<BehaviorSpecificationElement>
+    public class MspecBehaviorSpecificationTestElement : FieldElement, IEquatable<MspecBehaviorSpecificationTestElement>
     {
-        public BehaviorSpecificationElement(
-            UnitTestElementId id,
-            IUnitTestElement parent,
-            IClrTypeName typeName,
-            MspecServiceProvider serviceProvider,
-            string fieldName,
-            bool isIgnored)
-            : base(id, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit)
+        public MspecBehaviorSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
+            : base(services, id, typeName, fieldName, explicitReason)
         {
         }
 
-        public BehaviorElement Behavior => Parent as BehaviorElement;
+        public MspecBehaviorTestElement Behavior => Parent as MspecBehaviorTestElement;
 
         public override string Kind => "Behavior Specification";
 
@@ -52,25 +45,12 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return sequence;
         }
 
-        public bool Equals(BehaviorSpecificationElement other)
+        public bool Equals(MspecBehaviorSpecificationTestElement other)
         {
             return other != null &&
                    Equals(Id, other.Id) &&
                    Equals(TypeName, other.TypeName) &&
                    Equals(FieldName, other.FieldName);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as BehaviorSpecificationElement);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode
-                .Of(Id)
-                .And(TypeName?.FullName)
-                .And(FieldName);
         }
     }
 }

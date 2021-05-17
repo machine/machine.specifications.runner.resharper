@@ -9,14 +9,14 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 namespace Machine.Specifications.Runner.ReSharper.Mappings
 {
     [SolutionComponent]
-    public class MspecContextMapping : MspecElementMapping<ContextElement, MspecContextRemoteTask>
+    public class MspecContextMapping : MspecElementMapping<MspecContextTestElement, MspecContextRemoteTask>
     {
-        public MspecContextMapping(MspecServiceProvider serviceProvider)
-            : base(serviceProvider)
+        public MspecContextMapping(MspecServiceProvider services)
+            : base(services)
         {
         }
 
-        protected override MspecContextRemoteTask ToRemoteTask(ContextElement element, ITestRunnerExecutionContext context)
+        protected override MspecContextRemoteTask ToRemoteTask(MspecContextTestElement element, ITestRunnerExecutionContext context)
         {
             var task = MspecContextRemoteTask.ToClient(
                 element.Id.Id,
@@ -29,7 +29,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return task;
         }
 
-        protected override ContextElement ToElement(MspecContextRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecContextTestElement ToElement(MspecContextRemoteTask task, ITestRunnerDiscoveryContext context)
         {
             var factory = GetFactory(context);
 
@@ -38,8 +38,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 new ClrTypeName(task.ContextTypeName),
                 task.Subject,
                 task.Tags,
-                false,
-                out _);
+                null);
         }
     }
 }

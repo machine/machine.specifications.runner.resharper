@@ -98,7 +98,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
             server.TaskStarting(task);
 
-            specifications += 1;
+            specifications++;
         }
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
@@ -140,7 +140,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             server.TaskException(null, GetExceptions(exceptionResult));
             server.TaskFinished(null, GetExceptionMessage(exceptionResult), TaskResult.Exception);
 
-            errors += 1;
+            errors++;
         }
 
         private void Output(RemoteTask task, string output)

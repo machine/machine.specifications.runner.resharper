@@ -8,14 +8,14 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 namespace Machine.Specifications.Runner.ReSharper.Mappings
 {
     [SolutionComponent]
-    public class MspecBehaviorSpecificationMapping : MspecElementMapping<BehaviorSpecificationElement, MspecBehaviorSpecificationRemoteTask>
+    public class MspecBehaviorSpecificationMapping : MspecElementMapping<MspecBehaviorSpecificationTestElement, MspecBehaviorSpecificationRemoteTask>
     {
-        public MspecBehaviorSpecificationMapping(MspecServiceProvider serviceProvider)
-            : base(serviceProvider)
+        public MspecBehaviorSpecificationMapping(MspecServiceProvider services)
+            : base(services)
         {
         }
 
-        protected override MspecBehaviorSpecificationRemoteTask ToRemoteTask(BehaviorSpecificationElement element, ITestRunnerExecutionContext context)
+        protected override MspecBehaviorSpecificationRemoteTask ToRemoteTask(MspecBehaviorSpecificationTestElement element, ITestRunnerExecutionContext context)
         {
             var task = MspecBehaviorSpecificationRemoteTask.ToClient(
                 element.Id.Id,
@@ -29,7 +29,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return task;
         }
 
-        protected override BehaviorSpecificationElement ToElement(MspecBehaviorSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecBehaviorSpecificationTestElement ToElement(MspecBehaviorSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
         {
             if (task.ContextTypeName == null)
             {
@@ -45,11 +45,11 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 return null;
             }
 
-            var contextId = ServiceProvider.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
-            var behaviorId = ServiceProvider.CreateId(context.Project, context.TargetFrameworkId, $"{task.ContextTypeName}::{task.BehaviorFieldName}");
+            var contextId = Services.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
+            var behaviorId = Services.CreateId(context.Project, context.TargetFrameworkId, $"{task.ContextTypeName}::{task.BehaviorFieldName}");
 
-            var contextElement = ServiceProvider.ElementManager.GetElementById<ContextElement>(contextId);
-            var behavior = ServiceProvider.ElementManager.GetElementById<BehaviorElement>(behaviorId);
+            var contextElement = Services.ElementManager.GetElementById<MspecContextTestElement>(contextId);
+            var behavior = Services.ElementManager.GetElementById<MspecBehaviorTestElement>(behaviorId);
 
             if (contextElement == null)
             {
@@ -70,7 +70,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 behavior,
                 new ClrTypeName(task.ContextTypeName),
                 task.SpecificationFieldName,
-                false);
+                null);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Threading;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
 using Machine.Specifications.Runner.ReSharper.Reflection;
 using Machine.Specifications.Runner.ReSharper.Runner;
@@ -14,33 +13,30 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private readonly IProject project;
 
-        private readonly UnitTestElementFactory factory;
-
         private readonly IUnitTestElementsObserver observer;
 
-        public MspecTestMetadataExplorer(IProject project, UnitTestElementFactory factory, IUnitTestElementsObserver observer)
+        private readonly UnitTestElementFactory factory;
+
+        public MspecTestMetadataExplorer(IProject project, IUnitTestElementsObserver observer, UnitTestElementFactory factory)
         {
             this.project = project;
-            this.factory = factory;
             this.observer = observer;
+            this.factory = factory;
         }
 
         public void ExploreAssembly(IMetadataAssembly assembly, CancellationToken token)
         {
-            using (ReadLockCookie.Create())
+            var types = assembly.GetTypes()
+                .Flatten(x => x.GetNestedTypes());
+
+            foreach (var type in types)
             {
-                var types = assembly.GetTypes()
-                    .Flatten(x => x.GetNestedTypes());
-
-                foreach (var type in types)
+                if (token.IsCancellationRequested)
                 {
-                    if (token.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
-                    ExploreType(type.AsTypeInfo());
+                    break;
                 }
+
+                ExploreType(type.AsTypeInfo());
             }
         }
 
@@ -61,8 +57,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 new ClrTypeName(type.FullyQualifiedName),
                 type.GetSubject(),
                 type.GetTags().ToArray(),
-                type.IsIgnored(),
-                out _);
+                type.GetIgnoreReason());
 
             observer.OnUnitTestElement(contextElement);
 
@@ -91,7 +86,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 contextElement,
                 new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
-                field.IsIgnored());
+                field.GetIgnoreReason());
 
             observer.OnUnitTestElement(specificationElement);
         }
@@ -106,7 +101,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 contextElement,
                 new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
-                field.IsIgnored());
+                field.GetIgnoreReason());
 
             observer.OnUnitTestElement(behaviorElement);
 
@@ -129,7 +124,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 behaviorElement,
                 new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
-                field.IsIgnored());
+                field.GetIgnoreReason());
 
             observer.OnUnitTestElement(specificationElement);
         }

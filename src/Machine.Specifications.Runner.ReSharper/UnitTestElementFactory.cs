@@ -10,7 +10,7 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class UnitTestElementFactory
     {
-        private readonly MspecServiceProvider serviceProvider;
+        private readonly MspecServiceProvider services;
 
         private readonly TargetFrameworkId targetFrameworkId;
 
@@ -21,99 +21,98 @@ namespace Machine.Specifications.Runner.ReSharper
         private readonly Dictionary<UnitTestElementId, IUnitTestElement> elements = new();
 
         public UnitTestElementFactory(
-            MspecServiceProvider serviceProvider,
+            MspecServiceProvider services,
             TargetFrameworkId targetFrameworkId,
             Action<IUnitTestElement> elementChangedAction,
             UnitTestElementOrigin origin)
         {
-            this.serviceProvider = serviceProvider;
+            this.services = services;
             this.targetFrameworkId = targetFrameworkId;
             this.elementChangedAction = elementChangedAction;
             this.origin = origin;
         }
 
-        public ContextElement GetOrCreateContext(
+        public MspecContextTestElement GetOrCreateContext(
             IProject project,
             IClrTypeName typeName,
             string subject,
             string[] tags,
-            bool ignored,
-            out bool tagsChanged)
+            string ignoreReason)
         {
             lock (elements)
             {
                 var element = GetOrCreateElement(typeName.FullName, project, null, null, x =>
-                    new ContextElement(x, typeName, serviceProvider, subject, ignored));
+                    new MspecContextTestElement(services, x, typeName, subject, ignoreReason));
 
-                tagsChanged = UpdateCategories(element, tags);
+                UpdateCategories(element, tags);
 
                 return element;
             }
         }
 
-        public BehaviorElement GetOrCreateBehavior(
+        public MspecBehaviorTestElement GetOrCreateBehavior(
             IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
-            bool ignored)
+            string ignoreReason)
         {
             lock (elements)
             {
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new BehaviorElement(x, parent, typeName, serviceProvider, fieldName, ignored));
+                    new MspecBehaviorTestElement(services, x, typeName, fieldName, ignoreReason ?? parent.ExplicitReason));
             }
         }
 
-        public ContextSpecificationElement GetOrCreateContextSpecification(
+        public MspecContextSpecificationTestElement GetOrCreateContextSpecification(
             IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
-            bool ignored)
+            string ignoreReason)
         {
             lock (elements)
             {
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new ContextSpecificationElement(x, parent, typeName, serviceProvider, fieldName, ignored || parent.Explicit));
+                    new MspecContextSpecificationTestElement(services, x, typeName, fieldName, ignoreReason ?? parent.ExplicitReason));
             }
         }
 
-        public BehaviorSpecificationElement GetOrCreateBehaviorSpecification(
+        public MspecBehaviorSpecificationTestElement GetOrCreateBehaviorSpecification(
             IProject project,
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
-            bool isIgnored)
+            string ignoreReason)
         {
             lock (elements)
             {
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new BehaviorSpecificationElement(x, parent, typeName, serviceProvider, fieldName, isIgnored || parent.Explicit));
+                    new MspecBehaviorSpecificationTestElement(services, x, typeName, fieldName, ignoreReason ?? parent.ExplicitReason));
             }
         }
 
         private T GetElementById<T>(UnitTestElementId id)
-            where T : Element
+            where T : MspecTestElement
         {
             if (elements.TryGetValue(id, out var element))
             {
                 return element as T;
             }
 
-            return serviceProvider.ElementManager.GetElementById<T>(id);
+            return services.ElementManager.GetElementById<T>(id);
         }
 
         private T GetOrCreateElement<T>(string id, IProject project, IUnitTestElement parent, ISet<UnitTestElementCategory> categories, Func<UnitTestElementId, T> factory)
-            where T : Element
+            where T : MspecTestElement
         {
-            var elementId = serviceProvider.CreateId(project, targetFrameworkId, id);
+            var elementId = services.CreateId(project, targetFrameworkId, id);
 
             var element = GetElementById<T>(elementId) ?? factory(elementId);
 
@@ -125,18 +124,26 @@ namespace Machine.Specifications.Runner.ReSharper
             return element;
         }
 
-        private bool UpdateCategories(Element element, string[] categories)
+        private void UpdateCategories(MspecTestElement element, string[] categories)
+        {
+            if (UpdateOwnCategories(element, categories))
+            {
+                if (elementChangedAction != null)
+                {
+                    elementChangedAction(element);
+                }
+                else
+                {
+                    element.Services.ElementManager.FireElementChanged(element);
+                }
+            }
+        }
+
+        private bool UpdateOwnCategories(MspecTestElement element, string[] categories)
         {
             using (UT.WriteLock())
             {
-                var result = element.UpdateOwnCategoriesFrom(categories, origin);
-
-                if (result)
-                {
-                    elementChangedAction?.Invoke(element);
-                }
-
-                return result;
+                return element.UpdateOwnCategoriesFrom(categories, origin);
             }
         }
     }

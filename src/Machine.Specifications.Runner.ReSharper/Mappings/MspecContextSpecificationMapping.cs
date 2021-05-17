@@ -8,14 +8,14 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 namespace Machine.Specifications.Runner.ReSharper.Mappings
 {
     [SolutionComponent]
-    public class MspecSpecificationMapping : MspecElementMapping<ContextSpecificationElement, MspecContextSpecificationRemoteTask>
+    public class MspecContextSpecificationMapping : MspecElementMapping<MspecContextSpecificationTestElement, MspecContextSpecificationRemoteTask>
     {
-        public MspecSpecificationMapping(MspecServiceProvider serviceProvider)
-            : base(serviceProvider)
+        public MspecContextSpecificationMapping(MspecServiceProvider services)
+            : base(services)
         {
         }
 
-        protected override MspecContextSpecificationRemoteTask ToRemoteTask(ContextSpecificationElement element, ITestRunnerExecutionContext context)
+        protected override MspecContextSpecificationRemoteTask ToRemoteTask(MspecContextSpecificationTestElement element, ITestRunnerExecutionContext context)
         {
             var task = MspecContextSpecificationRemoteTask.ToClient(
                 element.Id.Id,
@@ -28,33 +28,34 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return task;
         }
 
-        protected override ContextSpecificationElement ToElement(MspecContextSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecContextSpecificationTestElement ToElement(MspecContextSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
         {
             if (task.ContextTypeName == null)
             {
-                context.Logger.Warn("Cannot create element for ContextSpecificationElement '" + task.TestId + "': ContextTypeName is missing");
+                context.Logger.Warn($"Cannot create element for MspecContextSpecificationTestElement '{task.TestId}': ContextTypeName is missing");
 
-                return null;
-            }
-
-            var id = ServiceProvider.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
-
-            var contextElement = ServiceProvider.ElementManager.GetElementById<ContextElement>(id);
-
-            if (contextElement == null)
-            {
-                context.Logger.Warn("Cannot create element for ContextSpecificationElement '" + task.TestId + "': Context is missing");
                 return null;
             }
 
             var factory = GetFactory(context);
+
+            var id = Services.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
+
+            var contextElement = Services.ElementManager.GetElementById<MspecContextTestElement>(id);
+
+            if (contextElement == null)
+            {
+                context.Logger.Warn($"Cannot create element for ContextSpecificationElement '{task.TestId}': Context is missing");
+
+                return null;
+            }
 
             return factory.GetOrCreateContextSpecification(
                 context.Project,
                 contextElement,
                 new ClrTypeName(task.ContextTypeName),
                 task.SpecificationFieldName,
-                false);
+                null);
         }
     }
 }

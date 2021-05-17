@@ -8,14 +8,14 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 namespace Machine.Specifications.Runner.ReSharper.Mappings
 {
     [SolutionComponent]
-    public class MspecBehaviorMapping : MspecElementMapping<BehaviorElement, MspecBehaviorRemoteTask>
+    public class MspecBehaviorMapping : MspecElementMapping<MspecBehaviorTestElement, MspecBehaviorRemoteTask>
     {
-        public MspecBehaviorMapping(MspecServiceProvider serviceProvider)
-            : base(serviceProvider)
+        public MspecBehaviorMapping(MspecServiceProvider services)
+            : base(services)
         {
         }
 
-        protected override MspecBehaviorRemoteTask ToRemoteTask(BehaviorElement element, ITestRunnerExecutionContext context)
+        protected override MspecBehaviorRemoteTask ToRemoteTask(MspecBehaviorTestElement element, ITestRunnerExecutionContext context)
         {
             var task = MspecBehaviorRemoteTask.ToClient(
                 element.Id.Id,
@@ -28,7 +28,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return task;
         }
 
-        protected override BehaviorElement ToElement(MspecBehaviorRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecBehaviorTestElement ToElement(MspecBehaviorRemoteTask task, ITestRunnerDiscoveryContext context)
         {
             if (task.ContextTypeName == null)
             {
@@ -37,8 +37,8 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 return null;
             }
 
-            var contextId = ServiceProvider.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
-            var contextElement = ServiceProvider.ElementManager.GetElementById<ContextElement>(contextId);
+            var contextId = Services.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
+            var contextElement = Services.ElementManager.GetElementById<MspecContextTestElement>(contextId);
 
             if (contextElement == null)
             {
@@ -53,7 +53,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 contextElement,
                 new ClrTypeName(task.ContextTypeName),
                 task.BehaviorFieldName,
-                false);
+                null);
         }
     }
 }

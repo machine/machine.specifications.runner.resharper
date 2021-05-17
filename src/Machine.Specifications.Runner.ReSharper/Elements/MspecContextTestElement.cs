@@ -4,26 +4,19 @@ using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Runner;
 using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class ContextElement : Element, IEquatable<ContextElement>
+    public class MspecContextTestElement : MspecTestElement, IEquatable<MspecContextTestElement>
     {
-        public ContextElement(
-            UnitTestElementId id,
-            IClrTypeName typeName,
-            MspecServiceProvider serviceProvider,
-            string subject,
-            bool isIgnored)
-            : base(id, null, typeName, serviceProvider, isIgnored)
+        public MspecContextTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string subject, string explicitReason)
+            : base(services, id, typeName, explicitReason)
         {
             Subject = subject;
+            ShortName = typeName.ShortName.ToFormat();
         }
-
-        public override string ShortName => Kind + GetPresentation();
 
         public override string Kind => "Context";
 
@@ -56,23 +49,11 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return GetDeclaredType();
         }
 
-        public bool Equals(ContextElement other)
+        public bool Equals(MspecContextTestElement other)
         {
             return other != null &&
                    Equals(Id, other.Id) &&
                    Equals(TypeName, other.TypeName);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as ContextElement);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode
-                .Of(Id)
-                .And(TypeName);
         }
     }
 }

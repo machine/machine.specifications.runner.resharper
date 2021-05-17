@@ -15,19 +15,19 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecTestExplorerFromMetadata : UnitTestExplorerFrom.Metadata
     {
-        private readonly MspecServiceProvider serviceProvider;
+        private readonly MspecServiceProvider services;
 
         private readonly ILogger logger;
 
         public MspecTestExplorerFromMetadata(
-            MspecServiceProvider serviceProvider,
+            MspecServiceProvider services,
             AssemblyToAssemblyReferencesResolveManager resolveManager,
             ResolveContextManager resolveContextManager,
             NuGetInstalledPackageChecker installedPackageChecker,
             ILogger logger)
-            : base(serviceProvider.Provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
+            : base(services.Provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
         {
-            this.serviceProvider = serviceProvider;
+            this.services = services;
             this.logger = logger;
         }
 
@@ -48,11 +48,13 @@ namespace Machine.Specifications.Runner.ReSharper
             IUnitTestElementsObserver observer, 
             CancellationToken token)
         {
-            var factory = new UnitTestElementFactory(serviceProvider, observer.TargetFrameworkId, observer.OnUnitTestElementChanged, UnitTestElementOrigin.Artifact);
-            var explorer = new MspecTestMetadataExplorer(project, factory, observer);
+            MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, logger, token, assembly =>
+            {
+                var factory = new UnitTestElementFactory(services, observer.TargetFrameworkId, observer.OnUnitTestElementChanged, UnitTestElementOrigin.Artifact);
+                var explorer = new MspecTestMetadataExplorer(project, observer, factory);
 
-            MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, logger, token,
-                assembly => explorer.ExploreAssembly(assembly, token));
+                explorer.ExploreAssembly(assembly, token);
+            });
         }
     }
 }

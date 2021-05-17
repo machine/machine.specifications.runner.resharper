@@ -102,8 +102,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 name,
                 type.GetSubject(),
                 type.GetTags().ToArray(),
-                type.IsIgnored(),
-                out _);
+                type.GetIgnoreReason());
 
             recentContexts[name] = context;
 
@@ -170,7 +169,7 @@ namespace Machine.Specifications.Runner.ReSharper
                     context,
                     containingType,
                     field.ShortName,
-                    field.IsIgnored());
+                    field.GetIgnoreReason());
 
                 OnUnitTestElement(specification, declaration);
             }
@@ -188,7 +187,7 @@ namespace Machine.Specifications.Runner.ReSharper
                     context,
                     containingType,
                     field.ShortName,
-                    field.IsIgnored());
+                    field.GetIgnoreReason());
 
                 OnUnitTestElement(behavior, declaration);
 
@@ -204,7 +203,7 @@ namespace Machine.Specifications.Runner.ReSharper
                             behavior,
                             containingType,
                             specField.ShortName,
-                            specField.IsIgnored());
+                            specField.GetIgnoreReason());
 
                         OnUnitTestElement(specification, declaration);
                     }
@@ -226,7 +225,14 @@ namespace Machine.Specifications.Runner.ReSharper
 
             var disposition = new UnitTestElementDisposition(element, project, textRange, containingRange);
 
-            observer.OnUnitTestElementDisposition(disposition);
+            if (textRange.IsValid && containingRange.IsValid)
+            {
+                observer.OnUnitTestElementDisposition(disposition);
+            }
+            else
+            {
+                observer.OnUnitTestElement(element);
+            }
         }
     }
 }
