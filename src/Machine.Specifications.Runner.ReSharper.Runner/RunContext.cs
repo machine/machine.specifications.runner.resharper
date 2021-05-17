@@ -8,7 +8,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     public class RunContext
     {
-        private readonly Dictionary<string, RemoteTask> remoteTasks = new();
+        private readonly Dictionary<string, MspecRunnerTask> remoteTasks = new();
 
         private readonly List<string> contextNames = new();
 
@@ -19,7 +19,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             var tasks = node.Children
                 .Flatten(x => x.Children)
                 .Select(x => x.RemoteTask)
-                .OfType<IKeyedTask>();
+                .OfType<MspecRunnerTask>()
+                .Where(x => !string.IsNullOrEmpty(x.GetKey()));
 
             foreach (var task in tasks)
             {
@@ -35,28 +36,28 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             }
         }
 
-        public RemoteTask GetContextTask(ContextInfo context)
+        public MspecRunnerTask GetContextTask(ContextInfo context)
         {
             var key = context.TypeName;
 
             return GetRemoteTask(key);
         }
 
-        public RemoteTask GetSpecificationTask(SpecificationInfo specification)
+        public MspecRunnerTask GetSpecificationTask(SpecificationInfo specification)
         {
             var key = $"{specification.ContainingType}.{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        public RemoteTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
+        public MspecRunnerTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
         {
             var key = $"{context.TypeName}.{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        private void Add(IKeyedTask task)
+        private void Add(MspecRunnerTask task)
         {
             var key = task.GetKey();
             var remote = task.AsRemoteTask();
@@ -72,11 +73,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             }
         }
 
-        private RemoteTask GetRemoteTask(string key)
+        private MspecRunnerTask GetRemoteTask(string key)
         {
             lock (sync)
             {
-                remoteTasks.TryGetValue(key, out RemoteTask task);
+                remoteTasks.TryGetValue(key, out MspecRunnerTask task);
 
                 return task;
             }

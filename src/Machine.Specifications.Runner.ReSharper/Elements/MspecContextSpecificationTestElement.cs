@@ -23,7 +23,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             var sequence = Context.GetTaskSequence(explicitElements, run);
 
             var task = run.GetRemoteTaskForElement<MspecContextSpecificationRunnerTask>(this) ??
-                       new MspecContextSpecificationRunnerTask(Id.ProjectId, Context.TypeName.FullName, FieldName);
+                       new MspecContextSpecificationRunnerTask(Id.ProjectId, Context.TypeName.FullName, FieldName, ExplicitReason);
 
             sequence.Add(new UnitTestTask(this, task));
 

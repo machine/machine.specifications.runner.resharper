@@ -38,7 +38,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             var sequence = Behavior.GetTaskSequence(explicitElements, run);
 
             var behaviorSpecificationTask = run.GetRemoteTaskForElement<MspecBehaviorSpecificationRunnerTask>(this) ??
-                                            new MspecBehaviorSpecificationRunnerTask(Id.ProjectId, Behavior.Context.TypeName.FullName, Behavior.FieldName, FieldName);
+                                            new MspecBehaviorSpecificationRunnerTask(Id.ProjectId, Behavior.Context.TypeName.FullName, Behavior.FieldName, FieldName, ExplicitReason);
 
             sequence.Add(new UnitTestTask(this, behaviorSpecificationTask));
 

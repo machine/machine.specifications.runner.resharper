@@ -25,7 +25,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
             var task = run.GetRemoteTaskForElement<MspecContextRunnerTask>(this) ??
-                       new MspecContextRunnerTask(Id.ProjectId, TypeName.FullName);
+                       new MspecContextRunnerTask(Id.ProjectId, TypeName.FullName, ExplicitReason);
 
             return new List<UnitTestTask>
             {

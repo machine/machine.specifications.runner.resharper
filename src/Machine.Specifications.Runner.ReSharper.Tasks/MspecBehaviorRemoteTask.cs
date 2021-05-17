@@ -5,13 +5,13 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
     [Serializable]
     public class MspecBehaviorRemoteTask : MspecRemoteTask
     {
-        public MspecBehaviorRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
-            : base(testId, runAllChildren, runExplicitly)
+        public MspecBehaviorRemoteTask(string testId, string ignoreReason, bool runAllChildren, bool runExplicitly)
+            : base(testId, ignoreReason, runAllChildren, runExplicitly)
         {
         }
 
-        public MspecBehaviorRemoteTask(string contextTypeName, string behaviorFieldName)
-            : base($"{contextTypeName}::{behaviorFieldName}")
+        public MspecBehaviorRemoteTask(string contextTypeName, string behaviorFieldName, string ignoreReason)
+            : base($"{contextTypeName}::{behaviorFieldName}", ignoreReason)
         {
             ContextTypeName = contextTypeName;
             BehaviorFieldName = behaviorFieldName;
@@ -21,14 +21,14 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public string BehaviorFieldName { get; set; }
 
-        public static MspecBehaviorRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
+        public static MspecBehaviorRemoteTask ToClient(string testId, string ignoreReason, bool runAllChildren, bool runExplicitly)
         {
-            return new(testId, runAllChildren, runExplicitly);
+            return new(testId, ignoreReason, runAllChildren, runExplicitly);
         }
 
-        public static MspecBehaviorRemoteTask ToServer(string contextTypeName, string behaviorFieldName)
+        public static MspecBehaviorRemoteTask ToServer(string contextTypeName, string behaviorFieldName, string ignoreReason)
         {
-            return new(contextTypeName, behaviorFieldName);
+            return new(contextTypeName, behaviorFieldName, ignoreReason);
         }
     }
 }

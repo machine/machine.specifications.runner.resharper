@@ -5,10 +5,10 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecContextSpecificationRunnerTask : RemoteTask, IEquatable<MspecContextSpecificationRunnerTask>, IKeyedTask
+    public class MspecContextSpecificationRunnerTask : MspecRunnerTask, IEquatable<MspecContextSpecificationRunnerTask>
     {
-        public MspecContextSpecificationRunnerTask(string projectId, string contextTypeName, string specificationFieldName)
-            : base(MspecTaskRunner.RunnerId)
+        public MspecContextSpecificationRunnerTask(string projectId, string contextTypeName, string specificationFieldName, string ignoreReason)
+            : base(ignoreReason)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
@@ -66,14 +66,9 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
                 .And(SpecificationFieldName);
         }
 
-        public string GetKey()
+        public override string GetKey()
         {
             return $"{ContextTypeName}.{SpecificationFieldName}";
-        }
-
-        public RemoteTask AsRemoteTask()
-        {
-            return this;
         }
     }
 }

@@ -38,7 +38,7 @@ public class build
         {
             Run("dotnet", "build " +
                           "--no-restore " +
-                          "--configuration Release " +
+                          "--configuration Debug " +
                           " /p:HostFullIdentifier= " +
                           $"/p:Version={version.SemVer} " +
                           $"/p:AssemblyVersion={version.AssemblySemVer} " +
@@ -48,12 +48,12 @@ public class build
 
         Target("test", DependsOn("build"), () =>
         {
-            Run("dotnet", "test --configuration Release --no-restore --no-build");
+            Run("dotnet", "test --configuration Debug --no-restore --no-build");
         });
 
         Target("package", DependsOn("build", "test"), () =>
         {
-            Run("dotnet", $"pack --configuration Release --no-restore --no-build --output artifacts /p:Version={version.SemVer}");
+            Run("dotnet", $"pack --configuration Debug --no-restore --no-build --output artifacts /p:Version={version.SemVer}");
         });
 
         Target("zip", DependsOn("package"), () =>

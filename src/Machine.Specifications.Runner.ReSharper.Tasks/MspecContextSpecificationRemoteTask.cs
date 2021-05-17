@@ -5,8 +5,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
     [Serializable]
     public class MspecContextSpecificationRemoteTask : MspecRemoteTask
     {
-        public MspecContextSpecificationRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
-            : base(testId, runAllChildren, runExplicitly)
+        public MspecContextSpecificationRemoteTask(string testId, string ignoreReason, bool runAllChildren, bool runExplicitly)
+            : base(testId, ignoreReason, runAllChildren, runExplicitly)
         {
         }
 
@@ -15,8 +15,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             string specificationFieldName,
             string displayName,
             string subject,
-            string[] tags)
-            : base(contextTypeName + "::" + specificationFieldName)
+            string[] tags,
+            string ignoreReason)
+            : base(contextTypeName + "::" + specificationFieldName, ignoreReason)
         {
             ContextTypeName = contextTypeName;
             SpecificationFieldName = specificationFieldName;
@@ -37,10 +38,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public static MspecContextSpecificationRemoteTask ToClient(
             string testId,
+            string ignoreReason,
             bool runAllChildren,
             bool runExplicitly)
         {
-            return new(testId, runAllChildren, runExplicitly);
+            return new(testId, ignoreReason, runAllChildren, runExplicitly);
         }
 
         public static MspecContextSpecificationRemoteTask ToServer(
@@ -48,9 +50,10 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             string specificationFieldName,
             string displayName,
             string subject,
-            string[] tags)
+            string[] tags,
+            string ignoreReason)
         {
-            return new(contextTypeName, specificationFieldName, displayName, subject, tags);
+            return new(contextTypeName, specificationFieldName, displayName, subject, tags, ignoreReason);
         }
     }
 }

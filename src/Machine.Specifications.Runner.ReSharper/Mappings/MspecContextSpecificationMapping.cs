@@ -19,6 +19,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         {
             var task = MspecContextSpecificationRemoteTask.ToClient(
                 element.Id.Id,
+                element.ExplicitReason,
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 

@@ -19,6 +19,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             };
         }
 
+        public static MspecRemoteTask GetRemoteTask(object element, object test)
+        {
+            return element switch
+            {
+                ContextInfo context when test is SpecificationInfo specification => FromSpecification(context, specification),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
+        }
+
         public static MspecRemoteTask GetRemoteTask(RemoteTask task)
         {
             return task switch
@@ -33,7 +42,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private static MspecRemoteTask FromContext(MspecContextRemoteTask task)
         {
-            return MspecContextRemoteTask.ToServer(task.ContextTypeName, task.Subject, task.Tags);
+            return MspecContextRemoteTask.ToServer(task.ContextTypeName, task.Subject, task.Tags, task.IgnoreReason);
         }
 
         private static MspecRemoteTask FromContextSpecification(MspecContextSpecificationRemoteTask task)
@@ -43,12 +52,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 task.SpecificationFieldName,
                 task.DisplayName,
                 task.Subject,
-                task.Tags);
+                task.Tags,
+                task.IgnoreReason);
         }
 
         private static MspecRemoteTask FromBehavior(MspecBehaviorRemoteTask task)
         {
-            return MspecBehaviorRemoteTask.ToServer(task.ContextTypeName, task.BehaviorFieldName);
+            return MspecBehaviorRemoteTask.ToServer(task.ContextTypeName, task.BehaviorFieldName, task.IgnoreReason);
         }
 
         private static MspecRemoteTask FromBehaviorSpecification(MspecBehaviorSpecificationRemoteTask task)
@@ -56,12 +66,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return MspecBehaviorSpecificationRemoteTask.ToServer(
                 task.ContextTypeName,
                 task.BehaviorFieldName,
-                task.SpecificationFieldName);
+                task.SpecificationFieldName,
+                task.IgnoreReason);
         }
 
         private static MspecRemoteTask FromContext(ContextInfo context)
         {
-            return MspecContextRemoteTask.ToServer(context.TypeName, context.Name, Empty);
+            return MspecContextRemoteTask.ToServer(context.TypeName, context.Name, Empty, null);
         }
 
         private static MspecRemoteTask FromSpecification(SpecificationInfo specification)
@@ -71,7 +82,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 specification.FieldName,
                 specification.Name,
                 specification.Name,
-                Empty);
+                Empty,
+                null);
+        }
+
+        private static MspecRemoteTask FromSpecification(ContextInfo context, SpecificationInfo specification)
+        {
+            return MspecContextSpecificationRemoteTask.ToServer(
+                context.TypeName,
+                specification.FieldName,
+                specification.Name,
+                specification.Name,
+                Empty,
+                null);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JetBrains.ReSharper.TestRunner.Abstractions;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -64,15 +64,20 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             return behaviorSpecifications.GetOrAdd(key, x =>
             {
-                var task = depot[x] ?? CreateTask(context);
+                var task = depot[x] ?? CreateTask(context, specification);
 
                 return new TaskWrapper(task, sink);
             });
         }
 
-        private RemoteTask CreateTask(object value)
+        private MspecRemoteTask CreateTask(object value)
         {
             return RemoteTaskBuilder.GetRemoteTask(value);
+        }
+
+        private MspecRemoteTask CreateTask(object context, object specification)
+        {
+            return RemoteTaskBuilder.GetRemoteTask(context, specification);
         }
     }
 }

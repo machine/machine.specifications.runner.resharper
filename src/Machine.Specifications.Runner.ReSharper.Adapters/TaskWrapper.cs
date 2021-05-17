@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class TaskWrapper
     {
-        private readonly RemoteTask task;
+        private readonly MspecRemoteTask task;
 
         private readonly ITestExecutionSink sink;
 
@@ -18,7 +19,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private string message;
 
-        public TaskWrapper(RemoteTask task, ITestExecutionSink sink)
+        public TaskWrapper(MspecRemoteTask task, ITestExecutionSink sink)
         {
             this.task = task;
             this.sink = sink;
@@ -44,10 +45,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             sink.TestOutput(task, output, TestOutputType.STDOUT);
         }
 
-        public void Skipped(string reason)
+        public void Skipped(string reason = null)
         {
             result = TestResult.Ignored;
-            message = reason;
+            message = reason ?? task.IgnoreReason;
 
             Finished();
         }

@@ -5,16 +5,16 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
     [Serializable]
     public class MspecContextRemoteTask : MspecRemoteTask
     {
-        public MspecContextRemoteTask(string typeName, string subject, string[] tags)
-            : base(typeName)
+        public MspecContextRemoteTask(string testId, string ignoreReason, bool runAllChildren, bool runExplicitly)
+            : base(testId, ignoreReason, runAllChildren, runExplicitly)
+        {
+        }
+
+        public MspecContextRemoteTask(string typeName, string subject, string[] tags, string ignoreReason)
+            : base(typeName, ignoreReason)
         {
             Subject = subject;
             Tags = tags;
-        }
-
-        public MspecContextRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
-            : base(testId, runAllChildren, runExplicitly)
-        {
         }
 
         public string ContextTypeName => TestId;
@@ -23,14 +23,14 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public string[] Tags { get; set; }
 
-        public static MspecContextRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
+        public static MspecContextRemoteTask ToClient(string testId, string ignoreReason, bool runAllChildren, bool runExplicitly)
         {
-            return new(testId, runAllChildren, runExplicitly);
+            return new(testId, ignoreReason, runAllChildren, runExplicitly);
         }
 
-        public static MspecContextRemoteTask ToServer(string typeName, string subject, string[] tags)
+        public static MspecContextRemoteTask ToServer(string typeName, string subject, string[] tags, string ignoreReason)
         {
-            return new(typeName, subject, tags);
+            return new(typeName, subject, tags, ignoreReason);
         }
     }
 }

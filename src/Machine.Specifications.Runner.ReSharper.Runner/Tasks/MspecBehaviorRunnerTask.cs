@@ -5,10 +5,10 @@ using JetBrains.ReSharper.TaskRunnerFramework;
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecBehaviorRunnerTask : RemoteTask, IEquatable<MspecBehaviorRunnerTask>
+    public class MspecBehaviorRunnerTask : MspecRunnerTask, IEquatable<MspecBehaviorRunnerTask>
     {
-        public MspecBehaviorRunnerTask(string projectId, string contextTypeName, string behaviorFieldName)
-            : base(MspecTaskRunner.RunnerId)
+        public MspecBehaviorRunnerTask(string projectId, string contextTypeName, string behaviorFieldName, string ignoreReason)
+            : base(ignoreReason)
         {
             ProjectId = projectId;
             ContextTypeName = contextTypeName;
@@ -38,6 +38,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(ProjectId), ProjectId);
             SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
             SetXmlAttribute(element, nameof(BehaviorFieldName), BehaviorFieldName);
+        }
+
+        public override string GetKey()
+        {
+            return null;
         }
 
         public bool Equals(MspecBehaviorRunnerTask other)

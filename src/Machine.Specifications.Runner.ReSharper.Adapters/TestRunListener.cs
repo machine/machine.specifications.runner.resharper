@@ -158,7 +158,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 }
                 else if (result.Status == Status.Ignored)
                 {
-                    currentTask.Skipped("Ignored");
+                    currentTask.Skipped();
                 }
             });
         }
