@@ -48,7 +48,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void Skipped(string reason = null)
         {
             result = TestResult.Ignored;
-            message = reason ?? task.IgnoreReason;
+            message = reason ?? task.IgnoreReason ?? "Ignored";
 
             Finished();
         }
