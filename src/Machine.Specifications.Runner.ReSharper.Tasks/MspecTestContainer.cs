@@ -4,9 +4,9 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 namespace Machine.Specifications.Runner.ReSharper.Tasks
 {
     [Serializable]
-    public class MspecAssemblyRemoteTask : TestContainer
+    public class MspecTestContainer : TestContainer
     {
-        public MspecAssemblyRemoteTask(string location, ShadowCopy shadowCopy)
+        public MspecTestContainer(string location, ShadowCopy shadowCopy)
             : base(location, shadowCopy)
         {
         }

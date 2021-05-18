@@ -4,6 +4,10 @@
     <Version>0.1.0</Version>
     <TargetFrameworks>net461</TargetFrameworks>
     <PackageId>Machine.Specifications.Runner.Resharper9</PackageId>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>NU5128,NU5100</NoWarn>
 
     <Title>Machine.Specifications for ReSharper</Title>
     <Description>A ReSharper runner for the Context/Specification framework Machine.Specifications</Description>
@@ -16,10 +20,6 @@
     <RepositoryUrl>https://github.com/machine/machine.specifications.runner.resharper</RepositoryUrl>
     <PackageProjectUrl>http://github.com/machine/machine.specifications.runner.resharper</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-
-    <NoWarn>NU5128,NU5100</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

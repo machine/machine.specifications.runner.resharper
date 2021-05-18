@@ -5,15 +5,13 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public class UnknownTypeInfoAdapter : ITypeInfo
     {
-        public static readonly UnknownTypeInfoAdapter Default = new UnknownTypeInfoAdapter();
-
-        public string ShortName => string.Empty;
+        public static readonly UnknownTypeInfoAdapter Default = new();
 
         public string FullyQualifiedName => string.Empty;
 
         public bool IsAbstract => false;
 
-        public ITypeInfo GetContainingType()
+        public ITypeInfo? GetContainingType()
         {
             return null;
         }

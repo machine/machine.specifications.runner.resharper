@@ -6,8 +6,8 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public static class UnitTestElementManagerExtensions
     {
-        public static T GetElementById<T>(this IUnitTestElementManager manager, UnitTestElementId id)
-            where T : Element
+        public static T? GetElementById<T>(this IUnitTestElementManager manager, UnitTestElementId id)
+            where T : MspecTestElement
         {
             return manager.GetElementById(id) as T;
         }

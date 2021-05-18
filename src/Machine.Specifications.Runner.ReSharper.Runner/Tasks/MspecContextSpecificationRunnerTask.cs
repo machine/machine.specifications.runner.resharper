@@ -1,28 +1,26 @@
 using System;
 using System.Xml;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.TaskRunnerFramework;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 {
     [Serializable]
-    public class MspecContextSpecificationTask : RemoteTask, IEquatable<MspecContextSpecificationTask>
+    public class MspecContextSpecificationRunnerTask : MspecRunnerTask, IEquatable<MspecContextSpecificationRunnerTask>
     {
-        [UsedImplicitly]
-        public MspecContextSpecificationTask(XmlElement element)
+        public MspecContextSpecificationRunnerTask(string projectId, string contextTypeName, string specificationFieldName, string? ignoreReason)
+            : base(ignoreReason)
+        {
+            ProjectId = projectId;
+            ContextTypeName = contextTypeName;
+            SpecificationFieldName = specificationFieldName;
+        }
+
+        public MspecContextSpecificationRunnerTask(XmlElement element)
             : base(element)
         {
             ProjectId = GetXmlAttribute(element, nameof(ProjectId));
             ContextTypeName = GetXmlAttribute(element, nameof(ContextTypeName));
             SpecificationFieldName = GetXmlAttribute(element, nameof(SpecificationFieldName));
-        }
-
-        public MspecContextSpecificationTask(string projectId, string contextTypeName, string specificationFieldName)
-            : base(MspecTaskRunner.RunnerId)
-        {
-            ProjectId = projectId;
-            ContextTypeName = contextTypeName;
-            SpecificationFieldName = specificationFieldName;
         }
 
         public string ProjectId { get; }
@@ -42,7 +40,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(SpecificationFieldName), SpecificationFieldName);
         }
 
-        public bool Equals(MspecContextSpecificationTask other)
+        public bool Equals(MspecContextSpecificationRunnerTask? other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&
@@ -52,22 +50,23 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
 
         public override bool Equals(RemoteTask other)
         {
-            return Equals(other as MspecContextSpecificationTask);
+            return Equals(other as MspecContextSpecificationRunnerTask);
         }
 
         public override bool Equals(object other)
         {
-            return Equals(other as MspecContextSpecificationTask);
+            return Equals(other as MspecContextSpecificationRunnerTask);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Of(ProjectId)
+            return HashCode
+                .Of(ProjectId)
                 .And(ContextTypeName)
                 .And(SpecificationFieldName);
         }
 
-        public string GetId()
+        public override string GetKey()
         {
             return $"{ContextTypeName}.{SpecificationFieldName}";
         }

@@ -10,7 +10,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
         {
             var items = source.ToArray();
 
-            return items.SelectMany(c => selector(c).Flatten(selector))
+            return items
+                .SelectMany(c => selector(c).Flatten(selector))
                 .Concat(items);
         }
     }

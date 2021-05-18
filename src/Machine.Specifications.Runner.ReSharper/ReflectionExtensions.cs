@@ -46,14 +46,18 @@ namespace Machine.Specifications.Runner.ReSharper
                    arguments.Any();
         }
 
-        public static bool IsIgnored(this ITypeInfo type)
+        public static string GetIgnoreReason(this ITypeInfo type)
         {
-            return type.GetCustomAttributes(FullNames.IgnoreAttribute, false).Any();
+            return type.GetCustomAttributes(FullNames.IgnoreAttribute, false)
+                .SelectMany(x => x.GetParameters())
+                .FirstOrDefault();
         }
 
-        public static bool IsIgnored(this IFieldInfo field)
+        public static string GetIgnoreReason(this IFieldInfo field)
         {
-            return field.GetCustomAttributes(FullNames.IgnoreAttribute, false).Any();
+            return field.GetCustomAttributes(FullNames.IgnoreAttribute, false)
+                .SelectMany(x => x.GetParameters())
+                .FirstOrDefault();
         }
 
         public static bool IsBehaviorContainer(this ITypeInfo type)

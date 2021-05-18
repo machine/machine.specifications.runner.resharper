@@ -5,49 +5,50 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
     [Serializable]
     public class MspecContextSpecificationRemoteTask : MspecRemoteTask
     {
-        public MspecContextSpecificationRemoteTask(string testId, bool runAllChildren, bool runExplicitly)
-            : base(testId, runAllChildren, runExplicitly)
+        public MspecContextSpecificationRemoteTask(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
+            : base(testId, ignoreReason, runAllChildren, runExplicitly)
         {
         }
 
         public MspecContextSpecificationRemoteTask(
             string contextTypeName,
             string specificationFieldName,
-            string displayName,
-            string subject,
-            string[] tags)
-            : base(contextTypeName + "::" + specificationFieldName)
+            string? subject,
+            string[]? tags,
+            string? ignoreReason)
+            : base($"{contextTypeName}::{specificationFieldName}", ignoreReason)
         {
             ContextTypeName = contextTypeName;
             SpecificationFieldName = specificationFieldName;
-            DisplayName = displayName;
             Subject = subject;
             Tags = tags;
         }
 
-        public string ContextTypeName { get; set; }
+        public string? ContextTypeName { get; set; }
 
-        public string SpecificationFieldName { get; set; }
+        public string? SpecificationFieldName { get; set; }
 
-        public string DisplayName { get; }
+        public string? Subject { get; }
 
-        public string Subject { get; }
+        public string[]? Tags { get; set; }
 
-        public string[] Tags { get; set; }
-
-        public static MspecContextSpecificationRemoteTask ToClient(string testId, bool runAllChildren, bool runExplicitly)
+        public static MspecContextSpecificationRemoteTask ToClient(
+            string testId,
+            string? ignoreReason,
+            bool runAllChildren,
+            bool runExplicitly)
         {
-            return new MspecContextSpecificationRemoteTask(testId, runAllChildren, runExplicitly);
+            return new(testId, ignoreReason, runAllChildren, runExplicitly);
         }
 
         public static MspecContextSpecificationRemoteTask ToServer(
             string contextTypeName,
             string specificationFieldName,
-            string displayName,
-            string subject,
-            string[] tags)
+            string? subject,
+            string[]? tags,
+            string? ignoreReason)
         {
-            return new MspecContextSpecificationRemoteTask(contextTypeName, specificationFieldName, displayName, subject, tags);
+            return new(contextTypeName, specificationFieldName, subject, tags, ignoreReason);
         }
     }
 }

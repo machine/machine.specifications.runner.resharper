@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using JetBrains.ReSharper.TaskRunnerFramework;
 using Machine.Specifications.Runner.Utility;
 
@@ -10,9 +8,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
     {
         private readonly IRemoteTaskServer server;
 
-        private readonly TestContext context;
+        private readonly RunContext context;
 
-        private ContextInfo currentContext;
+        private ContextInfo? currentContext;
+
+        private RemoteTask? currentTask;
 
         private int specifications;
 
@@ -20,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         private int errors;
 
-        public TestRunListener(IRemoteTaskServer server, TestContext context)
+        public TestRunListener(IRemoteTaskServer server, RunContext context)
         {
             this.server = server;
             this.context = context;
@@ -28,12 +28,10 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         public void OnAssemblyStart(Utility.AssemblyInfo assemblyInfo)
         {
-            Environment.CurrentDirectory = GetWorkingDirectory(context.AssemblyLocation);
         }
 
         public void OnAssemblyEnd(Utility.AssemblyInfo assemblyInfo)
         {
-            Output(default, assemblyInfo.CapturedOutput);
         }
 
         public void OnRunStart()
@@ -54,10 +52,14 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
             var task = context.GetContextTask(contextInfo);
 
-            if (task != null)
+            if (task == null)
             {
-                server.TaskStarting(task);
+                return;
             }
+
+            currentTask = task;
+
+            server.TaskStarting(task);
         }
 
         public void OnContextEnd(ContextInfo contextInfo)
@@ -80,6 +82,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
                 return;
             }
 
+            currentTask = task;
+
             Output(task, contextInfo.CapturedOutput);
 
             var message = result == TaskResult.Error
@@ -99,9 +103,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
                 return;
             }
 
+            currentTask = task;
+
             server.TaskStarting(task);
 
-            specifications += 1;
+            specifications++;
         }
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
@@ -110,7 +116,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
                        context.GetSpecificationTask(specificationInfo);
 
             if (task == null)
+            {
                 return;
+            }
+
+            currentTask = task;
 
             Output(task, specificationInfo.CapturedOutput);
 
@@ -139,11 +149,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
-            server.TaskOutput(null, "Fatal error: " + exceptionResult.Message, TaskOutputType.STDOUT);
-            server.TaskException(null, GetExceptions(exceptionResult));
-            server.TaskFinished(null, GetExceptionMessage(exceptionResult), TaskResult.Exception);
+            server.TaskOutput(currentTask, "Fatal error: " + exceptionResult.Message, TaskOutputType.STDOUT);
+            server.TaskException(currentTask, GetExceptions(exceptionResult));
+            server.TaskFinished(currentTask, GetExceptionMessage(exceptionResult), TaskResult.Exception);
 
-            errors += 1;
+            errors++;
         }
 
         private void Output(RemoteTask task, string output)
@@ -168,11 +178,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             return exception != null
                 ? $"{exception.FullTypeName}: {exception.Message}"
                 : string.Empty;
-        }
-
-        private string GetWorkingDirectory(string assemblyLocation)
-        {
-            return Path.GetDirectoryName(assemblyLocation);
         }
     }
 }

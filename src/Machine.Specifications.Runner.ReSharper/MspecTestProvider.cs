@@ -15,36 +15,25 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(MspecTaskRunner.RunnerId, null);
 
-        private readonly UnitTestElementComparer unitTestElementComparer = new UnitTestElementComparer(
-            typeof(ContextElement),
-            typeof(BehaviorElement),
-            typeof(BehaviorSpecificationElement),
-            typeof(ContextSpecificationElement));
-
         public string ID => MspecTaskRunner.RunnerId;
 
-        public string Name => ID;
-
-        public int CompareUnitTestElements(IUnitTestElement x, IUnitTestElement y)
-        {
-            return unitTestElementComparer.Compare(x, y);
-        }
+        public string Name => MspecTaskRunner.RunnerId;
 
         public bool IsElementOfKind(IUnitTestElement element, UnitTestElementKind elementKind)
         {
             switch (elementKind)
             {
                 case UnitTestElementKind.Test:
-                    return element is ContextSpecificationElement || element is BehaviorSpecificationElement;
+                    return element is MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
 
                 case UnitTestElementKind.TestContainer:
-                    return element is ContextElement || element is BehaviorElement;
+                    return element is MspecContextTestElement or MspecBehaviorTestElement;
 
                 case UnitTestElementKind.TestStuff:
-                    return element is Element;
+                    return element is MspecTestElement;
 
                 case UnitTestElementKind.Unknown:
-                    return !(element is Element);
+                    return element is not MspecTestElement;
             }
 
             return false;
@@ -79,7 +68,7 @@ namespace Machine.Specifications.Runner.ReSharper
         {
             using (ReadLockCookie.Create())
             {
-                return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MSpecReferenceName, out AssemblyNameInfo _);
+                return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MSpecReferenceName, out _);
             }
         }
 

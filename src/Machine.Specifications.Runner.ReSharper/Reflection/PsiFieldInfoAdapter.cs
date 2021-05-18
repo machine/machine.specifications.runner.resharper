@@ -14,7 +14,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
             this.field = field;
         }
 
-        public string DeclaringType => field.GetContainingType()?.GetClrName().FullName;
+        public string? DeclaringType => field.GetContainingType()?.GetClrName().FullName;
 
         public string ShortName => field.ShortName;
 
@@ -22,9 +22,9 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
         {
             get
             {
-                if (field.Type is IDeclaredType type && type.IsResolved)
+                if (field.Type is IDeclaredType {IsResolved: true} type)
                 {
-                    return type.GetTypeElement().AsTypeInfo(type);
+                    return type.GetTypeElement()!.AsTypeInfo(type);
                 }
 
                 return UnknownTypeInfoAdapter.Default;

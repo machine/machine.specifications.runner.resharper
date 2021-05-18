@@ -4,13 +4,11 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public interface ITypeInfo
     {
-        string ShortName { get; }
-
         string FullyQualifiedName { get; }
 
         bool IsAbstract { get; }
 
-        ITypeInfo GetContainingType();
+        ITypeInfo? GetContainingType();
 
         IEnumerable<IFieldInfo> GetFields();
 

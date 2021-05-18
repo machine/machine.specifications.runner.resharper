@@ -8,23 +8,23 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         where TElement : IUnitTestElement
         where TTask : RemoteTask
     {
-        protected MspecElementMapping(MspecServiceProvider serviceProvider)
+        protected MspecElementMapping(MspecServiceProvider services)
         {
-            ServiceProvider = serviceProvider;
+            Services = services;
         }
 
-        protected MspecServiceProvider ServiceProvider { get; }
+        protected MspecServiceProvider Services { get; }
 
         protected abstract TTask ToRemoteTask(TElement element, ITestRunnerExecutionContext context);
 
-        protected abstract TElement ToElement(TTask task, ITestRunnerDiscoveryContext context);
+        protected abstract TElement? ToElement(TTask task, ITestRunnerDiscoveryContext context);
 
         public RemoteTask GetRemoteTask(TElement element, ITestRunnerExecutionContext context)
         {
             return ToRemoteTask(element, context);
         }
 
-        public IUnitTestElement GetElement(TTask task, ITestRunnerDiscoveryContext context)
+        public IUnitTestElement? GetElement(TTask task, ITestRunnerDiscoveryContext context)
         {
             return ToElement(task, context);
         }
@@ -33,7 +33,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         {
             return context.GetOrCreateDataUnderLock(
                 MspecElementMappingKeys.ElementFactoryKey,
-                () => new UnitTestElementFactory(ServiceProvider, context.TargetFrameworkId, null, context.Origin));
+                () => new UnitTestElementFactory(Services, context.TargetFrameworkId, null, context.Origin));
         }
     }
 }
