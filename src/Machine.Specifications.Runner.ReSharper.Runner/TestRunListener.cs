@@ -12,6 +12,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         private ContextInfo? currentContext;
 
+        private RemoteTask? currentTask;
+
         private int specifications;
 
         private int successes;
@@ -50,10 +52,14 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
             var task = context.GetContextTask(contextInfo);
 
-            if (task != null)
+            if (task == null)
             {
-                server.TaskStarting(task);
+                return;
             }
+
+            currentTask = task;
+
+            server.TaskStarting(task);
         }
 
         public void OnContextEnd(ContextInfo contextInfo)
@@ -76,6 +82,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
                 return;
             }
 
+            currentTask = task;
+
             Output(task, contextInfo.CapturedOutput);
 
             var message = result == TaskResult.Error
@@ -95,6 +103,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
                 return;
             }
 
+            currentTask = task;
+
             server.TaskStarting(task);
 
             specifications++;
@@ -109,6 +119,8 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             {
                 return;
             }
+
+            currentTask = task;
 
             Output(task, specificationInfo.CapturedOutput);
 
@@ -137,9 +149,9 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
-            server.TaskOutput(null, "Fatal error: " + exceptionResult.Message, TaskOutputType.STDOUT);
-            server.TaskException(null, GetExceptions(exceptionResult));
-            server.TaskFinished(null, GetExceptionMessage(exceptionResult), TaskResult.Exception);
+            server.TaskOutput(currentTask, "Fatal error: " + exceptionResult.Message, TaskOutputType.STDOUT);
+            server.TaskException(currentTask, GetExceptions(exceptionResult));
+            server.TaskFinished(currentTask, GetExceptionMessage(exceptionResult), TaskResult.Exception);
 
             errors++;
         }

@@ -108,8 +108,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void OnSpecificationStart(SpecificationInfo specificationInfo)
         {
-            specifications++;
-
             logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(specificationInfo)}");
 
             logger.Catch(() =>
@@ -119,8 +117,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     return;
                 }
 
-                currentTask = context.GetTask(currentContext, specificationInfo);
+                var task = context.GetTask(currentContext, specificationInfo);
 
+                if (!task.Exists)
+                {
+                    return;
+                }
+
+                currentTask = task;
                 currentTask.Starting();
             });
         }
@@ -136,8 +140,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     return;
                 }
 
-                currentTask = context.GetTask(currentContext, specificationInfo);
+                var task = context.GetTask(currentContext, specificationInfo);
 
+                if (!task.Exists)
+                {
+                    return;
+                }
+
+                currentTask = task;
                 currentTask.Output(specificationInfo.CapturedOutput);
 
                 if (result.Status == Status.Failing)

@@ -25,6 +25,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             this.sink = sink;
         }
 
+        public bool Exists => task != null;
+
         public void Starting()
         {
             if (Interlocked.Exchange(ref started, 1) != 0)
