@@ -23,13 +23,13 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
-            task.ContextTypeName = element.Context.TypeName.FullName;
+            task.ContextTypeName = element.Context!.TypeName.FullName;
             task.SpecificationFieldName = element.FieldName;
 
             return task;
         }
 
-        protected override MspecContextSpecificationTestElement ToElement(MspecContextSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecContextSpecificationTestElement? ToElement(MspecContextSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
         {
             if (task.ContextTypeName == null)
             {
@@ -55,7 +55,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 context.Project,
                 contextElement,
                 new ClrTypeName(task.ContextTypeName),
-                task.SpecificationFieldName,
+                task.SpecificationFieldName!,
                 null);
         }
     }

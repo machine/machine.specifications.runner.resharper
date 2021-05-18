@@ -7,7 +7,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
     [Serializable]
     public class MspecContextSpecificationRunnerTask : MspecRunnerTask, IEquatable<MspecContextSpecificationRunnerTask>
     {
-        public MspecContextSpecificationRunnerTask(string projectId, string contextTypeName, string specificationFieldName, string ignoreReason)
+        public MspecContextSpecificationRunnerTask(string projectId, string contextTypeName, string specificationFieldName, string? ignoreReason)
             : base(ignoreReason)
         {
             ProjectId = projectId;
@@ -40,7 +40,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(SpecificationFieldName), SpecificationFieldName);
         }
 
-        public bool Equals(MspecContextSpecificationRunnerTask other)
+        public bool Equals(MspecContextSpecificationRunnerTask? other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&

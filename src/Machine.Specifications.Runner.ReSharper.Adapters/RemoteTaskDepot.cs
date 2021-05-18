@@ -24,7 +24,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public MspecRemoteTask this[MspecReSharperId id]
+        public MspecRemoteTask? this[MspecReSharperId id]
         {
             get
             {

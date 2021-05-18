@@ -23,14 +23,14 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
-            task.ContextTypeName = element.Behavior.Context.TypeName.FullName;
+            task.ContextTypeName = element.Behavior!.Context!.TypeName.FullName;
             task.SpecificationFieldName = element.FieldName;
             task.BehaviorFieldName = element.Behavior.FieldName;
 
             return task;
         }
 
-        protected override MspecBehaviorSpecificationTestElement ToElement(MspecBehaviorSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecBehaviorSpecificationTestElement? ToElement(MspecBehaviorSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
         {
             if (task.ContextTypeName == null)
             {
@@ -70,7 +70,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 context.Project,
                 behavior,
                 new ClrTypeName(task.ContextTypeName),
-                task.SpecificationFieldName,
+                task.SpecificationFieldName!,
                 null);
         }
     }

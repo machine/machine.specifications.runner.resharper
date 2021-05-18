@@ -5,7 +5,7 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public static class MetadataExtensions
     {
-        public static ITypeInfo AsTypeInfo(this IMetadataTypeInfo type, IMetadataClassType classType = null)
+        public static ITypeInfo AsTypeInfo(this IMetadataTypeInfo type, IMetadataClassType? classType = null)
         {
             return new MetadataTypeInfoAdapter(type, classType);
         }

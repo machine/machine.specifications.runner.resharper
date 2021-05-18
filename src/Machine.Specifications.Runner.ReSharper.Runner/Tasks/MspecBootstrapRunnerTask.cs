@@ -30,7 +30,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(ProjectId), ProjectId);
         }
 
-        public bool Equals(MspecBootstrapRunnerTask other)
+        public bool Equals(MspecBootstrapRunnerTask? other)
         {
             return other != null && other.ProjectId == ProjectId;
         }

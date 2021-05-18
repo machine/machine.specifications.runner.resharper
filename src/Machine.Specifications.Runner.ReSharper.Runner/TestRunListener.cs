@@ -10,7 +10,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         private readonly RunContext context;
 
-        private ContextInfo currentContext;
+        private ContextInfo? currentContext;
 
         private int specifications;
 
@@ -30,7 +30,6 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
 
         public void OnAssemblyEnd(Utility.AssemblyInfo assemblyInfo)
         {
-            Output(default, assemblyInfo.CapturedOutput);
         }
 
         public void OnRunStart()
@@ -107,7 +106,9 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
                        context.GetSpecificationTask(specificationInfo);
 
             if (task == null)
+            {
                 return;
+            }
 
             Output(task, specificationInfo.CapturedOutput);
 

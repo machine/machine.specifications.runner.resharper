@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JetBrains.ReSharper.TestRunner.Abstractions;
-using Machine.Specifications.Runner.ReSharper.Tasks;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -31,16 +30,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             var key = new MspecReSharperId(context);
 
-            return contexts.GetOrAdd(key, x =>
-            {
-                var task = depot[x] ?? CreateTask(context);
-
-                return new TaskWrapper(task, sink);
-            });
+            return contexts.GetOrAdd(key, x => new TaskWrapper(depot[x], sink));
         }
 
-        public TaskWrapper GetTask(ContextInfo context, SpecificationInfo specification)
+        public TaskWrapper GetTask(ContextInfo? context, SpecificationInfo specification)
         {
+            if (context == null)
+            {
+                return new TaskWrapper(null, sink);
+            }
+
             var key = new MspecReSharperId(context, specification);
 
             if (depot[key] == null)
@@ -48,34 +47,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 key = new MspecReSharperId(specification);
             }
 
-            return specifications.GetOrAdd(key, x =>
-            {
-                var task = depot[x] ?? CreateTask(context, specification);
-
-                return new TaskWrapper(task, sink);
-            });
-        }
-
-        private MspecRemoteTask CreateTask(object value)
-        {
-            var task = RemoteTaskBuilder.GetRemoteTask(value);
-
-            return ProcessDynamic(task);
-        }
-
-        private MspecRemoteTask CreateTask(object context, object specification)
-        {
-            var task = RemoteTaskBuilder.GetRemoteTask(context, specification);
-
-            return ProcessDynamic(task);
-        }
-
-        private MspecRemoteTask ProcessDynamic(MspecRemoteTask task)
-        {
-            sink.DynamicTestDiscovered(task);
-            depot.Add(task);
-
-            return task;
+            return specifications.GetOrAdd(key, x => new TaskWrapper(depot[x], sink));
         }
     }
 }

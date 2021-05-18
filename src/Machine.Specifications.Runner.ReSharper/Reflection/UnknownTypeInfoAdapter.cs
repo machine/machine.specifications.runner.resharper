@@ -11,7 +11,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 
         public bool IsAbstract => false;
 
-        public ITypeInfo GetContainingType()
+        public ITypeInfo? GetContainingType()
         {
             return null;
         }

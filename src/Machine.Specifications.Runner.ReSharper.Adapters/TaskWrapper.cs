@@ -7,7 +7,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class TaskWrapper
     {
-        private readonly MspecRemoteTask task;
+        private readonly MspecRemoteTask? task;
 
         private readonly ITestExecutionSink sink;
 
@@ -17,9 +17,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private TestResult result;
 
-        private string message;
+        private string? message;
 
-        public TaskWrapper(MspecRemoteTask task, ITestExecutionSink sink)
+        public TaskWrapper(MspecRemoteTask? task, ITestExecutionSink sink)
         {
             this.task = task;
             this.sink = sink;
@@ -32,7 +32,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 return;
             }
 
-            sink.TestStarting(task);
+            if (task != null)
+            {
+                sink.TestStarting(task);
+            }
         }
 
         public void Output(string output)
@@ -42,13 +45,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 return;
             }
 
-            sink.TestOutput(task, output, TestOutputType.STDOUT);
+            if (task != null)
+            {
+                sink.TestOutput(task, output, TestOutputType.STDOUT);
+            }
         }
 
-        public void Skipped(string reason = null)
+        public void Skipped(string? reason = null)
         {
             result = TestResult.Ignored;
-            message = reason ?? task.IgnoreReason ?? "Ignored";
+            message = reason ?? task?.IgnoreReason ?? "Ignored";
 
             Finished();
         }
@@ -63,7 +69,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             result = TestResult.Failed;
             message = exceptionMessage;
 
-            sink.TestException(task, exceptions);
+            if (task != null)
+            {
+                sink.TestException(task, exceptions);
+            }
         }
 
         public void Finished(bool childTestsFailed = false)
@@ -84,7 +93,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 return;
             }
 
-            sink.TestFinished(task, message, result);
+            if (task != null)
+            {
+                sink.TestFinished(task, message, result);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
     [Serializable]
     public abstract class MspecRunnerTask : RemoteTask
     {
-        protected MspecRunnerTask(string ignoreReason)
+        protected MspecRunnerTask(string? ignoreReason)
             : base(MspecTaskRunner.RunnerId)
         {
             IgnoreReason = ignoreReason;
@@ -19,7 +19,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             IgnoreReason = GetXmlAttribute(element, nameof(IgnoreReason));
         }
 
-        public string IgnoreReason { get; }
+        public string? IgnoreReason { get; }
 
         public override void SaveXml(XmlElement element)
         {
@@ -28,7 +28,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(IgnoreReason), IgnoreReason);
         }
 
-        public abstract string GetKey();
+        public abstract string? GetKey();
 
         public MspecRunnerTask AsRemoteTask()
         {

@@ -17,9 +17,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private readonly ManualResetEvent waitEvent = new(false);
 
-        private ContextInfo currentContext;
+        private ContextInfo? currentContext;
 
-        private TaskWrapper currentTask;
+        private TaskWrapper? currentTask;
 
         private int specifications;
 

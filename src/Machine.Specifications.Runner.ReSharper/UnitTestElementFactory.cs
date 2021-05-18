@@ -14,7 +14,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private readonly TargetFrameworkId targetFrameworkId;
 
-        private readonly Action<IUnitTestElement> elementChangedAction;
+        private readonly Action<IUnitTestElement>? elementChangedAction;
 
         private readonly UnitTestElementOrigin origin;
 
@@ -23,7 +23,7 @@ namespace Machine.Specifications.Runner.ReSharper
         public UnitTestElementFactory(
             MspecServiceProvider services,
             TargetFrameworkId targetFrameworkId,
-            Action<IUnitTestElement> elementChangedAction,
+            Action<IUnitTestElement>? elementChangedAction,
             UnitTestElementOrigin origin)
         {
             this.services = services;
@@ -35,9 +35,9 @@ namespace Machine.Specifications.Runner.ReSharper
         public MspecContextTestElement GetOrCreateContext(
             IProject project,
             IClrTypeName typeName,
-            string subject,
-            string[] tags,
-            string ignoreReason)
+            string? subject,
+            string[]? tags,
+            string? ignoreReason)
         {
             lock (elements)
             {
@@ -55,7 +55,7 @@ namespace Machine.Specifications.Runner.ReSharper
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
-            string ignoreReason)
+            string? ignoreReason)
         {
             lock (elements)
             {
@@ -71,7 +71,7 @@ namespace Machine.Specifications.Runner.ReSharper
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
-            string ignoreReason)
+            string? ignoreReason)
         {
             lock (elements)
             {
@@ -87,7 +87,7 @@ namespace Machine.Specifications.Runner.ReSharper
             IUnitTestElement parent,
             IClrTypeName typeName,
             string fieldName,
-            string ignoreReason)
+            string? ignoreReason)
         {
             lock (elements)
             {
@@ -98,7 +98,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        private T GetElementById<T>(UnitTestElementId id)
+        private T? GetElementById<T>(UnitTestElementId id)
             where T : MspecTestElement
         {
             if (elements.TryGetValue(id, out var element))
@@ -109,7 +109,7 @@ namespace Machine.Specifications.Runner.ReSharper
             return services.ElementManager.GetElementById<T>(id);
         }
 
-        private T GetOrCreateElement<T>(string id, IProject project, IUnitTestElement parent, ISet<UnitTestElementCategory> categories, Func<UnitTestElementId, T> factory)
+        private T GetOrCreateElement<T>(string id, IProject project, IUnitTestElement? parent, ISet<UnitTestElementCategory>? categories, Func<UnitTestElementId, T> factory)
             where T : MspecTestElement
         {
             var elementId = services.CreateId(project, targetFrameworkId, id);
@@ -124,7 +124,7 @@ namespace Machine.Specifications.Runner.ReSharper
             return element;
         }
 
-        private void UpdateCategories(MspecTestElement element, string[] categories)
+        private void UpdateCategories(MspecTestElement element, string[]? categories)
         {
             if (UpdateOwnCategories(element, categories))
             {
@@ -139,7 +139,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        private bool UpdateOwnCategories(MspecTestElement element, string[] categories)
+        private bool UpdateOwnCategories(MspecTestElement element, string[]? categories)
         {
             using (UT.WriteLock())
             {

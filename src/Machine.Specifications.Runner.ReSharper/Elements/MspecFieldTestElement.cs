@@ -10,7 +10,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public abstract class MspecFieldTestElement : MspecTestElement
     {
-        protected MspecFieldTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
+        protected MspecFieldTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
             : base(services, id, typeName, explicitReason)
         {
             FieldName = fieldName;
@@ -29,7 +29,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return $"{GetTitlePrefix()} {ShortName}".Trim();
         }
 
-        public override IDeclaredElement GetDeclaredElement()
+        public override IDeclaredElement? GetDeclaredElement()
         {
             var type = GetDeclaredType();
 

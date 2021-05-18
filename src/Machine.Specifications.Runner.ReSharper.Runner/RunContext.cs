@@ -19,8 +19,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             var tasks = node.Children
                 .Flatten(x => x.Children)
                 .Select(x => x.RemoteTask)
-                .OfType<MspecRunnerTask>()
-                .Where(x => !string.IsNullOrEmpty(x.GetKey()));
+                .OfType<MspecRunnerTask>();
 
             foreach (var task in tasks)
             {
@@ -36,22 +35,27 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             }
         }
 
-        public MspecRunnerTask GetContextTask(ContextInfo context)
+        public MspecRunnerTask? GetContextTask(ContextInfo context)
         {
             var key = context.TypeName;
 
             return GetRemoteTask(key);
         }
 
-        public MspecRunnerTask GetSpecificationTask(SpecificationInfo specification)
+        public MspecRunnerTask? GetSpecificationTask(SpecificationInfo specification)
         {
             var key = $"{specification.ContainingType}.{specification.FieldName}";
 
             return GetRemoteTask(key);
         }
 
-        public MspecRunnerTask GetBehaviorTask(ContextInfo context, SpecificationInfo specification)
+        public MspecRunnerTask? GetBehaviorTask(ContextInfo? context, SpecificationInfo specification)
         {
+            if (context == null)
+            {
+                return null;
+            }
+
             var key = $"{context.TypeName}.{specification.FieldName}";
 
             return GetRemoteTask(key);
@@ -61,6 +65,11 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
         {
             var key = task.GetKey();
             var remote = task.AsRemoteTask();
+
+            if (key == null)
+            {
+                return;
+            }
 
             lock (sync)
             {
@@ -73,7 +82,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             }
         }
 
-        private MspecRunnerTask GetRemoteTask(string key)
+        private MspecRunnerTask? GetRemoteTask(string key)
         {
             lock (sync)
             {

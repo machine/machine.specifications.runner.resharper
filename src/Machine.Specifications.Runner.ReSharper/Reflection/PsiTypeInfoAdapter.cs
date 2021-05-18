@@ -9,9 +9,9 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
     {
         private readonly ITypeElement type;
 
-        private readonly IDeclaredType declaredType;
+        private readonly IDeclaredType? declaredType;
 
-        public PsiTypeInfoAdapter(ITypeElement type, IDeclaredType declaredType = null)
+        public PsiTypeInfoAdapter(ITypeElement type, IDeclaredType? declaredType = null)
         {
             this.type = type;
             this.declaredType = declaredType;
@@ -19,16 +19,16 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 
         public string FullyQualifiedName => type.GetClrName().FullName;
 
-        public bool IsAbstract => type is IModifiersOwner owner && owner.IsAbstract;
+        public bool IsAbstract => type is IModifiersOwner {IsAbstract: true};
 
-        public ITypeInfo GetContainingType()
+        public ITypeInfo? GetContainingType()
         {
             return type.GetContainingType()?.AsTypeInfo();
         }
 
         public IEnumerable<IFieldInfo> GetFields()
         {
-            if (!(type is IClass classType))
+            if (type is not IClass classType)
             {
                 return Enumerable.Empty<IFieldInfo>();
             }
@@ -53,7 +53,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
                 return substitution.Domain
                     .Select(x => substitution.Apply(x).GetScalarType())
                     .Where(x => x != null)
-                    .Select(x => x.GetTypeElement())
+                    .Select(x => x?.GetTypeElement())
                     .OfType<IClass>()
                     .Select(x => x.AsTypeInfo());
             }

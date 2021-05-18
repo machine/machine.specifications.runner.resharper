@@ -8,9 +8,9 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
     {
         private readonly IMetadataTypeInfo type;
 
-        private readonly IMetadataClassType classType;
+        private readonly IMetadataClassType? classType;
 
-        public MetadataTypeInfoAdapter(IMetadataTypeInfo type, IMetadataClassType classType = null)
+        public MetadataTypeInfoAdapter(IMetadataTypeInfo type, IMetadataClassType? classType = null)
         {
             this.type = type;
             this.classType = classType;
@@ -20,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 
         public bool IsAbstract => type.IsAbstract;
 
-        public ITypeInfo GetContainingType()
+        public ITypeInfo? GetContainingType()
         {
             return type.DeclaringType?.AsTypeInfo();
         }

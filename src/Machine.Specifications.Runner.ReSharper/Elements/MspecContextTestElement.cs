@@ -11,7 +11,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public class MspecContextTestElement : MspecTestElement, IEquatable<MspecContextTestElement>
     {
-        public MspecContextTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string subject, string explicitReason)
+        public MspecContextTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string? subject, string? explicitReason)
             : base(services, id, typeName, explicitReason)
         {
             Subject = subject;
@@ -20,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override string Kind => "Context";
 
-        public string Subject { get; }
+        public string? Subject { get; }
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
@@ -44,12 +44,12 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
                 : $"{Subject}, {display}";
         }
 
-        public override IDeclaredElement GetDeclaredElement()
+        public override IDeclaredElement? GetDeclaredElement()
         {
             return GetDeclaredType();
         }
 
-        public bool Equals(MspecContextTestElement other)
+        public bool Equals(MspecContextTestElement? other)
         {
             return other != null &&
                    Equals(Id, other.Id) &&

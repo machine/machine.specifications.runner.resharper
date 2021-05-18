@@ -5,6 +5,7 @@
     <TargetFrameworks>net461</TargetFrameworks>
     <PackageId>Machine.Specifications.Runner.Resharper9</PackageId>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>NU5128,NU5100</NoWarn>
 

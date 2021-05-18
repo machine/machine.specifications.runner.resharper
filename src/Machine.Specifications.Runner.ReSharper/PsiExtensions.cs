@@ -5,7 +5,7 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public static class PsiExtensions
     {
-        public static ITypeInfo AsTypeInfo(this ITypeElement type, IDeclaredType declaredType = null)
+        public static ITypeInfo AsTypeInfo(this ITypeElement type, IDeclaredType? declaredType = null)
         {
             return new PsiTypeInfoAdapter(type, declaredType);
         }

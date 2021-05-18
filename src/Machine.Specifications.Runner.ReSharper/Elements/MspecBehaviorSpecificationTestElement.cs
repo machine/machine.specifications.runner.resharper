@@ -10,12 +10,12 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public class MspecBehaviorSpecificationTestElement : MspecFieldTestElement, IEquatable<MspecBehaviorSpecificationTestElement>
     {
-        public MspecBehaviorSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
+        public MspecBehaviorSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
             : base(services, id, typeName, fieldName, explicitReason)
         {
         }
 
-        public MspecBehaviorTestElement Behavior => Parent as MspecBehaviorTestElement;
+        public MspecBehaviorTestElement? Behavior => Parent as MspecBehaviorTestElement;
 
         public override string Kind => "Behavior Specification";
 
@@ -30,22 +30,22 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
         {
-            return Behavior.GetLocations(element);
+            return Behavior!.GetLocations(element);
         }
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            var sequence = Behavior.GetTaskSequence(explicitElements, run);
+            var sequence = Behavior!.GetTaskSequence(explicitElements, run);
 
             var behaviorSpecificationTask = run.GetRemoteTaskForElement<MspecBehaviorSpecificationRunnerTask>(this) ??
-                                            new MspecBehaviorSpecificationRunnerTask(Id.ProjectId, Behavior.Context.TypeName.FullName, Behavior.FieldName, FieldName, ExplicitReason);
+                                            new MspecBehaviorSpecificationRunnerTask(Id.ProjectId, Behavior!.Context!.TypeName.FullName, Behavior.FieldName, FieldName, ExplicitReason);
 
             sequence.Add(new UnitTestTask(this, behaviorSpecificationTask));
 
             return sequence;
         }
 
-        public bool Equals(MspecBehaviorSpecificationTestElement other)
+        public bool Equals(MspecBehaviorSpecificationTestElement? other)
         {
             return other != null &&
                    Equals(Id, other.Id) &&

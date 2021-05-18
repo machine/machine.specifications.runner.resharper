@@ -72,7 +72,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
             else if (declaredElement is IField field)
             {
-                ProcessField(declaration.GetProject(), field.AsFieldInfo(), declaration);
+                ProcessField(declaration.GetProject()!, field.AsFieldInfo(), declaration);
             }
         }
 
@@ -95,7 +95,7 @@ namespace Machine.Specifications.Runner.ReSharper
         private void ProcessContext(ITypeInfo type, IDeclaration declaration, bool isClear)
         {
             var name = new ClrTypeName(type.FullyQualifiedName);
-            var project = declaration.GetProject();
+            var project = declaration.GetProject()!;
 
             var context = factory.GetOrCreateContext(
                 project,
@@ -140,13 +140,13 @@ namespace Machine.Specifications.Runner.ReSharper
 
                     foreach (var field in type.GetFields())
                     {
-                        ProcessField(declaration.GetProject(), field);
+                        ProcessField(declaration.GetProject()!, field);
                     }
                 }
             }
         }
 
-        private void ProcessField(IProject project, IFieldInfo field, IDeclaration declaration = null)
+        private void ProcessField(IProject project, IFieldInfo field, IDeclaration? declaration = null)
         {
             if (field.IsSpecification())
             {
@@ -158,7 +158,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        private void ProcessSpecificationField(IProject project, IFieldInfo field, IDeclaration declaration = null)
+        private void ProcessSpecificationField(IProject project, IFieldInfo field, IDeclaration? declaration = null)
         {
             var containingType = new ClrTypeName(field.DeclaringType);
 
@@ -175,7 +175,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        private void ProcessBehaviorField(IProject project, IFieldInfo field, IDeclaration declaration = null)
+        private void ProcessBehaviorField(IProject project, IFieldInfo field, IDeclaration? declaration = null)
         {
             var behaviorType = field.FieldType.GetGenericArguments().FirstOrDefault();
             var containingType = new ClrTypeName(field.DeclaringType);
@@ -211,7 +211,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        private void OnUnitTestElement(IUnitTestElement element, IDeclaration declaration = null)
+        private void OnUnitTestElement(IUnitTestElement element, IDeclaration? declaration = null)
         {
             if (declaration == null)
             {

@@ -15,13 +15,13 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public abstract class MspecTestElement : IUnitTestElement
     {
-        private IUnitTestElement parent;
+        private IUnitTestElement? parent;
 
-        private string shortName;
+        private string? shortName;
 
-        private IClrTypeName typeName;
+        private IClrTypeName? typeName;
 
-        protected MspecTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string explicitReason)
+        protected MspecTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string? explicitReason)
         {
             Services = services;
             Id = id;
@@ -31,15 +31,15 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public abstract string Kind { get; }
 
-        public ISet<UnitTestElementCategory> OwnCategories { get; set; }
+        public ISet<UnitTestElementCategory>? OwnCategories { get; set; }
 
-        public string ExplicitReason { get; }
+        public string? ExplicitReason { get; }
 
         public UnitTestElementId Id { get; }
 
         public MspecServiceProvider Services { get; }
 
-        public IUnitTestElement Parent
+        public IUnitTestElement? Parent
         {
             get => parent;
             set
@@ -62,7 +62,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public IBindableCollection<IUnitTestElement> Children { get; } = new BindableSetCollectionWithoutIndexTracking<IUnitTestElement>(UT.Locks.ReadLock, UnitTestElement.EqualityComparer);
 
-        public string ShortName
+        public string? ShortName
         {
             get => shortName;
             protected set
@@ -83,7 +83,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public IClrTypeName TypeName
         {
-            get => typeName;
+            get => typeName!;
             private set
             {
                 if (Equals(value, typeName))
@@ -124,7 +124,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
                 : GetPresentation();
         }
 
-        public virtual IDeclaredElement GetDeclaredElement()
+        public virtual IDeclaredElement? GetDeclaredElement()
         {
             return Services.CachingService.GetTypeElement(Id.Project, Id.TargetFrameworkId, TypeName, true, true);
         }
@@ -154,7 +154,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return Services.GetRunStrategy(this);
         }
 
-        protected ITypeElement GetDeclaredType()
+        protected ITypeElement? GetDeclaredType()
         {
             return Services.CachingService.GetTypeElement(Id.Project, Id.TargetFrameworkId, TypeName, true, true);
         }
@@ -175,7 +175,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return Equals(obj as IUnitTestElement);
         }
 
-        public bool Equals(IUnitTestElement other)
+        public bool Equals(IUnitTestElement? other)
         {
             return other != null && other.Id.Equals(Id);
         }

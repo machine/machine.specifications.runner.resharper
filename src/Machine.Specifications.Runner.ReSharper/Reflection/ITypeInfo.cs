@@ -8,7 +8,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 
         bool IsAbstract { get; }
 
-        ITypeInfo GetContainingType();
+        ITypeInfo? GetContainingType();
 
         IEnumerable<IFieldInfo> GetFields();
 

@@ -17,14 +17,14 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
 
         protected abstract TTask ToRemoteTask(TElement element, ITestRunnerExecutionContext context);
 
-        protected abstract TElement ToElement(TTask task, ITestRunnerDiscoveryContext context);
+        protected abstract TElement? ToElement(TTask task, ITestRunnerDiscoveryContext context);
 
         public RemoteTask GetRemoteTask(TElement element, ITestRunnerExecutionContext context)
         {
             return ToRemoteTask(element, context);
         }
 
-        public IUnitTestElement GetElement(TTask task, ITestRunnerDiscoveryContext context)
+        public IUnitTestElement? GetElement(TTask task, ITestRunnerDiscoveryContext context)
         {
             return ToElement(task, context);
         }

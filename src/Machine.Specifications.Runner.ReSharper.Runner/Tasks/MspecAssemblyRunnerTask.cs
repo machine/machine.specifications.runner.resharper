@@ -35,7 +35,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(AssemblyLocation), AssemblyLocation);
         }
 
-        public bool Equals(MspecAssemblyRunnerTask other)
+        public bool Equals(MspecAssemblyRunnerTask? other)
         {
             return other != null && other.ProjectId == ProjectId;
         }

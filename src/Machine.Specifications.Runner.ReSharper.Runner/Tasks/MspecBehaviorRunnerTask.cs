@@ -7,7 +7,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
     [Serializable]
     public class MspecBehaviorRunnerTask : MspecRunnerTask, IEquatable<MspecBehaviorRunnerTask>
     {
-        public MspecBehaviorRunnerTask(string projectId, string contextTypeName, string behaviorFieldName, string ignoreReason)
+        public MspecBehaviorRunnerTask(string projectId, string contextTypeName, string behaviorFieldName, string? ignoreReason)
             : base(ignoreReason)
         {
             ProjectId = projectId;
@@ -40,12 +40,12 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(BehaviorFieldName), BehaviorFieldName);
         }
 
-        public override string GetKey()
+        public override string? GetKey()
         {
             return null;
         }
 
-        public bool Equals(MspecBehaviorRunnerTask other)
+        public bool Equals(MspecBehaviorRunnerTask? other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&

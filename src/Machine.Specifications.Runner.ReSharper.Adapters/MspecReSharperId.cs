@@ -71,7 +71,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             };
         }
 
-        public bool Equals(MspecReSharperId other)
+        public bool Equals(MspecReSharperId? other)
         {
             return other != null && Id == other.Id;
         }
@@ -83,9 +83,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public override int GetHashCode()
         {
-            return Id != null
-                ? Id.GetHashCode()
-                : 0;
+            return Id.GetHashCode();
         }
     }
 }

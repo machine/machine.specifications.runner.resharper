@@ -7,7 +7,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
     [Serializable]
     public class MspecContextRunnerTask : MspecRunnerTask, IEquatable<MspecContextRunnerTask>
     {
-        public MspecContextRunnerTask(string projectId, string contextTypeName, string ignoreReason)
+        public MspecContextRunnerTask(string projectId, string contextTypeName, string? ignoreReason)
             : base(ignoreReason)
         {
             ProjectId = projectId;
@@ -35,7 +35,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner.Tasks
             SetXmlAttribute(element, nameof(ContextTypeName), ContextTypeName);
         }
 
-        public bool Equals(MspecContextRunnerTask other)
+        public bool Equals(MspecContextRunnerTask? other)
         {
             return other != null &&
                    other.ProjectId == ProjectId &&

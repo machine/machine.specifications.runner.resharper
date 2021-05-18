@@ -6,6 +6,7 @@
     <PackageId>Machine.Specifications.Runner.ReSharper.Adapters</PackageId>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
 
     <AssemblyName Condition="'$(TargetFramework)' == 'net40'">Machine.Specifications.Runner.ReSharper.Adapters.net40</AssemblyName>
     <AssemblyName Condition="'$(TargetFramework)' == 'netstandard2.0'">Machine.Specifications.Runner.ReSharper.Adapters.netstandard20</AssemblyName>

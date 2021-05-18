@@ -9,18 +9,18 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 {
     public class MspecBehaviorTestElement : MspecFieldTestElement, IEquatable<MspecBehaviorTestElement>
     {
-        public MspecBehaviorTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string explicitReason)
+        public MspecBehaviorTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
             : base(services, id, typeName, fieldName, explicitReason)
         {
         }
 
-        public MspecContextTestElement Context => Parent as MspecContextTestElement;
+        public MspecContextTestElement? Context => Parent as MspecContextTestElement;
 
         public override string Kind => "Behavior";
 
         public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
         {
-            var sequence = Context.GetTaskSequence(explicitElements, run);
+            var sequence = Context!.GetTaskSequence(explicitElements, run);
 
             var behaviorTask = run.GetRemoteTaskForElement<MspecBehaviorRunnerTask>(this) ??
                                new MspecBehaviorRunnerTask(Id.ProjectId, Context.TypeName.FullName, FieldName, ExplicitReason);
@@ -35,7 +35,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             return "behaves like";
         }
 
-        public bool Equals(MspecBehaviorTestElement other)
+        public bool Equals(MspecBehaviorTestElement? other)
         {
             return other != null &&
                    Equals(Id, other.Id) &&
