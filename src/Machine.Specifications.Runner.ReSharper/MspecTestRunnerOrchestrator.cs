@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner.Extensions;
 using Machine.Specifications.Runner.ReSharper.Tasks;
-using TypeInfo = JetBrains.ReSharper.TestRunner.Abstractions.Objects.TypeInfo;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
@@ -15,7 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private const string Namespace = "Machine.Specifications.Runner.ReSharper";
 
-        public Assembly InProcessAdapterAssembly => typeof (MspecTestContainer).Assembly;
+        public System.Reflection.Assembly InProcessAdapterAssembly => typeof (MspecTestContainer).Assembly;
 
         public int Priority => 10;
 

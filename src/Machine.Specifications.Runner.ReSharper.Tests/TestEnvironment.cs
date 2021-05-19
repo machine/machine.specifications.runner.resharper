@@ -8,7 +8,7 @@ using NUnit.Framework;
 [assembly: RequiresThread(ApartmentState.STA)]
 
 #pragma warning disable CS0618
-[assembly: TestDataPathBase("src/Machine.Specifications.Runner.ReSharper.Tests/Data")]
+[assembly: TestDataPathBase("Data")]
 #pragma warning restore CS0618
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -20,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                SetJetTestPackagesDir();
+                //SetJetTestPackagesDir();
             }
             catch (Exception e)
             {
