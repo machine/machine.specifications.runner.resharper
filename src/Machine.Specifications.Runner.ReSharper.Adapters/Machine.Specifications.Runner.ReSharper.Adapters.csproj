@@ -22,12 +22,4 @@
     <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Tasks\Machine.Specifications.Runner.ReSharper.Tasks.csproj" />
   </ItemGroup>
 
-  <Target Name="ILRepack" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
-    <PropertyGroup>
-      <ILRepackCommand>"$(ILRepack)" --internalize --norepackres --out:"$(OutputPath)$(AssemblyName).dll" "$(TargetPath)" "$(OutputPath)Machine.Specifications.Runner.Utility.dll"</ILRepackCommand>
-    </PropertyGroup>
-
-    <Exec Command="$(ILRepackCommand)" />
-  </Target>
-
 </Project>

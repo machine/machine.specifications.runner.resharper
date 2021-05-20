@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Adapters\Machine.Specifications.Runner.ReSharper.Adapters.csproj" />
     <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Runner\Machine.Specifications.Runner.ReSharper.Runner.csproj" />
+    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Tasks\Machine.Specifications.Runner.ReSharper.Tasks.csproj" />
     <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper\Machine.Specifications.Runner.ReSharper.csproj" />
   </ItemGroup>
 
