@@ -16,7 +16,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
         {
 #if DEBUG
-            Debugger.Launch();
+            //Debugger.Launch();
 #endif
 
             logger.Info("Exploration started");
@@ -31,7 +31,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void RunTests(TestRunRequest request, ITestDiscoverySink discoverySink, ITestExecutionSink executionSink)
         {
 #if DEBUG
-            Debugger.Launch();
+            //Debugger.Launch();
 #endif
 
             logger.Info("Execution started");

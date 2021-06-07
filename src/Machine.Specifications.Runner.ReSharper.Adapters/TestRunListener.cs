@@ -46,8 +46,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
         {
             logger.Trace($"OnAssemblyEnd: {assemblyInfo.Location}");
-
-            waitEvent.Set();
         }
 
         public void OnRunStart()
@@ -58,6 +56,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void OnRunEnd()
         {
             logger.Trace("OnRunEnd");
+
+            waitEvent.Set();
         }
 
         public void OnContextStart(ContextInfo contextInfo)
