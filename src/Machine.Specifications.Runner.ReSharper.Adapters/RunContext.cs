@@ -26,14 +26,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return depot.GetContextNames();
         }
 
-        public TaskWrapper GetTask(ContextInfo context)
+        public TaskWrapper GetTask(Utility.ContextInfo context)
         {
             var key = new MspecReSharperId(context);
 
             return contexts.GetOrAdd(key, x => new TaskWrapper(depot[x], sink));
         }
 
-        public TaskWrapper GetTask(ContextInfo? context, SpecificationInfo specification)
+        public TaskWrapper GetTask(Utility.ContextInfo? context, Utility.SpecificationInfo specification)
         {
             if (context == null)
             {

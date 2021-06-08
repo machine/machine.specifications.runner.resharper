@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using JetBrains.Application.Settings;
 using JetBrains.Application.UI.BindableLinq.Dependencies;
@@ -37,6 +38,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         protected override void DoOneTest(string testName)
         {
             var path = GetTestDataFilePath2(testName + Extension);
+
+            CopyFrameworkLibrary(path.Directory);
 
             var assembly = GetDll(path);
 
@@ -76,16 +79,18 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
             elementManager.AddElements(elements.ToSet());
 
-            var session = facade.SessionManager.CreateSession(new EverythingCriterion());
+            var session = facade.SessionManager.CreateSession(SolutionCriterion.Instance);
 
             var provider = UnitTestHost.Instance.GetProvider("Process");
-            var unitTestElements = new UnitTestElements(new EverythingCriterion(), elements);
+            var unitTestElements = new UnitTestElements(SolutionCriterion.Instance, elements);
 
             var launch = facade.LaunchManager.CreateLaunch(session, unitTestElements, provider);
 
             launch.Output.Subscribe(new OutputObserver());
 
             launch.Run().Wait(lifetime);
+
+            var results = Solution.GetComponent<IUnitTestResultManager>();
         }
 
         private string GetDll(FileSystemPath source)
@@ -116,15 +121,25 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             return assembly.Name;
         }
 
-        private class EverythingCriterion : IUnitTestElementCriterion
+        private void CopyFrameworkLibrary(FileSystemPath destination)
         {
-            public IEnumerable<IDependencyDefinition> Dependencies { get; } = Array.Empty<IDependencyDefinition>();
+            var assembly = Assembly.GetExecutingAssembly();
 
-            public bool Matches(IUnitTestElement element)
-            {
-                return true;
-            }
+            var source = assembly.GetPath().Directory.Combine("Machine.Specifications.dll");
+            var target = destination.Combine("Machine.Specifications.dll");
+
+            source.CopyFile(target, true);
         }
+
+        //private class EverythingCriterion : IUnitTestElementCriterion
+        //{
+        //    public IEnumerable<IDependencyDefinition> Dependencies { get; } = Array.Empty<IDependencyDefinition>();
+
+        //    public bool Matches(IUnitTestElement element)
+        //    {
+        //        return true;
+        //    }
+        //}
 
         private class OutputObserver : IObserver<IUnitTestLaunchOutputMessage>
         {

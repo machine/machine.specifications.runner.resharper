@@ -15,6 +15,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             Context = context;
             MessageBroker = messageBroker;
+
+            Process = new MspecPreparedProcess();
         }
 
         public Task<int> Shutdown()
