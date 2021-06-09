@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Application.Components;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.TestRunner.Abstractions;
+using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -12,23 +12,21 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     [SolutionComponent]
     public class MspecTestRunnerAgentManager : ITestRunnerAgentManager
     {
-        private readonly IMessageBroker messageBroker;
+        private readonly IAssemblyResolver resolver;
 
-        public MspecTestRunnerAgentManager(IMessageBroker messageBroker)
+        public MspecTestRunnerAgentManager(IAssemblyResolver resolver)
         {
-            this.messageBroker = messageBroker;
+            this.resolver = resolver;
         }
 
         public Task<ITestRunnerExecutionAgent> GetExecutionAgent(ITestRunnerExecutionContext context, CancellationToken ct)
         {
             var handlers = context.Container.GetComponents<IProvideTestRunnerAgentMessageHandlers>()
                 .OrderBy(x => x.Priority)
+                .SelectMany(x => x.GetMessageHandlers(context))
                 .ToArray();
 
-            foreach (var handler in handlers)
-            {
-                var messageHandlers = handler.GetMessageHandlers(context);
-            }
+            var messageBroker = new MspecMessageBroker(resolver, handlers);
 
             return Task.FromResult<ITestRunnerExecutionAgent>(new MspecExecutionAgent(context, messageBroker));
         }

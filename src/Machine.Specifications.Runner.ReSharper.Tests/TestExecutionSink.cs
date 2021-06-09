@@ -8,7 +8,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     {
         private readonly IMessageBroker broker;
 
-        private ILogger logger = Logger.GetLogger<TestExecutionSink>();
+        private readonly ILogger logger = Logger.GetLogger<TestExecutionSink>();
 
         public TestExecutionSink(IMessageBroker broker)
         {

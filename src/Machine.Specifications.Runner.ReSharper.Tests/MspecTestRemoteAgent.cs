@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using JetBrains.ReSharper.TestRunner.Abstractions;
+using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -8,30 +10,40 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     {
         private readonly IMessageBroker broker;
 
-        private readonly ITestAdapterLoadContextFactory contextFactory;
+        private readonly IAssemblyResolver resolver;
 
-        public MspecTestRemoteAgent(IMessageBroker broker, ITestAdapterLoadContextFactory contextFactory)
+        private TestAdapterInfo loader;
+
+        public MspecTestRemoteAgent(IMessageBroker broker, IAssemblyResolver resolver)
         {
             this.broker = broker;
-            this.contextFactory = contextFactory;
+            this.resolver = resolver;
         }
 
         public void Execute(RemoteAgentInitializationRequest message)
         {
             if (message.TestAdapterLoader is TestAdapterInfo info)
             {
-                contextFactory.SetTestAdapterLoader(info);
+                loader = info;
             }
         }
 
         public Task Execute(TestRunRequest message)
         {
-            var context = contextFactory.Initialize();
-            var executor = context.InitializeTestExecutor();
+            var executor = CreateTestExecutor();
 
             executor.RunTests(message, new TestDiscoverySink(broker), new TestExecutionSink(broker));
 
             return Task.CompletedTask;
+        }
+
+        private ITestExecutor CreateTestExecutor()
+        {
+            var type = resolver
+                .LoadFrom(loader.Executor.Assembly)
+                .GetType(loader.Executor.TypeName);
+
+            return (ITestExecutor) Activator.CreateInstance(type);
         }
     }
 }
