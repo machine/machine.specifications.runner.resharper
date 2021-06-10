@@ -26,7 +26,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             var assemblyPath = Path.GetDirectoryName(request.Container.Location);
 
-            var listener = new TestRunListener(context, assemblyPath, token);
+            var listener = new TestRunListener(context, assemblyPath!, token);
             var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
 
             var runner = new AppDomainRunner(listener, runOptions);
