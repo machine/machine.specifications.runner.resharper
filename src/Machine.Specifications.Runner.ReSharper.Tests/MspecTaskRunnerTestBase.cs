@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using JetBrains.Application.Settings;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
 using JetBrains.ReSharper.TaskRunnerFramework;
+using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Criteria;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
@@ -37,6 +39,21 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             MetadataExplorer.ProcessArtifact(observer, CancellationToken.None).Wait();
 
             return observer.Elements;
+        }
+
+        public override void SetUp()
+        {
+            var factoryMethod = typeof(Logger).GetProperty(nameof(Logger.Factory), BindingFlags.Static | BindingFlags.Public);
+
+            if (factoryMethod != null)
+            {
+                var factory = factoryMethod.GetValue(null);
+
+                if (factory == null)
+                {
+                    factoryMethod.SetValue(null, new LoggerFactory());
+                }
+            }
         }
 
         protected override void DoTest(Lifetime lifetime, IProject testProject)

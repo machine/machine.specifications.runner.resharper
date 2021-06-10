@@ -23,11 +23,23 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         public DateTime? ExitTime { get; } = DateTime.Now;
 
-        public event ExitProcessHandler Exited;
+        public event ExitProcessHandler Exited
+        {
+            add { }
+            remove { }
+        }
 
-        public event LineReadHandler OutputLineRead;
+        public event LineReadHandler OutputLineRead
+        {
+            add { }
+            remove { }
+        }
 
-        public event LineReadHandler ErrorLineRead;
+        public event LineReadHandler ErrorLineRead
+        {
+            add { }
+            remove { }
+        }
 
         public void Dispose()
         {
