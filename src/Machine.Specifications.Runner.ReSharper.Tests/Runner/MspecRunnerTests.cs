@@ -1,4 +1,5 @@
-﻿using JetBrains.ReSharper.TestFramework;
+﻿using System.Linq;
+using JetBrains.ReSharper.TestFramework;
 using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
@@ -9,11 +10,17 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
     {
         protected override string RelativeTestDataPath => "Runner";
 
-        [Test]
         [ExcludeMsCorLib]
-        public void SimpleSpec()
+        [TestCase("SimpleSpec.cs")]
+        [TestCase("FailingSpec.cs")]
+        public void TestFile(string filename)
         {
-            DoOneTest("SimpleSpec");
+            var path = GetTestDataFilePath2(filename);
+
+            var references = GetReferencedAssemblies(GetTargetFrameworkId()).ToArray();
+            var assembly = CodeCompiler.CompileSource(path, references);
+
+            DoTestSolution(assembly);
         }
     }
 }

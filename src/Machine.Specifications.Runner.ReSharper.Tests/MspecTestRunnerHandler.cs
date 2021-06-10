@@ -6,7 +6,7 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    public class MspecTestRemoteAgent : IMessageHandler<RemoteAgentInitializationRequest>, IAsyncMessageHandler<TestRunRequest>
+    public class MspecTestRunnerHandler : IMessageHandler<RemoteAgentInitializationRequest>, IAsyncMessageHandler<TestRunRequest>
     {
         private readonly IMessageBroker broker;
 
@@ -14,7 +14,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         private TestAdapterInfo loader;
 
-        public MspecTestRemoteAgent(IMessageBroker broker, IAssemblyResolver resolver)
+        public MspecTestRunnerHandler(IMessageBroker broker, IAssemblyResolver resolver)
         {
             this.broker = broker;
             this.resolver = resolver;

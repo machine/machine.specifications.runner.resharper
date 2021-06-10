@@ -5,23 +5,23 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 {
     public class MspecPreparedProcess : IPreparedProcess
     {
-        public int ProcessId { get; }
+        public int ProcessId { get; } = 0;
 
-        public int ExitCode { get; }
+        public int ExitCode { get; } = 0;
 
-        public IntPtr Handle { get; }
+        public IntPtr Handle { get; } = IntPtr.Zero;
 
-        public string ProcessName { get; }
+        public string ProcessName { get; } = string.Empty;
 
-        public string ProcessArgs { get; }
+        public string ProcessArgs { get; } = string.Empty;
 
-        public string Output { get; }
+        public string Output { get; } = string.Empty;
 
         public bool IsRunning => false;
 
-        public DateTime? StartTime { get; }
+        public DateTime? StartTime { get; } = DateTime.Now;
 
-        public DateTime? ExitTime { get; }
+        public DateTime? ExitTime { get; } = DateTime.Now;
 
         public event ExitProcessHandler Exited;
 

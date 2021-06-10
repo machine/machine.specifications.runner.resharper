@@ -5,7 +5,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
-    public class TestRunListener : Utility.ISpecificationRunListener
+    public class TestRunListener : ISpecificationRunListener
     {
         private readonly RunContext context;
 
@@ -17,7 +17,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private readonly ManualResetEvent waitEvent = new(false);
 
-        private Utility.ContextInfo? currentContext;
+        private ContextInfo? currentContext;
 
         private TaskWrapper? currentTask;
 
@@ -36,14 +36,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public WaitHandle Finished => waitEvent;
 
-        public void OnAssemblyStart(Utility.AssemblyInfo assemblyInfo)
+        public void OnAssemblyStart(AssemblyInfo assemblyInfo)
         {
             logger.Trace($"OnAssemblyStart: {assemblyInfo.Location}");
 
             Environment.CurrentDirectory = assemblyPath;
         }
 
-        public void OnAssemblyEnd(Utility.AssemblyInfo assemblyInfo)
+        public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
         {
             logger.Trace($"OnAssemblyEnd: {assemblyInfo.Location}");
         }
@@ -60,7 +60,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             waitEvent.Set();
         }
 
-        public void OnContextStart(Utility.ContextInfo contextInfo)
+        public void OnContextStart(ContextInfo contextInfo)
         {
             specifications = 0;
             errors = 0;
@@ -83,7 +83,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             });
         }
 
-        public void OnContextEnd(Utility.ContextInfo contextInfo)
+        public void OnContextEnd(ContextInfo contextInfo)
         {
             logger.Trace($"OnContextEnd: {MspecReSharperId.Self(contextInfo)}");
 
@@ -106,7 +106,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             });
         }
 
-        public void OnSpecificationStart(Utility.SpecificationInfo specificationInfo)
+        public void OnSpecificationStart(SpecificationInfo specificationInfo)
         {
             logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(specificationInfo)}");
 
@@ -129,7 +129,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             });
         }
 
-        public void OnSpecificationEnd(Utility.SpecificationInfo specificationInfo, Utility.Result result)
+        public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
         {
             logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(specificationInfo)}");
 
@@ -150,30 +150,30 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 currentTask = task;
                 currentTask.Output(specificationInfo.CapturedOutput);
 
-                if (result.Status == Utility.Status.Failing)
+                if (result.Status == Status.Failing)
                 {
                     errors++;
                     currentTask.Failed(result.Exception.GetExceptions(), result.Exception.GetExceptionMessage());
                     currentTask.Finished();
                 }
-                else if (result.Status == Utility.Status.Passing)
+                else if (result.Status == Status.Passing)
                 {
                     successes++;
                     currentTask.Passed();
                     currentTask.Finished();
                 }
-                else if (result.Status == Utility.Status.NotImplemented)
+                else if (result.Status == Status.NotImplemented)
                 {
                     currentTask.Skipped("Not implemented");
                 }
-                else if (result.Status == Utility.Status.Ignored)
+                else if (result.Status == Status.Ignored)
                 {
                     currentTask.Skipped();
                 }
             });
         }
 
-        public void OnFatalError(Utility.ExceptionResult exceptionResult)
+        public void OnFatalError(ExceptionResult exceptionResult)
         {
             if (currentTask != null)
             {

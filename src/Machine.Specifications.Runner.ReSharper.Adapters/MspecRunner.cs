@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading;
+﻿using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
@@ -15,10 +14,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
         {
-#if DEBUG
-            //Debugger.Launch();
-#endif
-
             logger.Info("Exploration started");
             logger.Info("Exploration completed");
         }
@@ -30,10 +25,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void RunTests(TestRunRequest request, ITestDiscoverySink discoverySink, ITestExecutionSink executionSink)
         {
-#if DEBUG
-            //Debugger.Launch();
-#endif
-
             logger.Info("Execution started");
 
             var depot = new RemoteTaskDepot(request.Selection);

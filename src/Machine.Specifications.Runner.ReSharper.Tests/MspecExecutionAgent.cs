@@ -15,8 +15,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             Context = context;
             MessageBroker = messageBroker;
-
-            Process = new MspecPreparedProcess();
         }
 
         public Task<int> Shutdown()
@@ -24,15 +22,15 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             return Task.FromResult(0);
         }
 
-        public string Id { get; }
+        public string Id { get; } = string.Empty;
 
-        public Lifetime Lifetime { get; }
+        public Lifetime Lifetime { get; } = Lifetime.Eternal;
 
-        public IPreparedProcess Process { get; }
+        public IPreparedProcess Process { get; } = new MspecPreparedProcess();
 
         public IMessageBroker MessageBroker { get; }
 
-        public object ActivationOptions { get; }
+        public object ActivationOptions { get; } = new object();
 
         public ITestRunnerExecutionContext Context { get; }
 

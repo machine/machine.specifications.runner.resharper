@@ -11,13 +11,13 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 {
     public class MspecMessageBroker : IMessageBroker
     {
-        private readonly MspecTestRemoteAgent agent;
+        private readonly MspecTestRunnerHandler testRunnerHandler;
 
         private readonly Dictionary<Type, MessageHandler> messageHandlers = new Dictionary<Type, MessageHandler>();
 
         public MspecMessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers)
         {
-            agent = new MspecTestRemoteAgent(this, resolver);
+            testRunnerHandler = new MspecTestRunnerHandler(this, resolver);
 
             InitializeMessageHandlers(handlers);
         }
@@ -27,11 +27,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             switch (message)
             {
                 case RemoteAgentInitializationRequest initialization:
-                    agent.Execute(initialization);
+                    testRunnerHandler.Execute(initialization);
                     break;
 
                 case TestRunRequest testRun:
-                    await agent.Execute(testRun);
+                    await testRunnerHandler.Execute(testRun);
                     break;
 
                 default:

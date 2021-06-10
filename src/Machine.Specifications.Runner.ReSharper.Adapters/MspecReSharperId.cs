@@ -7,17 +7,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecReSharperId : IEquatable<MspecReSharperId>
     {
-        public MspecReSharperId(Utility.ContextInfo context)
+        public MspecReSharperId(ContextInfo context)
         {
             Id = context.TypeName;
         }
 
-        public MspecReSharperId(Utility.SpecificationInfo specification)
+        public MspecReSharperId(SpecificationInfo specification)
         {
             Id = $"{specification.ContainingType}::{specification.FieldName}";
         }
 
-        public MspecReSharperId(Utility.ContextInfo context, Utility.SpecificationInfo behaviorSpecification)
+        public MspecReSharperId(ContextInfo context, SpecificationInfo behaviorSpecification)
         {
             Id = $"{context.TypeName}::{behaviorSpecification.FieldName}";
         }
@@ -44,17 +44,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public string Id { get; }
 
-        public static string Self(Utility.ContextInfo context)
+        public static string Self(ContextInfo context)
         {
             return new MspecReSharperId(context).Id;
         }
 
-        public static string Self(Utility.SpecificationInfo specification)
+        public static string Self(SpecificationInfo specification)
         {
             return new MspecReSharperId(specification).Id;
         }
 
-        public static string Self(Utility.ContextInfo context, Utility.SpecificationInfo behaviorSpecification)
+        public static string Self(ContextInfo context, SpecificationInfo behaviorSpecification)
         {
             return new MspecReSharperId(context, behaviorSpecification).Id;
         }

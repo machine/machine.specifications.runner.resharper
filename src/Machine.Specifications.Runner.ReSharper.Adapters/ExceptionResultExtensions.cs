@@ -8,7 +8,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public static class ExceptionResultExtensions
     {
-        public static IEnumerable<Utility.ExceptionResult> Flatten(this Utility.ExceptionResult result)
+        public static IEnumerable<ExceptionResult> Flatten(this ExceptionResult result)
         {
             var exception = result;
 
@@ -23,14 +23,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public static ExceptionInfo[] GetExceptions(this Utility.ExceptionResult result)
+        public static ExceptionInfo[] GetExceptions(this ExceptionResult result)
         {
             return result.Flatten()
                 .Select(x => new ExceptionInfo(x.FullTypeName, x.Message, x.StackTrace))
                 .ToArray();
         }
 
-        public static string GetExceptionMessage(this Utility.ExceptionResult result)
+        public static string GetExceptionMessage(this ExceptionResult result)
         {
             var exception = result.Flatten().FirstOrDefault();
 
