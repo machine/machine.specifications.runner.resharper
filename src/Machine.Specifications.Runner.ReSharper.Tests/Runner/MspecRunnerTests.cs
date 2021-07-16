@@ -11,7 +11,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
         protected override string RelativeTestDataPath => "Runner";
 
         [ExcludeMsCorLib]
-        [TestCase("SimpleSpec.cs")]
+        //[TestCase("SimpleSpec.cs")]
         [TestCase("FailingSpec.cs")]
         public void TestFile(string filename)
         {
