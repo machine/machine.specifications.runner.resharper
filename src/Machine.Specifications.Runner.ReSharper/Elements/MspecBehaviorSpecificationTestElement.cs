@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Launch;
-using Machine.Specifications.Runner.ReSharper.Runner.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
@@ -31,18 +29,6 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         public override IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
         {
             return Behavior!.GetLocations(element);
-        }
-
-        public override IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
-        {
-            var sequence = Behavior!.GetTaskSequence(explicitElements, run);
-
-            var behaviorSpecificationTask = run.GetRemoteTaskForElement<MspecBehaviorSpecificationRunnerTask>(this) ??
-                                            new MspecBehaviorSpecificationRunnerTask(Id.ProjectId, Behavior!.Context!.TypeName.FullName, Behavior.FieldName, FieldName, ExplicitReason);
-
-            sequence.Add(new UnitTestTask(this, behaviorSpecificationTask));
-
-            return sequence;
         }
 
         public bool Equals(MspecBehaviorSpecificationTestElement? other)

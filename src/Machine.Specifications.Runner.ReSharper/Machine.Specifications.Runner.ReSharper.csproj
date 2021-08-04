@@ -14,7 +14,7 @@
     <Authors>Machine</Authors>
     <Owners>Machine</Owners>
     <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
-    <PackageReleaseNotes>Adds support for R# and Rider 2021.1</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds support for R# and Rider 2021.2</PackageReleaseNotes>
     <PackageIcon>Machine.png</PackageIcon>
     <PackageIconUrl>http://github.com/machine/machine.specifications.runner.resharper/raw/master/images/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/machine/machine.specifications.runner.resharper</RepositoryUrl>
@@ -36,7 +36,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Tasks\Machine.Specifications.Runner.ReSharper.Tasks.csproj" PrivateAssets="All" />
-    <ProjectReference Include="..\Machine.Specifications.Runner.ReSharper.Runner\Machine.Specifications.Runner.ReSharper.Runner.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,7 +49,6 @@
   <Target Name="PackageItems">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.dll" PackagePath="DotFiles" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.Runner.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.Utility.dll" PackagePath="DotFiles" />
 
       <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" PackagePath="DotFiles" />

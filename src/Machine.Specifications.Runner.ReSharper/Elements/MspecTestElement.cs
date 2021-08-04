@@ -7,7 +7,6 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
 using JetBrains.Util;
 
@@ -77,8 +76,6 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             }
         }
 
-        public bool Explicit => !string.IsNullOrEmpty(ExplicitReason);
-
         public UnitTestElementOrigin Origin { get; set; }
 
         public IClrTypeName TypeName
@@ -144,14 +141,9 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
                 .ToArray();
         }
 
-        public virtual IList<UnitTestTask> GetTaskSequence(ICollection<IUnitTestElement> explicitElements, IUnitTestRun run)
-        {
-            return EmptyList<UnitTestTask>.Instance;
-        }
-
         public IUnitTestRunStrategy GetRunStrategy(IHostProvider hostProvider)
         {
-            return Services.GetRunStrategy(this);
+            return Services.GetRunStrategy();
         }
 
         protected ITypeElement? GetDeclaredType()
@@ -165,7 +157,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
                 .Select(x => new {declaration = x, file = x.GetContainingFile()})
                 .Where(x => x.file != null)
                 .Select(x => new UnitTestElementLocation(
-                    x.file.GetSourceFile().ToProjectFile(),
+                    x.file!.GetSourceFile().ToProjectFile(),
                     x.declaration.GetNameDocumentRange().TextRange,
                     x.declaration.GetDocumentRange().TextRange));
         }

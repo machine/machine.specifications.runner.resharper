@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Machine.Specifications.Runner.ReSharper.Runner
+namespace Machine.Specifications.Runner.ReSharper
 {
     public static class EnumerableExtensions
     {

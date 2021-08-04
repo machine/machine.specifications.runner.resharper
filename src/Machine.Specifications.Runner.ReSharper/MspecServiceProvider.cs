@@ -1,6 +1,5 @@
 ﻿using System;
 using JetBrains.ProjectModel;
-using JetBrains.ProjectModel.Assemblies.Impl;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
@@ -15,10 +14,6 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private readonly IUnitTestElementIdFactory elementIdFactory;
 
-        private readonly IUnitTestingSettings settings;
-
-        private readonly Lazy<MspecOutOfProcessUnitTestRunStrategy> legacyRunStrategy;
-
         private readonly Lazy<MspecTestRunnerRunStrategy> runStrategy;
 
         public MspecServiceProvider(
@@ -26,20 +21,15 @@ namespace Machine.Specifications.Runner.ReSharper
             ISolution solution,
             UnitTestingCachingService cachingService,
             IUnitTestElementManager elementManager,
-            IUnitTestElementIdFactory elementIdFactory,
-            IUnitTestingSettings settings,
-            ResolveContextManager resolveContextManager)
+            IUnitTestElementIdFactory elementIdFactory)
         {
             this.elementIdFactory = elementIdFactory;
-            this.settings = settings;
 
-            legacyRunStrategy = Lazy.Of(solution.GetComponent<MspecOutOfProcessUnitTestRunStrategy>, true);
             runStrategy = Lazy.Of(solution.GetComponent<MspecTestRunnerRunStrategy>, true);
 
             Provider = provider;
             CachingService = cachingService;
             ElementManager = elementManager;
-            ResolveContextManager = resolveContextManager;
         }
 
         public MspecTestProvider Provider { get; }
@@ -48,20 +38,8 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public IUnitTestElementManager ElementManager { get; }
 
-        public ResolveContextManager ResolveContextManager { get; }
-
-        public IUnitTestRunStrategy GetRunStrategy(IUnitTestElement element)
+        public IUnitTestRunStrategy GetRunStrategy()
         {
-            var project = element.Id.Project;
-            var targetFrameworkId = element.Id.TargetFrameworkId;
-
-            var isNetFramework = targetFrameworkId.IsNetFramework || !project.IsDotNetCoreProject() || !targetFrameworkId.IsNetCoreApp;
-
-            if (isNetFramework && settings.TestRunner.UseLegacyRunner.Value)
-            {
-                return legacyRunStrategy.Value;
-            }
-
             return runStrategy.Value;
         }
 

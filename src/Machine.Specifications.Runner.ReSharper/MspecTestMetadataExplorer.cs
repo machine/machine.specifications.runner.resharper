@@ -5,7 +5,6 @@ using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
 using Machine.Specifications.Runner.ReSharper.Reflection;
-using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
