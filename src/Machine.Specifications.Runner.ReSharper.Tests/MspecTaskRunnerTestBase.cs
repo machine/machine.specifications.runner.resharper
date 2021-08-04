@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using JetBrains.Application.UI.BindableLinq.Extensions;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
@@ -66,7 +67,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                 var session = facade.SessionManager.CreateSession(SolutionCriterion.Instance);
                 var launch = facade.LaunchManager.CreateLaunch(session, unitTestElements, UnitTestHost.Instance.GetProvider("Process"));
 
-                launch.Run().Wait(lifetime);
+                launch.Run().Wait();
 
                 WriteResults(elements, output);
             });
