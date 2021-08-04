@@ -28,13 +28,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             }
         }
 
-        public Task Execute(TestRunRequest message)
+        public async Task Execute(TestRunRequest message)
         {
             var executor = CreateTestExecutor();
 
-            executor.RunTests(message, new TestDiscoverySink(broker), new TestExecutionSink(broker));
-
-            return Task.CompletedTask;
+            await Task.Run(() => executor.RunTests(message, new TestDiscoverySink(broker), new TestExecutionSink(broker)));
         }
 
         private ITestExecutor CreateTestExecutor()

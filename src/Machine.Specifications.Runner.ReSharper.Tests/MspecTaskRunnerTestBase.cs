@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using JetBrains.Application.UI.BindableLinq.Extensions;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
@@ -21,16 +20,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     public abstract class MspecTaskRunnerTestBase : BaseTestWithSingleProject
     {
         public IUnitTestExplorerFromArtifacts MetadataExplorer => Solution.GetComponent<MspecTestExplorerFromArtifacts>();
-
-        protected ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject, string assemblyLocation)
-        {
-            var assembly = FileSystemPath.Parse(assemblyLocation);
-            var observer = new TestUnitTestElementObserver(testProject, testProject.GetCurrentTargetFrameworkId(), assembly);
-
-            MetadataExplorer.ProcessArtifact(observer, CancellationToken.None).Wait();
-
-            return observer.Elements;
-        }
 
         public override void SetUp()
         {
@@ -67,10 +56,20 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                 var session = facade.SessionManager.CreateSession(SolutionCriterion.Instance);
                 var launch = facade.LaunchManager.CreateLaunch(session, unitTestElements, UnitTestHost.Instance.GetProvider("Process"));
 
-                launch.Run().Wait();
+                launch.Run().Wait(lifetime);
 
                 WriteResults(elements, output);
             });
+        }
+
+        private ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject, string assemblyLocation)
+        {
+            var assembly = FileSystemPath.Parse(assemblyLocation);
+            var observer = new TestUnitTestElementObserver(testProject, testProject.GetCurrentTargetFrameworkId(), assembly);
+
+            MetadataExplorer.ProcessArtifact(observer, CancellationToken.None).Wait();
+
+            return observer.Elements;
         }
 
         private void WriteResults(IUnitTestElement[] elements, TextWriter output)
