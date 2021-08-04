@@ -1,4 +1,4 @@
-﻿using JetBrains.ReSharper.TaskRunnerFramework;
+﻿using JetBrains.ReSharper.TestRunner.Isolation;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner
 {
