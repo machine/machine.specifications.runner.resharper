@@ -3,13 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Application.Components;
-using JetBrains.ProjectModel;
 using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    [SolutionComponent]
     public class MspecTestRunnerAgentManager : ITestRunnerAgentManager
     {
         private readonly IAssemblyResolver resolver;

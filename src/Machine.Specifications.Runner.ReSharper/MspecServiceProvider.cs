@@ -5,7 +5,7 @@ using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Strategy;
 using JetBrains.Util;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
-using Machine.Specifications.Runner.ReSharper.RunStrategies;
+using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
@@ -14,7 +14,7 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private readonly IUnitTestElementIdFactory elementIdFactory;
 
-        private readonly Lazy<MspecTestRunnerRunStrategy> runStrategy;
+        private readonly Lazy<MspecTestRunnerRunStrategy> runner;
 
         public MspecServiceProvider(
             MspecTestProvider provider,
@@ -25,7 +25,7 @@ namespace Machine.Specifications.Runner.ReSharper
         {
             this.elementIdFactory = elementIdFactory;
 
-            runStrategy = Lazy.Of(solution.GetComponent<MspecTestRunnerRunStrategy>, true);
+            runner = Lazy.Of(solution.GetComponent<MspecTestRunnerRunStrategy>, true);
 
             Provider = provider;
             CachingService = cachingService;
@@ -40,7 +40,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public IUnitTestRunStrategy GetRunStrategy()
         {
-            return runStrategy.Value;
+            return runner.Value;
         }
 
         public UnitTestElementId CreateId(IProject project, TargetFrameworkId targetFrameworkId, string id)

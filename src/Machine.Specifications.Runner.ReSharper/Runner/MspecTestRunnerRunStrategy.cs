@@ -4,19 +4,19 @@ using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner.DataCollection;
 
-namespace Machine.Specifications.Runner.ReSharper.RunStrategies
+namespace Machine.Specifications.Runner.ReSharper.Runner
 {
     [SolutionComponent]
     public class MspecTestRunnerRunStrategy : TestRunnerRunStrategy
     {
         public MspecTestRunnerRunStrategy(
             IDataCollectorFactory dataCollectorFactory,
-            ITestRunnerAgentManager agentManager,
+            IAgentManagerHost agentManagerHost,
             ITestRunnerHostSource testRunnerHostSource,
             MspecTestRunnerOrchestrator adapter,
             IUnitTestProjectArtifactResolver artifactResolver,
             DotNetCoreLaunchSettingsJsonProfileProvider launchSettingsProvider)
-            : base(dataCollectorFactory, agentManager, testRunnerHostSource, adapter, artifactResolver, launchSettingsProvider)
+            : base(dataCollectorFactory, agentManagerHost.TestRunnerAgentManager, testRunnerHostSource, adapter, artifactResolver, launchSettingsProvider)
         {
         }
     }
