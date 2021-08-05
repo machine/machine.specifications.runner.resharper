@@ -62,7 +62,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new MspecBehaviorTestElement(services, x, typeName, fieldName, ignoreReason));
+                    new MspecBehaviorTestElement(services, x, typeName, fieldName, ignoreReason ?? parent.GetExplicitReason()));
             }
         }
 
@@ -78,7 +78,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new MspecContextSpecificationTestElement(services, x, typeName, fieldName, ignoreReason));
+                    new MspecContextSpecificationTestElement(services, x, typeName, fieldName, ignoreReason ?? parent.GetExplicitReason()));
             }
         }
 
@@ -94,7 +94,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 var id = $"{typeName.FullName}::{fieldName}";
 
                 return GetOrCreateElement(id, project, parent, parent.OwnCategories, x =>
-                    new MspecBehaviorSpecificationTestElement(services, x, typeName, fieldName, ignoreReason));
+                    new MspecBehaviorSpecificationTestElement(services, x, typeName, fieldName, ignoreReason ?? parent.GetExplicitReason()));
             }
         }
 

@@ -66,7 +66,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             foreach (var handler in handlers)
             {
                 var asyncHandlers = handler.GetType()
-                    .GetTypeInfo()
                     .GetInterfaces()
                     .Where(x => x.IsGenericType)
                     .Where(x => x.GetGenericTypeDefinition() == typeof(IAsyncMessageHandler<>));
