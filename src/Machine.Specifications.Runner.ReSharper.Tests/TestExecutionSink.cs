@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using LoggingLevel = JetBrains.Diagnostics.LoggingLevel;
@@ -49,7 +50,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                sink.Output.Log(LoggingLevel.ERROR, "test error");
+                var messages = string.Join(",", exceptions.Select(x => x.Message));
+
+                sink.Output.Log(LoggingLevel.TRACE, "test error: " + messages);
 
                 broker.TestException(task, exceptions);
             }
