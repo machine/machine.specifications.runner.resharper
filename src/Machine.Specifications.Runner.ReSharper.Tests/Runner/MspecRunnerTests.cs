@@ -12,7 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
 
         [ExcludeMsCorLib]
         [TestCase("SimpleSpec.cs")]
-        //[TestCase("FailingSpec.cs")]
+        [TestCase("FailingSpec.cs")]
         public void TestFile(string filename)
         {
             var path = GetTestDataFilePath2(filename);
