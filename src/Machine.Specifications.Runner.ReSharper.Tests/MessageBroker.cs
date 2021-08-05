@@ -9,15 +9,15 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    public class MspecMessageBroker : IMessageBroker
+    public class MessageBroker : IMessageBroker
     {
-        private readonly MspecTestRunnerHandler testRunnerHandler;
+        private readonly TestRunnerHandler testRunnerHandler;
 
         private readonly Dictionary<Type, MessageHandler> messageHandlers = new Dictionary<Type, MessageHandler>();
 
-        public MspecMessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers)
+        public MessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers)
         {
-            testRunnerHandler = new MspecTestRunnerHandler(this, resolver);
+            testRunnerHandler = new TestRunnerHandler(this, resolver);
 
             InitializeMessageHandlers(handlers);
         }
@@ -31,11 +31,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                     break;
 
                 case TestRunRequest testRun:
-                    await testRunnerHandler.Execute(testRun);
+                    await testRunnerHandler.Execute(testRun).ConfigureAwait(false);
                     break;
 
                 default:
-                    await HandleMessage(message);
+                    await HandleMessage(message).ConfigureAwait(false);
                     break;
             }
         }
@@ -46,22 +46,27 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             throw new NotSupportedException();
         }
 
-        private async Task HandleMessage(IMessage message)
+        private Task HandleMessage(IMessage message)
         {
-            if (messageHandlers.TryGetValue(message.GetType(), out var handler))
+            if (!messageHandlers.TryGetValue(message.GetType(), out var handler))
             {
-                if (handler.Method.Invoke(handler.Handler, new object[] {message}) is Task task)
-                {
-                    await task;
-                }
+                return Task.CompletedTask;
             }
+
+            if (handler.Method.Invoke(handler.Handler, new object[] {message}) is Task task)
+            {
+                return task;
+            }
+
+            return Task.CompletedTask;
         }
 
         private void InitializeMessageHandlers(IMessageHandlerMarker[] handlers)
         {
             foreach (var handler in handlers)
             {
-                var asyncHandlers = handler.GetType().GetInterfaces()
+                var asyncHandlers = handler.GetType()
+                    .GetInterfaces()
                     .Where(x => x.IsGenericType)
                     .Where(x => x.GetGenericTypeDefinition() == typeof(IAsyncMessageHandler<>));
 

@@ -19,7 +19,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                broker.TestStarting(task);
+                broker.TestStarting(task).Wait();
             }
             catch (Exception ex)
             {
@@ -31,7 +31,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                broker.TestDuration(task, duration);
+                broker.TestDuration(task, duration).Wait();
             }
             catch (Exception ex)
             {
@@ -43,7 +43,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                broker.TestException(task, exceptions);
+                broker.TestException(task, exceptions).Wait();
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                broker.TestFinished(task, message, result);
+                broker.TestFinished(task, message, result).Wait();
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                broker.TestOutput(task, text, outputType);
+                broker.TestOutput(task, text, outputType).Wait();
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                broker.DynamicTestDiscovered(task);
+                broker.DynamicTestDiscovered(task).Wait();
             }
             catch (Exception ex)
             {

@@ -9,9 +9,9 @@ using JetBrains.Util;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    public class MspecExecutionAgent : ITestRunnerExecutionAgent
+    public class ExecutionAgent : ITestRunnerExecutionAgent
     {
-        public MspecExecutionAgent(ITestRunnerExecutionContext context, IMessageBroker messageBroker)
+        public ExecutionAgent(ITestRunnerExecutionContext context, IMessageBroker messageBroker)
         {
             Context = context;
             MessageBroker = messageBroker;
@@ -26,7 +26,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         public Lifetime Lifetime { get; } = Lifetime.Eternal;
 
-        public IPreparedProcess Process { get; } = new MspecPreparedProcess();
+        public IPreparedProcess Process { get; } = new EmptyPreparedProcess();
 
         public IMessageBroker MessageBroker { get; }
 
@@ -45,8 +45,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
             var tasks = taskDepot.GetRemoteTasks(Context.Run);
             
-            await MessageBroker.Initialize(new RemoteAgentInitializationRequest(loader));
-            await MessageBroker.RunTests(new TestRunRequest(container, tasks));
+            await MessageBroker.Initialize(new RemoteAgentInitializationRequest(loader)).ConfigureAwait(false);
+            await MessageBroker.RunTests(new TestRunRequest(container, tasks)).ConfigureAwait(false);
         }
     }
 }

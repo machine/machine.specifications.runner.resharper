@@ -6,18 +6,19 @@ using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.Runner.ReSharper.Elements;
-using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
     [UnitTestProvider]
     public class MspecTestProvider : IDotNetArtifactBasedUnitTestProvider
     {
-        private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(MspecTaskRunner.RunnerId, null);
+        private const string Id = "Machine.Specifications";
 
-        public string ID => MspecTaskRunner.RunnerId;
+        private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(Id, null);
 
-        public string Name => MspecTaskRunner.RunnerId;
+        public string ID => Id;
+
+        public string Name => Id;
 
         public bool IsElementOfKind(IUnitTestElement element, UnitTestElementKind elementKind)
         {

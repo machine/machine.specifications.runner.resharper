@@ -3,43 +3,23 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using JetBrains.Application.Settings;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
-using JetBrains.ReSharper.TaskRunnerFramework;
+using JetBrains.ReSharper.TestFramework;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Criteria;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
-using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    public abstract class MspecTaskRunnerTestBase : UnitTestTaskRunnerTestBase
+    [EnsureUnitTestRepositoryIsEmpty]
+    public abstract class MspecTaskRunnerTestBase : BaseTestWithSingleProject
     {
-        public override IUnitTestExplorerFromArtifacts MetadataExplorer => Solution.GetComponent<MspecTestExplorerFromArtifacts>();
-
-        protected override void ChangeSettingsForTest(IContextBoundSettingsStoreLive settingsStore)
-        {
-        }
-
-        protected override RemoteTaskRunnerInfo GetRemoteTaskRunnerInfo()
-        {
-            return new RemoteTaskRunnerInfo(MspecTaskRunner.RunnerId, typeof(MspecTaskRunner));
-        }
-
-        protected override ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject, string assemblyLocation)
-        {
-            var assembly = FileSystemPath.Parse(assemblyLocation);
-            var observer = new TestUnitTestElementObserver(testProject, testProject.GetCurrentTargetFrameworkId(), assembly);
-
-            MetadataExplorer.ProcessArtifact(observer, CancellationToken.None).Wait();
-
-            return observer.Elements;
-        }
+        public IUnitTestExplorerFromArtifacts MetadataExplorer => Solution.GetComponent<MspecTestExplorerFromArtifacts>();
 
         public override void SetUp()
         {
@@ -80,6 +60,16 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
                 WriteResults(elements, output);
             });
+        }
+
+        private ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject, string assemblyLocation)
+        {
+            var assembly = FileSystemPath.Parse(assemblyLocation);
+            var observer = new TestUnitTestElementObserver(testProject, testProject.GetCurrentTargetFrameworkId(), assembly);
+
+            MetadataExplorer.ProcessArtifact(observer, CancellationToken.None).Wait();
+
+            return observer.Elements;
         }
 
         private void WriteResults(IUnitTestElement[] elements, TextWriter output)
