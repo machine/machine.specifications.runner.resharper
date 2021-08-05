@@ -7,13 +7,13 @@ using Machine.Specifications.Runner.ReSharper.Runner;
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
     [SolutionComponent]
-    public class MspecAgentManagerHost : IAgentManagerHost, IHideImplementation<AgentManagerHost>
+    public class TestAgentManagerHost : IAgentManagerHost, IHideImplementation<AgentManagerHost>
     {
-        public MspecAgentManagerHost(IAssemblyResolver assemblyResolver, IMessageSink sink)
+        public TestAgentManagerHost(IAssemblyResolver assemblyResolver)
         {
-            TestRunnerAgentManager = new MspecTestRunnerAgentManager(assemblyResolver, sink);
+            AgentManager = new AgentManager(assemblyResolver);
         }
 
-        public ITestRunnerAgentManager TestRunnerAgentManager { get; }
+        public ITestRunnerAgentManager AgentManager { get; }
     }
 }

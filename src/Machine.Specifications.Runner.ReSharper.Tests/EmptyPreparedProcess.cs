@@ -3,19 +3,19 @@ using JetBrains.Util;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    public class MspecPreparedProcess : IPreparedProcess
+    public class EmptyPreparedProcess : IPreparedProcess
     {
-        public int ProcessId { get; } = 0;
+        public int ProcessId => 0;
 
-        public int ExitCode { get; } = 0;
+        public int ExitCode => 0;
 
-        public IntPtr Handle { get; } = IntPtr.Zero;
+        public IntPtr Handle => IntPtr.Zero;
 
-        public string ProcessName { get; } = string.Empty;
+        public string ProcessName => string.Empty;
 
-        public string ProcessArgs { get; } = string.Empty;
+        public string ProcessArgs => string.Empty;
 
-        public string Output { get; } = string.Empty;
+        public string Output => string.Empty;
 
         public bool IsRunning => false;
 

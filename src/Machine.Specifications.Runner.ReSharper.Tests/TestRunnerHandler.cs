@@ -6,21 +6,18 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    public class MspecTestRunnerHandler : IMessageHandler<RemoteAgentInitializationRequest>, IAsyncMessageHandler<TestRunRequest>
+    public class TestRunnerHandler : IMessageHandler<RemoteAgentInitializationRequest>, IAsyncMessageHandler<TestRunRequest>
     {
         private readonly IMessageBroker broker;
 
         private readonly IAssemblyResolver resolver;
 
-        private readonly IMessageSink sink;
-
         private TestAdapterInfo loader;
 
-        public MspecTestRunnerHandler(IMessageBroker broker, IAssemblyResolver resolver, IMessageSink sink)
+        public TestRunnerHandler(IMessageBroker broker, IAssemblyResolver resolver)
         {
             this.broker = broker;
             this.resolver = resolver;
-            this.sink = sink;
         }
 
         public void Execute(RemoteAgentInitializationRequest message)
@@ -35,7 +32,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             var executor = CreateTestExecutor();
 
-            executor.RunTests(message, new TestDiscoverySink(broker), new TestExecutionSink(broker, sink));
+            executor.RunTests(message, new TestDiscoverySink(broker), new TestExecutionSink(broker));
 
             return Task.CompletedTask;
         }

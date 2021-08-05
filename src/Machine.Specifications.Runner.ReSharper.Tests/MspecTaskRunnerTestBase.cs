@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
@@ -14,7 +12,6 @@ using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Criteria;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
-using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.Util;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -43,7 +40,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             var facade = Solution.GetComponent<IUnitTestingFacade>();
             var elementManager = Solution.GetComponent<IUnitTestElementManager>();
-            var sink = Solution.GetComponent<IMessageSink>();
 
             var projectFile = testProject.GetSubItems().First();
 
@@ -60,22 +56,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                 var session = facade.SessionManager.CreateSession(SolutionCriterion.Instance);
                 var launch = facade.LaunchManager.CreateLaunch(session, unitTestElements, UnitTestHost.Instance.GetProvider("Process"));
 
-                sink.SetOutput(launch.Output);
-
-                var logging = new OutputObserver();
-
-                var subscription = launch.Output.Subscribe(logging);
-
                 launch.Run().Wait(lifetime);
 
-                subscription.Dispose();
-
                 WriteResults(elements, output);
-
-                //foreach (var message in logging.Messages)
-                //{
-                //    output.WriteLine(message);
-                //}
             });
         }
 
@@ -117,28 +100,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                 {
                     source.CopyFile(target, true);
                 }
-            }
-        }
-
-        private class OutputObserver : IObserver<IUnitTestLaunchOutputMessage>
-        {
-            public List<string> Messages { get; } = new List<string>();
-
-            public void OnNext(IUnitTestLaunchOutputMessage value)
-            {
-                if (value is UnitTestLaunchLogMessage log)
-                {
-                    Messages.Add($"{log.Severity}: {log.Message}");
-                }
-            }
-
-            public void OnError(Exception error)
-            {
-                Messages.Add($"Exception: {error.Message}");
-            }
-
-            public void OnCompleted()
-            {
             }
         }
     }

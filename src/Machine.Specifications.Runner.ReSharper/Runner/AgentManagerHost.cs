@@ -8,9 +8,9 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
     {
         public AgentManagerHost(ITestRunnerAgentManager testRunnerAgentManager)
         {
-            TestRunnerAgentManager = testRunnerAgentManager;
+            AgentManager = testRunnerAgentManager;
         }
 
-        public ITestRunnerAgentManager TestRunnerAgentManager { get; }
+        public ITestRunnerAgentManager AgentManager { get; }
     }
 }

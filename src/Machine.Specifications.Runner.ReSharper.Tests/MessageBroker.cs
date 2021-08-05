@@ -9,15 +9,15 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
-    public class MspecMessageBroker : IMessageBroker
+    public class MessageBroker : IMessageBroker
     {
-        private readonly MspecTestRunnerHandler testRunnerHandler;
+        private readonly TestRunnerHandler testRunnerHandler;
 
         private readonly Dictionary<Type, MessageHandler> messageHandlers = new Dictionary<Type, MessageHandler>();
 
-        public MspecMessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers, IMessageSink sink)
+        public MessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers)
         {
-            testRunnerHandler = new MspecTestRunnerHandler(this, resolver, sink);
+            testRunnerHandler = new TestRunnerHandler(this, resolver);
 
             InitializeMessageHandlers(handlers);
         }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using LoggingLevel = JetBrains.Diagnostics.LoggingLevel;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
@@ -10,22 +8,17 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     {
         private readonly IMessageBroker broker;
 
-        private readonly IMessageSink sink;
-
         private readonly ILogger logger = Logger.GetLogger<TestExecutionSink>();
 
-        public TestExecutionSink(IMessageBroker broker, IMessageSink sink)
+        public TestExecutionSink(IMessageBroker broker)
         {
             this.broker = broker;
-            this.sink = sink;
         }
 
         public void TestStarting(RemoteTask task)
         {
             try
             {
-                sink.Output.Log(LoggingLevel.TRACE, "testing starting in execution sink");
-
                 broker.TestStarting(task).Wait();
             }
             catch (Exception ex)
@@ -50,10 +43,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                var messages = string.Join(",", exceptions.Select(x => x.Message));
-
-                sink.Output.Log(LoggingLevel.TRACE, "test error: " + messages);
-
                 broker.TestException(task, exceptions).Wait();
             }
             catch (Exception ex)
@@ -66,8 +55,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                sink.Output.Log(LoggingLevel.TRACE, "test finished: " + message);
-
                 broker.TestFinished(task, message, result).Wait();
             }
             catch (Exception ex)
@@ -80,8 +67,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
-                sink.Output.Log(LoggingLevel.TRACE, "test output: " + text);
-
                 broker.TestOutput(task, text, outputType).Wait();
             }
             catch (Exception ex)

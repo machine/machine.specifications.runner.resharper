@@ -16,7 +16,7 @@ namespace Machine.Specifications.Runner.ReSharper.Runner
             MspecTestRunnerOrchestrator adapter,
             IUnitTestProjectArtifactResolver artifactResolver,
             DotNetCoreLaunchSettingsJsonProfileProvider launchSettingsProvider)
-            : base(dataCollectorFactory, agentManagerHost.TestRunnerAgentManager, testRunnerHostSource, adapter, artifactResolver, launchSettingsProvider)
+            : base(dataCollectorFactory, agentManagerHost.AgentManager, testRunnerHostSource, adapter, artifactResolver, launchSettingsProvider)
         {
         }
     }
