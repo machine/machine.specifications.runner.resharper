@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
@@ -42,6 +43,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             var facade = Solution.GetComponent<IUnitTestingFacade>();
             var elementManager = Solution.GetComponent<IUnitTestElementManager>();
+            var sink = Solution.GetComponent<IMessageSink>();
 
             var projectFile = testProject.GetSubItems().First();
 
@@ -58,6 +60,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                 var session = facade.SessionManager.CreateSession(SolutionCriterion.Instance);
                 var launch = facade.LaunchManager.CreateLaunch(session, unitTestElements, UnitTestHost.Instance.GetProvider("Process"));
 
+                sink.SetOutput(launch.Output);
+
                 var logging = new OutputObserver();
 
                 var subscription = launch.Output.Subscribe(logging);
@@ -66,12 +70,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
                 subscription.Dispose();
 
+                WriteResults(elements, output);
+
                 foreach (var message in logging.Messages)
                 {
                     output.WriteLine(message);
                 }
-
-                WriteResults(elements, output);
             });
         }
 

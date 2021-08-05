@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using LoggingLevel = JetBrains.Diagnostics.LoggingLevel;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
@@ -8,17 +9,22 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     {
         private readonly IMessageBroker broker;
 
+        private readonly IMessageSink sink;
+
         private readonly ILogger logger = Logger.GetLogger<TestExecutionSink>();
 
-        public TestExecutionSink(IMessageBroker broker)
+        public TestExecutionSink(IMessageBroker broker, IMessageSink sink)
         {
             this.broker = broker;
+            this.sink = sink;
         }
 
         public void TestStarting(RemoteTask task)
         {
             try
             {
+                sink.Output.Log(LoggingLevel.TRACE, "testing starting in execution sink");
+
                 broker.TestStarting(task);
             }
             catch (Exception ex)
@@ -43,6 +49,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
+                sink.Output.Log(LoggingLevel.ERROR, "test error");
+
                 broker.TestException(task, exceptions);
             }
             catch (Exception ex)
@@ -55,6 +63,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
+                sink.Output.Log(LoggingLevel.TRACE, "test finished: " + message);
+
                 broker.TestFinished(task, message, result);
             }
             catch (Exception ex)
@@ -67,6 +77,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         {
             try
             {
+                sink.Output.Log(LoggingLevel.TRACE, "test output: " + text);
+
                 broker.TestOutput(task, text, outputType);
             }
             catch (Exception ex)

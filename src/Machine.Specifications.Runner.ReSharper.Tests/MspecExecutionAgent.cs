@@ -45,8 +45,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
             var tasks = taskDepot.GetRemoteTasks(Context.Run);
             
-            await MessageBroker.Initialize(new RemoteAgentInitializationRequest(loader));
-            await MessageBroker.RunTests(new TestRunRequest(container, tasks));
+            await MessageBroker.Initialize(new RemoteAgentInitializationRequest(loader)).ConfigureAwait(false);
+            await MessageBroker.RunTests(new TestRunRequest(container, tasks)).ConfigureAwait(false);
         }
     }
 }

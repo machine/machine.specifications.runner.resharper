@@ -12,12 +12,15 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         private readonly IAssemblyResolver resolver;
 
+        private readonly IMessageSink sink;
+
         private TestAdapterInfo loader;
 
-        public MspecTestRunnerHandler(IMessageBroker broker, IAssemblyResolver resolver)
+        public MspecTestRunnerHandler(IMessageBroker broker, IAssemblyResolver resolver, IMessageSink sink)
         {
             this.broker = broker;
             this.resolver = resolver;
+            this.sink = sink;
         }
 
         public void Execute(RemoteAgentInitializationRequest message)
@@ -28,11 +31,13 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             }
         }
 
-        public async Task Execute(TestRunRequest message)
+        public Task Execute(TestRunRequest message)
         {
             var executor = CreateTestExecutor();
 
-            await Task.Run(() => executor.RunTests(message, new TestDiscoverySink(broker), new TestExecutionSink(broker)));
+            executor.RunTests(message, new TestDiscoverySink(broker), new TestExecutionSink(broker, sink));
+
+            return Task.CompletedTask;
         }
 
         private ITestExecutor CreateTestExecutor()

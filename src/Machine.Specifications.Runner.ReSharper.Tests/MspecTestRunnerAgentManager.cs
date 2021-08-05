@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Application.Components;
 using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
+using JetBrains.ReSharper.UnitTestFramework.Launch;
 using JetBrains.ReSharper.UnitTestFramework.TestRunner;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -12,9 +13,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     {
         private readonly IAssemblyResolver resolver;
 
-        public MspecTestRunnerAgentManager(IAssemblyResolver resolver)
+        private readonly IMessageSink sink;
+
+        public MspecTestRunnerAgentManager(IAssemblyResolver resolver, IMessageSink sink)
         {
             this.resolver = resolver;
+            this.sink = sink;
         }
 
         public Task<ITestRunnerExecutionAgent> GetExecutionAgent(ITestRunnerExecutionContext context, CancellationToken ct)
@@ -24,7 +28,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                 .SelectMany(x => x.GetMessageHandlers(context))
                 .ToArray();
 
-            var messageBroker = new MspecMessageBroker(resolver, handlers);
+            var messageBroker = new MspecMessageBroker(resolver, handlers, sink);
 
             return Task.FromResult<ITestRunnerExecutionAgent>(new MspecExecutionAgent(context, messageBroker));
         }
