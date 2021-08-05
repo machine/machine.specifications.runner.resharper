@@ -72,10 +72,10 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
                 WriteResults(elements, output);
 
-                foreach (var message in logging.Messages)
-                {
-                    output.WriteLine(message);
-                }
+                //foreach (var message in logging.Messages)
+                //{
+                //    output.WriteLine(message);
+                //}
             });
         }
 
