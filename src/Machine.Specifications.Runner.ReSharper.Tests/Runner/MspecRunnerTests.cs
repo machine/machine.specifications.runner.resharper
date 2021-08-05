@@ -10,7 +10,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
     {
         protected override string RelativeTestDataPath => "Runner";
 
-        [Explicit("Not working on build server")]
         [ExcludeMsCorLib]
         [TestCase("SimpleSpec.cs")]
         [TestCase("FailingSpec.cs")]
