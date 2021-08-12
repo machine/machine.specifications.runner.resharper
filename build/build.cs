@@ -65,9 +65,9 @@ Target("zip", DependsOn("package"), () =>
     Directory.CreateDirectory(dotnetPath);
     Directory.CreateDirectory(metaPath);
 
-    var nupkg = Directory.GetFiles("artifacts", "*.nupkg").First();
+    var nupkg = Glob.Files("artifacts", "*.nupkg").First();
 
-    using var archive = ZipFile.OpenRead(nupkg);
+    using var archive = ZipFile.OpenRead(Path.Combine("artifacts", nupkg));
 
     foreach (var entry in archive.Entries.Where(x => x.FullName.Contains("DotFiles")))
     {
