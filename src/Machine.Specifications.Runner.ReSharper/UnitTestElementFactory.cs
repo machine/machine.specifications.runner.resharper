@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using Machine.Specifications.Runner.ReSharper.Elements;
 
@@ -19,6 +21,8 @@ namespace Machine.Specifications.Runner.ReSharper
         private readonly UnitTestElementOrigin origin;
 
         private readonly Dictionary<UnitTestElementId, IUnitTestElement> elements = new();
+
+        private readonly JetHashSet<IUnitTestElement> elementSet = new(UnitTestElement.Comparer.ByNaturalId);
 
         public UnitTestElementFactory(
             MspecServiceProvider services,
