@@ -9,18 +9,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
     {
         private readonly Dictionary<string, MspecRemoteTask> tasksByReSharperId = new();
 
-        private readonly List<string> contexts = new();
+        private readonly HashSet<string> contexts = new();
 
         public RemoteTaskDepot(RemoteTask[] tasks)
         {
             foreach (var task in tasks.OfType<MspecRemoteTask>())
             {
-                tasksByReSharperId[task.TestId] = task;
-
-                if (task is MspecContextRemoteTask context)
-                {
-                    contexts.Add(context.ContextTypeName);
-                }
+                Add(task);
             }
         }
 
@@ -38,15 +33,37 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             tasksByReSharperId[task.TestId] = task;
 
-            if (task is MspecContextRemoteTask context)
+            switch (task)
             {
-                contexts.Add(context.ContextTypeName);
+                case MspecContextRemoteTask context:
+                    AddContext(context.ContextTypeName);
+                    break;
+
+                case MspecBehaviorRemoteTask behavior:
+                    AddContext(behavior.ContextTypeName);
+                    break;
+
+                case MspecContextSpecificationRemoteTask specification:
+                    AddContext(specification.ContextTypeName);
+                    break;
+
+                case MspecBehaviorSpecificationRemoteTask behaviorSpecification:
+                    AddContext(behaviorSpecification.ContextTypeName);
+                    break;
             }
         }
 
         public IEnumerable<string> GetContextNames()
         {
             return contexts;
+        }
+
+        private void AddContext(string? contextName)
+        {
+            if (!string.IsNullOrEmpty(contextName))
+            {
+                contexts.Add(contextName!);
+            }
         }
     }
 }
