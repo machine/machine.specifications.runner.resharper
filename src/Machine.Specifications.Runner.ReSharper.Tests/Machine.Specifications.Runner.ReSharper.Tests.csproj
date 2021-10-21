@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Compile Remove="Data/**/*.cs" />
+    <None Include="Data/**/*.cs" />
 
     <None Update="Data/**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
