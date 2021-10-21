@@ -90,7 +90,6 @@ Function Write-Nuspec {
 
   <files>
     <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.dll" target="DotFiles" />
-    <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.Tasks.dll" target="DotFiles" />
     <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
     
     <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\Debug\net40\Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" target="DotFiles" />
