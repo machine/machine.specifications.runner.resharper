@@ -4,7 +4,7 @@ using JetBrains.Application.Components;
 using JetBrains.Lifetimes;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 using JetBrains.Util;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -34,9 +34,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         public ITestRunnerExecutionContext Context { get; }
 
-        public async Task RunTests(CancellationToken cancelCt, CancellationToken abortCt)
+        public async Task RunTests(CancellationToken cancelCt)
         {
-            abortCt.Register(() => MessageBroker.Abort());
+            cancelCt.Register(() => MessageBroker.Abort());
 
             var taskDepot = Context.Container.GetComponent<ITestRunnerRemoteTaskDepot>();
 
@@ -44,7 +44,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             var container = Context.Adapter.GetTestContainer(Context);
 
             var tasks = taskDepot.GetRemoteTasks(Context.Run);
-            
+
             await MessageBroker.Initialize(new RemoteAgentInitializationRequest(loader)).ConfigureAwait(false);
             await MessageBroker.RunTests(new TestRunRequest(container, tasks)).ConfigureAwait(false);
         }
