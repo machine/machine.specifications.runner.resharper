@@ -7,6 +7,7 @@ using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.ReSharper.UnitTestFramework.Exploration.Daemon;
+using JetBrains.Util;
 using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -30,13 +31,39 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                     GetTargetFrameworkId(),
                     new MspecTestProvider()));
 
-            using (discoveryManager.BeginTransaction(source))
+            using (var transaction = discoveryManager.BeginTransaction(source))
             {
-                var observer = new TestUnitTestElementObserver(source);
+                var observer = new DispositionObserverOnFile(transaction.Observer);
 
                 FileExplorer.ProcessFile(file, observer, InterruptableReadActivity.Empty);
 
-                DumpElements(observer.Elements, projectFile.Name + ".source");
+                DumpElements(transaction.Elements, projectFile.Name + ".source");
+            }
+        }
+
+        private class DispositionObserverOnFile : IUnitTestElementObserverOnFile
+        {
+            private readonly IUnitTestElementObserver inner;
+
+            public DispositionObserverOnFile(IUnitTestElementObserver inner)
+            {
+                this.inner = inner;
+            }
+
+            public IUnitTestElementSource Source => inner.Source;
+
+            public T GetElementById<T>(string testId)
+            {
+                return inner.GetElementById<T>(testId);
+            }
+
+            public void OnUnitTestElement(IUnitTestElement element)
+            {
+                inner.OnUnitTestElement(element);
+            }
+
+            public void OnUnitTestElementDisposition(IUnitTestLikeElement element, TextRange navigationRange, TextRange containingRange)
+            {
             }
         }
     }

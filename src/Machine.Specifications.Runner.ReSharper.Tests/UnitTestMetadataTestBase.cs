@@ -35,13 +35,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                     GetTargetFrameworkId(),
                     new MspecTestProvider()));
 
-            using (discoveryManager.BeginTransaction(source))
+            using (var transaction = discoveryManager.BeginTransaction(source))
             {
-                var observer = new TestUnitTestElementObserver(source);
+                ExploreAssembly().ProcessArtifact(transaction.Observer, lifetime).Wait(lifetime);
 
-                ExploreAssembly().ProcessArtifact(observer, lifetime).Wait(lifetime);
-
-                DumpElements(observer.Elements, name + ".metadata");
+                DumpElements(transaction.Elements, name + ".metadata");
             }
         }
 
