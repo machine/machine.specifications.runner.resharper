@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Persistence;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
@@ -13,7 +14,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         }
 
         public MspecContextTestElement(IClrTypeName typeName, string? subject, string? explicitReason)
-            : base(typeName.FullName, typeName, typeName.ShortName.ToFormat())
+            : base(typeName.FullName, typeName, GetDisplayName(typeName, subject))
         {
             Subject = subject;
             ExplicitReason = explicitReason;
@@ -21,17 +22,21 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override string Kind => "Context";
 
-        public string? Subject { get; }
+        [Persist]
+        [UsedImplicitly]
+        public string? Subject { get; set; }
 
-        public string? ExplicitReason { get; }
+        [Persist]
+        [UsedImplicitly]
+        public string? ExplicitReason { get; set; }
 
-        public override string GetPresentation()
+        private static string GetDisplayName(IClrTypeName typeName, string? subject)
         {
-            var display = TypeName.ShortName.ToFormat();
+            var display = typeName.ShortName.ToFormat();
 
-            return string.IsNullOrEmpty(Subject)
+            return string.IsNullOrEmpty(subject)
                 ? display
-                : $"{Subject}, {display}";
+                : $"{subject}, {display}";
         }
     }
 }

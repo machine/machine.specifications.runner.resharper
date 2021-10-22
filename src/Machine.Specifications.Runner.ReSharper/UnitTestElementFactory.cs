@@ -47,7 +47,7 @@ namespace Machine.Specifications.Runner.ReSharper
             string fieldName,
             string? ignoreReason)
         {
-            var specification = new MspecBehaviorSpecificationTestElement(behavior.Context, behavior, fieldName, ignoreReason);
+            var specification = new MspecBehaviorSpecificationTestElement(behavior, fieldName, ignoreReason);
 
             return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
         }

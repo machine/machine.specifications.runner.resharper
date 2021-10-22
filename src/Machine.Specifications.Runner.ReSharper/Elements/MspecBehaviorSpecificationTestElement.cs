@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
+using JetBrains.ProjectModel;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.Util;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Persistence;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
@@ -12,11 +17,11 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecBehaviorSpecificationTestElement(MspecContextTestElement context, MspecBehaviorTestElement behavior, string fieldName, string? explicitReason)
-            : base($"{context.TypeName.FullName}::{fieldName}", behavior)
+        public MspecBehaviorSpecificationTestElement(MspecBehaviorTestElement behavior, string fieldName, string? explicitReason)
+            : base($"{behavior.Context.TypeName.FullName}::{fieldName}", behavior)
         {
             FieldName = fieldName;
-            ShortName = fieldName.ToFormat();
+            DisplayName = fieldName.ToFormat();
             ExplicitReason = explicitReason;
         }
 
@@ -26,15 +31,40 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public bool IsNotRunnableStandalone => Origin == UnitTestElementOrigin.Dynamic;
 
-        public string FieldName { get; }
+        [Persist]
+        [UsedImplicitly]
+        public string FieldName { get; set; }
 
-        public string? ExplicitReason { get; }
+        [Persist]
+        [UsedImplicitly]
+        public string DisplayName { get; set; }
 
-        public override string ShortName { get; }
+        public override string ShortName => DisplayName;
+
+        [Persist]
+        [UsedImplicitly]
+        public string? ExplicitReason { get; set; }
 
         public override IEnumerable<UnitTestElementLocation> GetLocations()
         {
             return Behavior!.GetLocations();
+        }
+
+        public override IDeclaredElement? GetDeclaredElement()
+        {
+            var contextElement = Behavior!.Context.GetDeclaredElement();
+
+            if (contextElement is not IClass type)
+            {
+                return null;
+            }
+
+            using (CompilationContextCookie.OverrideOrCreate(Project.GetResolveContext(TargetFrameworkId)))
+            {
+                return type
+                    .EnumerateMembers<IField>(FieldName, type.CaseSensitiveName)
+                    .FirstOrDefault();
+            }
         }
     }
 }

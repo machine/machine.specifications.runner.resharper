@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Util;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Persistence;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
@@ -18,7 +19,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
             : base($"{parent.TypeName.FullName}::{fieldName}", parent, fieldName, declaredInTypeShortName)
         {
             FieldName = fieldName;
-            ShortName = fieldName.ToFormat();
+            DisplayName = fieldName.ToFormat();
             ExplicitReason = explicitReason;
         }
 
@@ -26,16 +27,24 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public override string Kind => "Specification";
 
-        public string FieldName { get; }
+        [Persist]
+        [UsedImplicitly]
+        public string FieldName { get; set; }
 
-        public override string ShortName { get; }
+        [Persist]
+        [UsedImplicitly]
+        public string DisplayName { get; set; }
 
-        public string? ExplicitReason { get; }
+        public override string ShortName => DisplayName;
+
+        [Persist]
+        [UsedImplicitly]
+        public string? ExplicitReason { get; set; }
 
         protected override IDeclaredElement? GetTypeMember(ITypeElement declaredType)
         {
             return declaredType
-                .EnumerateMembers<IField>(ShortName, declaredType.CaseSensitiveName)
+                .EnumerateMembers<IField>(FieldName, declaredType.CaseSensitiveName)
                 .FirstOrDefault();
         }
     }
