@@ -1,19 +1,42 @@
-﻿using System;
-using JetBrains.Metadata.Reader.API;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using JetBrains.ReSharper.UnitTestFramework;
+﻿using System.Linq;
+using JetBrains.Annotations;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.Util;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecContextSpecificationTestElement : MspecFieldTestElement
+    public class MspecContextSpecificationTestElement : ClrUnitTestElement.FromMethod<MspecContextTestElement>
     {
-        public MspecContextSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
-            : base(services, id, typeName, fieldName, explicitReason)
+        [UsedImplicitly]
+        public MspecContextSpecificationTestElement()
         {
         }
 
-        public MspecContextTestElement? Context => Parent as MspecContextTestElement;
+        public MspecContextSpecificationTestElement(MspecContextTestElement parent, string fieldName, string? declaredInTypeShortName, string? explicitReason)
+            : base($"{parent.TypeName.FullName}::{fieldName}", parent, fieldName, declaredInTypeShortName)
+        {
+            FieldName = fieldName;
+            ShortName = fieldName.ToFormat();
+            ExplicitReason = explicitReason;
+        }
+
+        public MspecContextTestElement Context => Parent;
 
         public override string Kind => "Specification";
+
+        public string FieldName { get; }
+
+        public override string ShortName { get; }
+
+        public string? ExplicitReason { get; }
+
+        protected override IDeclaredElement? GetTypeMember(ITypeElement declaredType)
+        {
+            return declaredType
+                .EnumerateMembers<IField>(ShortName, declaredType.CaseSensitiveName)
+                .FirstOrDefault();
+        }
     }
 }

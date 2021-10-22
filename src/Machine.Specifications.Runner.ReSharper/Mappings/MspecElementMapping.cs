@@ -1,6 +1,7 @@
 ﻿using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
 
 namespace Machine.Specifications.Runner.ReSharper.Mappings
 {
@@ -17,23 +18,22 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
 
         protected abstract TTask ToRemoteTask(TElement element, ITestRunnerExecutionContext context);
 
-        protected abstract TElement? ToElement(TTask task, ITestRunnerDiscoveryContext context);
+        protected abstract TElement? ToElement(TTask task, ITestRunnerDiscoveryContext context, IUnitTestElementObserver observer);
 
         public RemoteTask GetRemoteTask(TElement element, ITestRunnerExecutionContext context)
         {
             return ToRemoteTask(element, context);
         }
 
-        public IUnitTestElement? GetElement(TTask task, ITestRunnerDiscoveryContext context)
+        public IUnitTestElement? GetElement(TTask task, ITestRunnerDiscoveryContext context, IUnitTestElementObserver observer)
         {
-            return ToElement(task, context);
+            return ToElement(task, context, observer);
         }
 
         protected UnitTestElementFactory GetFactory(ITestRunnerDiscoveryContext context)
         {
             return context.GetOrCreateDataUnderLock(
-                MspecElementMappingKeys.ElementFactoryKey,
-                () => new UnitTestElementFactory(Services, context.TargetFrameworkId, null, context.Origin));
+                MspecElementMappingKeys.ElementFactoryKey, static () => new UnitTestElementFactory());
         }
     }
 }

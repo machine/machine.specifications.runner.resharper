@@ -1,8 +1,8 @@
 ﻿using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.DotNetCore;
-using JetBrains.ReSharper.UnitTestFramework.Exploration;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner.DataCollection;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner.DataCollection;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner
 {

@@ -2,7 +2,8 @@
 using System.Linq;
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using Machine.Specifications.Runner.ReSharper.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
@@ -19,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         protected override MspecContextRemoteTask ToRemoteTask(MspecContextTestElement element, ITestRunnerExecutionContext context)
         {
             var task = MspecContextRemoteTask.ToClient(
-                element.Id.Id,
+                element.NaturalId.TestId,
                 element.ExplicitReason,
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
@@ -30,16 +31,15 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return task;
         }
 
-        protected override MspecContextTestElement ToElement(MspecContextRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecContextTestElement ToElement(MspecContextRemoteTask task, ITestRunnerDiscoveryContext context, IUnitTestElementObserver observer)
         {
             var factory = GetFactory(context);
 
             return factory.GetOrCreateContext(
-                context.Project,
                 new ClrTypeName(task.ContextTypeName),
                 task.Subject,
                 task.Tags,
-                null);
+                task.IgnoreReason);
         }
     }
 }

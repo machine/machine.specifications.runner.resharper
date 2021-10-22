@@ -11,7 +11,11 @@ using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Criteria;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Execution;
+using JetBrains.ReSharper.UnitTestFramework.Execution.Hosting;
+using JetBrains.ReSharper.UnitTestFramework.Execution.Launch;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.Util;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -39,7 +43,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         protected override void DoTest(Lifetime lifetime, IProject testProject)
         {
             var facade = Solution.GetComponent<IUnitTestingFacade>();
-            var elementManager = Solution.GetComponent<IUnitTestElementManager>();
 
             var projectFile = testProject.GetSubItems().First();
 
@@ -51,9 +54,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
                 var unitTestElements = new UnitTestElements(SolutionCriterion.Instance, elements);
 
-                elementManager.AddElements(elements.ToSet());
+                var session = facade.SessionRepository.CreateSession(SolutionCriterion.Instance);
+                facade.SessionManager.OpenSession(session);
 
-                var session = facade.SessionManager.CreateSession(SolutionCriterion.Instance);
                 var launch = facade.LaunchManager.CreateLaunch(session, unitTestElements, UnitTestHost.Instance.GetProvider("Process"));
 
                 launch.Run().Wait(lifetime);
@@ -65,11 +68,25 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         private ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject, string assemblyLocation)
         {
             var assembly = FileSystemPath.Parse(assemblyLocation);
-            var observer = new TestUnitTestElementObserver(testProject, testProject.GetCurrentTargetFrameworkId(), assembly);
 
-            MetadataExplorer.ProcessArtifact(observer, CancellationToken.None).Wait();
+            var provider = UT.Facade.ProviderCache.GetProviderByProviderId(MspecTestProvider.Id);
 
-            return observer.Elements;
+            var source = new UnitTestElementSource(UnitTestElementOrigin.Source,
+                new ExplorationTarget(
+                    testProject,
+                    GetTargetFrameworkId(),
+                    provider));
+
+            var discoveryManager = Solution.GetComponent<IUnitTestDiscoveryManager>();
+
+            using (var transaction = discoveryManager.BeginTransaction(source))
+            {
+                MetadataExplorer.ProcessArtifact(transaction.Observer, CancellationToken.None).Wait();
+
+                transaction.Commit();
+
+                return transaction.Elements;
+            }
         }
 
         private void WriteResults(IUnitTestElement[] elements, TextWriter output)
@@ -80,7 +97,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             {
                 var result = results.GetResult(element);
 
-                output.WriteLine($"{element.Id.Provider.ID}::{element.Id.Project.GetPersistentID()}::{element.Id.Id}");
+                output.WriteLine($"{element.NaturalId.ProviderId}::{element.NaturalId.ProjectId}::{element.NaturalId.TestId}");
                 output.Write("  ");
                 output.WriteLine(result.ToString());
             }
@@ -98,7 +115,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
                 if (source.ExistsFile)
                 {
-                    source.CopyFile(target, true);
+                    source.CopyFile(target.ToNativeFileSystemPath(), true);
                 }
             }
         }

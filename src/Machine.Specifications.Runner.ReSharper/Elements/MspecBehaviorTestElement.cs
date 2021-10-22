@@ -1,31 +1,43 @@
-﻿using System;
-using JetBrains.Metadata.Reader.API;
-using JetBrains.ReSharper.UnitTestFramework;
+﻿using System.Linq;
+using JetBrains.Annotations;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.Util;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecBehaviorTestElement : MspecFieldTestElement, IEquatable<MspecBehaviorTestElement>
+    public class MspecBehaviorTestElement : ClrUnitTestElement.FromMethod<MspecContextTestElement>
     {
-        public MspecBehaviorTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
-            : base(services, id, typeName, fieldName, explicitReason)
+        [UsedImplicitly]
+        public MspecBehaviorTestElement()
         {
         }
 
-        public MspecContextTestElement? Context => Parent as MspecContextTestElement;
+        public MspecBehaviorTestElement(MspecContextTestElement parent, string fieldName, string? declaredInTypeShortName, string? explicitReason)
+            : base($"{parent.TypeName.FullName}::{fieldName}", parent, fieldName, declaredInTypeShortName)
+        {
+            FieldName = fieldName;
+            ExplicitReason = explicitReason;
+        }
+
+        public MspecContextTestElement Context => Parent;
 
         public override string Kind => "Behavior";
 
-        protected override string GetTitlePrefix()
+        public string FieldName { get; }
+
+        public string? ExplicitReason { get; }
+
+        public override string GetPresentation()
         {
-            return "behaves like";
+            return $"behaves like {ShortName}";
         }
 
-        public bool Equals(MspecBehaviorTestElement? other)
+        protected override IDeclaredElement? GetTypeMember(ITypeElement declaredType)
         {
-            return other != null &&
-                   Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName) &&
-                   Equals(FieldName, other.FieldName);
+            return declaredType
+                .EnumerateMembers<IField>(ShortName, declaredType.CaseSensitiveName)
+                .FirstOrDefault();
         }
     }
 }

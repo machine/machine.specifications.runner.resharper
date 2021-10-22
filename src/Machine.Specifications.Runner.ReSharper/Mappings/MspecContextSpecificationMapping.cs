@@ -1,6 +1,6 @@
-﻿using JetBrains.Metadata.Reader.Impl;
-using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+﻿using JetBrains.ProjectModel;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
 using Machine.Specifications.Runner.ReSharper.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
@@ -18,18 +18,18 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         protected override MspecContextSpecificationRemoteTask ToRemoteTask(MspecContextSpecificationTestElement element, ITestRunnerExecutionContext context)
         {
             var task = MspecContextSpecificationRemoteTask.ToClient(
-                element.Id.Id,
+                element.NaturalId.TestId,
                 element.ExplicitReason,
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
-            task.ContextTypeName = element.Context!.TypeName.FullName;
+            task.ContextTypeName = element.Context.TypeName.FullName;
             task.SpecificationFieldName = element.FieldName;
 
             return task;
         }
 
-        protected override MspecContextSpecificationTestElement? ToElement(MspecContextSpecificationRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecContextSpecificationTestElement? ToElement(MspecContextSpecificationRemoteTask task, ITestRunnerDiscoveryContext context, IUnitTestElementObserver observer)
         {
             if (task.ContextTypeName == null)
             {
@@ -40,9 +40,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
 
             var factory = GetFactory(context);
 
-            var id = Services.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
-
-            var contextElement = Services.ElementManager.GetElementById<MspecContextTestElement>(id);
+            var contextElement = observer.GetElementById<MspecContextTestElement>(task.ContextTypeName);
 
             if (contextElement == null)
             {
@@ -52,11 +50,9 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             }
 
             return factory.GetOrCreateContextSpecification(
-                context.Project,
                 contextElement,
-                new ClrTypeName(task.ContextTypeName),
                 task.SpecificationFieldName!,
-                null);
+                task.IgnoreReason);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.Runner.ReSharper
@@ -26,7 +27,7 @@ namespace Machine.Specifications.Runner.ReSharper
             return metadataExplorer.IsSupported(project, targetFrameworkId);
         }
 
-        public Task<ExplorationResult> ProcessArtifact(IProjectArtifactUnitTestElementObserver observer, CancellationToken token)
+        public Task<ExplorationResult> ProcessArtifact(IUnitTestElementObserver observer, CancellationToken token)
         {
             return metadataExplorer.ProcessArtifact(observer, token);
         }

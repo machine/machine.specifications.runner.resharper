@@ -1,7 +1,7 @@
 ﻿using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.NuGet.Packaging;
-using JetBrains.ReSharper.UnitTestFramework.Exploration;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.Util.Collections;
 
 namespace Machine.Specifications.Runner.ReSharper

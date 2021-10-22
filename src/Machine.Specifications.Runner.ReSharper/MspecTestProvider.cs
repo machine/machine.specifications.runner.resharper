@@ -3,6 +3,9 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Execution;
+using JetBrains.ReSharper.UnitTestFramework.Execution.Hosting;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.Runner.ReSharper.Elements;
@@ -12,13 +15,18 @@ namespace Machine.Specifications.Runner.ReSharper
     [UnitTestProvider]
     public class MspecTestProvider : IDotNetArtifactBasedUnitTestProvider
     {
-        private const string Id = "Machine.Specifications";
+        public const string Id = "Machine.Specifications";
 
         private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(Id, null);
 
         public string ID => Id;
 
         public string Name => Id;
+
+        public IUnitTestRunStrategy GetRunStrategy(IUnitTestElement element, IHostProvider hostProvider)
+        {
+            return UT.Facade.Get<MspecServiceProvider>().GetRunStrategy();
+        }
 
         public bool IsElementOfKind(IUnitTestElement element, UnitTestElementKind elementKind)
         {
@@ -31,10 +39,13 @@ namespace Machine.Specifications.Runner.ReSharper
                     return element is MspecContextTestElement or MspecBehaviorTestElement;
 
                 case UnitTestElementKind.TestStuff:
-                    return element is MspecTestElement;
+                    return element is MspecContextTestElement or MspecBehaviorTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
 
                 case UnitTestElementKind.Unknown:
-                    return element is not MspecTestElement;
+                    return element is not MspecContextTestElement &&
+                           element is not MspecBehaviorTestElement &&
+                           element is not MspecContextSpecificationTestElement &&
+                           element is not MspecBehaviorSpecificationTestElement;
             }
 
             return false;
@@ -75,7 +86,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public bool SupportsResultEventsForParentOf(IUnitTestElement element)
         {
-            return true;
+            return element is not MspecContextTestElement || element.Parent is not MspecContextTestElement;
         }
     }
 }

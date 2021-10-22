@@ -5,6 +5,7 @@ using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Daemon;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
@@ -23,15 +24,14 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public IUnitTestProvider Provider => services.Provider;
 
-        public void ProcessFile(IFile psiFile, IUnitTestElementsObserver observer, Func<bool> interrupted)
+        public void ProcessFile(IFile psiFile, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
         {
             if (!IsProjectFile(psiFile))
             {
                 return;
             }
 
-            var factory = new UnitTestElementFactory(services, observer.TargetFrameworkId, observer.OnUnitTestElementChanged, UnitTestElementOrigin.Source);
-            var explorer = new MspecPsiFileExplorer(searchDomainFactory, factory, observer, interrupted);
+            var explorer = new MspecPsiFileExplorer(searchDomainFactory, observer, interrupted);
 
             psiFile.ProcessDescendants(explorer);
         }

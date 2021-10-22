@@ -1,7 +1,6 @@
 ﻿using JetBrains.ProjectModel;
-using JetBrains.ReSharper.FeaturesTestFramework.UnitTesting;
-using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Daemon;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
@@ -11,7 +10,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         protected override string GetIdString(IUnitTestElement element)
         {
-            return $"{element.Id.Provider.ID}::{element.Id.Project.GetPersistentID()}::{element.Id.Id}";
+            return $"{element.NaturalId.ProviderId}::{element.NaturalId.ProjectId}::{element.NaturalId.TestId}";
         }
     }
 }

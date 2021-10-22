@@ -2,8 +2,8 @@
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner.Extensions;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner.Extensions;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper

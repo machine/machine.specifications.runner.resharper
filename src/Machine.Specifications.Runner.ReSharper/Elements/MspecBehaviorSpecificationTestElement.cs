@@ -1,42 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using JetBrains.Metadata.Reader.API;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.UnitTestFramework;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecBehaviorSpecificationTestElement : MspecFieldTestElement, IEquatable<MspecBehaviorSpecificationTestElement>
+    public class MspecBehaviorSpecificationTestElement : ClrUnitTestElement.Row, ITestCase
     {
-        public MspecBehaviorSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
-            : base(services, id, typeName, fieldName, explicitReason)
+        [UsedImplicitly]
+        public MspecBehaviorSpecificationTestElement()
         {
+        }
+
+        public MspecBehaviorSpecificationTestElement(MspecContextTestElement context, MspecBehaviorTestElement behavior, string fieldName, string? explicitReason)
+            : base($"{context.TypeName.FullName}::{fieldName}", behavior)
+        {
+            FieldName = fieldName;
+            ShortName = fieldName.ToFormat();
+            ExplicitReason = explicitReason;
         }
 
         public MspecBehaviorTestElement? Behavior => Parent as MspecBehaviorTestElement;
 
         public override string Kind => "Behavior Specification";
 
-        public override UnitTestElementDisposition GetDisposition()
-        {
-            var valid = Behavior?.GetDeclaredElement()?.IsValid();
+        public bool IsNotRunnableStandalone => Origin == UnitTestElementOrigin.Dynamic;
 
-            return valid.GetValueOrDefault()
-                ? base.GetDisposition()
-                : UnitTestElementDisposition.InvalidDisposition;
-        }
+        public string FieldName { get; }
 
-        public override IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
-        {
-            return Behavior!.GetLocations(element);
-        }
+        public string? ExplicitReason { get; }
 
-        public bool Equals(MspecBehaviorSpecificationTestElement? other)
+        public override string ShortName { get; }
+
+        public override IEnumerable<UnitTestElementLocation> GetLocations()
         {
-            return other != null &&
-                   Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName) &&
-                   Equals(FieldName, other.FieldName);
+            return Behavior!.GetLocations();
         }
     }
 }
