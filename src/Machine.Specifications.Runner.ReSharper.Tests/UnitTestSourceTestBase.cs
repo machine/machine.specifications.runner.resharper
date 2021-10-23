@@ -6,8 +6,6 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
-using JetBrains.ReSharper.UnitTestFramework.Exploration.Daemon;
-using JetBrains.Util;
 using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
@@ -16,7 +14,10 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     [Category("Unit Test support")]
     public abstract class UnitTestSourceTestBase : UnitTestElementDiscoveryTestBase
     {
-        protected abstract IUnitTestExplorerFromFile FileExplorer { get; }
+        protected override string GetIdString(IUnitTestElement element)
+        {
+            return $"{element.NaturalId.ProviderId}::{element.NaturalId.ProjectId}::{element.NaturalId.TestId}";
+        }
 
         protected override void DoTest(Lifetime lifetime, IProject project)
         {
@@ -24,6 +25,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             var file = projectFile.GetPrimaryPsiFile();
 
             var discoveryManager = Solution.GetComponent<IUnitTestDiscoveryManager>();
+            var fileExplorer = Solution.GetComponent<MspecTestExplorerFromFile>();
 
             var source = new UnitTestElementSource(UnitTestElementOrigin.Source,
                 new ExplorationTarget(
@@ -33,37 +35,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
             using (var transaction = discoveryManager.BeginTransaction(source))
             {
-                var observer = new DispositionObserverOnFile(transaction.Observer);
+                var observer = new TestElementObserverOnFile(transaction.Observer);
 
-                FileExplorer.ProcessFile(file, observer, InterruptableReadActivity.Empty);
+                fileExplorer.ProcessFile(file, observer, InterruptableReadActivity.Empty);
 
                 DumpElements(transaction.Elements, projectFile.Name + ".source");
-            }
-        }
-
-        private class DispositionObserverOnFile : IUnitTestElementObserverOnFile
-        {
-            private readonly IUnitTestElementObserver inner;
-
-            public DispositionObserverOnFile(IUnitTestElementObserver inner)
-            {
-                this.inner = inner;
-            }
-
-            public IUnitTestElementSource Source => inner.Source;
-
-            public T GetElementById<T>(string testId)
-            {
-                return inner.GetElementById<T>(testId);
-            }
-
-            public void OnUnitTestElement(IUnitTestElement element)
-            {
-                inner.OnUnitTestElement(element);
-            }
-
-            public void OnUnitTestElementDisposition(IUnitTestLikeElement element, TextRange navigationRange, TextRange containingRange)
-            {
             }
         }
     }

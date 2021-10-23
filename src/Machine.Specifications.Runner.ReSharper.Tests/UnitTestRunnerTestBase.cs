@@ -21,10 +21,8 @@ using JetBrains.Util;
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {
     [EnsureUnitTestRepositoryIsEmpty]
-    public abstract class MspecTaskRunnerTestBase : BaseTestWithSingleProject
+    public abstract class UnitTestRunnerTestBase : BaseTestWithSingleProject
     {
-        public IUnitTestExplorerFromArtifacts MetadataExplorer => Solution.GetComponent<MspecTestExplorerFromArtifacts>();
-
         public override void SetUp()
         {
             var factoryMethod = typeof(Logger).GetProperty(nameof(Logger.Factory), BindingFlags.Static | BindingFlags.Public);
@@ -50,14 +48,15 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
             ExecuteWithGold(projectFile.Location.FullPath, output =>
             {
-                var elements = GetUnitTestElements(testProject, projectFile.Location.FullPath).ToArray();
-
-                var unitTestElements = new UnitTestElements(SolutionCriterion.Instance, elements);
+                var elements = GetUnitTestElements(testProject).ToArray();
 
                 var session = facade.SessionRepository.CreateSession(SolutionCriterion.Instance);
                 facade.SessionManager.OpenSession(session);
 
-                var launch = facade.LaunchManager.CreateLaunch(session, unitTestElements, UnitTestHost.Instance.GetProvider("Process"));
+                var launch = facade.LaunchManager.CreateLaunch(
+                    session,
+                    new UnitTestElements(SolutionCriterion.Instance, elements),
+                    UnitTestHost.Instance.GetProvider("Process"));
 
                 launch.Run().Wait(lifetime);
 
@@ -65,10 +64,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             });
         }
 
-        private ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject, string assemblyLocation)
+        private ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject)
         {
-            var assembly = FileSystemPath.Parse(assemblyLocation);
-
             var provider = UT.Facade.ProviderCache.GetProviderByProviderId(MspecTestProvider.Id);
 
             var source = new UnitTestElementSource(UnitTestElementOrigin.Source,
@@ -78,10 +75,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                     provider));
 
             var discoveryManager = Solution.GetComponent<IUnitTestDiscoveryManager>();
+            var metadataExplorer = Solution.GetComponent<MspecTestExplorerFromArtifacts>();
 
             using (var transaction = discoveryManager.BeginTransaction(source))
             {
-                MetadataExplorer.ProcessArtifact(transaction.Observer, CancellationToken.None).Wait();
+                metadataExplorer.ProcessArtifact(transaction.Observer, CancellationToken.None).Wait();
 
                 transaction.Commit();
 

@@ -13,6 +13,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     [Category("Unit Test support")]
     public abstract class UnitTestMetadataTestBase : UnitTestElementDiscoveryTestBase
     {
+        protected override string GetIdString(IUnitTestElement element)
+        {
+            return $"{element.NaturalId.ProviderId}::{element.NaturalId.ProjectId}::{element.NaturalId.TestId}";
+        }
+
         protected override void DoTest(Lifetime lifetime, IProject testProject)
         {
             var name = testProject.GetSubItems()[0].Location.Name;
@@ -28,6 +33,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             }
 
             var discoveryManager = Solution.GetComponent<IUnitTestDiscoveryManager>();
+            var assemblyExplorer = Solution.GetComponent<MspecTestExplorerFromArtifacts>();
 
             var source = new UnitTestElementSource(UnitTestElementOrigin.Artifact,
                 new ExplorationTarget(
@@ -37,7 +43,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
             using (var transaction = discoveryManager.BeginTransaction(source))
             {
-                ExploreAssembly().ProcessArtifact(transaction.Observer, lifetime).Wait(lifetime);
+                assemblyExplorer.ProcessArtifact(transaction.Observer, lifetime).Wait(lifetime);
 
                 DumpElements(transaction.Elements, name + ".metadata");
             }
@@ -46,7 +52,5 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
         protected virtual void PrepareBeforeRun(IProject testProject)
         {
         }
-
-        protected abstract IUnitTestExplorerFromArtifacts ExploreAssembly();
     }
 }

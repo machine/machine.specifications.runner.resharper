@@ -15,6 +15,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
     [EnsureUnitTestRepositoryIsEmpty]
     public abstract class UnitTestElementDiscoveryTestBase : BaseTestWithSingleProject
     {
+        protected abstract string GetIdString(IUnitTestElement element);
+
         protected void DumpElements(IEnumerable<IUnitTestElement> elements, string path)
         {
             using (UT.ReadLock())
@@ -62,19 +64,17 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
                         }
                     }
 
-                    if (orphanedElements.Count <= 0)
+                    if (orphanedElements.Count > 0)
                     {
-                        return;
-                    }
+                        file.WriteLine();
+                        file.WriteLine();
+                        file.WriteLine("Section: Has parent, but parent doesn't have it among children");
+                        file.WriteLine();
 
-                    file.WriteLine();
-                    file.WriteLine();
-                    file.WriteLine("Section: Has parent, but parent doesn't have it among children");
-                    file.WriteLine();
-
-                    foreach (var element in OrderById(invalidChildren))
-                    {
-                        DumpElement(file, element, reportedElements, string.Empty);
+                        foreach (var element in OrderById(invalidChildren))
+                        {
+                            DumpElement(file, element, reportedElements, string.Empty);
+                        }
                     }
                 });
             }
@@ -98,11 +98,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
             }
         }
 
-        protected IEnumerable<IUnitTestElement> OrderById(IEnumerable<IUnitTestElement> elements)
+        private IEnumerable<IUnitTestElement> OrderById(IEnumerable<IUnitTestElement> elements)
         {
             return elements.OrderBy(GetIdString);
         }
-
-        protected virtual string GetIdString(IUnitTestElement element) => element.Id.ToString();
     }
 }

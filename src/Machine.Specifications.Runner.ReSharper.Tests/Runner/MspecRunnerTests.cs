@@ -6,7 +6,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
 {
     [MspecReferences]
     [TestNetFramework46]
-    public class MspecRunnerTests : MspecTaskRunnerTestBase
+    public class MspecRunnerTests : UnitTestRunnerTestBase
     {
         protected override string RelativeTestDataPath => "Runner";
 
