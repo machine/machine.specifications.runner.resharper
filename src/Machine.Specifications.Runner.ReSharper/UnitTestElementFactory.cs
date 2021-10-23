@@ -17,7 +17,11 @@ namespace Machine.Specifications.Runner.ReSharper
             string? ignoreReason)
         {
             var context = new MspecContextTestElement(typeName, subject, ignoreReason);
-            UpdateCategories(context, tags);
+
+            if (tags != null)
+            {
+                context.OwnCategories = tags.Select(x => new UnitTestElementCategory(x)).ToJetHashSet();
+            }
 
             return (MspecContextTestElement) elements.Intern(context);
         }
@@ -50,14 +54,6 @@ namespace Machine.Specifications.Runner.ReSharper
             var specification = new MspecBehaviorSpecificationTestElement(behavior, fieldName, ignoreReason);
 
             return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
-        }
-
-        private void UpdateCategories(UnitTestElement element, string[]? categories)
-        {
-            if (categories != null)
-            {
-                element.OwnCategories = categories.Select(x => new UnitTestElementCategory(x)).ToJetHashSet();
-            }
         }
     }
 }

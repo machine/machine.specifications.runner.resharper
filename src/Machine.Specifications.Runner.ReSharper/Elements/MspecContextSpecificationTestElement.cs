@@ -15,12 +15,12 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecContextSpecificationTestElement(MspecContextTestElement parent, string fieldName, string? declaredInTypeShortName, string? explicitReason)
+        public MspecContextSpecificationTestElement(MspecContextTestElement parent, string fieldName, string? declaredInTypeShortName, string? ignoreReason)
             : base($"{parent.TypeName.FullName}::{fieldName}", parent, fieldName, declaredInTypeShortName)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();
-            ExplicitReason = explicitReason;
+            IgnoreReason = ignoreReason;
         }
 
         public MspecContextTestElement Context => Parent;
@@ -39,7 +39,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         [Persist]
         [UsedImplicitly]
-        public string? ExplicitReason { get; set; }
+        public string? IgnoreReason { get; set; }
 
         protected override IDeclaredElement? GetTypeMember(ITypeElement declaredType)
         {

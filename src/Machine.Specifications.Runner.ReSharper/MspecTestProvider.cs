@@ -9,6 +9,7 @@ using JetBrains.ReSharper.UnitTestFramework.Execution.Hosting;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 using JetBrains.Util.Reflection;
 using Machine.Specifications.Runner.ReSharper.Elements;
+using Machine.Specifications.Runner.ReSharper.Reflection;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
@@ -17,7 +18,7 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         public const string Id = "Machine.Specifications";
 
-        private static readonly AssemblyNameInfo MSpecReferenceName = AssemblyNameInfoFactory.Create2(Id, null);
+        private static readonly AssemblyNameInfo MspecReferenceName = AssemblyNameInfoFactory.Create2(Id, null);
 
         public string ID => Id;
 
@@ -30,45 +31,29 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public bool IsElementOfKind(IUnitTestElement element, UnitTestElementKind elementKind)
         {
-            switch (elementKind)
+            return elementKind switch
             {
-                case UnitTestElementKind.Test:
-                    return element is MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
-
-                case UnitTestElementKind.TestContainer:
-                    return element is MspecContextTestElement or MspecBehaviorTestElement;
-
-                case UnitTestElementKind.TestStuff:
-                    return element is MspecContextTestElement or MspecBehaviorTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
-
-                case UnitTestElementKind.Unknown:
-                    return element is not MspecContextTestElement &&
-                           element is not MspecBehaviorTestElement &&
-                           element is not MspecContextSpecificationTestElement &&
-                           element is not MspecBehaviorSpecificationTestElement;
-            }
-
-            return false;
+                UnitTestElementKind.Test => element is MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement,
+                UnitTestElementKind.TestContainer => element is MspecContextTestElement or MspecBehaviorTestElement,
+                UnitTestElementKind.TestStuff => element is MspecContextTestElement or MspecBehaviorTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement,
+                UnitTestElementKind.Unknown => element is not MspecContextTestElement &&
+                                               element is not MspecBehaviorTestElement &&
+                                               element is not MspecContextSpecificationTestElement &&
+                                               element is not MspecBehaviorSpecificationTestElement,
+                _ => false
+            };
         }
 
-        public bool IsElementOfKind(IDeclaredElement declaredElement, UnitTestElementKind elementKind)
+        public bool IsElementOfKind(IDeclaredElement element, UnitTestElementKind elementKind)
         {
-            switch (elementKind)
+            return elementKind switch
             {
-                case UnitTestElementKind.Test:
-                    return declaredElement.IsSpecification();
-
-                case UnitTestElementKind.TestContainer:
-                    return declaredElement.IsContext() || declaredElement.IsBehavior();
-
-                case UnitTestElementKind.TestStuff:
-                    return declaredElement.IsSpecification() || declaredElement.IsContext() || declaredElement.IsBehavior();
-
-                case UnitTestElementKind.Unknown:
-                    return !(declaredElement.IsSpecification() || declaredElement.IsContext() || declaredElement.IsBehavior());
-            }
-
-            return false;
+                UnitTestElementKind.Test => element.IsSpecification(),
+                UnitTestElementKind.TestContainer => element.IsContext() || element.IsBehavior(),
+                UnitTestElementKind.TestStuff => element.IsSpecification() || element.IsContext() || element.IsBehavior(),
+                UnitTestElementKind.Unknown => !(element.IsSpecification() || element.IsContext() || element.IsBehavior()),
+                _ => false
+            };
         }
 
         public bool IsSupported(IHostProvider hostProvider, IProject project, TargetFrameworkId targetFrameworkId)
@@ -80,7 +65,7 @@ namespace Machine.Specifications.Runner.ReSharper
         {
             using (ReadLockCookie.Create())
             {
-                return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MSpecReferenceName, out _);
+                return ReferencedAssembliesService.IsProjectReferencingAssemblyByName(project, targetFrameworkId, MspecReferenceName, out _);
             }
         }
 

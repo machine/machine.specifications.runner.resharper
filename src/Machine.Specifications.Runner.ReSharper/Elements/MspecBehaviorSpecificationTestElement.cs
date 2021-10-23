@@ -17,12 +17,12 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecBehaviorSpecificationTestElement(MspecBehaviorTestElement behavior, string fieldName, string? explicitReason)
+        public MspecBehaviorSpecificationTestElement(MspecBehaviorTestElement behavior, string fieldName, string? ignoreReason)
             : base($"{behavior.Context.TypeName.FullName}::{fieldName}", behavior)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();
-            ExplicitReason = explicitReason;
+            IgnoreReason = ignoreReason;
         }
 
         public MspecBehaviorTestElement? Behavior => Parent as MspecBehaviorTestElement;
@@ -43,7 +43,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         [Persist]
         [UsedImplicitly]
-        public string? ExplicitReason { get; set; }
+        public string? IgnoreReason { get; set; }
 
         public override IEnumerable<UnitTestElementLocation> GetLocations()
         {

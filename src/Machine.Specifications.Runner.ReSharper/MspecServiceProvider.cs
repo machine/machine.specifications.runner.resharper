@@ -11,14 +11,10 @@ namespace Machine.Specifications.Runner.ReSharper
     {
         private readonly Lazy<MspecTestRunnerRunStrategy> runner;
 
-        public MspecServiceProvider(MspecTestProvider provider, ISolution solution)
+        public MspecServiceProvider(ISolution solution)
         {
             runner = Lazy.Of(solution.GetComponent<MspecTestRunnerRunStrategy>, true);
-
-            Provider = provider;
         }
-
-        public MspecTestProvider Provider { get; }
 
         public IUnitTestRunStrategy GetRunStrategy()
         {

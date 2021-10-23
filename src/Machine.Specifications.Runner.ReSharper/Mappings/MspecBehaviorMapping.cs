@@ -19,7 +19,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         {
             var task = MspecBehaviorRemoteTask.ToClient(
                 element.NaturalId.TestId,
-                element.ExplicitReason,
+                element.IgnoreReason,
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 

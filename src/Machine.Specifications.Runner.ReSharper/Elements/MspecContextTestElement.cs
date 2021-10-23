@@ -13,11 +13,11 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecContextTestElement(IClrTypeName typeName, string? subject, string? explicitReason)
+        public MspecContextTestElement(IClrTypeName typeName, string? subject, string? ignoreReason)
             : base(typeName.FullName, typeName, GetDisplayName(typeName, subject))
         {
             Subject = subject;
-            ExplicitReason = explicitReason;
+            IgnoreReason = ignoreReason;
         }
 
         public override string Kind => "Context";
@@ -28,7 +28,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         [Persist]
         [UsedImplicitly]
-        public string? ExplicitReason { get; set; }
+        public string? IgnoreReason { get; set; }
 
         private static string GetDisplayName(IClrTypeName typeName, string? subject)
         {

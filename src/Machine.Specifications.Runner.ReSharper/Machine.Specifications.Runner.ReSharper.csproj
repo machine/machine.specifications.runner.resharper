@@ -9,6 +9,10 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>NU5128,NU5100</NoWarn>
 
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/RootSuffix ReSharper /ReSharper.Internal</StartArguments>
+
     <Title>Machine.Specifications for ReSharper</Title>
     <Description>A ReSharper runner for the Context/Specification framework Machine.Specifications</Description>
     <Authors>Machine</Authors>

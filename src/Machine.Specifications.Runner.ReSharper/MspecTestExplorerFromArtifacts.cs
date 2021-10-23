@@ -1,35 +1,18 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using JetBrains.Application.Settings;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
-using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
     [SolutionComponent]
-    public class MspecTestExplorerFromArtifacts : IUnitTestExplorerFromArtifacts
+    public class MspecTestExplorerFromArtifacts : UnitTestExplorerFrom.Switching<MspecProviderSettings>
     {
-        private readonly MspecTestExplorerFromMetadata metadataExplorer;
-
-        public MspecTestExplorerFromArtifacts(MspecTestExplorerFromMetadata metadataExplorer)
+        public MspecTestExplorerFromArtifacts(
+            ISettingsStore settingsStore,
+            MspecTestExplorerFromMetadata metadataExplorer,
+            MspecTestExplorerFromTestRunner testRunnerExplorer)
+            : base(settingsStore, x => x.TestDiscoveryFromArtifactsMethod, metadataExplorer, testRunnerExplorer)
         {
-            this.metadataExplorer = metadataExplorer;
-
-            Provider = metadataExplorer.Provider;
-        }
-
-        public IUnitTestProvider Provider { get; }
-
-        public PertinenceResult IsSupported(IProject project, TargetFrameworkId targetFrameworkId)
-        {
-            return metadataExplorer.IsSupported(project, targetFrameworkId);
-        }
-
-        public Task<ExplorationResult> ProcessArtifact(IUnitTestElementObserver observer, CancellationToken token)
-        {
-            return metadataExplorer.ProcessArtifact(observer, token);
         }
     }
 }

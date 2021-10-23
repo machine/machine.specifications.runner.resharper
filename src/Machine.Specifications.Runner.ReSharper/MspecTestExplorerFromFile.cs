@@ -12,17 +12,15 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecTestExplorerFromFile : IUnitTestExplorerFromFile
     {
-        private readonly SearchDomainFactory searchDomainFactory;
-
-        private readonly MspecServiceProvider services;
-
-        public MspecTestExplorerFromFile(MspecServiceProvider services, SearchDomainFactory searchDomainFactory)
+        public MspecTestExplorerFromFile(MspecTestProvider provider, SearchDomainFactory searchDomainFactory)
         {
-            this.searchDomainFactory = searchDomainFactory;
-            this.services = services;
+            Provider = provider;
+            SearchDomainFactory = searchDomainFactory;
         }
 
-        public IUnitTestProvider Provider => services.Provider;
+        public IUnitTestProvider Provider { get; }
+
+        public SearchDomainFactory SearchDomainFactory { get; }
 
         public void ProcessFile(IFile psiFile, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
         {
@@ -31,7 +29,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 return;
             }
 
-            var explorer = new MspecPsiFileExplorer(searchDomainFactory, observer, interrupted);
+            var explorer = new MspecPsiFileExplorer(SearchDomainFactory, observer, interrupted);
 
             psiFile.ProcessDescendants(explorer);
         }
