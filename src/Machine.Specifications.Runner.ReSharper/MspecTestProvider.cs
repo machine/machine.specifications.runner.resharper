@@ -31,29 +31,45 @@ namespace Machine.Specifications.Runner.ReSharper
 
         public bool IsElementOfKind(IUnitTestElement element, UnitTestElementKind elementKind)
         {
-            return elementKind switch
+            switch (elementKind)
             {
-                UnitTestElementKind.Test => element is MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement,
-                UnitTestElementKind.TestContainer => element is MspecContextTestElement or MspecBehaviorTestElement,
-                UnitTestElementKind.TestStuff => element is MspecContextTestElement or MspecBehaviorTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement,
-                UnitTestElementKind.Unknown => element is not MspecContextTestElement &&
-                                               element is not MspecBehaviorTestElement &&
-                                               element is not MspecContextSpecificationTestElement &&
-                                               element is not MspecBehaviorSpecificationTestElement,
-                _ => false
-            };
+                case UnitTestElementKind.Test:
+                    return element is MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
+
+                case UnitTestElementKind.TestContainer:
+                    return element is MspecContextTestElement or MspecBehaviorTestElement;
+
+                case UnitTestElementKind.TestStuff:
+                    return element is MspecContextTestElement or MspecBehaviorTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
+
+                case UnitTestElementKind.Unknown:
+                    return element is not MspecContextTestElement &&
+                           element is not MspecBehaviorTestElement &&
+                           element is not MspecContextSpecificationTestElement &&
+                           element is not MspecBehaviorSpecificationTestElement;
+            }
+
+            return false;
         }
 
         public bool IsElementOfKind(IDeclaredElement element, UnitTestElementKind elementKind)
         {
-            return elementKind switch
+            switch (elementKind)
             {
-                UnitTestElementKind.Test => element.IsSpecification(),
-                UnitTestElementKind.TestContainer => element.IsContext() || element.IsBehavior(),
-                UnitTestElementKind.TestStuff => element.IsSpecification() || element.IsContext() || element.IsBehavior(),
-                UnitTestElementKind.Unknown => !(element.IsSpecification() || element.IsContext() || element.IsBehavior()),
-                _ => false
-            };
+                case UnitTestElementKind.Test:
+                    return element.IsSpecification();
+
+                case UnitTestElementKind.TestContainer:
+                    return element.IsContext() || element.IsBehavior();
+
+                case UnitTestElementKind.TestStuff:
+                    return element.IsSpecification() || element.IsContext() || element.IsBehavior();
+
+                case UnitTestElementKind.Unknown:
+                    return !(element.IsSpecification() || element.IsContext() || element.IsBehavior());
+            }
+
+            return false;
         }
 
         public bool IsSupported(IHostProvider hostProvider, IProject project, TargetFrameworkId targetFrameworkId)

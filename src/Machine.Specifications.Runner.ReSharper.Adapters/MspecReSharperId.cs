@@ -61,14 +61,23 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public static MspecReSharperId Create(RemoteTask task)
         {
-            return task switch
+            switch (task)
             {
-                MspecContextRemoteTask context => new MspecReSharperId(context),
-                MspecContextSpecificationRemoteTask specification => new MspecReSharperId(specification),
-                MspecBehaviorRemoteTask behavior => new MspecReSharperId(behavior),
-                MspecBehaviorSpecificationRemoteTask specification => new MspecReSharperId(specification),
-                _ => throw new ArgumentOutOfRangeException(nameof(task))
-            };
+                case MspecContextRemoteTask context:
+                    return new MspecReSharperId(context);
+
+                case MspecContextSpecificationRemoteTask specification:
+                    return new MspecReSharperId(specification);
+
+                case MspecBehaviorRemoteTask behavior:
+                    return new MspecReSharperId(behavior);
+
+                case MspecBehaviorSpecificationRemoteTask specification:
+                    return new MspecReSharperId(specification);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(task));
+            }
         }
 
         public bool Equals(MspecReSharperId? other)
