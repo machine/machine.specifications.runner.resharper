@@ -7,7 +7,7 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
 
-    <AssemblyName Condition="'$(TargetFramework)' == 'net461'">Machine.Specifications.Runner.ReSharper.Tasks.net40</AssemblyName>
+    <AssemblyName Condition="'$(TargetFramework)' == 'net461'">Machine.Specifications.Runner.ReSharper.Tasks.net461</AssemblyName>
     <AssemblyName Condition="'$(TargetFramework)' == 'netstandard2.0'">Machine.Specifications.Runner.ReSharper.Tasks.netstandard20</AssemblyName>
   </PropertyGroup>
 

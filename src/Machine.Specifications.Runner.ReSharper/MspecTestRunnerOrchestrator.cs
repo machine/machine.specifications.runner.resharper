@@ -25,7 +25,7 @@ namespace Machine.Specifications.Runner.ReSharper
         {
             var framework = context.RuntimeEnvironment.TargetFrameworkId.IsNetCoreSdk()
                 ? "netstandard20"
-                : "net40";
+                : "net461";
 
             var adapters = Root.Combine($"{Namespace}.Adapters.{framework}.dll");
             var tasks = Root.Combine($"{Namespace}.Tasks.{framework}.dll");

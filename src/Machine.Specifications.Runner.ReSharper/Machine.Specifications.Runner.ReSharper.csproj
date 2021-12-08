@@ -55,8 +55,8 @@
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.ReSharper.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Machine.Specifications.Runner.Utility.dll" PackagePath="DotFiles" />
 
-      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" PackagePath="DotFiles" />
-      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\$(ConfigurationName)\net40\Machine.Specifications.Runner.ReSharper.Tasks.net40.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\net461\Machine.Specifications.Runner.ReSharper.Adapters.net461.dll" PackagePath="DotFiles" />
+      <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\$(ConfigurationName)\net461\Machine.Specifications.Runner.ReSharper.Tasks.net461.dll" PackagePath="DotFiles" />
 
       <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.netstandard20.dll" PackagePath="DotFiles" />
       <TfmSpecificPackageFile Include="$(SolutionDir)\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\$(ConfigurationName)\netstandard2.0\Machine.Specifications.Runner.ReSharper.Tasks.netstandard20.dll" PackagePath="DotFiles" />
