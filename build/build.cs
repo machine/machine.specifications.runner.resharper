@@ -16,11 +16,6 @@ var waveVersion = GetWaveVersion();
 var notes = GetReleaseNotes();
 var apiKey = Environment.GetEnvironmentVariable("JETBRAINS_API_KEY");
 
-version.SemVer = "1.0.0";
-version.AssemblySemVer = "1.0.0";
-version.AssemblySemFileVer = "1.0.0";
-version.InformationalVersion = "1.0.0";
-
 Target("clean", () =>
 {
     Run("dotnet", "clean");

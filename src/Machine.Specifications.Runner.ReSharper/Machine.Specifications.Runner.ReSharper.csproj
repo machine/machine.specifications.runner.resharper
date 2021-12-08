@@ -18,7 +18,7 @@
     <Authors>Machine</Authors>
     <Owners>Machine</Owners>
     <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
-    <PackageReleaseNotes>Adds support for R# and Rider 2021.2</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds support for R# and Rider 2021.3</PackageReleaseNotes>
     <PackageIcon>Machine.png</PackageIcon>
     <PackageIconUrl>http://github.com/machine/machine.specifications.runner.resharper/raw/master/images/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/machine/machine.specifications.runner.resharper</RepositoryUrl>
