@@ -1,7 +1,7 @@
 ﻿using JetBrains.Application.Components;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 using Machine.Specifications.Runner.ReSharper.Runner;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests

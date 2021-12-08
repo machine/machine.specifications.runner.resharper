@@ -1,42 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using JetBrains.Metadata.Reader.API;
+﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.Psi.Util;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Persistence;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecBehaviorSpecificationTestElement : MspecFieldTestElement, IEquatable<MspecBehaviorSpecificationTestElement>
+    public class MspecBehaviorSpecificationTestElement : ClrUnitTestElement.Row, ITestCase
     {
-        public MspecBehaviorSpecificationTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
-            : base(services, id, typeName, fieldName, explicitReason)
+        [UsedImplicitly]
+        public MspecBehaviorSpecificationTestElement()
         {
+        }
+
+        public MspecBehaviorSpecificationTestElement(MspecBehaviorTestElement behavior, string fieldName, string? ignoreReason)
+            : base($"{behavior.Context.TypeName.FullName}::{fieldName}", behavior)
+        {
+            FieldName = fieldName;
+            DisplayName = fieldName.ToFormat();
+            IgnoreReason = ignoreReason;
         }
 
         public MspecBehaviorTestElement? Behavior => Parent as MspecBehaviorTestElement;
 
         public override string Kind => "Behavior Specification";
 
-        public override UnitTestElementDisposition GetDisposition()
-        {
-            var valid = Behavior?.GetDeclaredElement()?.IsValid();
+        public bool IsNotRunnableStandalone => Origin == UnitTestElementOrigin.Dynamic;
 
-            return valid.GetValueOrDefault()
-                ? base.GetDisposition()
-                : UnitTestElementDisposition.InvalidDisposition;
+        [Persist]
+        [UsedImplicitly]
+        public string FieldName { get; set; }
+
+        [Persist]
+        [UsedImplicitly]
+        public string DisplayName { get; set; }
+
+        public override string ShortName => DisplayName;
+
+        [Persist]
+        [UsedImplicitly]
+        public string? IgnoreReason { get; set; }
+
+        public override IEnumerable<UnitTestElementLocation> GetLocations()
+        {
+            return Behavior!.GetLocations();
         }
 
-        public override IEnumerable<UnitTestElementLocation> GetLocations(IDeclaredElement element)
+        public override IDeclaredElement? GetDeclaredElement()
         {
-            return Behavior!.GetLocations(element);
-        }
+            var contextElement = Behavior!.Context.GetDeclaredElement();
 
-        public bool Equals(MspecBehaviorSpecificationTestElement? other)
-        {
-            return other != null &&
-                   Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName) &&
-                   Equals(FieldName, other.FieldName);
+            if (contextElement is not IClass type)
+            {
+                return null;
+            }
+
+            using (CompilationContextCookie.OverrideOrCreate(Project.GetResolveContext(TargetFrameworkId)))
+            {
+                return type
+                    .EnumerateMembers<IField>(FieldName, type.CaseSensitiveName)
+                    .FirstOrDefault();
+            }
         }
     }
 }

@@ -1,31 +1,51 @@
-﻿using System;
-using JetBrains.Metadata.Reader.API;
-using JetBrains.ReSharper.UnitTestFramework;
+﻿using System.Linq;
+using JetBrains.Annotations;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.Util;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Persistence;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecBehaviorTestElement : MspecFieldTestElement, IEquatable<MspecBehaviorTestElement>
+    public class MspecBehaviorTestElement : ClrUnitTestElement.FromMethod<MspecContextTestElement>
     {
-        public MspecBehaviorTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string fieldName, string? explicitReason)
-            : base(services, id, typeName, fieldName, explicitReason)
+        [UsedImplicitly]
+        public MspecBehaviorTestElement()
         {
         }
 
-        public MspecContextTestElement? Context => Parent as MspecContextTestElement;
+        public MspecBehaviorTestElement(MspecContextTestElement parent, string fieldName, string? declaredInTypeShortName, string? ignoreReason)
+            : base($"{parent.TypeName.FullName}::{fieldName}", parent, fieldName, declaredInTypeShortName)
+        {
+            FieldName = fieldName;
+            DisplayName = $"behaves like {fieldName.ToFormat()}";
+            IgnoreReason = ignoreReason;
+        }
+
+        public MspecContextTestElement Context => Parent;
 
         public override string Kind => "Behavior";
 
-        protected override string GetTitlePrefix()
-        {
-            return "behaves like";
-        }
+        [Persist]
+        [UsedImplicitly]
+        public string FieldName { get; set; }
 
-        public bool Equals(MspecBehaviorTestElement? other)
+        [Persist]
+        [UsedImplicitly]
+        public string DisplayName { get; set; }
+
+        public override string ShortName => DisplayName;
+
+        [Persist]
+        [UsedImplicitly]
+        public string? IgnoreReason { get; set; }
+
+        protected override IDeclaredElement? GetTypeMember(ITypeElement declaredType)
         {
-            return other != null &&
-                   Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName) &&
-                   Equals(FieldName, other.FieldName);
+            return declaredType
+                .EnumerateMembers<IField>(FieldName, declaredType.CaseSensitiveName)
+                .FirstOrDefault();
         }
     }
 }

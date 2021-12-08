@@ -1,7 +1,6 @@
 using JetBrains.ReSharper.Psi;
-using Machine.Specifications.Runner.ReSharper.Reflection;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public static class PsiExtensions
     {

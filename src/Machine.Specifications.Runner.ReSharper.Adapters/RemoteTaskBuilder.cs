@@ -8,14 +8,23 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
     {
         public static MspecRemoteTask GetRemoteTask(RemoteTask task)
         {
-            return task switch
+            switch (task)
             {
-                MspecContextRemoteTask context => FromContext(context),
-                MspecContextSpecificationRemoteTask specification => FromContextSpecification(specification),
-                MspecBehaviorRemoteTask behavior => FromBehavior(behavior),
-                MspecBehaviorSpecificationRemoteTask specification => FromBehaviorSpecification(specification),
-                _ => throw new ArgumentOutOfRangeException(nameof(task))
-            };
+                case MspecContextRemoteTask context:
+                    return FromContext(context);
+
+                case MspecContextSpecificationRemoteTask specification:
+                    return FromContextSpecification(specification);
+
+                case MspecBehaviorRemoteTask behavior:
+                    return FromBehavior(behavior);
+
+                case MspecBehaviorSpecificationRemoteTask specification:
+                    return FromBehaviorSpecification(specification);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(task));
+            }
         }
 
         private static MspecRemoteTask FromContext(MspecContextRemoteTask task)

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Application.Components;
 using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests
 {

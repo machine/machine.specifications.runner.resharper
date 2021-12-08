@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.Util;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
@@ -16,7 +16,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         public FileSystemPath ResolveArtifact(IProject project, TargetFrameworkId targetFrameworkId)
         {
-            return project.GetSubItems().First().Location;
+            return project.GetSubItems().First().Location.ToNativeFileSystemPath();
         }
     }
 }

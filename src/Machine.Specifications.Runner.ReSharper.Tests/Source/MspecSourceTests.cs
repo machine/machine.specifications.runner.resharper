@@ -5,7 +5,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Source
 {
     [MspecReferences]
     [TestNetFramework46]
-    public class MspecSourceTests : MspecSourceTestBase
+    public class MspecSourceTests : UnitTestSourceTestBase
     {
         protected override string RelativeTestDataPath => "Exploration";
 

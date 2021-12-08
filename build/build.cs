@@ -16,6 +16,11 @@ var waveVersion = GetWaveVersion();
 var notes = GetReleaseNotes();
 var apiKey = Environment.GetEnvironmentVariable("JETBRAINS_API_KEY");
 
+version.SemVer = "1.0.0";
+version.AssemblySemVer = "1.0.0";
+version.AssemblySemFileVer = "1.0.0";
+version.InformationalVersion = "1.0.0";
+
 Target("clean", () =>
 {
     Run("dotnet", "clean");
@@ -80,8 +85,11 @@ Target("zip", DependsOn("package"), () =>
         .Replace("${UntilBuild}", waveVersion + ".*")
         .Replace("${ChangeNotes}", notes);
 
+    var icon = File.ReadAllBytes(Path.Combine("images", "pluginIcon.svg"));
+
     File.WriteAllText(Path.Combine(metaPath, "plugin.xml"), plugin);
     File.WriteAllText(Path.Combine(metaPath, "MANIFEST.MF"), "Manifest-Version: 1.0");
+    File.WriteAllBytes(Path.Combine(metaPath, "pluginIcon.svg"), icon);
 
     ZipFile.CreateFromDirectory(metaPath, jarPath, CompressionLevel.Optimal, true, new UnixUTF8Encoding());
 

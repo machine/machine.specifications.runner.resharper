@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Util;
-using Machine.Specifications.Runner.ReSharper.Reflection;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public static class ReflectionExtensions
     {
@@ -46,14 +45,14 @@ namespace Machine.Specifications.Runner.ReSharper
                    arguments.Any();
         }
 
-        public static string GetIgnoreReason(this ITypeInfo type)
+        public static string? GetIgnoreReason(this ITypeInfo type)
         {
             return type.GetCustomAttributes(FullNames.IgnoreAttribute, false)
                 .SelectMany(x => x.GetParameters())
                 .FirstOrDefault();
         }
 
-        public static string GetIgnoreReason(this IFieldInfo field)
+        public static string? GetIgnoreReason(this IFieldInfo field)
         {
             return field.GetCustomAttributes(FullNames.IgnoreAttribute, false)
                 .SelectMany(x => x.GetParameters())

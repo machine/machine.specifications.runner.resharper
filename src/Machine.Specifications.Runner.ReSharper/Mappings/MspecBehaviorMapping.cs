@@ -1,6 +1,6 @@
-﻿using JetBrains.Metadata.Reader.Impl;
-using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+﻿using JetBrains.ProjectModel;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
 using Machine.Specifications.Runner.ReSharper.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
@@ -18,18 +18,18 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         protected override MspecBehaviorRemoteTask ToRemoteTask(MspecBehaviorTestElement element, ITestRunnerExecutionContext context)
         {
             var task = MspecBehaviorRemoteTask.ToClient(
-                element.Id.Id,
-                element.ExplicitReason,
+                element.NaturalId.TestId,
+                element.IgnoreReason,
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
-            task.ContextTypeName = element.Context!.TypeName.FullName;
+            task.ContextTypeName = element.Context.TypeName.FullName;
             task.BehaviorFieldName = element.FieldName;
 
             return task;
         }
 
-        protected override MspecBehaviorTestElement? ToElement(MspecBehaviorRemoteTask task, ITestRunnerDiscoveryContext context)
+        protected override MspecBehaviorTestElement? ToElement(MspecBehaviorRemoteTask task, ITestRunnerDiscoveryContext context, IUnitTestElementObserver observer)
         {
             if (task.ContextTypeName == null)
             {
@@ -38,8 +38,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 return null;
             }
 
-            var contextId = Services.CreateId(context.Project, context.TargetFrameworkId, task.ContextTypeName);
-            var contextElement = Services.ElementManager.GetElementById<MspecContextTestElement>(contextId);
+            var contextElement = observer.GetElementById<MspecContextTestElement>(task.ContextTypeName);
 
             if (contextElement == null)
             {
@@ -50,11 +49,9 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             var factory = GetFactory(context);
 
             return factory.GetOrCreateBehavior(
-                context.Project,
                 contextElement,
-                new ClrTypeName(task.ContextTypeName),
                 task.BehaviorFieldName!,
-                null);
+                task.IgnoreReason);
         }
     }
 }

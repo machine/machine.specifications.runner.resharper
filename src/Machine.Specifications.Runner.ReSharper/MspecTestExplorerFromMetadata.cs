@@ -5,8 +5,8 @@ using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.Assemblies.AssemblyToAssemblyResolvers;
 using JetBrains.ProjectModel.Assemblies.Impl;
 using JetBrains.ProjectModel.NuGet.Packaging;
-using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.Util;
 using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
@@ -15,19 +15,16 @@ namespace Machine.Specifications.Runner.ReSharper
     [SolutionComponent]
     public class MspecTestExplorerFromMetadata : UnitTestExplorerFrom.Metadata
     {
-        private readonly MspecServiceProvider services;
-
         private readonly ILogger logger;
 
         public MspecTestExplorerFromMetadata(
-            MspecServiceProvider services,
+            MspecTestProvider provider,
             AssemblyToAssemblyReferencesResolveManager resolveManager,
             ResolveContextManager resolveContextManager,
             NuGetInstalledPackageChecker installedPackageChecker,
             ILogger logger)
-            : base(services.Provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
+            : base(provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
         {
-            this.services = services;
             this.logger = logger;
         }
 
@@ -42,16 +39,13 @@ namespace Machine.Specifications.Runner.ReSharper
         }
 
         protected override void ProcessProject(
-            IProject project, 
-            FileSystemPath assemblyPath, 
             MetadataLoader loader,
-            IUnitTestElementsObserver observer, 
+            IUnitTestElementObserver observer, 
             CancellationToken token)
         {
-            MetadataElementsSource.ExploreProject(project, assemblyPath, loader, observer, logger, token, assembly =>
+            MetadataElementsSource.ExploreProject(observer.Source.Project, observer.Source.Output, loader, logger, token, assembly =>
             {
-                var factory = new UnitTestElementFactory(services, observer.TargetFrameworkId, observer.OnUnitTestElementChanged, UnitTestElementOrigin.Artifact);
-                var explorer = new MspecTestMetadataExplorer(project, observer, factory);
+                var explorer = new MspecTestMetadataExplorer(observer);
 
                 explorer.ExploreAssembly(assembly, token);
             });

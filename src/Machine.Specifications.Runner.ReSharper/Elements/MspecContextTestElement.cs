@@ -1,43 +1,42 @@
-﻿using System;
+﻿using JetBrains.Annotations;
 using JetBrains.Metadata.Reader.API;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Persistence;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecContextTestElement : MspecTestElement, IEquatable<MspecContextTestElement>
+    public class MspecContextTestElement : ClrUnitTestElement.FromClass
     {
-        public MspecContextTestElement(MspecServiceProvider services, UnitTestElementId id, IClrTypeName typeName, string? subject, string? explicitReason)
-            : base(services, id, typeName, explicitReason)
+        [UsedImplicitly]
+        public MspecContextTestElement()
+        {
+        }
+
+        public MspecContextTestElement(IClrTypeName typeName, string? subject, string? ignoreReason)
+            : base(typeName.FullName, typeName, GetDisplayName(typeName, subject))
         {
             Subject = subject;
-            ShortName = typeName.ShortName.ToFormat();
+            IgnoreReason = ignoreReason;
         }
 
         public override string Kind => "Context";
 
-        public string? Subject { get; }
+        [Persist]
+        [UsedImplicitly]
+        public string? Subject { get; set; }
 
-        protected override string GetPresentation()
+        [Persist]
+        [UsedImplicitly]
+        public string? IgnoreReason { get; set; }
+
+        private static string GetDisplayName(IClrTypeName typeName, string? subject)
         {
-            var display = TypeName.ShortName.ToFormat();
+            var display = typeName.ShortName.ToFormat();
 
-            return string.IsNullOrEmpty(Subject)
+            return string.IsNullOrEmpty(subject)
                 ? display
-                : $"{Subject}, {display}";
-        }
-
-        public override IDeclaredElement? GetDeclaredElement()
-        {
-            return GetDeclaredType();
-        }
-
-        public bool Equals(MspecContextTestElement? other)
-        {
-            return other != null &&
-                   Equals(Id, other.Id) &&
-                   Equals(TypeName, other.TypeName);
+                : $"{subject}, {display}";
         }
     }
 }

@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <PackageId>Machine.Specifications.Runner.ReSharper.Tasks</PackageId>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
 
-    <AssemblyName Condition="'$(TargetFramework)' == 'net40'">Machine.Specifications.Runner.ReSharper.Tasks.net40</AssemblyName>
+    <AssemblyName Condition="'$(TargetFramework)' == 'net461'">Machine.Specifications.Runner.ReSharper.Tasks.net461</AssemblyName>
     <AssemblyName Condition="'$(TargetFramework)' == 'netstandard2.0'">Machine.Specifications.Runner.ReSharper.Tasks.netstandard20</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.TestRunner.Abstractions" Version="2.2.1" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.TestRunner.Abstractions" Version="2.6.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

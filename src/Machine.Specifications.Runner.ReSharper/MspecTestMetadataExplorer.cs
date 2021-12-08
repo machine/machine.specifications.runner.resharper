@@ -2,25 +2,21 @@
 using System.Threading;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.Metadata.Reader.Impl;
-using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using Machine.Specifications.Runner.ReSharper.Elements;
 using Machine.Specifications.Runner.ReSharper.Reflection;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
     public class MspecTestMetadataExplorer
     {
-        private readonly IProject project;
+        private readonly IUnitTestElementObserver observer;
 
-        private readonly IUnitTestElementsObserver observer;
+        private readonly UnitTestElementFactory factory = new();
 
-        private readonly UnitTestElementFactory factory;
-
-        public MspecTestMetadataExplorer(IProject project, IUnitTestElementsObserver observer, UnitTestElementFactory factory)
+        public MspecTestMetadataExplorer(IUnitTestElementObserver observer)
         {
-            this.project = project;
             this.observer = observer;
-            this.factory = factory;
         }
 
         public void ExploreAssembly(IMetadataAssembly assembly, CancellationToken token)
@@ -52,7 +48,6 @@ namespace Machine.Specifications.Runner.ReSharper
         private void ExploreContext(ITypeInfo type)
         {
             var contextElement = factory.GetOrCreateContext(
-                project,
                 new ClrTypeName(type.FullyQualifiedName),
                 type.GetSubject(),
                 type.GetTags().ToArray(),
@@ -67,38 +62,34 @@ namespace Machine.Specifications.Runner.ReSharper
 
             foreach (var specification in specifications)
             {
-                ExploreSpecification(contextElement, type, specification);
+                ExploreSpecification(contextElement, specification);
             }
 
             foreach (var behavior in behaviors)
             {
-                ExploreBehavior(contextElement, type, behavior);
+                ExploreBehavior(contextElement, behavior);
             }
 
-            observer.OnUnitTestElementChanged(contextElement);
+            observer.OnUnitTestElement(contextElement);
         }
 
-        private void ExploreSpecification(IUnitTestElement contextElement, ITypeInfo type, IFieldInfo field)
+        private void ExploreSpecification(MspecContextTestElement contextElement, IFieldInfo field)
         {
             var specificationElement = factory.GetOrCreateContextSpecification(
-                project,
                 contextElement,
-                new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
                 field.GetIgnoreReason());
 
             observer.OnUnitTestElement(specificationElement);
         }
 
-        private void ExploreBehavior(IUnitTestElement contextElement, ITypeInfo type, IFieldInfo field)
+        private void ExploreBehavior(MspecContextTestElement contextElement, IFieldInfo field)
         {
             var behaviorType = field.FieldType.GetGenericArguments()
                 .FirstOrDefault();
 
             var behaviorElement = factory.GetOrCreateBehavior(
-                project,
                 contextElement,
-                new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
                 field.GetIgnoreReason());
 
@@ -111,17 +102,15 @@ namespace Machine.Specifications.Runner.ReSharper
 
                 foreach (var behaviorSpecification in behaviorSpecifications)
                 {
-                    ExploreBehaviorSpecification(behaviorElement, type, behaviorSpecification);
+                    ExploreBehaviorSpecification(behaviorElement, behaviorSpecification);
                 }
             }
         }
 
-        private void ExploreBehaviorSpecification(IUnitTestElement behaviorElement, ITypeInfo type, IFieldInfo field)
+        private void ExploreBehaviorSpecification(MspecBehaviorTestElement behaviorElement, IFieldInfo field)
         {
             var specificationElement = factory.GetOrCreateBehaviorSpecification(
-                project,
                 behaviorElement,
-                new ClrTypeName(type.FullyQualifiedName),
                 field.ShortName,
                 field.GetIgnoreReason());
 

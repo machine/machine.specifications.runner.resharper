@@ -1,5 +1,5 @@
 ﻿using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework.TestRunner;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 
 namespace Machine.Specifications.Runner.ReSharper.Runner
 {

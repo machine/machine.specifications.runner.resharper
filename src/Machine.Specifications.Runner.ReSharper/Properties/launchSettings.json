@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "Machine.Specifications.Runner.Resharper": {
-      "commandName": "Executable",
-      "executablePath": "$(DevEnvDir)devenv.exe",
-      "commandLineArgs": "/RootSuffix ReSharper /ReSharper.Internal"
-    }
-  }
-}

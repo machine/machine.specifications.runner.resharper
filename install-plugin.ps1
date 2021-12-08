@@ -92,8 +92,8 @@ Function Write-Nuspec {
     <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.dll" target="DotFiles" />
     <file src="..\src\Machine.Specifications.Runner.ReSharper\bin\Debug\net461\Machine.Specifications.Runner.Utility.dll" target="DotFiles" />
     
-    <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\Debug\net40\Machine.Specifications.Runner.ReSharper.Adapters.net40.dll" target="DotFiles" />
-    <file src="..\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\Debug\net40\Machine.Specifications.Runner.ReSharper.Tasks.net40.dll" target="DotFiles" />
+    <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.Adapters.net461.dll" target="DotFiles" />
+    <file src="..\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\Debug\net461\Machine.Specifications.Runner.ReSharper.Tasks.net461.dll" target="DotFiles" />
 
     <file src="..\src\Machine.Specifications.Runner.ReSharper.Adapters\bin\Debug\netstandard2.0\Machine.Specifications.Runner.ReSharper.Adapters.netstandard20.dll" target="DotFiles" />
     <file src="..\src\Machine.Specifications.Runner.ReSharper.Tasks\bin\Debug\netstandard2.0\Machine.Specifications.Runner.ReSharper.Tasks.netstandard20.dll" target="DotFiles" />

@@ -6,7 +6,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Metadata
 {
     [MspecReferences]
     [TestNetFramework46]
-    public class MspecMetadataTests : MspecMetadataTestBase
+    public class MspecMetadataTests : UnitTestMetadataTestBase
     {
         protected override string RelativeTestDataPath => "Exploration";
 
