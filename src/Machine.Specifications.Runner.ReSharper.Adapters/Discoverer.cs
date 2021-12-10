@@ -33,10 +33,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             try
             {
-                var source = request.Selection
-                    .Select(GetRemoteTask)
-                    .Where(task => task != null)
-                    .ToArray();
+                foreach (var task in request.Selection)
+                {
+                    GetRemoteTask(task);
+                }
+
+                var source = depot.GetTasks().ToArray();
 
                 if (source.Any())
                 {

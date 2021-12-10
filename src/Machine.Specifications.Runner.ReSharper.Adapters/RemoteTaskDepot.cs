@@ -17,6 +17,29 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             {
                 Add(task);
             }
+
+            foreach (var task in tasks.OfType<MspecContextSpecificationRemoteTask>())
+            {
+                var context = MspecContextRemoteTask.ToServer(task.ContextTypeName!, task.Subject, null, null);
+
+                Add(context);
+            }
+
+            foreach (var task in tasks.OfType<MspecBehaviorSpecificationRemoteTask>())
+            {
+                var behavior = MspecBehaviorRemoteTask.ToServer(task.ContextTypeName, task.BehaviorFieldName, null);
+                var context = MspecContextRemoteTask.ToServer(task.ContextTypeName!, null, null, null);
+
+                Add(behavior);
+                Add(context);
+            }
+
+            foreach (var task in tasks.OfType<MspecBehaviorRemoteTask>())
+            {
+                var context = MspecContextRemoteTask.ToServer(task.ContextTypeName!, null, null, null);
+
+                Add(context);
+            }
         }
 
         public MspecRemoteTask? this[MspecReSharperId id]
@@ -56,6 +79,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public IEnumerable<string> GetContextNames()
         {
             return contexts;
+        }
+
+        public IEnumerable<RemoteTask> GetTasks()
+        {
+            return tasksByReSharperId.Values;
         }
 
         private void AddContext(string? contextName)
