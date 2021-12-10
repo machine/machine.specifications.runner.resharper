@@ -16,7 +16,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         }
 
         public MspecContextSpecificationTestElement(MspecContextTestElement parent, string fieldName, string? declaredInTypeShortName, string? ignoreReason)
-            : base($"{parent.TypeName.FullName}::{fieldName}", parent, fieldName, declaredInTypeShortName)
+            : base($"{parent.TypeName.FullName}.{fieldName}", parent, fieldName, declaredInTypeShortName)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();
@@ -29,11 +29,11 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         [Persist]
         [UsedImplicitly]
-        public string FieldName { get; set; }
+        public string FieldName { get; set; } = null!;
 
         [Persist]
         [UsedImplicitly]
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = null!;
 
         public override string ShortName => DisplayName;
 

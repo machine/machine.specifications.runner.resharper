@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
@@ -50,6 +51,23 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
 
             logger.Info("Discovery completed");
+        }
+
+        public void ReportAll()
+        {
+            Action<string> listener = s =>
+            {
+                Console.WriteLine(s);
+            };
+
+            var assemblyName = AssemblyName.GetAssemblyName(request.Container.Location);
+            var assembly = Assembly.Load(assemblyName);
+
+            var controllerType = Type.GetType("Machine.Specifications.Controller.Controller, Machine.Specifications");
+            var discoverMember = controllerType.GetMethod("DiscoverSpecs", BindingFlags.Instance | BindingFlags.Public);
+
+            var controller = Activator.CreateInstance(controllerType, listener);
+            var results = discoverMember.Invoke(controller, new object[] {assembly});
         }
 
         private RemoteTask GetRemoteTask(RemoteTask element)

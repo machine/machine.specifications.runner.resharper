@@ -18,7 +18,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         }
 
         public MspecBehaviorSpecificationTestElement(MspecBehaviorTestElement behavior, string fieldName, string? ignoreReason)
-            : base($"{behavior.Context.TypeName.FullName}::{fieldName}", behavior)
+            : base($"{behavior.Context.TypeName.FullName}.{behavior.FieldName}+{fieldName}", behavior)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();
@@ -33,11 +33,11 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         [Persist]
         [UsedImplicitly]
-        public string FieldName { get; set; }
+        public string FieldName { get; set; } = null!;
 
         [Persist]
         [UsedImplicitly]
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = null!;
 
         public override string ShortName => DisplayName;
 

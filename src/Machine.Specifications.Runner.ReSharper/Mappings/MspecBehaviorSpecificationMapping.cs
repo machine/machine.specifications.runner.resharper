@@ -47,7 +47,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             }
 
             var contextElement = observer.GetElementById<MspecContextTestElement>(task.ContextTypeName);
-            var behavior = observer.GetElementById<MspecBehaviorTestElement>($"{task.ContextTypeName}::{task.BehaviorFieldName}");
+            var behavior = observer.GetElementById<MspecBehaviorTestElement>($"{task.ContextTypeName}.{task.BehaviorFieldName}");
 
             if (contextElement == null)
             {

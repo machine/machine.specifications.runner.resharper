@@ -1,4 +1,5 @@
-﻿using JetBrains.Application.Environment;
+﻿using System;
+using JetBrains.Application.Environment;
 using JetBrains.Application.Environment.Helpers;
 using JetBrains.Application.UI.Options;
 using JetBrains.Application.UI.Options.OptionsDialog;
@@ -8,6 +9,7 @@ using Machine.Specifications.Runner.ReSharper.Resources;
 
 namespace Machine.Specifications.Runner.ReSharper.Options
 {
+    [Obsolete]
     [OptionsPage("MSpecPage", "MSpec", typeof(MspecThemedIcons.Mspec), ParentId = UnitTestingPages.Frameworks)]
     public class MspecPage : CustomSimpleOptionsPage
     {

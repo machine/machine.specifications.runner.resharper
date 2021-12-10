@@ -14,12 +14,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public MspecReSharperId(SpecificationInfo specification)
         {
-            Id = $"{specification.ContainingType}::{specification.FieldName}";
+            Id = $"{specification.ContainingType}.{specification.FieldName}";
         }
 
         public MspecReSharperId(ContextInfo context, SpecificationInfo behaviorSpecification)
         {
-            Id = $"{context.TypeName}::{behaviorSpecification.FieldName}";
+            Id = $"{context.TypeName}.{behaviorSpecification.FieldName}";
         }
 
         public MspecReSharperId(MspecContextRemoteTask context)
@@ -29,17 +29,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public MspecReSharperId(MspecContextSpecificationRemoteTask specification)
         {
-            Id = $"{specification.ContextTypeName}::{specification.SpecificationFieldName}";
+            Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
         }
 
         public MspecReSharperId(MspecBehaviorRemoteTask behavior)
         {
-            Id = $"{behavior.ContextTypeName}::{behavior.BehaviorFieldName}";
+            Id = $"{behavior.ContextTypeName}.{behavior.BehaviorFieldName}";
         }
 
         public MspecReSharperId(MspecBehaviorSpecificationRemoteTask specification)
         {
-            Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
+            Id = $"{specification.ContextTypeName}.{specification.BehaviorFieldName}+{specification.SpecificationFieldName}";
         }
 
         public string Id { get; }
