@@ -18,7 +18,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         }
 
         public MspecBehaviorSpecificationTestElement(MspecBehaviorTestElement behavior, string fieldName, string? ignoreReason)
-            : base($"{behavior.Context.TypeName.FullName}.{behavior.FieldName}+{fieldName}", behavior)
+            : base($"{behavior.Context.TypeName.FullName}.{fieldName}", behavior)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();

@@ -19,6 +19,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private ContextInfo? currentContext;
 
+        private TaskWrapper? currentBehavior;
+
         private TaskWrapper? currentTask;
 
         private int specifications;
@@ -99,7 +101,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 if (successes == specifications && errors == 0)
                 {
                     currentTask.Passed();
+                    currentBehavior?.Passed();
                 }
+
+                currentBehavior?.Finished(errors > 0);
 
                 currentTask.Output(contextInfo.CapturedOutput);
                 currentTask.Finished(errors > 0);
@@ -108,6 +113,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void OnSpecificationStart(SpecificationInfo specificationInfo)
         {
+            specifications++;
+
             logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(specificationInfo)}");
 
             logger.Catch(() =>
@@ -122,6 +129,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 if (!task.Exists)
                 {
                     return;
+                }
+
+                var behavior = context.GetBehaviorTask(currentContext, specificationInfo);
+
+                if (behavior.Exists)
+                {
+                    currentBehavior = behavior;
+                    behavior.Starting();
                 }
 
                 currentTask = task;

@@ -35,10 +35,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             {
                 foreach (var task in request.Selection)
                 {
-                    GetRemoteTask(task);
+                    VerifyRemoteTask(task);
                 }
 
-                var source = depot.GetTasks().ToArray();
+                var source = depot.GetReportableTasks().ToArray();
 
                 if (source.Any())
                 {
@@ -72,7 +72,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             var results = discoverMember.Invoke(controller, new object[] {assembly});
         }
 
-        private RemoteTask GetRemoteTask(RemoteTask element)
+        private void VerifyRemoteTask(RemoteTask element)
         {
             token.ThrowIfCancellationRequested();
 
@@ -83,8 +83,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             {
                 depot.Add(task);
             }
-
-            return task;
         }
     }
 }

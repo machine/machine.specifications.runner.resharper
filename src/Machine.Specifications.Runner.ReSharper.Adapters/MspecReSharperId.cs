@@ -39,7 +39,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public MspecReSharperId(MspecBehaviorSpecificationRemoteTask specification)
         {
-            Id = $"{specification.ContextTypeName}.{specification.BehaviorFieldName}+{specification.SpecificationFieldName}";
+            Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
         }
 
         public string Id { get; }

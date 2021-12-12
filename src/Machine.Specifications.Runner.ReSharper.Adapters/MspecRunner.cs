@@ -30,7 +30,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             var depot = new RemoteTaskDepot(request.Selection);
 
             var discoverer = new Discoverer(request, discoverySink, depot, discoveryToken.Token);
-            discoverer.ReportAll();
             discoverer.Discover();
 
             var executor = new Executor(executionSink, request, depot, executionToken.Token);
