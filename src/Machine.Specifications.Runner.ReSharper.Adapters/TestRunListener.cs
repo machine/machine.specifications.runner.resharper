@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
+using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -70,7 +71,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             currentContext = contextInfo;
 
-            logger.Trace($"OnContextStart: {MspecReSharperId.Self(contextInfo)}");
+            logger.Trace($"OnContextStart: {MspecReSharperId.Self(contextInfo.AsContext())}");
 
             logger.Catch(() =>
             {
@@ -79,7 +80,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     return;
                 }
 
-                currentTask = context.GetTask(contextInfo);
+                currentTask = context.GetTask(contextInfo.AsContext());
 
                 currentTask.Starting();
             });
@@ -87,7 +88,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void OnContextEnd(ContextInfo contextInfo)
         {
-            logger.Trace($"OnContextEnd: {MspecReSharperId.Self(contextInfo)}");
+            logger.Trace($"OnContextEnd: {MspecReSharperId.Self(contextInfo.AsContext())}");
 
             logger.Catch(() =>
             {
@@ -96,7 +97,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     return;
                 }
 
-                currentTask = context.GetTask(contextInfo);
+                currentTask = context.GetTask(contextInfo.AsContext());
 
                 if (successes == specifications && errors == 0)
                 {
@@ -115,7 +116,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             specifications++;
 
-            logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(specificationInfo)}");
+            logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(currentContext.AsSpecification(specificationInfo))}");
 
             logger.Catch(() =>
             {
@@ -124,7 +125,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     return;
                 }
 
-                var task = context.GetTask(currentContext, specificationInfo);
+                var task = context.GetTask(currentContext.AsSpecification(specificationInfo));
 
                 if (!task.Exists)
                 {
@@ -138,7 +139,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
         {
-            logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(specificationInfo)}");
+            logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(currentContext.AsSpecification(specificationInfo))}");
 
             logger.Catch(() =>
             {
@@ -147,7 +148,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     return;
                 }
 
-                var task = context.GetTask(currentContext, specificationInfo);
+                var task = context.GetTask(currentContext.AsSpecification(specificationInfo));
 
                 if (!task.Exists)
                 {

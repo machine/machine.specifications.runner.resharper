@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Application.Progress;
 using JetBrains.Metadata.Reader.Impl;
-using JetBrains.ReSharper.Feature.Services.Navigation.Requests;
-using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
@@ -17,6 +14,8 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class MspecPsiFileExplorer : IRecursiveElementProcessor
     {
+        private readonly SearchDomainFactory searchDomainFactory;
+
         private readonly IUnitTestElementObserverOnFile observer;
 
         private readonly Func<bool> interrupted;
@@ -25,8 +24,9 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private readonly Dictionary<ClrTypeName, MspecContextTestElement> recentContexts = new();
 
-        public MspecPsiFileExplorer(IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
+        public MspecPsiFileExplorer(SearchDomainFactory searchDomainFactory, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
         {
+            this.searchDomainFactory = searchDomainFactory;
             this.observer = observer;
             this.interrupted = interrupted;
         }
@@ -124,6 +124,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 var specification = factory.GetOrCreateContextSpecification(
                     context,
                     field.ShortName,
+                    null,
                     field.GetIgnoreReason());
 
                 OnUnitTestElement(specification, declaration);
@@ -132,13 +133,15 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private void ProcessBehaviorField(IFieldInfo field, IDeclaration? declaration = null)
         {
+            var behaviorType = field.FieldType.GetGenericArguments().FirstOrDefault();
             var containingType = new ClrTypeName(field.DeclaringType);
 
-            if (recentContexts.TryGetValue(containingType, out var context))
+            if (recentContexts.TryGetValue(containingType, out var context) && behaviorType != null && behaviorType.IsBehaviorContainer())
             {
                 var specification = factory.GetOrCreateContextSpecification(
                     context,
                     field.ShortName,
+                    behaviorType.FullyQualifiedName,
                     field.GetIgnoreReason());
 
                 OnUnitTestElement(specification, declaration);

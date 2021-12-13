@@ -26,6 +26,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public string? ContextTypeName { get; set; }
 
+        public string? BehaviorType { get; set; }
+
         public string? SpecificationFieldName { get; set; }
 
         public string? Subject { get; }

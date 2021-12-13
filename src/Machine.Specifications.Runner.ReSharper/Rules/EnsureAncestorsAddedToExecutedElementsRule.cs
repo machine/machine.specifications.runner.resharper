@@ -22,7 +22,7 @@ namespace Machine.Specifications.Runner.ReSharper.Rules
 
         public void Apply(ISet<IUnitTestElement> elements, IUnitTestSession session, IHostProvider hostProvider)
         {
-            var additional = new HashSet<IUnitTestElement>();
+            var ancestors = new HashSet<IUnitTestElement>();
 
             foreach (var element in elements)
             {
@@ -30,14 +30,14 @@ namespace Machine.Specifications.Runner.ReSharper.Rules
                 {
                     var parent = element.Parent;
 
-                    while (parent != null && additional.Add(parent))
+                    while (parent != null && ancestors.Add(parent))
                     {
                         parent = parent.Parent;
                     }
                 }
             }
 
-            elements.AddRange(additional);
+            elements.AddRange(ancestors);
         }
     }
 }

@@ -1,73 +1,40 @@
 ﻿using System;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
+using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public static class RemoteTaskBuilder
     {
-        public static MspecRemoteTask GetRemoteTask(RemoteTask task)
-        {
-            return task switch
-            {
-                MspecContextRemoteTask context => FromContext(context),
-                MspecContextSpecificationRemoteTask specification => FromContextSpecification(specification),
-                MspecBehaviorSpecificationRemoteTask specification => FromBehaviorSpecification(specification),
-                _ => throw new ArgumentOutOfRangeException(nameof(task))
-            };
-        }
-
-        public static MspecRemoteTask GetRemoteTask(TestElement element)
+        public static MspecRemoteTask GetRemoteTask(IMspecElement element)
         {
             return element switch
             {
-                Context context => FromContext(context),
-                Specification specification when !specification.IsBehavior() => FromSpecification(specification),
-                Specification specification when specification.IsBehavior() => FromBehavior(specification),
+                IContext context => FromContext(context),
+                IContextSpecification {IsBehavior: false} specification => FromSpecification(specification),
+                IContextSpecification {IsBehavior: true} specification => FromBehavior(specification),
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
         }
 
-        private static MspecRemoteTask FromContext(Context context)
+        private static MspecRemoteTask FromContext(IContext context)
         {
-            return MspecContextRemoteTask.ToServer(context.TypeName, context.Subject, null, null);
+            return MspecContextRemoteTask.ToServer(MspecReSharperId.Self(context), context.Subject, null, null);
         }
 
-        private static MspecRemoteTask FromSpecification(Specification specification)
+        private static MspecRemoteTask FromSpecification(IContextSpecification specification)
         {
-            return MspecContextSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, specification.Context.Subject, null, null);
+            return MspecContextSpecificationRemoteTask.ToServer(specification.ContainingType, specification.FieldName, null, null, null);
         }
 
-        private static MspecRemoteTask FromBehavior(Specification specification)
-        {
-            var parent = $"{specification.Context.TypeName}.{specification.ContainingType}";
-
-            return MspecBehaviorSpecificationRemoteTask.ToServer(parent, specification.Context.TypeName, specification.FieldName, null);
-        }
-
-        private static MspecRemoteTask FromContext(MspecContextRemoteTask task)
-        {
-            return MspecContextRemoteTask.ToServer(task.ContextTypeName, task.Subject, task.Tags, task.IgnoreReason);
-        }
-
-        private static MspecRemoteTask FromContextSpecification(MspecContextSpecificationRemoteTask task)
-        {
-            return MspecContextSpecificationRemoteTask.ToServer(
-                task.ContextTypeName!,
-                task.SpecificationFieldName!,
-                task.Subject,
-                task.Tags,
-                task.IgnoreReason);
-        }
-
-        private static MspecRemoteTask FromBehaviorSpecification(MspecBehaviorSpecificationRemoteTask task)
+        private static MspecRemoteTask FromBehavior(IContextSpecification specification)
         {
             return MspecBehaviorSpecificationRemoteTask.ToServer(
-                task.ParentId,
-                task.ContextTypeName!,
-                task.SpecificationFieldName!,
-                task.IgnoreReason);
+                specification.Context.TypeName,
+                specification.Context.TypeName,
+                specification.ContainingType,
+                specification.FieldName,
+                null);
         }
     }
 }

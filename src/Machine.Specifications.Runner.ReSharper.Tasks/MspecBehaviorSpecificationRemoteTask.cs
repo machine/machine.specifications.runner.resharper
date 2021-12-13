@@ -10,17 +10,20 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         {
         }
 
-        private MspecBehaviorSpecificationRemoteTask(string parentId, string contextTypeName, string specificationFieldName, string? ignoreReason)
+        private MspecBehaviorSpecificationRemoteTask(string parentId, string contextTypeName, string behaviorType, string specificationFieldName, string? ignoreReason)
             : base($"{contextTypeName}.{specificationFieldName}", ignoreReason)
         {
             ParentId = parentId;
             ContextTypeName = contextTypeName;
+            BehaviorType = behaviorType;
             SpecificationFieldName = specificationFieldName;
         }
 
         public string ParentId { get; set; }
 
         public string? ContextTypeName { get; set; }
+
+        public string BehaviorType { get; set; }
 
         public string? SpecificationFieldName { get; set; }
 
@@ -29,9 +32,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             return new(testId, ignoreReason, runAllChildren, runExplicitly);
         }
 
-        public static MspecBehaviorSpecificationRemoteTask ToServer(string parentId, string contextTypeName, string specificationFieldName, string? ignoreReason)
+        public static MspecBehaviorSpecificationRemoteTask ToServer(string parentId, string contextTypeName, string behaviorType, string specificationFieldName, string? ignoreReason)
         {
-            return new(parentId, contextTypeName, specificationFieldName, ignoreReason);
+            return new(parentId, contextTypeName, behaviorType, specificationFieldName, ignoreReason);
         }
     }
 }

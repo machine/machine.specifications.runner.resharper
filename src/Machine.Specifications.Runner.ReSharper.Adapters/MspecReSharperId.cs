@@ -1,118 +1,23 @@
 ﻿using System;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.ReSharper.Tasks;
-using Machine.Specifications.Runner.Utility;
+using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecReSharperId : IEquatable<MspecReSharperId>
     {
-        private MspecReSharperId(string id)
-        {
-            Id = id;
-        }
-
-        public MspecReSharperId(ContextInfo context)
+        public MspecReSharperId(IContext context)
         {
             Id = context.TypeName;
         }
 
-        public MspecReSharperId(SpecificationInfo specification)
+        public MspecReSharperId(IContextSpecification specification)
         {
-            Id = $"{specification.ContainingType}.{specification.FieldName}";
-        }
-
-        public MspecReSharperId(ContextInfo context, SpecificationInfo behaviorSpecification)
-        {
-            Id = $"{context.TypeName}.{behaviorSpecification.FieldName}";
-        }
-
-        public MspecReSharperId(MspecContextRemoteTask context)
-        {
-            Id = context.ContextTypeName;
-        }
-
-        public MspecReSharperId(MspecContextSpecificationRemoteTask specification)
-        {
-            Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
-        }
-
-        public MspecReSharperId(MspecBehaviorSpecificationRemoteTask specification)
-        {
-            Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
-        }
-
-        public MspecReSharperId(Context context)
-        {
-            Id = context.TypeName;
-        }
-
-        public MspecReSharperId(Specification specification)
-        {
-            Id = specification.IsBehavior()
-                ? $"{specification.Context.TypeName}.{specification.ContainingType}.{specification.FieldName}"
-                : $"{specification.Context.TypeName}.{specification.FieldName}";
+            Id = specification.IsBehavior
+                ? $"{Self(specification.Context)}::{specification.ContainingType}.{specification.FieldName}"
+                : $"{Self(specification.Context)}.{specification.FieldName}";
         }
 
         public string Id { get; }
-
-        public static string Self(ContextInfo context)
-        {
-            return new MspecReSharperId(context).Id;
-        }
-
-        public static string Self(SpecificationInfo specification)
-        {
-            return new MspecReSharperId(specification).Id;
-        }
-
-        public static string Self(ContextInfo context, SpecificationInfo behaviorSpecification)
-        {
-            return new MspecReSharperId(context, behaviorSpecification).Id;
-        }
-
-        public static string Self(Specification specification)
-        {
-            return new MspecReSharperId(specification).Id;
-        }
-
-        public static string Self(Context context)
-        {
-            return new MspecReSharperId(context).Id;
-        }
-
-        public static string Self(TestElement element)
-        {
-            return element switch
-            {
-                Context context => Self(context),
-                Specification specification => Self(specification),
-                _ => throw new ArgumentOutOfRangeException(nameof(element))
-            };
-        }
-
-        public static MspecReSharperId Create(RemoteTask task)
-        {
-            return task switch
-            {
-                MspecContextRemoteTask context => new MspecReSharperId(context),
-                MspecContextSpecificationRemoteTask specification => new MspecReSharperId(specification),
-                MspecBehaviorSpecificationRemoteTask specification => new MspecReSharperId(specification),
-                _ => throw new ArgumentOutOfRangeException(nameof(task))
-            };
-        }
-
-        public static string? Parent(TestElement element)
-        {
-            return element switch
-            {
-                Context context => null,
-                Specification specification when specification.IsBehavior() => new MspecReSharperId($"{specification.Context.TypeName}.{specification.ContainingType}").Id,
-                Specification specification when !specification.IsBehavior() => Self(specification.Context),
-                _ => throw new ArgumentOutOfRangeException(nameof(element))
-            };
-        }
 
         public bool Equals(MspecReSharperId? other)
         {
@@ -127,6 +32,47 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"ReSharperId({Id})";
+        }
+
+        public static string Self(IContext context)
+        {
+            return new MspecReSharperId(context).Id;
+        }
+
+        public static string Self(IContextSpecification specification)
+        {
+            return new MspecReSharperId(specification).Id;
+        }
+
+        public static string Self(IMspecElement element)
+        {
+            return Create(element).Id;
+        }
+
+        public static MspecReSharperId Create(IMspecElement element)
+        {
+            return element switch
+            {
+                IContext context => new MspecReSharperId(context),
+                IContextSpecification specification => new MspecReSharperId(specification),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
+        }
+
+        public static string? Parent(IMspecElement element)
+        {
+            return element switch
+            {
+                IContext context => null,
+                IContextSpecification {IsBehavior: false} specification => Self(specification.Context),
+                IContextSpecification {IsBehavior: true} specification => Self(specification.Context),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
         }
     }
 }

@@ -52,6 +52,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return factory.GetOrCreateContextSpecification(
                 contextElement,
                 task.SpecificationFieldName!,
+                task.BehaviorType,
                 task.IgnoreReason);
         }
     }

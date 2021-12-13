@@ -53,6 +53,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             return factory.GetOrCreateBehaviorSpecification(
                 specificationElement,
                 task.SpecificationFieldName!,
+                task.BehaviorType,
                 null);
         }
     }

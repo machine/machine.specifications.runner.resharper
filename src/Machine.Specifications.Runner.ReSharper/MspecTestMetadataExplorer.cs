@@ -78,6 +78,7 @@ namespace Machine.Specifications.Runner.ReSharper
             var specificationElement = factory.GetOrCreateContextSpecification(
                 contextElement,
                 field.ShortName,
+                null,
                 field.GetIgnoreReason());
 
             observer.OnUnitTestElement(specificationElement);
@@ -85,9 +86,13 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private void ExploreBehavior(MspecContextTestElement contextElement, IFieldInfo field)
         {
+            var behaviorType = field.FieldType.GetGenericArguments()
+                .FirstOrDefault();
+
             var specificationElement = factory.GetOrCreateContextSpecification(
                 contextElement,
                 field.ShortName,
+                behaviorType.FullyQualifiedName,
                 field.GetIgnoreReason());
 
             observer.OnUnitTestElement(specificationElement);

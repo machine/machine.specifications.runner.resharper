@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
@@ -26,8 +27,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             var assemblyPath = Path.GetDirectoryName(request.Container.Location);
 
+            var contexts = context.GetTestsToRun()
+                .Select(x => x.Context.TypeName)
+                .Distinct();
+
             var listener = new TestRunListener(context, assemblyPath!, token);
-            var runOptions = RunOptions.Custom.FilterBy(context.GetContextNames());
+            var runOptions = RunOptions.Custom.FilterBy(contexts);
 
             var runner = new AppDomainRunner(listener, runOptions);
             runner.RunAssembly(new AssemblyPath(request.Container.Location));

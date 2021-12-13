@@ -29,9 +29,10 @@ namespace Machine.Specifications.Runner.ReSharper
         public MspecContextSpecificationTestElement GetOrCreateContextSpecification(
             MspecContextTestElement context,
             string fieldName,
+            string? behaviorType,
             string? ignoreReason)
         {
-            var specification = new MspecContextSpecificationTestElement(context, fieldName, null, ignoreReason);
+            var specification = new MspecContextSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason);
 
             return (MspecContextSpecificationTestElement) elements.Intern(specification);
         }
@@ -39,9 +40,10 @@ namespace Machine.Specifications.Runner.ReSharper
         public MspecBehaviorSpecificationTestElement GetOrCreateBehaviorSpecification(
             MspecContextSpecificationTestElement parent,
             string fieldName,
+            string behaviorType,
             string? ignoreReason)
         {
-            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, ignoreReason);
+            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, behaviorType, ignoreReason);
 
             return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
         }

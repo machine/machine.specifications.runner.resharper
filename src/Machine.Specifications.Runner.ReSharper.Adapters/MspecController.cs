@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Xml;
-using System.Xml.Serialization;
+using System.Xml.Linq;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
+using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
@@ -26,47 +26,72 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             controller = Activator.CreateInstance(controllerType, (Action<string>) Listener);
         }
 
-        public IEnumerable<TestElement> Find(string assemblyPath)
+        public IEnumerable<IMspecElement> Find(string assemblyPath)
         {
             var assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
             var assembly = Assembly.Load(assemblyName);
 
             var results = (string)invoker.Invoke(controller, new object[] { assembly });
 
-            var serializer = new XmlSerializer(typeof(ContextSpecifications));
+            var contexts = ReadContexts(results);
 
-            using var reader = new StringReader(results);
-            using var xmlReader = new XmlTextReader(reader)
-            {
-                Namespaces = false
-            };
-
-            var specifications = (ContextSpecifications)serializer.Deserialize(xmlReader);
-
-            return GetTestElements(specifications);
+            return GetTestElements(contexts.ToArray());
         }
 
-        private IEnumerable<TestElement> GetTestElements(ContextSpecifications specifications)
+        private IEnumerable<Context> ReadContexts(string xml)
         {
-            var elements = new List<TestElement>();
+            var document = XDocument.Parse(xml);
 
-            foreach (var context in specifications.Contexts)
+            foreach (var contextElement in document.Descendants("contextinfo"))
             {
                 token.ThrowIfCancellationRequested();
 
-                elements.Add(context);
+                var context = new Context
+                {
+                    Name = contextElement.ReadValue("name"),
+                    TypeName = contextElement.ReadValue("typename"),
+                    Subject = contextElement.ReadValue("concern")
+                };
+
+                var specifications = new List<Specification>();
+
+                var specificationsElement = contextElement.Element("specifications");
+
+                if (specificationsElement != null)
+                {
+                    foreach (var specificationElement in specificationsElement.Elements("specificationinfo"))
+                    {
+                        token.ThrowIfCancellationRequested();
+
+                        var specification = new Specification
+                        {
+                            Context = context,
+                            Name = specificationElement.ReadValue("name"),
+                            ContainingType = specificationElement.ReadValue("containingtype"),
+                            FieldName = specificationElement.ReadValue("fieldname")
+                        };
+
+                        specifications.Add(specification);
+                    }
+                }
+
+                context.Specifications = specifications.ToArray();
+
+                yield return context;
+            }
+        }
+
+        private IEnumerable<IMspecElement> GetTestElements(Context[] contexts)
+        {
+            foreach (var context in contexts)
+            {
+                yield return context.AsContext();
 
                 foreach (var specification in context.Specifications)
                 {
-                    token.ThrowIfCancellationRequested();
-
-                    specification.Context = context;
-
-                    elements.Add(specification);
+                    yield return specification.AsSpecification();
                 }
             }
-
-            return elements;
         }
 
         private void Listener(string _)

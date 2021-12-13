@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
+using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -47,7 +47,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
                     source.Add(task);
 
-                    if (parent != null && depot[element] == null && depot[parent] != null)
+                    if (parent != null && depot[element] == null && depot[parent] != null && depot[parent].RunAllChildren)
                     {
                         depot.Add(task);
                     }
@@ -70,14 +70,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             logger.Info("Discovery completed");
         }
 
-        private MspecRemoteTask GetRemoteTask(TestElement element)
+        private MspecRemoteTask GetRemoteTask(IMspecElement element)
         {
             return RemoteTaskBuilder.GetRemoteTask(element);
         }
 
-        private string? GetParent(TestElement element)
+        private IMspecElement? GetParent(IMspecElement element)
         {
-            return MspecReSharperId.Parent(element);
+            return element switch
+            {
+                IContext => null,
+                IContextSpecification specification => specification.Context,
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
         }
     }
 }

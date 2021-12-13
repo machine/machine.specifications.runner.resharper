@@ -12,15 +12,14 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecBehaviorSpecificationTestElement(MspecContextSpecificationTestElement parent, string fieldName, string? ignoreReason)
+        public MspecBehaviorSpecificationTestElement(MspecContextSpecificationTestElement parent, string fieldName, string behaviorType, string? ignoreReason)
             : base($"{parent.Context.TypeName.FullName}.{fieldName}", parent)
         {
             FieldName = fieldName;
+            BehaviorType = behaviorType;
             DisplayName = fieldName.ToFormat();
             IgnoreReason = ignoreReason;
         }
-
-        public MspecContextTestElement? Context => (Parent as MspecContextSpecificationTestElement).Context;
 
         public override string Kind => "Behavior Specification";
 
@@ -29,6 +28,10 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         [Persist]
         [UsedImplicitly]
         public string FieldName { get; set; } = null!;
+
+        [Persist]
+        [UsedImplicitly]
+        public string? BehaviorType { get; set; }
 
         [Persist]
         [UsedImplicitly]

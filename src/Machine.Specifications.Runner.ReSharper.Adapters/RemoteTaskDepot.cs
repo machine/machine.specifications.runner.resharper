@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
+using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -10,9 +10,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
     {
         private readonly Dictionary<string, MspecRemoteTask> tasksByReSharperId = new();
 
-        private readonly HashSet<string> contextsToRun = new();
-
-        private readonly List<Specification> testsToRun = new();
+        private readonly List<IContextSpecification> testsToRun = new();
 
         public RemoteTaskDepot(RemoteTask[] tasks)
         {
@@ -22,11 +20,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public MspecRemoteTask? this[string id]
+        public MspecRemoteTask? this[IMspecElement element]
         {
             get
             {
-                tasksByReSharperId.TryGetValue(id, out var value);
+                tasksByReSharperId.TryGetValue(MspecReSharperId.Self(element), out var value);
 
                 return value;
             }
@@ -42,62 +40,22 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public MspecRemoteTask? this[TestElement element]
-        {
-            get
-            {
-                var id = MspecReSharperId.Self(element);
-
-                tasksByReSharperId.TryGetValue(id, out var value);
-
-                return value;
-            }
-        }
-
         public void Add(MspecRemoteTask task)
         {
             tasksByReSharperId[task.TestId] = task;
-
-            switch (task)
-            {
-                case MspecContextRemoteTask context:
-                    AddContext(context.ContextTypeName);
-                    break;
-
-                case MspecContextSpecificationRemoteTask specification:
-                    AddContext(specification.ContextTypeName);
-                    break;
-
-                case MspecBehaviorSpecificationRemoteTask behaviorSpecification:
-                    AddContext(behaviorSpecification.ContextTypeName);
-                    break;
-            }
         }
 
-        public void Bind(TestElement element, MspecRemoteTask task)
+        public void Bind(IMspecElement element, MspecRemoteTask task)
         {
-            if (tasksByReSharperId.ContainsKey(task.TestId) && element is Specification specification)
+            if (tasksByReSharperId.ContainsKey(task.TestId) && element is IContextSpecification specification)
             {
                 testsToRun.Add(specification);
             }
         }
 
-        public IEnumerable<string> GetContextsToRun()
+        public IEnumerable<IContextSpecification> GetTestsToRun()
         {
-            return contextsToRun;
-        }
-
-        public IEnumerable<RemoteTask> GetTasks()
-        {
-            return tasksByReSharperId.Values;
-        }
-
-        private void AddContext(string? contextName)
-        {
-            if (!string.IsNullOrEmpty(contextName))
-            {
-                contextsToRun.Add(contextName!);
-            }
+            return testsToRun;
         }
     }
 }
