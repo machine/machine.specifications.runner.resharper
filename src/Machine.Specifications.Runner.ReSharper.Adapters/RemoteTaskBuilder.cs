@@ -41,7 +41,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private static MspecRemoteTask FromBehavior(Specification specification)
         {
-            return MspecBehaviorSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, null);
+            var parent = $"{specification.Context.TypeName}.{specification.ContainingType}";
+
+            return MspecBehaviorSpecificationRemoteTask.ToServer(parent, specification.Context.TypeName, specification.FieldName, null);
         }
 
         private static MspecRemoteTask FromContext(MspecContextRemoteTask task)
@@ -62,6 +64,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         private static MspecRemoteTask FromBehaviorSpecification(MspecBehaviorSpecificationRemoteTask task)
         {
             return MspecBehaviorSpecificationRemoteTask.ToServer(
+                task.ParentId,
                 task.ContextTypeName!,
                 task.SpecificationFieldName!,
                 task.IgnoreReason);

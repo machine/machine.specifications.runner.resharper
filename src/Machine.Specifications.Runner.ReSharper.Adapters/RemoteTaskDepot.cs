@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -11,6 +12,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private readonly HashSet<string> contextsToRun = new();
 
+        private readonly List<Specification> testsToRun = new();
+
         public RemoteTaskDepot(RemoteTask[] tasks)
         {
             foreach (var task in tasks.OfType<MspecRemoteTask>())
@@ -19,11 +22,33 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
+        public MspecRemoteTask? this[string id]
+        {
+            get
+            {
+                tasksByReSharperId.TryGetValue(id, out var value);
+
+                return value;
+            }
+        }
+
         public MspecRemoteTask? this[MspecReSharperId id]
         {
             get
             {
                 tasksByReSharperId.TryGetValue(id.Id, out var value);
+
+                return value;
+            }
+        }
+
+        public MspecRemoteTask? this[TestElement element]
+        {
+            get
+            {
+                var id = MspecReSharperId.Self(element);
+
+                tasksByReSharperId.TryGetValue(id, out var value);
 
                 return value;
             }
@@ -46,6 +71,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 case MspecBehaviorSpecificationRemoteTask behaviorSpecification:
                     AddContext(behaviorSpecification.ContextTypeName);
                     break;
+            }
+        }
+
+        public void Bind(TestElement element, MspecRemoteTask task)
+        {
+            if (tasksByReSharperId.ContainsKey(task.TestId) && element is Specification specification)
+            {
+                testsToRun.Add(specification);
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
@@ -10,12 +11,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecController
     {
+        private readonly CancellationToken token;
+
         private readonly object controller;
 
         private readonly MethodInfo invoker;
 
-        public MspecController()
+        public MspecController(CancellationToken token)
         {
+            this.token = token;
             var controllerType = Type.GetType("Machine.Specifications.Controller.Controller, Machine.Specifications");
 
             invoker = controllerType.GetMethod("DiscoverSpecs", BindingFlags.Instance | BindingFlags.Public);
@@ -48,10 +52,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             foreach (var context in specifications.Contexts)
             {
+                token.ThrowIfCancellationRequested();
+
                 elements.Add(context);
 
                 foreach (var specification in context.Specifications)
                 {
+                    token.ThrowIfCancellationRequested();
+
                     specification.Context = context;
 
                     elements.Add(specification);
@@ -63,6 +71,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private void Listener(string _)
         {
+            token.ThrowIfCancellationRequested();
         }
     }
 }

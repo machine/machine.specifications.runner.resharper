@@ -8,6 +8,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecReSharperId : IEquatable<MspecReSharperId>
     {
+        private MspecReSharperId(string id)
+        {
+            Id = id;
+        }
+
         public MspecReSharperId(ContextInfo context)
         {
             Id = context.TypeName;
@@ -67,6 +72,26 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return new MspecReSharperId(context, behaviorSpecification).Id;
         }
 
+        public static string Self(Specification specification)
+        {
+            return new MspecReSharperId(specification).Id;
+        }
+
+        public static string Self(Context context)
+        {
+            return new MspecReSharperId(context).Id;
+        }
+
+        public static string Self(TestElement element)
+        {
+            return element switch
+            {
+                Context context => Self(context),
+                Specification specification => Self(specification),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
+        }
+
         public static MspecReSharperId Create(RemoteTask task)
         {
             return task switch
@@ -75,6 +100,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 MspecContextSpecificationRemoteTask specification => new MspecReSharperId(specification),
                 MspecBehaviorSpecificationRemoteTask specification => new MspecReSharperId(specification),
                 _ => throw new ArgumentOutOfRangeException(nameof(task))
+            };
+        }
+
+        public static string? Parent(TestElement element)
+        {
+            return element switch
+            {
+                Context context => null,
+                Specification specification when specification.IsBehavior() => new MspecReSharperId($"{specification.Context.TypeName}.{specification.ContainingType}").Id,
+                Specification specification when !specification.IsBehavior() => Self(specification.Context),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
         }
 

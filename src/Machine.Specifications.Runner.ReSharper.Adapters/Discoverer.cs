@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
@@ -38,12 +37,22 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             try
             {
-                var controller = new MspecController();
+                var controller = new MspecController(token);
                 var results = controller.Find(request.Container.Location);
 
                 foreach (var element in results)
                 {
                     var task = GetRemoteTask(element);
+                    var parent = GetParent(element);
+
+                    source.Add(task);
+
+                    if (parent != null && depot[element] == null && depot[parent] != null)
+                    {
+                        depot.Add(task);
+                    }
+
+                    depot.Bind(element, task);
                 }
 
                 if (source.Any())
@@ -66,14 +75,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return RemoteTaskBuilder.GetRemoteTask(element);
         }
 
-        private MspecReSharperId? GetParent(TestElement element)
+        private string? GetParent(TestElement element)
         {
-            if (element is Specification specification)
-            {
-                return MspecReSharperId.Create();
-            }
-
-            return null;
+            return MspecReSharperId.Parent(element);
         }
     }
 }
