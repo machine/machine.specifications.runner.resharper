@@ -85,32 +85,8 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private void ExploreBehavior(MspecContextTestElement contextElement, IFieldInfo field)
         {
-            var behaviorType = field.FieldType.GetGenericArguments()
-                .FirstOrDefault();
-
-            var behaviorElement = factory.GetOrCreateBehavior(
+            var specificationElement = factory.GetOrCreateContextSpecification(
                 contextElement,
-                field.ShortName,
-                field.GetIgnoreReason());
-
-            observer.OnUnitTestElement(behaviorElement);
-
-            if (behaviorType != null)
-            {
-                var behaviorSpecifications = behaviorType.GetFields()
-                    .Where(x => x.IsSpecification());
-
-                foreach (var behaviorSpecification in behaviorSpecifications)
-                {
-                    ExploreBehaviorSpecification(behaviorElement, behaviorSpecification);
-                }
-            }
-        }
-
-        private void ExploreBehaviorSpecification(MspecBehaviorTestElement behaviorElement, IFieldInfo field)
-        {
-            var specificationElement = factory.GetOrCreateBehaviorSpecification(
-                behaviorElement,
                 field.ShortName,
                 field.GetIgnoreReason());
 

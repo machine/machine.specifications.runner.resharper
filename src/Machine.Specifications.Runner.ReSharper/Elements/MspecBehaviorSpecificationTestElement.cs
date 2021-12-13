@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
-using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Util;
+﻿using JetBrains.Annotations;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Persistence;
 using Machine.Specifications.Runner.Utility;
@@ -17,15 +12,15 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecBehaviorSpecificationTestElement(MspecBehaviorTestElement behavior, string fieldName, string? ignoreReason)
-            : base($"{behavior.Context.TypeName.FullName}.{fieldName}", behavior)
+        public MspecBehaviorSpecificationTestElement(MspecContextSpecificationTestElement parent, string fieldName, string? ignoreReason)
+            : base($"{parent.Context.TypeName.FullName}.{fieldName}", parent)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();
             IgnoreReason = ignoreReason;
         }
 
-        public MspecBehaviorTestElement? Behavior => Parent as MspecBehaviorTestElement;
+        public MspecContextTestElement? Context => (Parent as MspecContextSpecificationTestElement).Context;
 
         public override string Kind => "Behavior Specification";
 
@@ -44,27 +39,5 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         [Persist]
         [UsedImplicitly]
         public string? IgnoreReason { get; set; }
-
-        public override IEnumerable<UnitTestElementLocation> GetLocations()
-        {
-            return Behavior!.GetLocations();
-        }
-
-        public override IDeclaredElement? GetDeclaredElement()
-        {
-            var contextElement = Behavior!.Context.GetDeclaredElement();
-
-            if (contextElement is not IClass type)
-            {
-                return null;
-            }
-
-            using (CompilationContextCookie.OverrideOrCreate(Project.GetResolveContext(TargetFrameworkId)))
-            {
-                return type
-                    .EnumerateMembers<IField>(FieldName, type.CaseSensitiveName)
-                    .FirstOrDefault();
-            }
-        }
     }
 }

@@ -131,14 +131,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     return;
                 }
 
-                var behavior = context.GetBehaviorTask(currentContext, specificationInfo);
-
-                if (behavior.Exists)
-                {
-                    currentBehavior = behavior;
-                    behavior.Starting();
-                }
-
                 currentTask = task;
                 currentTask.Starting();
             });

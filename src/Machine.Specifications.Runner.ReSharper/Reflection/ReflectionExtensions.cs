@@ -38,11 +38,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
         {
             var type = field.FieldType;
 
-            var arguments = type.GetGenericArguments()
-                .SelectMany(x => x.GetCustomAttributes(FullNames.BehaviorsAttribute, false));
-
-            return type.GetCustomAttributes(FullNames.BehaviorDelegateAttribute, false).Any() &&
-                   arguments.Any();
+            return type.GetCustomAttributes(FullNames.BehaviorDelegateAttribute, false).Any();
         }
 
         public static string? GetIgnoreReason(this ITypeInfo type)

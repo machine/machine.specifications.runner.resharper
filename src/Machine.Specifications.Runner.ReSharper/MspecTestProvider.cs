@@ -37,14 +37,13 @@ namespace Machine.Specifications.Runner.ReSharper
                     return element is MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
 
                 case UnitTestElementKind.TestContainer:
-                    return element is MspecContextTestElement or MspecBehaviorTestElement;
+                    return element is MspecContextTestElement;
 
                 case UnitTestElementKind.TestStuff:
-                    return element is MspecContextTestElement or MspecBehaviorTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
+                    return element is MspecContextTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
 
                 case UnitTestElementKind.Unknown:
                     return element is not MspecContextTestElement &&
-                           element is not MspecBehaviorTestElement &&
                            element is not MspecContextSpecificationTestElement &&
                            element is not MspecBehaviorSpecificationTestElement;
             }
@@ -60,7 +59,7 @@ namespace Machine.Specifications.Runner.ReSharper
                     return element.IsSpecification();
 
                 case UnitTestElementKind.TestContainer:
-                    return element.IsContext() || element.IsBehavior();
+                    return element.IsContext();
 
                 case UnitTestElementKind.TestStuff:
                     return element.IsSpecification() || element.IsContext() || element.IsBehavior();

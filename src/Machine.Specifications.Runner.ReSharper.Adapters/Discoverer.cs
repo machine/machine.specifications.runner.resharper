@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
+using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
@@ -31,20 +34,23 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             logger.Info($"Discovering tests from {request.Container.Location}");
 
+            var source = new List<RemoteTask>();
+
             try
             {
-                foreach (var task in request.Selection)
-                {
-                    VerifyRemoteTask(task);
-                }
+                var controller = new MspecController();
+                var results = controller.Find(request.Container.Location);
 
-                var source = depot.GetTasks().ToArray();
+                foreach (var element in results)
+                {
+                    var task = GetRemoteTask(element);
+                }
 
                 if (source.Any())
                 {
-                    logger.Debug("Sending discovery results to server");
+                    logger.Debug($"Sending {source.Count} discovery results to server");
 
-                    sink.TestsDiscovered(source);
+                    sink.TestsDiscovered(source.ToArray());
                 }
             }
             catch (OperationCanceledException)
@@ -55,34 +61,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             logger.Info("Discovery completed");
         }
 
-        public void ReportAll()
+        private MspecRemoteTask GetRemoteTask(TestElement element)
         {
-            Action<string> listener = s =>
-            {
-                Console.WriteLine(s);
-            };
-
-            var assemblyName = AssemblyName.GetAssemblyName(request.Container.Location);
-            var assembly = Assembly.Load(assemblyName);
-
-            var controllerType = Type.GetType("Machine.Specifications.Controller.Controller, Machine.Specifications");
-            var discoverMember = controllerType.GetMethod("DiscoverSpecs", BindingFlags.Instance | BindingFlags.Public);
-
-            var controller = Activator.CreateInstance(controllerType, listener);
-            var results = discoverMember.Invoke(controller, new object[] {assembly});
+            return RemoteTaskBuilder.GetRemoteTask(element);
         }
 
-        private void VerifyRemoteTask(RemoteTask element)
+        private MspecReSharperId? GetParent(TestElement element)
         {
-            token.ThrowIfCancellationRequested();
-
-            var task = RemoteTaskBuilder.GetRemoteTask(element);
-            var id = MspecReSharperId.Create(task);
-
-            if (depot[id] == null)
+            if (element is Specification specification)
             {
-                depot.Add(task);
+                return MspecReSharperId.Create();
             }
+
+            return null;
         }
     }
 }

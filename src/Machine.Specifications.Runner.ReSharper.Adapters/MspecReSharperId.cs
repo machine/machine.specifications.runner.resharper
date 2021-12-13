@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 using Machine.Specifications.Runner.Utility;
 
@@ -32,14 +33,21 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
         }
 
-        public MspecReSharperId(MspecBehaviorRemoteTask behavior)
-        {
-            Id = $"{behavior.ContextTypeName}.{behavior.BehaviorFieldName}";
-        }
-
         public MspecReSharperId(MspecBehaviorSpecificationRemoteTask specification)
         {
             Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
+        }
+
+        public MspecReSharperId(Context context)
+        {
+            Id = context.TypeName;
+        }
+
+        public MspecReSharperId(Specification specification)
+        {
+            Id = specification.IsBehavior()
+                ? $"{specification.Context.TypeName}.{specification.ContainingType}.{specification.FieldName}"
+                : $"{specification.Context.TypeName}.{specification.FieldName}";
         }
 
         public string Id { get; }
@@ -61,23 +69,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public static MspecReSharperId Create(RemoteTask task)
         {
-            switch (task)
+            return task switch
             {
-                case MspecContextRemoteTask context:
-                    return new MspecReSharperId(context);
-
-                case MspecContextSpecificationRemoteTask specification:
-                    return new MspecReSharperId(specification);
-
-                case MspecBehaviorRemoteTask behavior:
-                    return new MspecReSharperId(behavior);
-
-                case MspecBehaviorSpecificationRemoteTask specification:
-                    return new MspecReSharperId(specification);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(task));
-            }
+                MspecContextRemoteTask context => new MspecReSharperId(context),
+                MspecContextSpecificationRemoteTask specification => new MspecReSharperId(specification),
+                MspecBehaviorSpecificationRemoteTask specification => new MspecReSharperId(specification),
+                _ => throw new ArgumentOutOfRangeException(nameof(task))
+            };
         }
 
         public bool Equals(MspecReSharperId? other)

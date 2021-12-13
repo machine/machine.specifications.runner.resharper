@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -8,23 +9,39 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
     {
         public static MspecRemoteTask GetRemoteTask(RemoteTask task)
         {
-            switch (task)
+            return task switch
             {
-                case MspecContextRemoteTask context:
-                    return FromContext(context);
+                MspecContextRemoteTask context => FromContext(context),
+                MspecContextSpecificationRemoteTask specification => FromContextSpecification(specification),
+                MspecBehaviorSpecificationRemoteTask specification => FromBehaviorSpecification(specification),
+                _ => throw new ArgumentOutOfRangeException(nameof(task))
+            };
+        }
 
-                case MspecContextSpecificationRemoteTask specification:
-                    return FromContextSpecification(specification);
+        public static MspecRemoteTask GetRemoteTask(TestElement element)
+        {
+            return element switch
+            {
+                Context context => FromContext(context),
+                Specification specification when !specification.IsBehavior() => FromSpecification(specification),
+                Specification specification when specification.IsBehavior() => FromBehavior(specification),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
+        }
 
-                case MspecBehaviorRemoteTask behavior:
-                    return FromBehavior(behavior);
+        private static MspecRemoteTask FromContext(Context context)
+        {
+            return MspecContextRemoteTask.ToServer(context.TypeName, context.Subject, null, null);
+        }
 
-                case MspecBehaviorSpecificationRemoteTask specification:
-                    return FromBehaviorSpecification(specification);
+        private static MspecRemoteTask FromSpecification(Specification specification)
+        {
+            return MspecContextSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, specification.Context.Subject, null, null);
+        }
 
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(task));
-            }
+        private static MspecRemoteTask FromBehavior(Specification specification)
+        {
+            return MspecBehaviorSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, null);
         }
 
         private static MspecRemoteTask FromContext(MspecContextRemoteTask task)
@@ -42,16 +59,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 task.IgnoreReason);
         }
 
-        private static MspecRemoteTask FromBehavior(MspecBehaviorRemoteTask task)
-        {
-            return MspecBehaviorRemoteTask.ToServer(task.ContextTypeName, task.BehaviorFieldName, task.IgnoreReason);
-        }
-
         private static MspecRemoteTask FromBehaviorSpecification(MspecBehaviorSpecificationRemoteTask task)
         {
             return MspecBehaviorSpecificationRemoteTask.ToServer(
                 task.ContextTypeName!,
-                task.BehaviorFieldName!,
                 task.SpecificationFieldName!,
                 task.IgnoreReason);
         }

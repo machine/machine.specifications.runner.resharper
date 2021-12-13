@@ -9,41 +9,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
     {
         private readonly Dictionary<string, MspecRemoteTask> tasksByReSharperId = new();
 
-        private readonly Dictionary<string, MspecRemoteTask> behaviorTasksById = new();
-
-        private readonly HashSet<MspecRemoteTask> reportableTasks = new();
-
-        private readonly HashSet<string> contexts = new();
+        private readonly HashSet<string> contextsToRun = new();
 
         public RemoteTaskDepot(RemoteTask[] tasks)
         {
             foreach (var task in tasks.OfType<MspecRemoteTask>())
             {
-                Add(RemoteTaskBuilder.GetRemoteTask(task));
-            }
-
-            foreach (var task in tasks.OfType<MspecBehaviorSpecificationRemoteTask>())
-            {
-                var behavior = MspecBehaviorRemoteTask.ToServer(task.ContextTypeName, task.BehaviorFieldName, null);
-                var id = MspecReSharperId.Create(behavior);
-
-                if (tasksByReSharperId.TryGetValue(id.Id, out var existingBehavior))
-                {
-                    behaviorTasksById[task.TestId] = existingBehavior;
-                }
-                else
-                {
-                    reportableTasks.Add(behavior);
-                    tasksByReSharperId[id.Id] = behavior;
-                    behaviorTasksById[task.TestId] = behavior;
-                }
-            }
-
-            foreach (var task in tasks.OfType<MspecContextSpecificationRemoteTask>())
-            {
-                var context = MspecContextRemoteTask.ToServer(task.ContextTypeName, task.Subject, null, null);
-
-                Add(context);
+                Add(task);
             }
         }
 
@@ -57,13 +29,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public MspecRemoteTask? GetBehavior(MspecReSharperId id)
-        {
-            behaviorTasksById.TryGetValue(id.Id, out var value);
-
-            return value;
-        }
-
         public void Add(MspecRemoteTask task)
         {
             tasksByReSharperId[task.TestId] = task;
@@ -72,10 +37,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             {
                 case MspecContextRemoteTask context:
                     AddContext(context.ContextTypeName);
-                    break;
-
-                case MspecBehaviorRemoteTask behavior:
-                    AddContext(behavior.ContextTypeName);
                     break;
 
                 case MspecContextSpecificationRemoteTask specification:
@@ -88,9 +49,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public IEnumerable<string> GetContextNames()
+        public IEnumerable<string> GetContextsToRun()
         {
-            return contexts;
+            return contextsToRun;
         }
 
         public IEnumerable<RemoteTask> GetTasks()
@@ -98,16 +59,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return tasksByReSharperId.Values;
         }
 
-        public IEnumerable<RemoteTask> GetReportableTasks()
-        {
-            return reportableTasks;
-        }
-
         private void AddContext(string? contextName)
         {
             if (!string.IsNullOrEmpty(contextName))
             {
-                contexts.Add(contextName!);
+                contextsToRun.Add(contextName!);
             }
         }
     }

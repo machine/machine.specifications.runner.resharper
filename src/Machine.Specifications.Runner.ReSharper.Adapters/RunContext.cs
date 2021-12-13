@@ -13,8 +13,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private readonly ConcurrentDictionary<MspecReSharperId, TaskWrapper> contexts = new();
 
-        private readonly ConcurrentDictionary<string, TaskWrapper> behaviors = new();
-
         private readonly ConcurrentDictionary<MspecReSharperId, TaskWrapper> specifications = new();
 
         public RunContext(RemoteTaskDepot depot, ITestExecutionSink sink)
@@ -25,7 +23,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public IEnumerable<string> GetContextNames()
         {
-            return depot.GetContextNames();
+            return depot.GetContextsToRun();
         }
 
         public TaskWrapper GetTask(ContextInfo context)
@@ -50,25 +48,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
 
             return specifications.GetOrAdd(key, x => new TaskWrapper(depot[x], sink));
-        }
-
-        public TaskWrapper GetBehaviorTask(ContextInfo? context, SpecificationInfo specification)
-        {
-            if (context == null)
-            {
-                return new TaskWrapper(null, sink);
-            }
-
-            var key = new MspecReSharperId(context, specification);
-
-            var behavior = depot.GetBehavior(key);
-
-            if (behavior == null)
-            {
-                return new TaskWrapper(null, sink);
-            }
-
-            return behaviors.GetOrAdd(behavior.TestId, x => new TaskWrapper(behavior, sink));
         }
     }
 }

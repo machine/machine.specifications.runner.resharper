@@ -23,9 +23,9 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
-            task.ContextTypeName = element.Behavior!.Context.TypeName.FullName;
+            //task.ContextTypeName = element.Behavior!.Context.TypeName.FullName;
             task.SpecificationFieldName = element.FieldName;
-            task.BehaviorFieldName = element.Behavior.FieldName;
+            //task.BehaviorFieldName = element.Behavior.FieldName;
 
             return task;
         }
@@ -39,26 +39,11 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 return null;
             }
 
-            if (task.BehaviorFieldName == null)
+            var specificationElement = observer.GetElementById<MspecContextSpecificationTestElement>(task.ParentId);
+
+            if (specificationElement == null)
             {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': BehaviorFieldName is missing");
-
-                return null;
-            }
-
-            var contextElement = observer.GetElementById<MspecContextTestElement>(task.ContextTypeName);
-            var behavior = observer.GetElementById<MspecBehaviorTestElement>($"{task.ContextTypeName}.{task.BehaviorFieldName}");
-
-            if (contextElement == null)
-            {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': Context is missing");
-
-                return null;
-            }
-
-            if (behavior == null)
-            {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': Behavior is missing");
+                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': Specification is missing");
 
                 return null;
             }
@@ -66,7 +51,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             var factory = GetFactory(context);
 
             return factory.GetOrCreateBehaviorSpecification(
-                behavior,
+                specificationElement,
                 task.SpecificationFieldName!,
                 null);
         }
