@@ -38,7 +38,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     VerifyRemoteTask(task);
                 }
 
-                var source = depot.GetReportableTasks().ToArray();
+                var source = depot.GetTasks().ToArray();
 
                 if (source.Any())
                 {

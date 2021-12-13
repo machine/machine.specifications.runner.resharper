@@ -10,7 +10,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecBehaviorSpecificationTestElement : ClrUnitTestElement.Row, ITestCase
+    public class MspecBehaviorSpecificationTestElement : ClrUnitTestElement.Row, ITestCase, IMspecTestElement
     {
         [UsedImplicitly]
         public MspecBehaviorSpecificationTestElement()

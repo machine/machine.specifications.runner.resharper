@@ -6,7 +6,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecContextTestElement : ClrUnitTestElement.FromClass
+    public class MspecContextTestElement : ClrUnitTestElement.FromClass, IMspecTestElement
     {
         [UsedImplicitly]
         public MspecContextTestElement()

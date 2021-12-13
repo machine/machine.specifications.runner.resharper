@@ -8,7 +8,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Elements
 {
-    public class MspecBehaviorTestElement : ClrUnitTestElement.FromMethod<MspecContextTestElement>
+    public class MspecBehaviorTestElement : ClrUnitTestElement.FromMethod<MspecContextTestElement>, IMspecTestElement
     {
         [UsedImplicitly]
         public MspecBehaviorTestElement()
