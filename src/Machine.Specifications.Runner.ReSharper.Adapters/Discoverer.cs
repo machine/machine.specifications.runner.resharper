@@ -47,9 +47,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
                     source.Add(task);
 
-                    if (parent != null && depot[element] == null && depot[parent] != null && depot[parent].RunAllChildren)
+                    if (parent != null && depot[element] == null && depot[parent] != null)
                     {
-                        depot.Add(task);
+                        depot.Add(element, task);
                     }
 
                     depot.Bind(element, task);

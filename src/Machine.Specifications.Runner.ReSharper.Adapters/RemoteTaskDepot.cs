@@ -16,7 +16,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             foreach (var task in tasks.OfType<MspecRemoteTask>())
             {
-                Add(task);
+                tasksByReSharperId[task.TestId] = task;
             }
         }
 
@@ -40,9 +40,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public void Add(MspecRemoteTask task)
+        public void Add(IMspecElement element, MspecRemoteTask task)
         {
-            tasksByReSharperId[task.TestId] = task;
+            if (element is IContextSpecification { IsBehavior: true })
+            {
+                tasksByReSharperId[task.TestId] = task;
+            }
         }
 
         public void Bind(IMspecElement element, MspecRemoteTask task)

@@ -44,7 +44,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             var key = new MspecReSharperId(specification);
 
-            return specifications.GetOrAdd(key, x => new TaskWrapper(depot[x], sink));
+            return specifications.GetOrAdd(key, x =>
+            {
+                var task = depot[x];
+
+                if (task == null && specification.IsBehavior)
+                {
+                    task = CreateTask(specification);
+                }
+
+                return new TaskWrapper(task, sink);
+            });
         }
 
         private MspecRemoteTask CreateTask(IMspecElement element)
@@ -53,7 +63,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             sink.DynamicTestDiscovered(task);
 
-            depot.Add(task);
+            depot.Add(element, task);
 
             return task;
         }
