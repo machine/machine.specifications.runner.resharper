@@ -19,11 +19,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             SpecificationFieldName = specificationFieldName;
         }
 
-        public string ParentId { get; set; }
+        public string? ParentId { get; set; }
 
         public string? ContextTypeName { get; set; }
 
-        public string BehaviorType { get; set; }
+        public string? BehaviorType { get; set; }
 
         public string? SpecificationFieldName { get; set; }
 

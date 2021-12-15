@@ -59,7 +59,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private MspecRemoteTask CreateTask(IMspecElement element)
         {
-            var task = RemoteTaskBuilder.GetRemoteTask(element);
+            var task = RemoteTaskBuilder.GetRemoteTask(depot, element);
 
             sink.DynamicTestDiscovered(task);
 

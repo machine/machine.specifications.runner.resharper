@@ -23,8 +23,9 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
-            //task.ContextTypeName = element.Behavior!.Context.TypeName.FullName;
+            task.ContextTypeName = element.Specification.Context.TypeName.FullName;
             task.SpecificationFieldName = element.FieldName;
+            task.BehaviorType = element.BehaviorType;
             //task.BehaviorFieldName = element.Behavior.FieldName;
 
             return task;
@@ -34,7 +35,14 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
         {
             if (task.ContextTypeName == null)
             {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': ContextTypeName is missing");
+                context.Logger.Warn($"Cannot create element for BehaviorSpecificationElement '{task.TestId}': ContextTypeName is missing");
+
+                return null;
+            }
+
+            if (task.ParentId == null)
+            {
+                context.Logger.Warn($"Cannot create element for BehaviorSpecificationElement '{task.TestId}': ParentId is missing");
 
                 return null;
             }

@@ -25,6 +25,8 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public bool IsNotRunnableStandalone => Origin == UnitTestElementOrigin.Dynamic;
 
+        public MspecContextSpecificationTestElement Specification => (MspecContextSpecificationTestElement) Parent;
+
         [Persist]
         [UsedImplicitly]
         public string FieldName { get; set; } = null!;

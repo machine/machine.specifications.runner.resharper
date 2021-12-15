@@ -33,12 +33,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             var results = (string)invoker.Invoke(controller, new object[] { assembly });
 
-            var contexts = ReadContexts(results);
+            var contexts = ReadContexts(results, assembly);
 
             return GetTestElements(contexts.ToArray());
         }
 
-        private IEnumerable<Context> ReadContexts(string xml)
+        private IEnumerable<Context> ReadContexts(string xml, Assembly assembly)
         {
             var document = XDocument.Parse(xml);
 
@@ -48,6 +48,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
                 var context = new Context
                 {
+                    Assembly = assembly,
                     Name = contextElement.ReadValue("name"),
                     TypeName = contextElement.ReadValue("typename"),
                     Subject = contextElement.ReadValue("concern")
@@ -65,6 +66,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
                         var specification = new Specification
                         {
+                            Assembly = assembly,
                             Context = context,
                             Name = specificationElement.ReadValue("name"),
                             ContainingType = specificationElement.ReadValue("containingtype"),

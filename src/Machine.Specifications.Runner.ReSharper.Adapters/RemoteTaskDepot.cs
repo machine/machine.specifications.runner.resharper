@@ -60,5 +60,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             return testsToRun;
         }
+
+        public IEnumerable<MspecRemoteTask> GetTasks()
+        {
+            return tasksByReSharperId.Values;
+        }
     }
 }

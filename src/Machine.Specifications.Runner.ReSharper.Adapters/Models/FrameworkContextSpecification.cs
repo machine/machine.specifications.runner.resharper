@@ -19,6 +19,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Models
 
         public string FieldName { get; }
 
+        public string? ParentFieldName { get; }
+
         public bool IsBehavior { get; }
 
         public string Name { get; }

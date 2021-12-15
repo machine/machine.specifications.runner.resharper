@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
@@ -6,13 +7,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public static class RemoteTaskBuilder
     {
-        public static MspecRemoteTask GetRemoteTask(IMspecElement element)
+        public static MspecRemoteTask GetRemoteTask(RemoteTaskDepot depot, IMspecElement element)
         {
             return element switch
             {
                 IContext context => FromContext(context),
                 IContextSpecification {IsBehavior: false} specification => FromSpecification(specification),
-                IContextSpecification {IsBehavior: true} specification => FromBehavior(specification),
+                IContextSpecification {IsBehavior: true} specification => FromBehavior(depot, specification),
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
         }
@@ -27,10 +28,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return MspecContextSpecificationRemoteTask.ToServer(specification.ContainingType, specification.FieldName, null, null, null);
         }
 
-        private static MspecRemoteTask FromBehavior(IContextSpecification specification)
+        private static MspecRemoteTask FromBehavior(RemoteTaskDepot depot, IContextSpecification specification)
         {
+            var parentSpecification = depot.GetTasks()
+                .OfType<MspecContextSpecificationRemoteTask>()
+                .FirstOrDefault(x => x.BehaviorType == specification.ContainingType);
+
+            var parentId = $"{specification.Context.TypeName}.{parentSpecification.SpecificationFieldName}";
+
             return MspecBehaviorSpecificationRemoteTask.ToServer(
-                specification.Context.TypeName,
+                parentId,
                 specification.Context.TypeName,
                 specification.ContainingType,
                 specification.FieldName,

@@ -8,6 +8,8 @@
 
         string FieldName { get; }
 
+        string? ParentFieldName { get; }
+
         bool IsBehavior { get; }
     }
 }

@@ -72,7 +72,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private MspecRemoteTask GetRemoteTask(IMspecElement element)
         {
-            return RemoteTaskBuilder.GetRemoteTask(element);
+            return RemoteTaskBuilder.GetRemoteTask(depot, element);
         }
 
         private IMspecElement? GetParent(IMspecElement element)
