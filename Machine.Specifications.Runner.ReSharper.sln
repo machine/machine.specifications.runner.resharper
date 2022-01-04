@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{9725D2B9
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		CONTRIBUTING.md = CONTRIBUTING.md
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		install-plugin.ps1 = install-plugin.ps1
 		plugin.xml = plugin.xml
@@ -23,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runner.ReSharper.Tests", "src\Machine.Specifications.Runner.ReSharper.Tests\Machine.Specifications.Runner.ReSharper.Tests.csproj", "{64E9C141-E05B-4CBD-B8FC-75AF0EBAF907}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machine.Specifications.Runner.ReSharper.Adapters.Tests", "src\Machine.Specifications.Runner.ReSharper.Adapters.Tests\Machine.Specifications.Runner.ReSharper.Adapters.Tests.csproj", "{AE5A2664-12B7-41EA-A0DA-648625363109}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machine.Specifications.Runner.ReSharper.Adapters.Tests", "src\Machine.Specifications.Runner.ReSharper.Adapters.Tests\Machine.Specifications.Runner.ReSharper.Adapters.Tests.csproj", "{AE5A2664-12B7-41EA-A0DA-648625363109}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

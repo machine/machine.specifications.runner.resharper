@@ -1,0 +1,44 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="GetInstallPath" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <VersionBase Required="true" />
+      <RootSuffix Required="true" />
+      <Directories ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+    </ParameterGroup>
+
+    <Task>
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+var platforms = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JetBrains");
+var installations = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "JetBrains", "Installations");
+
+var platform = Directory.GetDirectories(platforms, "ReSharperPlatformVs*")
+    .SelectMany(x => Directory.GetDirectories(x, string.Format("v{0}_*{1}", VersionBase, RootSuffix)))
+    .Where(x => File.Exists(Path.Combine(x, "NuGet.Config")))
+    .OrderByDescending(x => x)
+    .FirstOrDefault();
+var hostIdentifier = Path.GetFileName(Path.GetDirectoryName(platform)) + "_" + Path.GetFileName(platform).Split('_').Last();
+
+Directories = Directory.GetDirectories(installations)
+    .Where(x => Path.GetFileName(x).StartsWith(hostIdentifier))
+    .Where(x => File.Exists(Path.Combine(x, "packages")))
+    .Distinct()
+    .Select(x => new TaskItem(x))
+    .ToArray();
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="CopyPluginToHive" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Debug'">
+    <GetInstallPath VersionBase="$(WaveVersionBase)" RootSuffix="$(RootSuffix)">
+      <Output TaskParameter="Directories" ItemName="HiveDirectory" />
+    </GetInstallPath>
+
+    <Message Text="Copying @(MainAssembly) to @(HiveDirectory)" Importance="High" />
+
+    <Copy SourceFiles="@(MainAssembly)" DestinationFolder="@(HiveDirectory)" Condition="Exists('@(HiveDirectory)')" />
+  </Target>
+
+</Project>
