@@ -4,7 +4,7 @@ using JetBrains.ReSharper.TestRunner.Abstractions;
 using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
     public class RunContext
     {
@@ -59,7 +59,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private MspecRemoteTask CreateTask(IMspecElement element)
         {
-            var task = RemoteTaskBuilder.GetRemoteTask(depot, element);
+            var task = RemoteTaskBuilder.GetRemoteTask(element);
 
             sink.DynamicTestDiscovered(task);
 

@@ -13,6 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         private MspecContextSpecificationRemoteTask(
             string contextTypeName,
             string specificationFieldName,
+            string? behaviorType,
             string? subject,
             string[]? tags,
             string? ignoreReason)
@@ -20,6 +21,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         {
             ContextTypeName = contextTypeName;
             SpecificationFieldName = specificationFieldName;
+            BehaviorType = behaviorType;
             Subject = subject;
             Tags = tags;
         }
@@ -46,11 +48,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         public static MspecContextSpecificationRemoteTask ToServer(
             string contextTypeName,
             string specificationFieldName,
+            string? behaviorType,
             string? subject,
             string[]? tags,
             string? ignoreReason)
         {
-            return new(contextTypeName, specificationFieldName, subject, tags, ignoreReason);
+            return new(contextTypeName, specificationFieldName, behaviorType, subject, tags, ignoreReason);
         }
     }
 }

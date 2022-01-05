@@ -3,7 +3,7 @@ using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
     public class TaskWrapper
     {

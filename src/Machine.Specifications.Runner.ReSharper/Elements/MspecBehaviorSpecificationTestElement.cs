@@ -13,7 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         }
 
         public MspecBehaviorSpecificationTestElement(MspecContextSpecificationTestElement parent, string fieldName, string behaviorType, string? ignoreReason)
-            : base($"{parent.Context.TypeName.FullName}.{fieldName}", parent)
+            : base($"{parent.Context.TypeName.FullName}.{parent.FieldName}.{fieldName}", parent)
         {
             FieldName = fieldName;
             BehaviorType = behaviorType;

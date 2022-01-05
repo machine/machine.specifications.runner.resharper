@@ -4,7 +4,7 @@ using JetBrains.ReSharper.TestRunner.Abstractions;
 using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
     public class TestRunListener : ISpecificationRunListener
     {

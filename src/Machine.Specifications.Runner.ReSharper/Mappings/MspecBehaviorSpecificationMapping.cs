@@ -26,7 +26,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             task.ContextTypeName = element.Specification.Context.TypeName.FullName;
             task.SpecificationFieldName = element.FieldName;
             task.BehaviorType = element.BehaviorType;
-            //task.BehaviorFieldName = element.Behavior.FieldName;
+            task.ParentId = $"{element.Specification.Context.TypeName.FullName}.{element.Specification.FieldName}";
 
             return task;
         }

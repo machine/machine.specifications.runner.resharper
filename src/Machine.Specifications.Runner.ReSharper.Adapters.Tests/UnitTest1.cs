@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 using Xunit;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests
@@ -11,12 +12,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests
         [Fact]
         public void Test1()
         {
-            var path = @"C:\Users\rober\source\repos\MSpecProject\MspecBehaviors\bin\Debug\net472\MspecBehaviors.dll";
+            var path = @"C:\Projects\MSpecProject\MSpecProject\bin\Debug\net472\MSpecProject.dll";
 
-            //File.Copy(path, Path.Combine(Environment.CurrentDirectory, Path.GetFileName(path)));
+            File.Copy(path, Path.Combine(Environment.CurrentDirectory, Path.GetFileName(path)), true);
 
             var controller = new MspecController(CancellationToken.None);
-            var results = controller.Find(path).ToArray();
+            var sink = new MspecDiscoverySink();
+
+            controller.Find(sink, path);
         }
     }
 }

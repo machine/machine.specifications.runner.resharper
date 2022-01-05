@@ -1,4 +1,5 @@
-﻿using JetBrains.ProjectModel;
+﻿using System.Linq;
+using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
@@ -26,6 +27,18 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             task.ContextTypeName = element.Context.TypeName.FullName;
             task.SpecificationFieldName = element.FieldName;
             task.BehaviorType = element.BehaviorType;
+
+            if (string.IsNullOrEmpty(element.BehaviorType))
+            {
+                var behavior = element.Children
+                    .OfType<MspecBehaviorSpecificationTestElement>()
+                    .FirstOrDefault(x => !string.IsNullOrEmpty(x.BehaviorType));
+
+                if (behavior != null)
+                {
+                    task.BehaviorType = behavior.BehaviorType;
+                }
+            }
 
             return task;
         }

@@ -1,4 +1,4 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery.Elements
 {
     public class Specification : TestElement
     {
@@ -7,5 +7,7 @@
         public string ContainingType { get; set; }
 
         public string FieldName { get; set; }
+
+        public Specification SpecificationField { get; set; }
     }
 }

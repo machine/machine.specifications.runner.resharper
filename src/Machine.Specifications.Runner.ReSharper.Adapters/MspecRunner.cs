@@ -1,6 +1,8 @@
 ﻿using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
+using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {

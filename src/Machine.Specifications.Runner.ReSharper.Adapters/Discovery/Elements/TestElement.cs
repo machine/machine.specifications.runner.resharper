@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery.Elements
 {
     public abstract class TestElement
     {

@@ -13,7 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public MspecReSharperId(IContextSpecification specification)
         {
             Id = specification.IsBehavior
-                ? $"{Self(specification.Context)}::{specification.ContainingType}.{specification.FieldName}"
+                ? $"{Self(specification.Context)}.{specification.ParentFieldName}.{specification.FieldName}"
                 : $"{Self(specification.Context)}.{specification.FieldName}";
         }
 
@@ -68,9 +68,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             return element switch
             {
-                IContext context => null,
+                IContext => null,
                 IContextSpecification {IsBehavior: false} specification => Self(specification.Context),
-                IContextSpecification {IsBehavior: true} specification => Self(specification.Context),
+                IContextSpecification {IsBehavior: true} specification => $"{specification.ParentFieldName}",
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
         }

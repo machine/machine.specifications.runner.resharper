@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Xml.Linq;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.ReSharper.Adapters.Models;
+using Machine.Specifications.Runner.ReSharper.Adapters.Discovery.Elements;
+using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 {
     public class MspecController
     {
@@ -26,7 +27,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             controller = Activator.CreateInstance(controllerType, (Action<string>) Listener);
         }
 
-        public IEnumerable<IMspecElement> Find(string assemblyPath)
+        public void Find(IMspecDiscoverySink sink, string assemblyPath)
         {
             var assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
             var assembly = Assembly.Load(assemblyName);
@@ -35,7 +36,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
             var contexts = ReadContexts(results, assembly);
 
-            return GetTestElements(contexts.ToArray());
+            foreach (var context in contexts)
+            {
+                sink.OnContext(context);
+            }
+
+            sink.OnDiscoveryCompleted();
         }
 
         private IEnumerable<Context> ReadContexts(string xml, Assembly assembly)
@@ -55,6 +61,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 };
 
                 var specifications = new List<Specification>();
+                var behaviors = new ConcurrentDictionary<string, Specification>();
 
                 var specificationsElement = contextElement.Element("specifications");
 
@@ -73,6 +80,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                             FieldName = specificationElement.ReadValue("fieldname")
                         };
 
+                        SetSpecificationField(assembly, context, specification, behaviors);
+
                         specifications.Add(specification);
                     }
                 }
@@ -83,17 +92,59 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        private IEnumerable<IMspecElement> GetTestElements(Context[] contexts)
+        private void SetSpecificationField(Assembly assembly, Context context, Specification specification, ConcurrentDictionary<string, Specification> behaviors)
         {
-            foreach (var context in contexts)
-            {
-                yield return context.AsContext();
+            var isBehavior = specification.ContainingType != context.TypeName;
 
-                foreach (var specification in context.Specifications)
-                {
-                    yield return specification.AsSpecification();
-                }
+            if (isBehavior)
+            {
+                var fieldName = GetParentFieldName(context, specification);
+
+                var key = $"{context.TypeName}.{fieldName}";
+
+                specification.SpecificationField = behaviors.GetOrAdd(key, _ => CreateParentSpecification(assembly, context, fieldName));
             }
+            else
+            {
+                specification.SpecificationField = specification;
+            }
+        }
+
+        private Specification CreateParentSpecification(Assembly assembly, Context context, string fieldName)
+        {
+            return new Specification
+            {
+                Assembly = assembly,
+                Context = context,
+                Name = fieldName,
+                ContainingType = context.TypeName,
+                FieldName = fieldName
+            };
+        }
+
+        private string? GetParentFieldName(Context context, Specification specification)
+        {
+            var type = specification.Assembly.GetType(context.TypeName);
+
+            var field = type
+                .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(x => x.FieldType.IsGenericType)
+                .Where(IsBehavesLikeField)
+                .Where(x => x.FieldType.GenericTypeArguments.First().FullName == specification.ContainingType)
+                .ToArray();
+
+            if (field.Any())
+            {
+                return field.First().Name;
+            }
+
+            return null;
+        }
+
+        private bool IsBehavesLikeField(FieldInfo field)
+        {
+            return field.FieldType.GetCustomAttributes(false)
+                .Any(x => x.GetType().FullName == FullNames.BehaviorDelegateAttribute);
         }
 
         private void Listener(string _)

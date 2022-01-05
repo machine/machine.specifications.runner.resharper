@@ -7,7 +7,7 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 {
     public class Discoverer
     {
@@ -38,9 +38,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             try
             {
                 var controller = new MspecController(token);
-                var results = controller.Find(request.Container.Location);
+                var discoverySink = new MspecDiscoverySink();
 
-                foreach (var element in results)
+                controller.Find(discoverySink, request.Container.Location);
+
+                foreach (var element in discoverySink.Elements.Result)
                 {
                     var task = GetRemoteTask(element);
                     var parent = GetParent(element);
@@ -72,7 +74,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private MspecRemoteTask GetRemoteTask(IMspecElement element)
         {
-            return RemoteTaskBuilder.GetRemoteTask(depot, element);
+            return RemoteTaskBuilder.GetRemoteTask(element);
         }
 
         private IMspecElement? GetParent(IMspecElement element)
@@ -80,9 +82,18 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return element switch
             {
                 IContext => null,
-                IContextSpecification specification => specification.Context,
+                IContextSpecification specification => GetParent(specification),
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
+        }
+
+        private IMspecElement? GetParent(IContextSpecification specification)
+        {
+            if (specification.IsBehavior)
+            {
+            }
+
+            return specification.Context;
         }
     }
 }

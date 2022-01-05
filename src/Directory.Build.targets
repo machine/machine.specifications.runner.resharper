@@ -31,7 +31,7 @@ Directories = Directory.GetDirectories(installations)
     </Task>
   </UsingTask>
 
-  <Target Name="CopyPluginToHive" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Debug'">
+  <!--<Target Name="CopyPluginToHive" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Debug'">
     <GetInstallPath VersionBase="$(WaveVersionBase)" RootSuffix="$(RootSuffix)">
       <Output TaskParameter="Directories" ItemName="HiveDirectory" />
     </GetInstallPath>
@@ -39,6 +39,6 @@ Directories = Directory.GetDirectories(installations)
     <Message Text="Copying @(MainAssembly) to @(HiveDirectory)" Importance="High" />
 
     <Copy SourceFiles="@(MainAssembly)" DestinationFolder="@(HiveDirectory)" Condition="Exists('@(HiveDirectory)')" />
-  </Target>
+  </Target>-->
 
 </Project>
