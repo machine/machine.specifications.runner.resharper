@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Adapters.Models;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
@@ -51,7 +51,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
                     if (parent != null && depot[element] == null && depot[parent] != null)
                     {
-                        depot.Add(element, task);
+                        depot.Add(task);
                     }
 
                     depot.Bind(element, task);
@@ -81,19 +81,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
         {
             return element switch
             {
-                IContext => null,
-                IContextSpecification specification => GetParent(specification),
+                IContextElement => null,
+                ISpecificationElement {IsBehavior: true} specification => specification.BehaviorSpecification,
+                ISpecificationElement {IsBehavior: false} specification => specification.Context,
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
-        }
-
-        private IMspecElement? GetParent(IContextSpecification specification)
-        {
-            if (specification.IsBehavior)
-            {
-            }
-
-            return specification.Context;
         }
     }
 }

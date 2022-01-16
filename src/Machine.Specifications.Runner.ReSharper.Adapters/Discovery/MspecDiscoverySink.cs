@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Machine.Specifications.Runner.ReSharper.Adapters.Discovery.Elements;
-using Machine.Specifications.Runner.ReSharper.Adapters.Models;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 {
@@ -11,24 +10,29 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
         private readonly List<IMspecElement> elements = new();
 
-        private readonly HashSet<Specification> behaviors = new();
+        private readonly HashSet<IContextElement> handledContexts = new();
+
+        private readonly HashSet<ISpecificationElement> handledBehaviors = new();
+
+        private readonly HashSet<ISpecificationElement> handledSpecifications = new();
 
         public Task<IMspecElement[]> Elements => source.Task;
 
-        public void OnContext(Context context)
+        public void OnSpecification(ISpecificationElement specification)
         {
-            elements.Add(context.AsContext());
-
-            foreach (var specification in context.Specifications)
+            if (handledContexts.Add(specification.Context))
             {
-                var contextSpecification = specification.AsSpecification();
+                elements.Add(specification.Context);
+            }
 
-                if (contextSpecification.IsBehavior && behaviors.Add(specification.SpecificationField))
-                {
-                    elements.Add(specification.SpecificationField.AsSpecification());
-                }
+            if (specification.BehaviorSpecification != null && handledBehaviors.Add(specification.BehaviorSpecification))
+            {
+                elements.Add(specification.BehaviorSpecification);
+            }
 
-                elements.Add(contextSpecification);
+            if (handledSpecifications.Add(specification))
+            {
+                elements.Add(specification);
             }
         }
 

@@ -1,4 +1,4 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Models
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements
 {
     public interface IMspecElement
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Adapters.Models;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -10,7 +10,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
     {
         private readonly Dictionary<string, MspecRemoteTask> tasksByReSharperId = new();
 
-        private readonly List<IContextSpecification> testsToRun = new();
+        private readonly List<ISpecificationElement> testsToRun = new();
+
+        private readonly List<IMspecElement> elements = new();
 
         public RemoteTaskDepot(RemoteTask[] tasks)
         {
@@ -40,30 +42,29 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public void Add(IMspecElement element, MspecRemoteTask task)
+        public void Add(MspecRemoteTask task)
         {
-            if (element is IContextSpecification { IsBehavior: true })
-            {
-                tasksByReSharperId[task.TestId] = task;
-            }
+            tasksByReSharperId[task.TestId] = task;
         }
 
         public void Bind(IMspecElement element, MspecRemoteTask task)
         {
-            if (tasksByReSharperId.ContainsKey(task.TestId) && element is IContextSpecification specification)
+            if (tasksByReSharperId.ContainsKey(task.TestId) && element is ISpecificationElement specification)
             {
                 testsToRun.Add(specification);
             }
+
+            elements.Add(element);
         }
 
-        public IEnumerable<IContextSpecification> GetTestsToRun()
+        public IEnumerable<ISpecificationElement> GetTestsToRun()
         {
             return testsToRun;
         }
 
-        public IEnumerable<MspecRemoteTask> GetTasks()
+        public IEnumerable<IMspecElement> GetElements()
         {
-            return tasksByReSharperId.Values;
+            return elements;
         }
     }
 }

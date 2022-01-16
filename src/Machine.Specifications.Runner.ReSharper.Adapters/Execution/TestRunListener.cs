@@ -1,7 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
-using Machine.Specifications.Runner.ReSharper.Adapters.Models;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
@@ -10,17 +10,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
     {
         private readonly RunContext context;
 
-        private readonly string assemblyPath;
-
         private readonly CancellationToken token;
-
-        private readonly ILogger logger = Logger.GetLogger<TestRunListener>();
 
         private readonly ManualResetEvent waitEvent = new(false);
 
-        private ContextInfo? currentContext;
+        private readonly ILogger logger = Logger.GetLogger<TestRunListener>();
 
-        private TaskWrapper? currentBehavior;
+        private ContextInfo? currentContext;
 
         private TaskWrapper? currentTask;
 
@@ -30,20 +26,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         private int errors;
 
-        public TestRunListener(RunContext context, string assemblyPath, CancellationToken token)
+        public WaitHandle Finished => waitEvent;
+
+        public TestRunListener(RunContext context, CancellationToken token)
         {
             this.context = context;
-            this.assemblyPath = assemblyPath;
             this.token = token;
         }
-
-        public WaitHandle Finished => waitEvent;
 
         public void OnAssemblyStart(AssemblyInfo assemblyInfo)
         {
             logger.Trace($"OnAssemblyStart: {assemblyInfo.Location}");
 
-            Environment.CurrentDirectory = assemblyPath;
+            Environment.CurrentDirectory = Path.GetDirectoryName(assemblyInfo.Location);
         }
 
         public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
@@ -71,7 +66,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             currentContext = contextInfo;
 
-            logger.Trace($"OnContextStart: {MspecReSharperId.Self(contextInfo.AsContext())}");
+            logger.Trace($"OnContextStart: {MspecReSharperId.Self(contextInfo)}");
 
             logger.Catch(() =>
             {
@@ -80,7 +75,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                currentTask = context.GetTask(contextInfo.AsContext());
+                currentTask = context.GetTask(contextInfo);
 
                 currentTask.Starting();
             });
@@ -88,7 +83,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void OnContextEnd(ContextInfo contextInfo)
         {
-            logger.Trace($"OnContextEnd: {MspecReSharperId.Self(contextInfo.AsContext())}");
+            logger.Trace($"OnContextEnd: {MspecReSharperId.Self(contextInfo)}");
 
             logger.Catch(() =>
             {
@@ -97,15 +92,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                currentTask = context.GetTask(contextInfo.AsContext());
+                currentTask = context.GetTask(contextInfo);
 
                 if (successes == specifications && errors == 0)
                 {
                     currentTask.Passed();
-                    currentBehavior?.Passed();
                 }
-
-                currentBehavior?.Finished(errors > 0);
 
                 currentTask.Output(contextInfo.CapturedOutput);
                 currentTask.Finished(errors > 0);
@@ -116,7 +108,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
         {
             specifications++;
 
-            logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(currentContext.AsSpecification(specificationInfo))}");
+            logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(currentContext!, specificationInfo)}");
 
             logger.Catch(() =>
             {
@@ -125,7 +117,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                var task = context.GetTask(currentContext.AsSpecification(specificationInfo));
+                var task = context.GetTask(currentContext!, specificationInfo);
 
                 if (!task.Exists)
                 {
@@ -139,7 +131,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
         {
-            logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(currentContext.AsSpecification(specificationInfo))}");
+            logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(currentContext!, specificationInfo)}");
 
             logger.Catch(() =>
             {
@@ -148,7 +140,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                var task = context.GetTask(currentContext.AsSpecification(specificationInfo));
+                var task = context.GetTask(currentContext!, specificationInfo);
 
                 if (!task.Exists)
                 {
@@ -183,10 +175,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
+            logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
+
             if (currentTask != null)
             {
-                logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
-
                 logger.Catch(() =>
                 {
                     if (token.IsCancellationRequested)
