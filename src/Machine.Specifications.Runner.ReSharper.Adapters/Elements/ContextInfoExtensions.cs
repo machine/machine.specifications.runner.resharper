@@ -6,7 +6,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements
     {
         public static IContextElement ToElement(this ContextInfo context)
         {
-            return new ContextElement(context.TypeName, context.Concern, context.Name);
+            return new ContextElement(context.TypeName, context.Concern);
         }
     }
 }

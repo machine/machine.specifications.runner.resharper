@@ -2,17 +2,17 @@
 {
     public class ContextElement : IContextElement
     {
-        public ContextElement(string typeName, string subject, string name)
+        public ContextElement(string typeName, string subject)
         {
+            Id = typeName;
             TypeName = typeName;
             Subject = subject;
-            Name = name;
         }
+
+        public string Id { get; }
 
         public string TypeName { get; }
 
         public string Subject { get; }
-
-        public string Name { get; }
     }
 }

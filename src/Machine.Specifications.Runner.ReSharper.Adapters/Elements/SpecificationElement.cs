@@ -2,25 +2,22 @@
 {
     public class SpecificationElement : ISpecificationElement
     {
-        public SpecificationElement(IContextElement context, string containingType, string fieldName, string name, ISpecificationElement? behaviorSpecification = null)
+        public SpecificationElement(IContextElement context, string fieldName, IBehaviorElement? behavior = null)
         {
+            Id = behavior != null
+                ? $"{context.TypeName}.{behavior.TypeName}.{fieldName}"
+                : $"{context.TypeName}.{fieldName}";
             Context = context;
-            ContainingType = containingType;
             FieldName = fieldName;
-            Name = name;
-            BehaviorSpecification = behaviorSpecification;
+            Behavior = behavior;
         }
+
+        public string Id { get; }
 
         public IContextElement Context { get; }
 
-        public string ContainingType { get; }
-
         public string FieldName { get; }
 
-        public ISpecificationElement? BehaviorSpecification { get; }
-
-        public bool IsBehavior => BehaviorSpecification != null;
-
-        public string Name { get; }
+        public IBehaviorElement? Behavior { get; }
     }
 }

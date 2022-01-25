@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
@@ -17,6 +18,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
         {
             logger.Info("Exploration started");
+
+            var depot = new RemoteTaskDepot(Array.Empty<RemoteTask>());
+
+            var discoverer = new Discoverer(request, discoverySink, depot, discoveryToken.Token);
+            discoverer.Discover();
+
             logger.Info("Exploration completed");
         }
 

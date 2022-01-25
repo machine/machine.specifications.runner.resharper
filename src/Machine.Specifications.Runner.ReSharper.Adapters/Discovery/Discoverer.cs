@@ -11,7 +11,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 {
     public class Discoverer
     {
-        private readonly TestRunRequest request;
+        private readonly TestRequest request;
 
         private readonly ITestDiscoverySink sink;
 
@@ -21,7 +21,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
         private readonly ILogger logger = Logger.GetLogger<Discoverer>();
 
-        public Discoverer(TestRunRequest request, ITestDiscoverySink sink, RemoteTaskDepot depot, CancellationToken token)
+        public Discoverer(TestRequest request, ITestDiscoverySink sink, RemoteTaskDepot depot, CancellationToken token)
         {
             this.request = request;
             this.sink = sink;
@@ -82,8 +82,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
             return element switch
             {
                 IContextElement => null,
-                ISpecificationElement {IsBehavior: true} specification => specification.BehaviorSpecification,
-                ISpecificationElement {IsBehavior: false} specification => specification.Context,
+                IBehaviorElement behavior => behavior.Context,
+                ISpecificationElement {Behavior: null} specification => specification.Context,
+                ISpecificationElement {Behavior: not null} specification => specification.Behavior,
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
         }

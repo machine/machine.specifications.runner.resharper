@@ -24,17 +24,23 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void Execute()
         {
+            var selection = context.GetSelection().ToArray();
+
             var contexts = context.GetTestsToRun()
                 .Select(x => x.Context.TypeName)
                 .Distinct();
 
-            var listener = new TestRunListener(context, token);
+            var results = new ResultsContainer(selection);
+
+            var listener = new TestExecutionListener(context, token);
+            var adapter = new TestAdapterListener(listener, results);
+
             var runOptions = RunOptions.Custom.FilterBy(contexts);
 
-            var runner = new AppDomainRunner(listener, runOptions);
+            var runner = new AppDomainRunner(adapter, runOptions);
             runner.RunAssembly(new AssemblyPath(request.Container.Location));
 
-            listener.Finished.WaitOne();
+            adapter.Finished.WaitOne();
         }
     }
 }

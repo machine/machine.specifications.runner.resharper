@@ -12,7 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
         private readonly HashSet<IContextElement> handledContexts = new();
 
-        private readonly HashSet<ISpecificationElement> handledBehaviors = new();
+        private readonly HashSet<IBehaviorElement> handledBehaviors = new();
 
         private readonly HashSet<ISpecificationElement> handledSpecifications = new();
 
@@ -25,9 +25,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
                 elements.Add(specification.Context);
             }
 
-            if (specification.BehaviorSpecification != null && handledBehaviors.Add(specification.BehaviorSpecification))
+            if (specification.Behavior != null && handledBehaviors.Add(specification.Behavior))
             {
-                elements.Add(specification.BehaviorSpecification);
+                elements.Add(specification.Behavior);
             }
 
             if (handledSpecifications.Add(specification))

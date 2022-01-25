@@ -1,4 +1,7 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
+﻿using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
+using Machine.Specifications.Runner.Utility;
+
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
     public interface IExecutionListener
     {
@@ -10,14 +13,18 @@
 
         void OnRunEnd();
 
-        void OnContextStart(string contextTypeName);
+        void OnContextStart(IContextElement context);
 
-        void OnContextEnd(string contextTypeName);
+        void OnContextEnd(IContextElement context);
 
-        void OnSpecificationStart(string containingType, string fieldName);
+        void OnBehaviorStart(IBehaviorElement behavior);
 
-        void OnSpecificationEnd(string containingType, string fieldName);
+        void OnBehaviorEnd(IBehaviorElement behavior);
 
-        void OnError();
+        void OnSpecificationStart(ISpecificationElement specification);
+
+        void OnSpecificationEnd(ISpecificationElement specification);
+
+        void OnFatalError(ExceptionResult exceptionResult);
     }
 }

@@ -23,6 +23,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             this.sink = sink;
         }
 
+        public IEnumerable<IMspecElement> GetSelection()
+        {
+            return depot.GetSelection();
+        }
+
         public IEnumerable<ISpecificationElement> GetTestsToRun()
         {
             return depot.GetTestsToRun();
@@ -68,7 +73,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             {
                 var task = depot[x];
 
-                if (task == null && specification.IsBehavior)
+                if (task == null && specification.Behavior != null)
                 {
                     task = CreateTask(specification);
                 }

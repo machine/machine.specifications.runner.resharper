@@ -40,10 +40,9 @@ namespace Machine.Specifications.Runner.ReSharper
         public MspecBehaviorSpecificationTestElement GetOrCreateBehaviorSpecification(
             MspecContextSpecificationTestElement parent,
             string fieldName,
-            string behaviorType,
             string? ignoreReason)
         {
-            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, behaviorType, ignoreReason);
+            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, ignoreReason);
 
             return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
         }

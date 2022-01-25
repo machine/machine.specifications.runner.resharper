@@ -2,6 +2,6 @@
 {
     public interface IMspecElement
     {
-        string Name { get; }
+        string Id { get; }
     }
 }

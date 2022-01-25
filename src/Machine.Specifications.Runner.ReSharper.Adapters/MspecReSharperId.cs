@@ -11,12 +11,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             Id = context.TypeName;
         }
 
-        public MspecReSharperId(ContextInfo context, SpecificationInfo specification)
+        public MspecReSharperId(ContextInfo context, SpecificationInfo specification, string? behavior = null)
         {
             var isBehavior = context.TypeName != specification.ContainingType;
 
             Id = isBehavior
-                ? $"{context.TypeName}.{specification.ContainingType}.{specification.FieldName}"
+                ? $"{context.TypeName}.{behavior}.{specification.FieldName}"
                 : $"{context.TypeName}.{specification.FieldName}";
         }
 
@@ -25,10 +25,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             Id = context.TypeName;
         }
 
+        public MspecReSharperId(IBehaviorElement behavior)
+        {
+            Id = $"{behavior.Context.TypeName}.{behavior.FieldName}";
+        }
+
         public MspecReSharperId(ISpecificationElement specification)
         {
-            Id = specification.IsBehavior
-                ? $"{specification.Context.TypeName}.{specification.BehaviorSpecification!.FieldName}.{specification.FieldName}"
+            Id = specification.Behavior != null
+                ? $"{specification.Context.TypeName}.{specification.Behavior.FieldName}.{specification.FieldName}"
                 : $"{specification.Context.TypeName}.{specification.FieldName}";
         }
 
@@ -59,14 +64,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return new MspecReSharperId(context).Id;
         }
 
-        public static string Self(ContextInfo context, SpecificationInfo specification)
+        public static string Self(ContextInfo context, SpecificationInfo specification, string? behavior = null)
         {
-            return new MspecReSharperId(context, specification).Id;
+            return new MspecReSharperId(context, specification, behavior).Id;
         }
 
         public static string Self(IContextElement context)
         {
             return new MspecReSharperId(context).Id;
+        }
+
+        public static string Self(IBehaviorElement behavior)
+        {
+            return new MspecReSharperId(behavior).Id;
         }
 
         public static string Self(ISpecificationElement specification)
@@ -94,8 +104,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return element switch
             {
                 IContextElement => null,
-                ISpecificationElement {IsBehavior: false} specification => Self(specification.Context),
-                ISpecificationElement {IsBehavior: true} specification => $"{specification.BehaviorSpecification!.FieldName}",
+                IBehaviorElement behavior => Self(behavior.Context),
+                ISpecificationElement {Behavior: not null} specification => Self(specification.Behavior),
+                ISpecificationElement {Behavior: null} specification => Self(specification.Context),
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
         }

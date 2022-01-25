@@ -10,9 +10,28 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
     {
         private readonly Dictionary<string, string?> behaviorFields = new();
 
-        private readonly Dictionary<string, ISpecificationElement> behaviors = new();
+        private readonly Dictionary<string, IBehaviorElement> behaviors = new();
 
-        public string? GetOrAddBehaviorField(Assembly assembly, string contextTypeName, string behaviorType)
+        public IBehaviorElement? GetOrAddBehavior(Assembly assembly, IContextElement context, SpecificationInfo specification)
+        {
+            var behaviorField = GetOrAddBehaviorField(assembly, context.TypeName, specification.ContainingType);
+
+            if (behaviorField == null)
+            {
+                return null;
+            }
+
+            var key = $"{context.TypeName}.{behaviorField}";
+
+            if (!behaviors.TryGetValue(key, out var behavior))
+            {
+                behavior = behaviors[key] = new BehaviorElement(context, specification.ContainingType, behaviorField);
+            }
+
+            return behavior;
+        }
+
+        private string? GetOrAddBehaviorField(Assembly assembly, string contextTypeName, string behaviorType)
         {
             var key = $"{contextTypeName}.{behaviorType}";
 
@@ -30,25 +49,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
             }
 
             return field;
-        }
-
-        public ISpecificationElement? GetOrAddBehavior(Assembly assembly, IContextElement context, SpecificationInfo specification)
-        {
-            var behaviorField = GetOrAddBehaviorField(assembly, context.TypeName, specification.ContainingType);
-
-            if (behaviorField == null)
-            {
-                return null;
-            }
-
-            var key = $"{context.TypeName}.{behaviorField}";
-
-            if (!behaviors.TryGetValue(key, out var behavior))
-            {
-                behavior = behaviors[key] = new SpecificationElement(context, context.TypeName, behaviorField, behaviorField.ToFormat());
-            }
-
-            return behavior;
         }
 
         private bool IsBehavesLikeField(FieldInfo field)

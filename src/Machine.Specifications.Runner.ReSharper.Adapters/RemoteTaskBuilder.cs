@@ -1,6 +1,7 @@
 ﻿using System;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
+using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
@@ -11,10 +12,26 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return element switch
             {
                 IContextElement context => FromContext(context),
-                ISpecificationElement {IsBehavior: false} specification => FromSpecification(specification),
-                ISpecificationElement {IsBehavior: true} specification => FromBehavior(specification),
+                IBehaviorElement behavior => FromBehavior(behavior),
+                ISpecificationElement specification => FromSpecification(specification),
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
+        }
+
+        public static MspecRemoteTask GetRemoteTask(ContextInfo context)
+        {
+            return MspecContextRemoteTask.ToServer(context.TypeName, context.Concern, null, null);
+        }
+
+        public static MspecRemoteTask GetRemoteTask(ContextInfo context, SpecificationInfo specification)
+        {
+            var isBehavior = context.TypeName != specification.ContainingType;
+
+            var behaviorType = isBehavior
+                ? context.TypeName
+                : null;
+
+            return MspecContextSpecificationRemoteTask.ToServer(specification.ContainingType, specification.FieldName, behaviorType, null, null, null);
         }
 
         private static MspecRemoteTask FromContext(IContextElement context)
@@ -22,25 +39,20 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             return MspecContextRemoteTask.ToServer(MspecReSharperId.Self(context), context.Subject, null, null);
         }
 
-        private static MspecRemoteTask FromSpecification(ISpecificationElement specification)
+        private static MspecRemoteTask FromBehavior(IBehaviorElement behavior)
         {
-            var behaviorType = specification.IsBehavior
-                ? specification.Context.TypeName
-                : null;
-
-            return MspecContextSpecificationRemoteTask.ToServer(specification.ContainingType, specification.FieldName, behaviorType, null, null, null);
+            return MspecBehaviorSpecificationRemoteTask.ToServer(
+                $"{behavior.Context.TypeName}.{behavior.FieldName}",
+                behavior.Context.TypeName,
+                behavior.FieldName,
+                null);
         }
 
-        private static MspecRemoteTask FromBehavior(ISpecificationElement specification)
+        private static MspecRemoteTask FromSpecification(ISpecificationElement specification)
         {
-            var parentId = $"{specification.Context.TypeName}.{specification.BehaviorSpecification!.FieldName}";
+            var behaviorType = specification.Behavior?.TypeName;
 
-            return MspecBehaviorSpecificationRemoteTask.ToServer(
-                parentId,
-                specification.Context.TypeName,
-                specification.ContainingType,
-                specification.FieldName,
-                null);
+            return MspecContextSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, behaviorType, null, null, null);
         }
     }
 }

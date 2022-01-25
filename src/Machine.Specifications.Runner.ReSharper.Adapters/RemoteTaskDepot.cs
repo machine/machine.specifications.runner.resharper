@@ -12,7 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private readonly List<ISpecificationElement> testsToRun = new();
 
-        private readonly List<IMspecElement> elements = new();
+        private readonly List<IMspecElement> selection = new();
 
         public RemoteTaskDepot(RemoteTask[] tasks)
         {
@@ -49,22 +49,25 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         public void Bind(IMspecElement element, MspecRemoteTask task)
         {
-            if (tasksByReSharperId.ContainsKey(task.TestId) && element is ISpecificationElement specification)
+            if (tasksByReSharperId.ContainsKey(task.TestId))
             {
-                testsToRun.Add(specification);
-            }
+                selection.Add(element);
 
-            elements.Add(element);
+                if (element is ISpecificationElement specification)
+                {
+                    testsToRun.Add(specification);
+                }
+            }
+        }
+
+        public IEnumerable<IMspecElement> GetSelection()
+        {
+            return selection;
         }
 
         public IEnumerable<ISpecificationElement> GetTestsToRun()
         {
             return testsToRun;
-        }
-
-        public IEnumerable<IMspecElement> GetElements()
-        {
-            return elements;
         }
     }
 }

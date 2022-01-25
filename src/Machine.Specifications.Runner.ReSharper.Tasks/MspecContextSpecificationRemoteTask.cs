@@ -12,15 +12,15 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         private MspecContextSpecificationRemoteTask(
             string contextTypeName,
-            string specificationFieldName,
+            string fieldName,
             string? behaviorType,
             string? subject,
             string[]? tags,
             string? ignoreReason)
-            : base($"{contextTypeName}.{specificationFieldName}", ignoreReason)
+            : base($"{contextTypeName}.{fieldName}", ignoreReason)
         {
             ContextTypeName = contextTypeName;
-            SpecificationFieldName = specificationFieldName;
+            FieldName = fieldName;
             BehaviorType = behaviorType;
             Subject = subject;
             Tags = tags;
@@ -30,7 +30,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public string? BehaviorType { get; set; }
 
-        public string? SpecificationFieldName { get; set; }
+        public string? FieldName { get; set; }
 
         public string? Subject { get; }
 
@@ -47,13 +47,13 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public static MspecContextSpecificationRemoteTask ToServer(
             string contextTypeName,
-            string specificationFieldName,
+            string fieldName,
             string? behaviorType,
             string? subject,
             string[]? tags,
             string? ignoreReason)
         {
-            return new(contextTypeName, specificationFieldName, behaviorType, subject, tags, ignoreReason);
+            return new(contextTypeName, fieldName, behaviorType, subject, tags, ignoreReason);
         }
     }
 }

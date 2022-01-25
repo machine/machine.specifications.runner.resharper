@@ -12,11 +12,10 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecBehaviorSpecificationTestElement(MspecContextSpecificationTestElement parent, string fieldName, string behaviorType, string? ignoreReason)
+        public MspecBehaviorSpecificationTestElement(MspecContextSpecificationTestElement parent, string fieldName, string? ignoreReason)
             : base($"{parent.Context.TypeName.FullName}.{parent.FieldName}.{fieldName}", parent)
         {
             FieldName = fieldName;
-            BehaviorType = behaviorType;
             DisplayName = fieldName.ToFormat();
             IgnoreReason = ignoreReason;
         }
@@ -25,15 +24,11 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public bool IsNotRunnableStandalone => Origin == UnitTestElementOrigin.Dynamic;
 
-        public MspecContextSpecificationTestElement Specification => (MspecContextSpecificationTestElement) Parent;
+        public MspecContextSpecificationTestElement Specification => (MspecContextSpecificationTestElement) Parent!;
 
         [Persist]
         [UsedImplicitly]
         public string FieldName { get; set; } = null!;
-
-        [Persist]
-        [UsedImplicitly]
-        public string? BehaviorType { get; set; }
 
         [Persist]
         [UsedImplicitly]

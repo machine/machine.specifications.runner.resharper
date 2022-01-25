@@ -4,9 +4,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements
 {
     public static class SpecificationInfoExtensions
     {
-        public static ISpecificationElement ToElement(this SpecificationInfo specification, IContextElement context, ISpecificationElement? behavior = null)
+        public static ISpecificationElement ToElement(this SpecificationInfo specification, IContextElement context, IBehaviorElement? behavior = null)
         {
-            return new SpecificationElement(context, specification.ContainingType, specification.FieldName, specification.Name, behavior);
+            return new SpecificationElement(context, specification.FieldName, behavior);
         }
 
         public static bool IsBehavior(this SpecificationInfo specification, string contextTypeName)

@@ -8,7 +8,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public bool Equals(MspecRemoteTask x, MspecRemoteTask y)
         {
-            return x?.TestId == y?.TestId;
+            return x.TestId == y.TestId;
         }
 
         public int GetHashCode(MspecRemoteTask obj)

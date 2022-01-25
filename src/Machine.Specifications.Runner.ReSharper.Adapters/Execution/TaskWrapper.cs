@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Tasks;
@@ -11,6 +13,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         private readonly ITestExecutionSink sink;
 
+        private readonly Stopwatch watch = new();
+        
         private int started;
 
         private int finished;
@@ -36,6 +40,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             if (task != null)
             {
+                watch.Restart();
+
                 sink.TestStarting(task);
             }
         }
@@ -77,7 +83,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             }
         }
 
-        public void Finished(bool childTestsFailed = false)
+        public void Finished(bool childTestsFailed = false, TimeSpan? elapsed = null)
         {
             if (result == TestResult.Inconclusive)
             {
@@ -97,6 +103,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             if (task != null)
             {
+                if (elapsed.GetValueOrDefault() >= TimeSpan.Zero)
+                {
+                    sink.TestDuration(task, elapsed!.Value);
+                }
+
                 sink.TestFinished(task, message, result);
             }
         }

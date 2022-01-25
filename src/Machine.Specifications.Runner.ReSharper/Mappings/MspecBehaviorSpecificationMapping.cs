@@ -24,8 +24,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
                 context.IsRunExplicitly(element));
 
             task.ContextTypeName = element.Specification.Context.TypeName.FullName;
-            task.SpecificationFieldName = element.FieldName;
-            task.BehaviorType = element.BehaviorType;
+            task.FieldName = element.FieldName;
             task.ParentId = $"{element.Specification.Context.TypeName.FullName}.{element.Specification.FieldName}";
 
             return task;
@@ -60,8 +59,7 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
 
             return factory.GetOrCreateBehaviorSpecification(
                 specificationElement,
-                task.SpecificationFieldName!,
-                task.BehaviorType,
+                task.FieldName!,
                 null);
         }
     }

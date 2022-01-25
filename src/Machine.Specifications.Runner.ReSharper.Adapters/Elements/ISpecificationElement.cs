@@ -4,12 +4,8 @@
     {
         IContextElement Context { get; }
 
-        string ContainingType { get; }
-
         string FieldName { get; }
 
-        ISpecificationElement? BehaviorSpecification { get; }
-
-        bool IsBehavior { get; }
+        IBehaviorElement? Behavior { get; }
     }
 }
