@@ -103,9 +103,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             if (task != null)
             {
-                if (elapsed.GetValueOrDefault() >= TimeSpan.Zero)
+                if (elapsed != null && elapsed.Value >= TimeSpan.Zero)
                 {
-                    sink.TestDuration(task, elapsed!.Value);
+                    sink.TestDuration(task, elapsed.Value);
                 }
 
                 sink.TestFinished(task, message, result);

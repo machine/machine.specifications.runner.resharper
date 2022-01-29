@@ -1,24 +1,25 @@
 ﻿using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 using NSubstitute;
-using Xunit;
+using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
 {
+    [TestFixture]
     public class ResultsElementTests
     {
-        [Fact]
+        [Test]
         public void CannotSetResultIfThereAreChildren()
         {
             var specification = new ResultsElement(Substitute.For<IMspecElement>());
             var context = new ResultsElement(Substitute.For<IMspecElement>(), new[] {specification});
 
-            context.SetResult(true);
+            context.Finished(true);
 
             Assert.False(context.IsSuccessful);
         }
 
-        [Fact]
+        [Test]
         public void ResultIsUnsuccessfulIfNoChildren()
         {
             var context = new ResultsElement(Substitute.For<IMspecElement>());
@@ -26,13 +27,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             Assert.False(context.IsSuccessful);
         }
 
-        [Fact]
+        [Test]
         public void CanSetResultOnChild()
         {
             var specification = new ResultsElement(Substitute.For<IMspecElement>());
             var context = new ResultsElement(Substitute.For<IMspecElement>(), new[] { specification });
 
-            specification.SetResult(true);
+            specification.Finished(true);
 
             Assert.True(context.IsSuccessful);
             Assert.True(specification.IsSuccessful);

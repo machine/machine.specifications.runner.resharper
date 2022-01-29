@@ -26,11 +26,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public bool IsSuccessful => successful ?? Children.Any() && Children.All(x => x.IsSuccessful);
 
-        public void SetResult(bool isSuccessful)
-        {
-            
-        }
-
         public void Started()
         {
             watch = Stopwatch.StartNew();
@@ -43,9 +38,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                 successful = isSuccessful;
             }
 
-            watch!.Stop();
+            if (watch != null)
+            {
+                watch.Stop();
 
-            Elapsed = watch.Elapsed;
+                Elapsed = watch.Elapsed;
+            }
         }
     }
 }

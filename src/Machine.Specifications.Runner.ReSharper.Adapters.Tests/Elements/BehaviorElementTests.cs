@@ -1,12 +1,13 @@
 ﻿using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using NSubstitute;
-using Xunit;
+using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Elements
 {
+    [TestFixture]
     public class BehaviorElementTests
     {
-        [Fact]
+        [Test]
         public void SetsCorrectId()
         {
             var context = Substitute.For<IContextElement>();
@@ -14,7 +15,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Elements
 
             var element = new BehaviorElement(context, "Namespace.BehaviorType", "a_vehicle_that_is_started");
 
-            Assert.Equal("Namespace.ContextType.a_vehicle_that_is_started", element.Id);
+            Assert.That(element.Id, Is.EqualTo("Namespace.ContextType.Namespace.BehaviorType"));
         }
     }
 }

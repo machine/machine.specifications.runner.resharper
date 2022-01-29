@@ -3,13 +3,14 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 using NSubstitute;
-using Xunit;
+using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
 {
+    [TestFixture]
     public class TaskWrapperTests
     {
-        [Fact]
+        [Test]
         public void TaskExists()
         {
             var sink = Substitute.For<ITestExecutionSink>();
@@ -20,7 +21,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             Assert.True(wrapper.Exists);
         }
 
-        [Fact]
+        [Test]
         public void StartsOnce()
         {
             var sink = Substitute.For<ITestExecutionSink>();
@@ -34,7 +35,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             sink.Received(1).TestStarting(task);
         }
 
-        [Fact]
+        [Test]
         public void SetsOutput()
         {
             var sink = Substitute.For<ITestExecutionSink>();
@@ -47,7 +48,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             sink.Received().TestOutput(task, "my result", TestOutputType.STDOUT);
         }
 
-        [Fact]
+        [Test]
         public void CallsFinishedOnce()
         {
             var sink = Substitute.For<ITestExecutionSink>();

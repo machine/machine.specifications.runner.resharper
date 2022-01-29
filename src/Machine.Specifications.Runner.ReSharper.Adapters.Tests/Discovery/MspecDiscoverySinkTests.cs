@@ -1,13 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Xunit;
+using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Discovery
 {
+    [TestFixture]
     public class MspecDiscoverySinkTests
     {
-        [Fact]
+        [Test]
         public async Task AddsSingleContext()
         {
             var context = new ContextElement("Namespace.ContextType", "subject");
@@ -22,13 +23,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Discovery
 
             var results = await sink.Elements;
 
-            Assert.Equal(3, results.Length);
-            Assert.Contains(context, results);
-            Assert.Contains(specification1, results);
-            Assert.Contains(specification2, results);
+            Assert.That(results.Length, Is.EqualTo(3));
+            CollectionAssert.Contains(results, context);
+            CollectionAssert.Contains(results, specification1);
+            CollectionAssert.Contains(results, specification2);
         }
 
-        [Fact]
+        [Test]
         public async Task AddsSingleBehavior()
         {
             var context = new ContextElement("Namespace.ContextType", "subject");
@@ -45,11 +46,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Discovery
 
             var results = await sink.Elements;
 
-            Assert.Equal(4, results.Length);
-            Assert.Contains(context, results);
-            Assert.Contains(behavior, results);
-            Assert.Contains(specification1, results);
-            Assert.Contains(specification2, results);
+            Assert.That(results.Length, Is.EqualTo(4));
+            CollectionAssert.Contains(results, context);
+            CollectionAssert.Contains(results, behavior);
+            CollectionAssert.Contains(results, specification1);
+            CollectionAssert.Contains(results, specification2);
         }
     }
 }

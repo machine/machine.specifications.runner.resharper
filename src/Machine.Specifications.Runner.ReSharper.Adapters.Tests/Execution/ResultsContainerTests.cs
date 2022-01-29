@@ -2,14 +2,15 @@
 using System.Linq;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
-using Xunit;
+using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
 {
+    [TestFixture]
     public class ResultsContainerTests
     {
-        [Fact]
-        public void CanGetResultsById()
+        [Test]
+        public void CanStartElementById()
         {
             var elements = GetElements().ToArray();
 
@@ -19,11 +20,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             Assert.NotNull(results.Started<IBehaviorElement>("Namespace.ContextType.Namespace.ABehavior"));
             Assert.NotNull(results.Started<ISpecificationElement>("Namespace.ContextType.should_be"));
             Assert.NotNull(results.Started<ISpecificationElement>("Namespace.ContextType.Namespace.ABehavior.should_be"));
-            Assert.NotNull(results.Started<ISpecificationElement>("Namespace.ContextType.Namespace.ABehavior.should_not_be"));
         }
 
-        [Fact]
-        public void CanReserveBehaviorType()
+        [Test]
+        public void CanStartElementOnlyOnce()
         {
             var elements = GetElements().ToArray();
 
@@ -36,7 +36,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             Assert.Null(behavior2);
         }
 
-        [Fact]
+        [Test]
         public void CanSetAllSuccessful()
         {
             var elements = GetElements().ToArray();
@@ -61,7 +61,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             Assert.True(behavior.IsSuccessful);
         }
 
-        [Fact]
+        [Test]
         public void CanSetBehaviorAsFailed()
         {
             var elements = GetElements().ToArray();
@@ -86,7 +86,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             Assert.False(behavior.IsSuccessful);
         }
 
-        [Fact]
+        [Test]
         public void CanSetContextAsFailed()
         {
             var elements = GetElements().ToArray();
@@ -111,6 +111,32 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
             Assert.True(behavior.IsSuccessful);
         }
 
+        [Test]
+        public void CanStartDuplicateBehaviorsOnceEach()
+        {
+            var elements = GetElementsWithDuplicateBehavior().ToArray();
+
+            var results = new ResultsContainer(elements);
+
+            var behavior1 = results.Started<IBehaviorElement>("Namespace.ContextType.Namespace.ABehavior");
+            var behavior2 = results.Started<IBehaviorElement>("Namespace.ContextType.Namespace.ABehavior");
+            var behavior3 = results.Started<IBehaviorElement>("Namespace.ContextType.Namespace.ABehavior");
+
+            var specification1 = results.Started<ISpecificationElement>("Namespace.ContextType.Namespace.ABehavior.should_be");
+            var specification2 = results.Started<ISpecificationElement>("Namespace.ContextType.Namespace.ABehavior.should_be");
+            var specification3 = results.Started<ISpecificationElement>("Namespace.ContextType.Namespace.ABehavior.should_be");
+
+            Assert.NotNull(behavior1);
+            Assert.NotNull(behavior2);
+            Assert.AreNotSame(behavior1, behavior2);
+            Assert.Null(behavior3);
+
+            Assert.NotNull(specification1);
+            Assert.NotNull(specification2);
+            Assert.AreNotSame(specification1, specification2);
+            Assert.Null(specification3);
+        }
+
         private IEnumerable<IMspecElement> GetElements()
         {
             var context = new ContextElement("Namespace.ContextType", "subject");
@@ -126,6 +152,30 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Execution
                 specification1,
                 specification2,
                 specification3
+            };
+        }
+
+        private IEnumerable<IMspecElement> GetElementsWithDuplicateBehavior()
+        {
+            var context = new ContextElement("Namespace.ContextType", "subject");
+            var behavior1 = new BehaviorElement(context, "Namespace.ABehavior", "a_vehicle");
+            var behavior2 = new BehaviorElement(context, "Namespace.ABehavior", "a_different_vehicle");
+            var specification1 = new SpecificationElement(context, "should_be", behavior1);
+            var specification2 = new SpecificationElement(context, "should_not_be", behavior1);
+            var specification3 = new SpecificationElement(context, "should_be", behavior2);
+            var specification4 = new SpecificationElement(context, "should_not_be", behavior2);
+            var specification5 = new SpecificationElement(context, "should_be");
+
+            return new IMspecElement[]
+            {
+                context,
+                behavior1,
+                behavior2,
+                specification1,
+                specification2,
+                specification3,
+                specification4,
+                specification5
             };
         }
     }
