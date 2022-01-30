@@ -95,6 +95,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             {
                 IContextElement context => new MspecReSharperId(context),
                 ISpecificationElement specification => new MspecReSharperId(specification),
+                IBehaviorElement behavior => new MspecReSharperId(behavior),
                 _ => throw new ArgumentOutOfRangeException(nameof(element))
             };
         }

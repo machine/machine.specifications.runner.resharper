@@ -8,7 +8,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 {
-    public class MspecController
+    public class MspecController : IMspecController
     {
         private readonly CancellationToken token;
 

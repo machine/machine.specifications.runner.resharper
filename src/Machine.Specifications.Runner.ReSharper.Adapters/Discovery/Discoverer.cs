@@ -13,6 +13,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
     {
         private readonly TestRequest request;
 
+        private readonly IMspecController controller;
+
         private readonly ITestDiscoverySink sink;
 
         private readonly RemoteTaskDepot depot;
@@ -21,9 +23,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
         private readonly ILogger logger = Logger.GetLogger<Discoverer>();
 
-        public Discoverer(TestRequest request, ITestDiscoverySink sink, RemoteTaskDepot depot, CancellationToken token)
+        public Discoverer(TestRequest request, IMspecController controller, ITestDiscoverySink sink, RemoteTaskDepot depot, CancellationToken token)
         {
             this.request = request;
+            this.controller = controller;
             this.sink = sink;
             this.depot = depot;
             this.token = token;
@@ -37,8 +40,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
             try
             {
-                var controller = new MspecController(token);
-                var discoverySink = new MspecDiscoverySink();
+                var discoverySink = new MspecDiscoverySink(token);
 
                 controller.Find(discoverySink, request.Container.Location);
 

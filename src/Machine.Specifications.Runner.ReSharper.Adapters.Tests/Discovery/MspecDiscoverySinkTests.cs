@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using NUnit.Framework;
@@ -16,7 +17,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Discovery
             var specification1 = new SpecificationElement(context, "should_be");
             var specification2 = new SpecificationElement(context, "should_not_be");
 
-            var sink = new MspecDiscoverySink();
+            var sink = new MspecDiscoverySink(CancellationToken.None);
             sink.OnSpecification(specification1);
             sink.OnSpecification(specification2);
             sink.OnDiscoveryCompleted();
@@ -39,7 +40,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Tests.Discovery
             var specification1 = new SpecificationElement(context, "should_be", behavior);
             var specification2 = new SpecificationElement(context, "should_not_be", behavior);
 
-            var sink = new MspecDiscoverySink();
+            var sink = new MspecDiscoverySink(CancellationToken.None);
             sink.OnSpecification(specification1);
             sink.OnSpecification(specification2);
             sink.OnDiscoveryCompleted();

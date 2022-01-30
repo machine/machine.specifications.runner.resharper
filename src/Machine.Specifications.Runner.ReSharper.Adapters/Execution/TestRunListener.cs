@@ -75,7 +75,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                currentTask = context.GetTask(contextInfo);
+                //currentTask = context.GetTask(contextInfo);
 
                 currentTask.Starting();
             });
@@ -92,7 +92,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                currentTask = context.GetTask(contextInfo);
+                //currentTask = context.GetTask(contextInfo);
 
                 if (successes == specifications && errors == 0)
                 {
@@ -117,15 +117,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                var task = context.GetTask(currentContext!, specificationInfo);
+                //var task = context.GetTask(currentContext!, specificationInfo);
 
-                if (!task.Exists)
-                {
-                    return;
-                }
+                //if (!task.Exists)
+                //{
+                //    return;
+                //}
 
-                currentTask = task;
-                currentTask.Starting();
+                //currentTask = task;
+                //currentTask.Starting();
             });
         }
 
@@ -140,14 +140,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     return;
                 }
 
-                var task = context.GetTask(currentContext!, specificationInfo);
+                //var task = context.GetTask(currentContext!, specificationInfo);
 
-                if (!task.Exists)
-                {
-                    return;
-                }
+                //if (!task.Exists)
+                //{
+                //    return;
+                //}
 
-                currentTask = task;
+                //currentTask = task;
                 currentTask.Output(specificationInfo.CapturedOutput);
 
                 if (result.Status == Status.Failing)
