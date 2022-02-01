@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using JetBrains.ReSharper.TestFramework;
+using Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.Runner

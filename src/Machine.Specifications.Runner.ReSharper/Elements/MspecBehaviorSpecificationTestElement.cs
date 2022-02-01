@@ -12,8 +12,8 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         {
         }
 
-        public MspecBehaviorSpecificationTestElement(MspecContextSpecificationTestElement parent, string fieldName, string? ignoreReason)
-            : base($"{parent.Context.TypeName.FullName}.{parent.FieldName}.{fieldName}", parent)
+        public MspecBehaviorSpecificationTestElement(MspecSpecificationTestElement parent, string fieldName, string? ignoreReason)
+            : base($"{parent.NaturalId.TestId}.{fieldName}", parent)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();
@@ -24,7 +24,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
 
         public bool IsNotRunnableStandalone => Origin == UnitTestElementOrigin.Dynamic;
 
-        public MspecContextSpecificationTestElement Specification => (MspecContextSpecificationTestElement) Parent!;
+        public MspecSpecificationTestElement Specification => (MspecSpecificationTestElement) Parent!;
 
         [Persist]
         [UsedImplicitly]

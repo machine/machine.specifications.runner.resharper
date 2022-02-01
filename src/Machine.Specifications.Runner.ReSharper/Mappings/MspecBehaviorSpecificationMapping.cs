@@ -32,25 +32,18 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
 
         protected override MspecBehaviorSpecificationTestElement? ToElement(MspecBehaviorSpecificationRemoteTask task, ITestRunnerDiscoveryContext context, IUnitTestElementObserver observer)
         {
-            if (task.ContextTypeName == null)
-            {
-                context.Logger.Warn($"Cannot create element for BehaviorSpecificationElement '{task.TestId}': ContextTypeName is missing");
-
-                return null;
-            }
-
             if (task.ParentId == null)
             {
-                context.Logger.Warn($"Cannot create element for BehaviorSpecificationElement '{task.TestId}': ParentId is missing");
+                context.Logger.Warn($"Cannot create element for MspecBehaviorSpecificationTestElement '{task.TestId}': ParentId is missing");
 
                 return null;
             }
 
-            var specificationElement = observer.GetElementById<MspecContextSpecificationTestElement>(task.ParentId);
+            var specificationElement = observer.GetElementById<MspecSpecificationTestElement>(task.ParentId);
 
             if (specificationElement == null)
             {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': Specification is missing");
+                context.Logger.Warn("Cannot create element for MspecBehaviorSpecificationTestElement '" + task.TestId + "': Specification is missing");
 
                 return null;
             }

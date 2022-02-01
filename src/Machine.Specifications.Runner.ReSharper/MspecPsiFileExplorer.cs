@@ -121,7 +121,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
             if (recentContexts.TryGetValue(containingType, out var context))
             {
-                var specification = factory.GetOrCreateContextSpecification(
+                var specification = factory.GetOrCreateSpecification(
                     context,
                     field.ShortName,
                     null,
@@ -138,7 +138,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
             if (recentContexts.TryGetValue(containingType, out var context) && behaviorType != null && behaviorType.IsBehaviorContainer())
             {
-                var specification = factory.GetOrCreateContextSpecification(
+                var specification = factory.GetOrCreateSpecification(
                     context,
                     field.ShortName,
                     behaviorType.FullyQualifiedName,

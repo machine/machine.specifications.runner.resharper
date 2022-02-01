@@ -33,7 +33,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             var results = new ResultsContainer(selection);
 
             var listener = new TestExecutionListener(context, token);
-            var adapter = new TestAdapterListener(listener, results);
+            var adapter = new TestRunListener(listener, results);
 
             var runOptions = RunOptions.Custom.FilterBy(contexts);
 

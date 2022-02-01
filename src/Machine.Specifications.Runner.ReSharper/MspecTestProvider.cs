@@ -34,17 +34,17 @@ namespace Machine.Specifications.Runner.ReSharper
             switch (elementKind)
             {
                 case UnitTestElementKind.Test:
-                    return element is MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
+                    return element is MspecSpecificationTestElement or MspecBehaviorSpecificationTestElement;
 
                 case UnitTestElementKind.TestContainer:
                     return element is MspecContextTestElement;
 
                 case UnitTestElementKind.TestStuff:
-                    return element is MspecContextTestElement or MspecContextSpecificationTestElement or MspecBehaviorSpecificationTestElement;
+                    return element is MspecContextTestElement or MspecSpecificationTestElement or MspecBehaviorSpecificationTestElement;
 
                 case UnitTestElementKind.Unknown:
                     return element is not MspecContextTestElement &&
-                           element is not MspecContextSpecificationTestElement &&
+                           element is not MspecSpecificationTestElement &&
                            element is not MspecBehaviorSpecificationTestElement;
             }
 

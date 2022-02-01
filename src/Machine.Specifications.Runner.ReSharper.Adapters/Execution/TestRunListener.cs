@@ -1,198 +1,119 @@
-﻿using System;
-using System.IO;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using JetBrains.ReSharper.TestRunner.Abstractions;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
     public class TestRunListener : ISpecificationRunListener
     {
-        private readonly RunContext context;
+        private readonly IExecutionListener listener;
 
-        private readonly CancellationToken token;
+        private readonly ResultsContainer container;
 
         private readonly ManualResetEvent waitEvent = new(false);
 
-        private readonly ILogger logger = Logger.GetLogger<TestRunListener>();
+        private readonly HashSet<IBehaviorElement> currentBehaviors = new();
 
-        private ContextInfo? currentContext;
+        private IContextElement? currentContext;
 
-        private TaskWrapper? currentTask;
-
-        private int specifications;
-
-        private int successes;
-
-        private int errors;
+        public TestRunListener(IExecutionListener listener, ResultsContainer container)
+        {
+            this.listener = listener;
+            this.container = container;
+        }
 
         public WaitHandle Finished => waitEvent;
 
-        public TestRunListener(RunContext context, CancellationToken token)
-        {
-            this.context = context;
-            this.token = token;
-        }
-
         public void OnAssemblyStart(AssemblyInfo assemblyInfo)
         {
-            logger.Trace($"OnAssemblyStart: {assemblyInfo.Location}");
-
-            Environment.CurrentDirectory = Path.GetDirectoryName(assemblyInfo.Location);
+            listener.OnAssemblyStart(assemblyInfo.Location);
         }
 
         public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
         {
-            logger.Trace($"OnAssemblyEnd: {assemblyInfo.Location}");
+            listener.OnAssemblyEnd(assemblyInfo.Location);
         }
 
         public void OnRunStart()
         {
-            logger.Trace("OnRunStart");
+            listener.OnRunStart();
         }
 
         public void OnRunEnd()
         {
-            logger.Trace("OnRunEnd");
+            listener.OnRunEnd();
 
             waitEvent.Set();
         }
 
         public void OnContextStart(ContextInfo contextInfo)
         {
-            specifications = 0;
-            errors = 0;
-            successes = 0;
+            var context = container.Started<IContextElement>(contextInfo.TypeName);
 
-            currentContext = contextInfo;
-
-            logger.Trace($"OnContextStart: {MspecReSharperId.Self(contextInfo)}");
-
-            logger.Catch(() =>
+            if (context != null)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
+                currentContext = context;
 
-                //currentTask = context.GetTask(contextInfo);
-
-                currentTask.Starting();
-            });
+                listener.OnContextStart(context);
+            }
         }
 
         public void OnContextEnd(ContextInfo contextInfo)
         {
-            logger.Trace($"OnContextEnd: {MspecReSharperId.Self(contextInfo)}");
+            var result = container.Get(contextInfo.TypeName);
 
-            logger.Catch(() =>
-            {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
+            result.Finished(result.IsSuccessful);
 
-                //currentTask = context.GetTask(contextInfo);
+            currentContext = null;
+            currentBehaviors.Clear();
 
-                if (successes == specifications && errors == 0)
-                {
-                    currentTask.Passed();
-                }
-
-                currentTask.Output(contextInfo.CapturedOutput);
-                currentTask.Finished(errors > 0);
-            });
+            listener.OnContextEnd((IContextElement) result.Element);
         }
 
         public void OnSpecificationStart(SpecificationInfo specificationInfo)
         {
-            specifications++;
+            var isBehavior = container.IsBehavior(specificationInfo.ContainingType);
 
-            logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(currentContext!, specificationInfo)}");
-
-            logger.Catch(() =>
+            if (isBehavior)
             {
-                if (token.IsCancellationRequested)
+                var key = $"{currentContext!.TypeName}.{specificationInfo.ContainingType}";
+
+                var behavior = currentBehaviors.FirstOrDefault(x => x.TypeName == specificationInfo.ContainingType) ??
+                               container.Started<IBehaviorElement>(key);
+
+                if (behavior != null && currentBehaviors.Add(behavior))
                 {
-                    return;
+                    listener.OnBehaviorStart(behavior);
                 }
 
-                //var task = context.GetTask(currentContext!, specificationInfo);
+                var specification = container.Started<ISpecificationElement>($"{key}.{specificationInfo.FieldName}");
 
-                //if (!task.Exists)
-                //{
-                //    return;
-                //}
+                if (specification != null)
+                {
+                    listener.OnSpecificationStart(specification);
+                }
+            }
+            else
+            {
+                var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
+                var specification = container.Started<ISpecificationElement>(key);
 
-                //currentTask = task;
-                //currentTask.Starting();
-            });
+                if (specification != null)
+                {
+                    listener.OnSpecificationStart(specification);
+                }
+            }
         }
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
         {
-            logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(currentContext!, specificationInfo)}");
-
-            logger.Catch(() =>
-            {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                //var task = context.GetTask(currentContext!, specificationInfo);
-
-                //if (!task.Exists)
-                //{
-                //    return;
-                //}
-
-                //currentTask = task;
-                currentTask.Output(specificationInfo.CapturedOutput);
-
-                if (result.Status == Status.Failing)
-                {
-                    errors++;
-                    currentTask.Failed(result.Exception.GetExceptions(), result.Exception.GetExceptionMessage());
-                    currentTask.Finished();
-                }
-                else if (result.Status == Status.Passing)
-                {
-                    successes++;
-                    currentTask.Passed();
-                    currentTask.Finished();
-                }
-                else if (result.Status == Status.NotImplemented)
-                {
-                    currentTask.Skipped("Not implemented");
-                }
-                else if (result.Status == Status.Ignored)
-                {
-                    currentTask.Skipped();
-                }
-            });
         }
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
-            logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
-
-            if (currentTask != null)
-            {
-                logger.Catch(() =>
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
-                    currentTask.Output($"Fatal error: {exceptionResult.Message}");
-                    currentTask.Failed(exceptionResult.GetExceptions(), exceptionResult.GetExceptionMessage());
-                    currentTask.Finished(true);
-                });
-            }
-
-            errors++;
+            listener.OnFatalError(exceptionResult);
         }
     }
 }

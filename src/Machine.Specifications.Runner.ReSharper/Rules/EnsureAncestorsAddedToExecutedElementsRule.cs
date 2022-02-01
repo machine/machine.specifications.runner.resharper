@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using JetBrains.ReSharper.UnitTestFramework.Criteria;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Execution.Hosting;
@@ -24,16 +25,13 @@ namespace Machine.Specifications.Runner.ReSharper.Rules
         {
             var ancestors = new HashSet<IUnitTestElement>();
 
-            foreach (var element in elements)
+            foreach (var element in elements.OfType<IMspecTestElement>())
             {
-                if (element is IMspecTestElement)
-                {
-                    var parent = element.Parent;
+                var parent = element.Parent;
 
-                    while (parent != null && ancestors.Add(parent))
-                    {
-                        parent = parent.Parent;
-                    }
+                while (parent != null && ancestors.Add(parent))
+                {
+                    parent = parent.Parent;
                 }
             }
 

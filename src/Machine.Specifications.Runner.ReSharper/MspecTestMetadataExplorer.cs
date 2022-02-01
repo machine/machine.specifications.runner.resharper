@@ -75,7 +75,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private void ExploreSpecification(MspecContextTestElement contextElement, IFieldInfo field)
         {
-            var specificationElement = factory.GetOrCreateContextSpecification(
+            var specificationElement = factory.GetOrCreateSpecification(
                 contextElement,
                 field.ShortName,
                 null,
@@ -89,7 +89,7 @@ namespace Machine.Specifications.Runner.ReSharper
             var behaviorType = field.FieldType.GetGenericArguments()
                 .FirstOrDefault();
 
-            var specificationElement = factory.GetOrCreateContextSpecification(
+            var specificationElement = factory.GetOrCreateSpecification(
                 contextElement,
                 field.ShortName,
                 behaviorType.FullyQualifiedName,

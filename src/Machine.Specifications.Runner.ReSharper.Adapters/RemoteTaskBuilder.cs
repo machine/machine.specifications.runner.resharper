@@ -31,7 +31,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                 ? context.TypeName
                 : null;
 
-            return MspecContextSpecificationRemoteTask.ToServer(specification.ContainingType, specification.FieldName, behaviorType, null, null, null);
+            return MspecSpecificationRemoteTask.ToServer(specification.ContainingType, specification.FieldName, behaviorType, null, null, null);
         }
 
         private static MspecRemoteTask FromContext(IContextElement context)
@@ -52,7 +52,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         {
             var behaviorType = specification.Behavior?.TypeName;
 
-            return MspecContextSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, behaviorType, null, null, null);
+            return MspecSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, behaviorType, null, null, null);
         }
     }
 }
