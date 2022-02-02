@@ -11,6 +11,8 @@
 
         public string Id { get; }
 
+        public string GroupId => Id;
+
         public string TypeName { get; }
 
         public string Subject { get; }

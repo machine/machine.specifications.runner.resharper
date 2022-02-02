@@ -12,7 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         private readonly HashSet<string> behaviorTypes;
 
-        private readonly PendingResultsCollection pending = new();
+        private readonly PendingResultsCollection pending;
 
         public ResultsContainer(IMspecElement[] elements)
         {
@@ -50,10 +50,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                 .Select(x => x.TypeName)
                 .Distinct();
 
-            foreach (var result in results)
-            {
-                pending.Add(result.Element.Id, result.Element);
-            }
+            pending = new PendingResultsCollection(results.Select(x => x.Element).ToArray());
 
             elementsById = results
                 .Select(x => x.Element)

@@ -20,7 +20,6 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             var task = MspecBehaviorSpecificationRemoteTask.ToClient(
                 element.NaturalId.TestId,
                 element.IgnoreReason,
-                context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
             task.ContextTypeName = element.Specification.Context.TypeName.FullName;

@@ -5,7 +5,7 @@
         public SpecificationElement(IContextElement context, string fieldName, IBehaviorElement? behavior = null)
         {
             Id = behavior != null
-                ? $"{context.TypeName}.{behavior.TypeName}.{fieldName}"
+                ? $"{context.TypeName}.{behavior.FieldName}.{fieldName}"
                 : $"{context.TypeName}.{fieldName}";
             Context = context;
             FieldName = fieldName;
@@ -13,6 +13,8 @@
         }
 
         public string Id { get; }
+
+        public string GroupId => Id;
 
         public IContextElement Context { get; }
 

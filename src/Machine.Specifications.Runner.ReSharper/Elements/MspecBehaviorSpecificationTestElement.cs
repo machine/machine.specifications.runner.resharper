@@ -13,7 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper.Elements
         }
 
         public MspecBehaviorSpecificationTestElement(MspecSpecificationTestElement parent, string fieldName, string? ignoreReason)
-            : base($"{parent.NaturalId.TestId}.{fieldName}", parent)
+            : base($"{parent.Context.TypeName.FullName}.{parent.FieldName}.{fieldName}", parent)
         {
             FieldName = fieldName;
             DisplayName = fieldName.ToFormat();

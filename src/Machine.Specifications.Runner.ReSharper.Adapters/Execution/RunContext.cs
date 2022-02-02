@@ -12,11 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         private readonly ITestExecutionSink sink;
 
-        private readonly ConcurrentDictionary<IContextElement, TaskWrapper> contextTasks = new();
-
-        private readonly ConcurrentDictionary<ISpecificationElement, TaskWrapper> specificationTasks = new();
-
-        private readonly ConcurrentDictionary<IBehaviorElement, TaskWrapper> behaviorTasks = new();
+        private readonly ConcurrentDictionary<IMspecElement, TaskWrapper> tasks = new();
 
         private readonly ConcurrentDictionary<string, TaskWrapper> tasksById = new();
 
@@ -36,33 +32,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             return depot.GetTestsToRun();
         }
 
-        public TaskWrapper GetTask(IContextElement context)
+        public TaskWrapper GetTask(IMspecElement element)
         {
-            return contextTasks.GetOrAdd(context, key =>
+            return tasks.GetOrAdd(element, key =>
             {
-                var task = depot[new MspecReSharperId(key)] ?? CreateTask(context);
+                var task = depot[MspecReSharperId.Create(key)] ?? CreateTask(element);
 
-                return tasksById.GetOrAdd(task.TestId, y => new TaskWrapper(task, sink));
-            });
-        }
-
-        public TaskWrapper GetTask(ISpecificationElement specification)
-        {
-            return specificationTasks.GetOrAdd(specification, key =>
-            {
-                var task = depot[new MspecReSharperId(key)] ?? CreateTask(specification);
-
-                return tasksById.GetOrAdd(task.TestId, y => new TaskWrapper(task, sink));
-            });
-        }
-
-        public TaskWrapper GetTask(IBehaviorElement behavior)
-        {
-            return behaviorTasks.GetOrAdd(behavior, key =>
-            {
-                var task = depot[new MspecReSharperId(key)] ?? CreateTask(behavior);
-
-                return tasksById.GetOrAdd(task.TestId, y => new TaskWrapper(task, sink));
+                return tasksById.GetOrAdd(task.TestId, _ => new TaskWrapper(task, sink));
             });
         }
 

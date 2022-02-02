@@ -17,7 +17,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
             string? subject,
             string[]? tags,
             string? ignoreReason)
-            : base(GetTestId(contextTypeName, fieldName, behaviorType), ignoreReason)
+            : base($"{contextTypeName}.{fieldName}", ignoreReason)
         {
             ContextTypeName = contextTypeName;
             FieldName = fieldName;
@@ -35,13 +35,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
         public string? Subject { get; }
 
         public string[]? Tags { get; set; }
-
-        private static string GetTestId(string contextTypeName, string fieldName, string? behaviorType)
-        {
-            return behaviorType == null
-                ? $"{contextTypeName}.{fieldName}"
-                : $"{contextTypeName}.{behaviorType}.{fieldName}";
-        }
 
         public static MspecSpecificationRemoteTask ToClient(
             string testId,

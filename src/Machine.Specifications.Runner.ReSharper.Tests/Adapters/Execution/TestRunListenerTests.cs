@@ -3,7 +3,7 @@
 namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 {
     [TestFixture]
-    public class TestExecutionListenerTests
+    public class TestRunListenerTests
     {
         
     }

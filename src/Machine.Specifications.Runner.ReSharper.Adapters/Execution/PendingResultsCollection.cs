@@ -8,14 +8,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
     {
         private readonly Dictionary<string, ConcurrentBag<IMspecElement>> values = new();
 
-        public void Add(string key, IMspecElement value)
+        public PendingResultsCollection(IMspecElement[] elements)
         {
-            if (!values.TryGetValue(key, out var bag))
+            foreach (var element in elements)
             {
-                values[key] = bag = new ConcurrentBag<IMspecElement>();
-            }
+                if (!values.TryGetValue(element.GroupId, out var bag))
+                {
+                    values[element.GroupId] = bag = new ConcurrentBag<IMspecElement>();
+                }
 
-            bag.Add(value);
+                bag.Add(element);
+            }
         }
 
         public IMspecElement? Take(string key)

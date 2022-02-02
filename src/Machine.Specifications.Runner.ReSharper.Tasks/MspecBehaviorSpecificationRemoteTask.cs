@@ -5,13 +5,13 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
     [Serializable]
     public class MspecBehaviorSpecificationRemoteTask : MspecRemoteTask
     {
-        private MspecBehaviorSpecificationRemoteTask(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
-            : base(testId, ignoreReason, runAllChildren, runExplicitly)
+        private MspecBehaviorSpecificationRemoteTask(string testId, string? ignoreReason, bool runExplicitly)
+            : base(testId, ignoreReason, true, runExplicitly)
         {
         }
 
         private MspecBehaviorSpecificationRemoteTask(string parentId, string contextTypeName, string fieldName, string? ignoreReason)
-            : base($"{contextTypeName}.{fieldName}", ignoreReason)
+            : base($"{parentId}.{fieldName}", ignoreReason)
         {
             ParentId = parentId;
             ContextTypeName = contextTypeName;
@@ -24,9 +24,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
 
         public string? FieldName { get; set; }
 
-        public static MspecBehaviorSpecificationRemoteTask ToClient(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
+        public static MspecBehaviorSpecificationRemoteTask ToClient(string testId, string? ignoreReason, bool runExplicitly)
         {
-            return new(testId, ignoreReason, runAllChildren, runExplicitly);
+            return new(testId, ignoreReason, runExplicitly);
         }
 
         public static MspecBehaviorSpecificationRemoteTask ToServer(string parentId, string contextTypeName, string fieldName, string? ignoreReason)

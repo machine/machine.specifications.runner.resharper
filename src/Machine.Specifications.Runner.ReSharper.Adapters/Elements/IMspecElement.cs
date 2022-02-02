@@ -3,5 +3,7 @@
     public interface IMspecElement
     {
         string Id { get; }
+
+        string GroupId { get; }
     }
 }
