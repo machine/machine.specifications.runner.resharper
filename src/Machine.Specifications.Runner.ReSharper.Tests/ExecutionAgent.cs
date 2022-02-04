@@ -34,7 +34,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests
 
         public ITestRunnerExecutionContext Context { get; }
 
-        public async Task RunTests(CancellationToken cancelCt)
+        public async Task RunTests(CancellationToken cancelCt, CancellationToken abortCt)
         {
             cancelCt.Register(() => MessageBroker.Abort());
 
