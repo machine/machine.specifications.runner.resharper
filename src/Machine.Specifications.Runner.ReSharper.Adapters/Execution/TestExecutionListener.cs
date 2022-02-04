@@ -108,7 +108,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             });
         }
 
-        public void OnSpecificationEnd(ISpecificationElement specification)
+        public void OnSpecificationEnd(ISpecificationElement specification, Result result)
         {
             logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(specification)}");
 

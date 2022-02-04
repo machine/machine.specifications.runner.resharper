@@ -23,7 +23,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         void OnSpecificationStart(ISpecificationElement specification);
 
-        void OnSpecificationEnd(ISpecificationElement specification);
+        void OnSpecificationEnd(ISpecificationElement specification, Result result);
 
         void OnFatalError(ExceptionResult exceptionResult);
     }

@@ -51,7 +51,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
                     source.Add(task);
 
-                    if (parent != null && depot[element] == null && depot[parent] != null)
+                    if (parent != null && depot[element] == null && depot[parent] != null && depot[parent]!.RunAllChildren)
                     {
                         depot.Add(task);
                     }

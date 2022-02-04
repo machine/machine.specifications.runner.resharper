@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.ReSharper.Tasks;
+using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
 using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters
@@ -14,101 +12,87 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters
         [Test]
         public void CanGetContextByElement()
         {
-            var contextTask = MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
-            var contextElement = new ContextElement("Namespace.Context", string.Empty);
+            var depot = new RemoteTaskDepot(new RemoteTask[]
+            {
+                RemoteTaskFixtures.Context
+            });
 
-            var depot = new RemoteTaskDepot(new RemoteTask[] { contextTask });
-
-            Assert.NotNull(depot[contextElement]);
+            Assert.NotNull(depot[ElementFixtures.Context]);
         }
 
         [Test]
         public void CanGetSpecificationByElement()
         {
-            var contextTask = MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
-            var specificationTask = MspecSpecificationRemoteTask.ToServer("Namespace.Context", "should", null, null, null, null);
+            var depot = new RemoteTaskDepot(new RemoteTask[]
+            {
+                RemoteTaskFixtures.Context,
+                RemoteTaskFixtures.Specification
+            });
 
-            var contextElement = new ContextElement("Namespace.Context", string.Empty);
-            var specificationElement = new SpecificationElement(contextElement, "should");
-
-            var depot = new RemoteTaskDepot(new RemoteTask[] { contextTask, specificationTask });
-
-            Assert.NotNull(depot[specificationElement]);
+            Assert.NotNull(depot[ElementFixtures.Specification]);
         }
 
         [Test]
         public void CanGetBehaviorByElement()
         {
-            var contextTask = MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
-            var behaviorTask = MspecSpecificationRemoteTask.ToServer("Namespace.Context", "behaves_like", "Namespace.ABehavior", null, null, null);
+            var depot = new RemoteTaskDepot(new RemoteTask[]
+            {
+                RemoteTaskFixtures.Context,
+                RemoteTaskFixtures.Behavior
+            });
 
-            var contextElement = new ContextElement("Namespace.Context", string.Empty);
-            var behaviorElement = new BehaviorElement(contextElement, "Namespace.ABehavior", "behaves_like");
-
-            var depot = new RemoteTaskDepot(new RemoteTask[] { contextTask, behaviorTask });
-
-            Assert.NotNull(depot[behaviorElement]);
+            Assert.NotNull(depot[ElementFixtures.Behavior]);
         }
 
         [Test]
         public void CanGetBehaviorSpecificationByElement()
         {
-            var contextTask = MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
-            var behaviorTask = MspecSpecificationRemoteTask.ToServer("Namespace.Context", "behaves_like", "Namespace.ABehavior", null, null, null);
-            var specificationTask = MspecBehaviorSpecificationRemoteTask.ToServer("Namespace.Context.behaves_like", "Namespace.Context", "should_behave", null);
+            var depot = new RemoteTaskDepot(new RemoteTask[]
+            {
+                RemoteTaskFixtures.Context,
+                RemoteTaskFixtures.Behavior,
+                RemoteTaskFixtures.BehaviorSpecification
+            });
 
-            var contextElement = new ContextElement("Namespace.Context", string.Empty);
-            var specificationElement = new SpecificationElement(contextElement, "should");
-            var behaviorElement = new BehaviorElement(contextElement, "Namespace.ABehavior", "behaves_like");
-            var behaviorSpecificationElement = new SpecificationElement(contextElement, "should_behave", behaviorElement);
-
-            var depot = new RemoteTaskDepot(new RemoteTask[] { contextTask, behaviorTask, specificationTask });
-
-            Assert.NotNull(depot[specificationElement]);
+            Assert.NotNull(depot[ElementFixtures.BehaviorSpecification]);
         }
 
         [Test]
         public void CanGetBehaviorWhenThereIsSpecificationWithSameName()
         {
-            var contextTask = MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
-            var specificationTask = MspecSpecificationRemoteTask.ToServer("Namespace.Context", "should", null, null, null, null);
-            var behaviorTask = MspecSpecificationRemoteTask.ToServer("Namespace.Context", "behaves_like", "Namespace.ABehavior", null, null, null);
-            var behaviorSpecificationTask = MspecBehaviorSpecificationRemoteTask.ToServer("Namespace.Context.behaves_like", "Namespace.Context", "should_behave", null);
-
-            var contextElement = new ContextElement("Namespace.Context", string.Empty);
-            var behaviorElement = new BehaviorElement(contextElement, "Namespace.ABehavior", "behaves_like");
-            var specificationElement = new SpecificationElement(contextElement, "should_behave", behaviorElement);
-
-            var depot = new RemoteTaskDepot(new RemoteTask[] { contextTask, behaviorTask, specificationTask });
-
-            Assert.NotNull(depot[specificationElement]);
-        }
-
-        private IEnumerable<RemoteTask> GetTasks()
-        {
-            yield return MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
-            yield return MspecSpecificationRemoteTask.ToServer("Namespace.Context", "should", null, null, null, null);
-            yield return MspecSpecificationRemoteTask.ToServer("Namespace.Context", "behaves_like", "Namespace.ABehavior", null, null, null);
-            yield return MspecBehaviorSpecificationRemoteTask.ToServer("Namespace.Context.behaves_like", "Namespace.Context", "should_behave", null);
-            yield return MspecBehaviorSpecificationRemoteTask.ToServer("Namespace.Context.behaves_like", "Namespace.Context", "should_not_behave", null);
-        }
-
-        private IEnumerable<IMspecElement> GetElements()
-        {
-            var context = new ContextElement("Namespace.Context", string.Empty);
-            var behavior = new BehaviorElement(context, "Namespace.ABehavior", "behaves_like");
-            var specification1 = new SpecificationElement(context, "should");
-            var specification2 = new SpecificationElement(context, "should_behave", behavior);
-            var specification3 = new SpecificationElement(context, "should_not_behave", behavior);
-
-            return new IMspecElement[]
+            var depot = new RemoteTaskDepot(new RemoteTask[]
             {
-                context,
-                behavior,
-                specification1,
-                specification2,
-                specification3
-            };
+                RemoteTaskFixtures.Context,
+                RemoteTaskFixtures.Behavior,
+                RemoteTaskFixtures.Specification,
+                RemoteTaskFixtures.BehaviorSpecification
+            });
+
+            Assert.NotNull(depot[ElementFixtures.Specification]);
+        }
+
+        [Test]
+        public void BoundElementsAreSelected()
+        {
+            var depot = new RemoteTaskDepot(new RemoteTask[]
+            {
+                RemoteTaskFixtures.Context,
+                RemoteTaskFixtures.Behavior,
+                RemoteTaskFixtures.Specification,
+                RemoteTaskFixtures.BehaviorSpecification
+            });
+
+            depot.Bind(ElementFixtures.Context, RemoteTaskFixtures.Context);
+            depot.Bind(ElementFixtures.Behavior, RemoteTaskFixtures.Behavior);
+            depot.Bind(ElementFixtures.Specification, RemoteTaskFixtures.Specification);
+            depot.Bind(ElementFixtures.BehaviorSpecification, RemoteTaskFixtures.BehaviorSpecification);
+
+            var selected = depot.GetSelection().ToArray();
+
+            CollectionAssert.Contains(selected, ElementFixtures.Context);
+            CollectionAssert.Contains(selected, ElementFixtures.Behavior);
+            CollectionAssert.Contains(selected, ElementFixtures.Specification);
+            CollectionAssert.Contains(selected, ElementFixtures.BehaviorSpecification);
         }
     }
 }
