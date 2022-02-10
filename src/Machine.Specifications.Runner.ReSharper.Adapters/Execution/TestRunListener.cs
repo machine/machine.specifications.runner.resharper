@@ -66,6 +66,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             result.Finished(result.IsSuccessful);
 
+            foreach (var behavior in currentBehaviors)
+            {
+                listener.OnBehaviorEnd(behavior);
+            }
+
             currentContext = null;
             currentBehaviors.Clear();
 
@@ -83,16 +88,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                 var behavior = currentBehaviors.FirstOrDefault(x => x.TypeName == specificationInfo.ContainingType) ??
                                container.Started<IBehaviorElement>(key);
 
-                if (behavior != null && currentBehaviors.Add(behavior))
+                if (behavior != null)
                 {
-                    listener.OnBehaviorStart(behavior);
-                }
+                    if (currentBehaviors.Add(behavior))
+                    {
+                        listener.OnBehaviorStart(behavior);
+                    }
 
-                var specification = container.Started<ISpecificationElement>($"{key}.{specificationInfo.FieldName}");
+                    var specification = container.Started<ISpecificationElement>($"{behavior.Id}.{specificationInfo.FieldName}");
 
-                if (specification != null)
-                {
-                    listener.OnSpecificationStart(specification);
+                    if (specification != null)
+                    {
+                        listener.OnSpecificationStart(specification);
+                    }
                 }
             }
             else
@@ -109,6 +117,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
         {
+            var isBehavior = container.IsBehavior(specificationInfo.ContainingType);
+
+            if (isBehavior)
+            {
+
+            }
+            else
+            {
+                var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
+                var specification = container.Get(key);
+
+                listener.OnSpecificationEnd((ISpecificationElement) specification.Element, result);
+            }
         }
 
         public void OnFatalError(ExceptionResult exceptionResult)
