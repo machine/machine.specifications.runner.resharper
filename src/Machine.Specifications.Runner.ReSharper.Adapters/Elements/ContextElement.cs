@@ -11,7 +11,7 @@
 
         public string Id { get; }
 
-        public string GroupId => Id;
+        public string AggregateId => Id;
 
         public string TypeName { get; }
 

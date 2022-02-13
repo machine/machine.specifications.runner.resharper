@@ -12,9 +12,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
         {
             foreach (var element in elements)
             {
-                if (!values.TryGetValue(element.GroupId, out var bag))
+                if (!values.TryGetValue(element.AggregateId, out var bag))
                 {
-                    values[element.GroupId] = bag = new ConcurrentBag<IMspecElement>();
+                    values[element.AggregateId] = bag = new ConcurrentBag<IMspecElement>();
                 }
 
                 bag.Add(element);

@@ -4,6 +4,6 @@
     {
         string Id { get; }
 
-        string GroupId { get; }
+        string AggregateId { get; }
     }
 }

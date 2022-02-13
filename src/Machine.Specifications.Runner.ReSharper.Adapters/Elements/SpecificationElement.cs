@@ -7,6 +7,9 @@
             Id = behavior != null
                 ? $"{context.TypeName}.{behavior.FieldName}.{fieldName}"
                 : $"{context.TypeName}.{fieldName}";
+            AggregateId = behavior != null
+                ? $"{context.TypeName}.{behavior.TypeName}.{fieldName}"
+                : $"{context.TypeName}.{fieldName}";
             Context = context;
             FieldName = fieldName;
             Behavior = behavior;
@@ -14,7 +17,7 @@
 
         public string Id { get; }
 
-        public string GroupId => Id;
+        public string AggregateId { get; }
 
         public IContextElement Context { get; }
 

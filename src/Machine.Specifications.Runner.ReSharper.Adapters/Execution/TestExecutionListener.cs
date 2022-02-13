@@ -47,91 +47,70 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
         {
             logger.Trace($"OnContextStart: {MspecReSharperId.Self(context)}");
 
-            logger.Catch(() =>
+            if (token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-            });
+                return;
+            }
         }
 
         public void OnContextEnd(IContextElement context)
         {
             logger.Trace($"OnContextEnd: {MspecReSharperId.Self(context)}");
 
-            logger.Catch(() =>
+            if (token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-            });
+                return;
+            }
         }
 
         public void OnBehaviorStart(IBehaviorElement behavior)
         {
             logger.Trace($"OnBehaviorStart: {MspecReSharperId.Self(behavior)}");
 
-            logger.Catch(() =>
+            if (token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-            });
+                return;
+            }
         }
 
         public void OnBehaviorEnd(IBehaviorElement behavior)
         {
             logger.Trace($"OnBehaviorEnd: {MspecReSharperId.Self(behavior)}");
 
-            logger.Catch(() =>
+            if (token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-            });
+                return;
+            }
         }
 
         public void OnSpecificationStart(ISpecificationElement specification)
         {
             logger.Trace($"OnSpecificationStart: {MspecReSharperId.Self(specification)}");
 
-            logger.Catch(() =>
+            if (token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-            });
+                return;
+            }
         }
 
         public void OnSpecificationEnd(ISpecificationElement specification, Result result)
         {
             logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(specification)}");
 
-            logger.Catch(() =>
+            if (token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-            });
+                return;
+            }
         }
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
             logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
 
-            logger.Catch(() =>
+            if (token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-            });
+                return;
+            }
         }
     }
 }

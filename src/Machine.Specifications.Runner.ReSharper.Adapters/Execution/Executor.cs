@@ -24,16 +24,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void Execute()
         {
-            var selection = context.GetSelection().ToArray();
+            var testsToRun = context.GetTestsToRun().ToArray();
 
-            var contexts = context.GetTestsToRun()
+            var contexts = testsToRun
                 .Select(x => x.Context.TypeName)
                 .Distinct();
 
-            var results = new ResultsContainer(selection);
+            var cache = new ElementCache(testsToRun);
+            var tracker = new RunTracker(testsToRun);
 
             var listener = new TestExecutionListener(context, token);
-            var adapter = new TestRunListener(listener, results);
+            var adapter = new TestRunListener(listener, cache, tracker);
 
             var runOptions = RunOptions.Custom.FilterBy(contexts);
 

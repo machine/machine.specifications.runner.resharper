@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using JetBrains.ReSharper.TestRunner.Abstractions;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.Utility;
 
@@ -10,131 +11,175 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
     {
         private readonly IExecutionListener listener;
 
-        private readonly ResultsContainer container;
+        private readonly ElementCache cache;
+
+        private readonly RunTracker tracker;
+
+        private readonly ILogger logger = Logger.GetLogger<TestRunListener>();
 
         private readonly ManualResetEvent waitEvent = new(false);
 
-        private readonly HashSet<IBehaviorElement> currentBehaviors = new();
+        private readonly HashSet<IMspecElement> behaviors = new();
 
         private IContextElement? currentContext;
 
-        public TestRunListener(IExecutionListener listener, ResultsContainer container)
+        public TestRunListener(IExecutionListener listener, ElementCache cache, RunTracker tracker)
         {
             this.listener = listener;
-            this.container = container;
+            this.cache = cache;
+            this.tracker = tracker;
         }
 
         public WaitHandle Finished => waitEvent;
 
         public void OnAssemblyStart(AssemblyInfo assemblyInfo)
         {
-            listener.OnAssemblyStart(assemblyInfo.Location);
+            logger.Trace($"OnAssemblyStart: {assemblyInfo.Location}");
+
+            logger.Catch(() => listener.OnAssemblyStart(assemblyInfo.Location));
         }
 
         public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
         {
-            listener.OnAssemblyEnd(assemblyInfo.Location);
+            logger.Trace($"OnAssemblyEnd: {assemblyInfo.Location}");
+
+            logger.Catch(() => listener.OnAssemblyEnd(assemblyInfo.Location));
         }
 
         public void OnRunStart()
         {
-            listener.OnRunStart();
+            logger.Trace("OnRunStart:");
+
+            logger.Catch(() => listener.OnRunStart());
         }
 
         public void OnRunEnd()
         {
-            listener.OnRunEnd();
+            logger.Trace("OnRunEnd:");
+
+            logger.Catch(() => listener.OnRunEnd());
 
             waitEvent.Set();
         }
 
         public void OnContextStart(ContextInfo contextInfo)
         {
-            var context = container.Started<IContextElement>(contextInfo.TypeName);
+            logger.Trace($"OnContextStart: {contextInfo.TypeName}");
 
-            if (context != null)
+            logger.Catch(() =>
             {
+                var context = tracker.StartContext(contextInfo.TypeName);
+
                 currentContext = context;
 
-                listener.OnContextStart(context);
-            }
+                if (context != null)
+                {
+                    listener.OnContextStart(context);
+                }
+            });
         }
 
         public void OnContextEnd(ContextInfo contextInfo)
         {
-            var result = container.Get(contextInfo.TypeName);
+            logger.Trace($"OnContextEnd: {contextInfo.TypeName}");
 
-            result.Finished(result.IsSuccessful);
-
-            foreach (var behavior in currentBehaviors)
+            logger.Catch(() =>
             {
-                listener.OnBehaviorEnd(behavior);
-            }
+                var context = tracker.FinishContext(contextInfo.TypeName);
 
-            currentContext = null;
-            currentBehaviors.Clear();
+                if (context != null)
+                {
+                    var runningBehaviors = cache.GetBehaviors(context)
+                        .Where(x => behaviors.Contains(x));
 
-            listener.OnContextEnd((IContextElement) result.Element);
+                    foreach (var behavior in runningBehaviors)
+                    {
+                        listener.OnBehaviorEnd(behavior);
+                    }
+
+                    listener.OnContextEnd(context);
+                }
+
+                currentContext = null;
+            });
         }
 
         public void OnSpecificationStart(SpecificationInfo specificationInfo)
         {
-            var isBehavior = container.IsBehavior(specificationInfo.ContainingType);
+            logger.Trace($"OnSpecificationStart: {specificationInfo.ContainingType}.{specificationInfo.FieldName}");
 
-            if (isBehavior)
+            logger.Catch(() =>
             {
-                var key = $"{currentContext!.TypeName}.{specificationInfo.ContainingType}";
+                var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
 
-                var behavior = currentBehaviors.FirstOrDefault(x => x.TypeName == specificationInfo.ContainingType) ??
-                               container.Started<IBehaviorElement>(key);
-
-                if (behavior != null)
+                if (isBehavior)
                 {
-                    if (currentBehaviors.Add(behavior))
-                    {
-                        listener.OnBehaviorStart(behavior);
-                    }
+                    var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-                    var specification = container.Started<ISpecificationElement>($"{behavior.Id}.{specificationInfo.FieldName}");
+                    var specification = tracker.StartSpecification(key);
+
+                    if (specification?.Behavior != null && behaviors.Add(specification.Behavior))
+                    {
+                        listener.OnBehaviorStart(specification.Behavior);
+                    }
 
                     if (specification != null)
                     {
                         listener.OnSpecificationStart(specification);
                     }
                 }
-            }
-            else
-            {
-                var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
-                var specification = container.Started<ISpecificationElement>(key);
-
-                if (specification != null)
+                else
                 {
-                    listener.OnSpecificationStart(specification);
+                    var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
+
+                    var specification = tracker.StartSpecification(key);
+
+                    if (specification != null)
+                    {
+                        listener.OnSpecificationStart(specification);
+                    }
                 }
-            }
+            });
         }
 
         public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
         {
-            var isBehavior = container.IsBehavior(specificationInfo.ContainingType);
+            logger.Trace($"OnSpecificationEnd: {specificationInfo.ContainingType}.{specificationInfo.FieldName}");
 
-            if (isBehavior)
+            logger.Catch(() =>
             {
+                var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
 
-            }
-            else
-            {
-                var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
-                var specification = container.Get(key);
+                if (isBehavior)
+                {
+                    var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-                listener.OnSpecificationEnd((ISpecificationElement) specification.Element, result);
-            }
+                    var specification = tracker.FinishSpecification(key);
+
+                    if (specification != null)
+                    {
+                        listener.OnSpecificationEnd(specification, result);
+                    }
+                }
+                else
+                {
+                    var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
+
+                    var specification = tracker.FinishSpecification(key);
+
+                    if (specification != null)
+                    {
+                        listener.OnSpecificationEnd(specification, result);
+                    }
+                }
+            });
         }
 
         public void OnFatalError(ExceptionResult exceptionResult)
         {
-            listener.OnFatalError(exceptionResult);
+            logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
+
+            logger.Catch(() => listener.OnFatalError(exceptionResult));
         }
     }
 }
