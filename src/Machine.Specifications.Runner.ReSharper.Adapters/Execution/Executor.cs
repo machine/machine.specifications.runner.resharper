@@ -34,14 +34,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             var tracker = new RunTracker(testsToRun);
 
             var listener = new TestExecutionListener(context, token);
-            var adapter = new TestRunListener(listener, cache, tracker);
+            var adapter = new SpecificationAdapterListener(listener, cache, tracker);
+            var loggingListener = new LoggingRunListener(adapter);
 
             var runOptions = RunOptions.Custom.FilterBy(contexts);
 
-            var runner = new AppDomainRunner(adapter, runOptions);
+            var runner = new AppDomainRunner(loggingListener, runOptions);
             runner.RunAssembly(new AssemblyPath(request.Container.Location));
 
-            adapter.Finished.WaitOne();
+            loggingListener.Finished.WaitOne();
         }
     }
 }

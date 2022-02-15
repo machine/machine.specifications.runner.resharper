@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 {
     [TestFixture]
-    public class TestRunListenerTests
+    public class SpecificationAdapterListenerTests
     {
         [Test]
         public void CanNotifyRun()
@@ -18,12 +18,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var cache = new ElementCache(Array.Empty<ISpecificationElement>());
             var tracker = new RunTracker(Array.Empty<ISpecificationElement>());
 
-            var listener = new TestRunListener(sink, cache, tracker);
+            var listener = new SpecificationAdapterListener(sink, cache, tracker);
 
             listener.OnRunStart();
             listener.OnRunEnd();
 
-            Assert.IsTrue(listener.Finished.WaitOne(1));
             sink.Received().OnRunStart();
             sink.Received().OnRunEnd();
         }
@@ -37,7 +36,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var cache = new ElementCache(Array.Empty<ISpecificationElement>());
             var tracker = new RunTracker(Array.Empty<ISpecificationElement>());
 
-            var listener = new TestRunListener(sink, cache, tracker);
+            var listener = new SpecificationAdapterListener(sink, cache, tracker);
 
             var assembly = new AssemblyInfo("Assembly", path);
 
@@ -62,7 +61,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var cache = new ElementCache(elements);
             var tracker = new RunTracker(elements);
 
-            var listener = new TestRunListener(sink, cache, tracker);
+            var listener = new SpecificationAdapterListener(sink, cache, tracker);
 
             var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
 
@@ -87,7 +86,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var cache = new ElementCache(elements);
             var tracker = new RunTracker(elements);
 
-            var listener = new TestRunListener(sink, cache, tracker);
+            var listener = new SpecificationAdapterListener(sink, cache, tracker);
 
             var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
             var specification = new SpecificationInfo(null, null, ElementFixtures.Context.TypeName, ElementFixtures.Specification.FieldName);
@@ -116,7 +115,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var cache = new ElementCache(elements);
             var tracker = new RunTracker(elements);
 
-            var listener = new TestRunListener(sink, cache, tracker);
+            var listener = new SpecificationAdapterListener(sink, cache, tracker);
 
             var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
             var specification1 = new SpecificationInfo(null, null, ElementFixtures.Behavior.TypeName, ElementFixtures.BehaviorSpecification.FieldName);
