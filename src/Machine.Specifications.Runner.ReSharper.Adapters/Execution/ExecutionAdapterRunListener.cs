@@ -5,7 +5,7 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
-    public class SpecificationAdapterListener : ISpecificationRunListener
+    public class ExecutionAdapterRunListener : ISpecificationRunListener
     {
         private readonly IExecutionListener listener;
 
@@ -17,7 +17,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         private IContextElement? currentContext;
 
-        public SpecificationAdapterListener(IExecutionListener listener, ElementCache cache, RunTracker tracker)
+        public ExecutionAdapterRunListener(IExecutionListener listener, ElementCache cache, RunTracker tracker)
         {
             this.listener = listener;
             this.cache = cache;
@@ -67,10 +67,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
                 foreach (var behavior in runningBehaviors)
                 {
-                    listener.OnBehaviorEnd(behavior);
+                    listener.OnBehaviorEnd(behavior, contextInfo.CapturedOutput);
                 }
 
-                listener.OnContextEnd(context);
+                listener.OnContextEnd(context, contextInfo.CapturedOutput);
             }
 
             currentContext = null;
@@ -121,7 +121,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
                 if (specification != null)
                 {
-                    listener.OnSpecificationEnd(specification, result);
+                    listener.OnSpecificationEnd(specification, specificationInfo.CapturedOutput, result);
                 }
             }
             else
@@ -132,7 +132,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
                 if (specification != null)
                 {
-                    listener.OnSpecificationEnd(specification, result);
+                    listener.OnSpecificationEnd(specification, specificationInfo.CapturedOutput, result);
                 }
             }
         }

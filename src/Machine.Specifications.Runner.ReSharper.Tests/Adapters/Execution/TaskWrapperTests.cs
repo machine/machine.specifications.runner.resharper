@@ -11,17 +11,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
     public class TaskWrapperTests
     {
         [Test]
-        public void TaskExists()
-        {
-            var sink = Substitute.For<ITestExecutionSink>();
-            var task = MspecContextRemoteTask.ToServer("ContextType", null, null, null);
-
-            var wrapper = new TaskWrapper(task, sink);
-
-            Assert.True(wrapper.Exists);
-        }
-
-        [Test]
         public void StartsOnce()
         {
             var sink = Substitute.For<ITestExecutionSink>();

@@ -15,15 +15,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         void OnContextStart(IContextElement context);
 
-        void OnContextEnd(IContextElement context);
+        void OnContextEnd(IContextElement context, string capturedOutput);
 
         void OnBehaviorStart(IBehaviorElement behavior);
 
-        void OnBehaviorEnd(IBehaviorElement behavior);
+        void OnBehaviorEnd(IBehaviorElement behavior, string capturedOutput);
 
         void OnSpecificationStart(ISpecificationElement specification);
 
-        void OnSpecificationEnd(ISpecificationElement specification, Result result);
+        void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, Result result);
 
         void OnFatalError(ExceptionResult exceptionResult);
     }

@@ -26,10 +26,10 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters
             var depot = new RemoteTaskDepot(new RemoteTask[]
             {
                 RemoteTaskFixtures.Context,
-                RemoteTaskFixtures.Specification
+                RemoteTaskFixtures.Specification1
             });
 
-            Assert.NotNull(depot[ElementFixtures.Specification]);
+            Assert.NotNull(depot[ElementFixtures.Specification1]);
         }
 
         [Test]
@@ -38,10 +38,10 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters
             var depot = new RemoteTaskDepot(new RemoteTask[]
             {
                 RemoteTaskFixtures.Context,
-                RemoteTaskFixtures.Behavior
+                RemoteTaskFixtures.Behavior1
             });
 
-            Assert.NotNull(depot[ElementFixtures.Behavior]);
+            Assert.NotNull(depot[ElementFixtures.Behavior1]);
         }
 
         [Test]
@@ -50,11 +50,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters
             var depot = new RemoteTaskDepot(new RemoteTask[]
             {
                 RemoteTaskFixtures.Context,
-                RemoteTaskFixtures.Behavior,
-                RemoteTaskFixtures.BehaviorSpecification
+                RemoteTaskFixtures.Behavior1,
+                RemoteTaskFixtures.Behavior1Specification1
             });
 
-            Assert.NotNull(depot[ElementFixtures.BehaviorSpecification]);
+            Assert.NotNull(depot[ElementFixtures.Behavior1Specification1]);
         }
 
         [Test]
@@ -63,36 +63,34 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters
             var depot = new RemoteTaskDepot(new RemoteTask[]
             {
                 RemoteTaskFixtures.Context,
-                RemoteTaskFixtures.Behavior,
-                RemoteTaskFixtures.Specification,
-                RemoteTaskFixtures.BehaviorSpecification
+                RemoteTaskFixtures.Behavior1,
+                RemoteTaskFixtures.Specification1,
+                RemoteTaskFixtures.Behavior1Specification1
             });
 
-            Assert.NotNull(depot[ElementFixtures.Specification]);
+            Assert.NotNull(depot[ElementFixtures.Specification1]);
         }
 
         [Test]
-        public void BoundElementsAreSelected()
+        public void BoundElementsAreRunnable()
         {
             var depot = new RemoteTaskDepot(new RemoteTask[]
             {
                 RemoteTaskFixtures.Context,
-                RemoteTaskFixtures.Behavior,
-                RemoteTaskFixtures.Specification,
-                RemoteTaskFixtures.BehaviorSpecification
+                RemoteTaskFixtures.Behavior1,
+                RemoteTaskFixtures.Specification1,
+                RemoteTaskFixtures.Behavior1Specification1
             });
 
             depot.Bind(ElementFixtures.Context, RemoteTaskFixtures.Context);
-            depot.Bind(ElementFixtures.Behavior, RemoteTaskFixtures.Behavior);
-            depot.Bind(ElementFixtures.Specification, RemoteTaskFixtures.Specification);
-            depot.Bind(ElementFixtures.BehaviorSpecification, RemoteTaskFixtures.BehaviorSpecification);
+            depot.Bind(ElementFixtures.Behavior1, RemoteTaskFixtures.Behavior1);
+            depot.Bind(ElementFixtures.Specification1, RemoteTaskFixtures.Specification1);
+            depot.Bind(ElementFixtures.Behavior1Specification1, RemoteTaskFixtures.Behavior1Specification1);
 
-            var selected = depot.GetSelection().ToArray();
+            var selected = depot.GetTestsToRun().ToArray();
 
-            CollectionAssert.Contains(selected, ElementFixtures.Context);
-            CollectionAssert.Contains(selected, ElementFixtures.Behavior);
-            CollectionAssert.Contains(selected, ElementFixtures.Specification);
-            CollectionAssert.Contains(selected, ElementFixtures.BehaviorSpecification);
+            CollectionAssert.Contains(selected, ElementFixtures.Specification1);
+            CollectionAssert.Contains(selected, ElementFixtures.Behavior1Specification1);
         }
     }
 }

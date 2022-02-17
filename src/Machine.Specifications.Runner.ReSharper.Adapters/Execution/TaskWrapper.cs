@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
@@ -28,8 +27,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             this.task = task;
             this.sink = sink;
         }
-
-        public bool Exists => task != null;
 
         public void Starting()
         {
@@ -83,8 +80,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             }
         }
 
-        public void Finished(bool childTestsFailed = false, TimeSpan? elapsed = null)
+        public void Finished(bool childTestsFailed = false)
         {
+            watch.Stop();
+
             if (result == TestResult.Inconclusive)
             {
                 result = childTestsFailed
@@ -103,13 +102,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             if (task != null)
             {
-                if (elapsed != null && elapsed.Value >= TimeSpan.Zero)
-                {
-                    sink.TestDuration(task, elapsed.Value);
-                }
-
+                sink.TestDuration(task, watch.Elapsed);
                 sink.TestFinished(task, message, result);
             }
+        }
+
+        public void Reset()
+        {
+            finished = 0;
+            result = TestResult.Inconclusive;
+            message = string.Empty;
         }
     }
 }

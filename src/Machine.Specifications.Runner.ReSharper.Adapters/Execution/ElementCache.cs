@@ -18,13 +18,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
         {
             var types = specifications
                 .Where(x => x.Behavior != null)
-                .Select(x => x.Behavior!.TypeName);
+                .Select(x => x.Behavior!.TypeName)
+                .Distinct();
 
             behaviorTypes = new HashSet<string>(types);
 
             behaviorsByContext = specifications
                 .Where(x => x.Behavior != null)
                 .Select(x => x.Behavior!)
+                .Distinct()
                 .ToLookup(x => x!.Context);
 
             specificationsByContext = specifications

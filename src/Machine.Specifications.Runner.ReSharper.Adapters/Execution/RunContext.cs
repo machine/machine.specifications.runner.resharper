@@ -22,11 +22,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             this.sink = sink;
         }
 
-        public IEnumerable<IMspecElement> GetSelection()
-        {
-            return depot.GetSelection();
-        }
-
         public IEnumerable<ISpecificationElement> GetTestsToRun()
         {
             return depot.GetTestsToRun();

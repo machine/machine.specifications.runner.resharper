@@ -19,15 +19,31 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var depot = new RemoteTaskDepot(new RemoteTask[]
             {
                 RemoteTaskFixtures.Context,
-                RemoteTaskFixtures.Behavior,
-                RemoteTaskFixtures.Specification,
-                RemoteTaskFixtures.BehaviorSpecification
+                RemoteTaskFixtures.Behavior1,
+                RemoteTaskFixtures.Specification1,
+                RemoteTaskFixtures.Behavior1Specification1
             });
 
             var context = new RunContext(depot, sink);
 
-            Assert.NotNull(context.GetTask(ElementFixtures.Specification));
+            Assert.That(context.GetTask(ElementFixtures.Specification1), Is.Not.Null);
             sink.DidNotReceive().DynamicTestDiscovered(Arg.Any<RemoteTask>());
+        }
+
+        [Test]
+        public void TaskNotInDepotIsReportedToSink()
+        {
+            var sink = Substitute.For<ITestExecutionSink>();
+
+            var depot = new RemoteTaskDepot(new RemoteTask[]
+            {
+                RemoteTaskFixtures.Context
+            });
+
+            var context = new RunContext(depot, sink);
+
+            Assert.That(context.GetTask(ElementFixtures.Specification1), Is.Not.Null);
+            sink.Received().DynamicTestDiscovered(Arg.Any<RemoteTask>());
         }
     }
 }

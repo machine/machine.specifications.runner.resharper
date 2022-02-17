@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 {
     [TestFixture]
-    public class SpecificationAdapterListenerTests
+    public class ExecutionAdapterRunListenerTests
     {
         [Test]
         public void CanNotifyRun()
@@ -18,7 +18,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var cache = new ElementCache(Array.Empty<ISpecificationElement>());
             var tracker = new RunTracker(Array.Empty<ISpecificationElement>());
 
-            var listener = new SpecificationAdapterListener(sink, cache, tracker);
+            var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
             listener.OnRunStart();
             listener.OnRunEnd();
@@ -36,7 +36,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var cache = new ElementCache(Array.Empty<ISpecificationElement>());
             var tracker = new RunTracker(Array.Empty<ISpecificationElement>());
 
-            var listener = new SpecificationAdapterListener(sink, cache, tracker);
+            var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
             var assembly = new AssemblyInfo("Assembly", path);
 
@@ -53,15 +53,15 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var sink = Substitute.For<IExecutionListener>();
             var elements = new ISpecificationElement[]
             {
-                ElementFixtures.Specification,
-                ElementFixtures.BehaviorSpecification,
-                ElementFixtures.SecondBehaviorSpecification
+                ElementFixtures.Specification1,
+                ElementFixtures.Behavior1Specification1,
+                ElementFixtures.Behavior1Specification2
             };
 
             var cache = new ElementCache(elements);
             var tracker = new RunTracker(elements);
 
-            var listener = new SpecificationAdapterListener(sink, cache, tracker);
+            var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
             var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
 
@@ -69,7 +69,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnContextEnd(context);
 
             sink.Received().OnContextStart(ElementFixtures.Context);
-            sink.Received().OnContextEnd(ElementFixtures.Context);
+            sink.Received().OnContextEnd(ElementFixtures.Context, Arg.Any<string>());
         }
 
         [Test]
@@ -78,18 +78,18 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var sink = Substitute.For<IExecutionListener>();
             var elements = new ISpecificationElement[]
             {
-                ElementFixtures.Specification,
-                ElementFixtures.BehaviorSpecification,
-                ElementFixtures.SecondBehaviorSpecification
+                ElementFixtures.Specification1,
+                ElementFixtures.Behavior1Specification1,
+                ElementFixtures.Behavior1Specification2
             };
 
             var cache = new ElementCache(elements);
             var tracker = new RunTracker(elements);
 
-            var listener = new SpecificationAdapterListener(sink, cache, tracker);
+            var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
             var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
-            var specification = new SpecificationInfo(null, null, ElementFixtures.Context.TypeName, ElementFixtures.Specification.FieldName);
+            var specification = new SpecificationInfo(null, null, ElementFixtures.Context.TypeName, ElementFixtures.Specification1.FieldName);
 
             listener.OnContextStart(context);
             listener.OnSpecificationStart(specification);
@@ -97,9 +97,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnContextEnd(context);
 
             sink.Received().OnContextStart(ElementFixtures.Context);
-            sink.Received().OnSpecificationStart(ElementFixtures.Specification);
-            sink.Received().OnSpecificationEnd(ElementFixtures.Specification, Arg.Any<Result>());
-            sink.Received().OnContextEnd(ElementFixtures.Context);
+            sink.Received().OnSpecificationStart(ElementFixtures.Specification1);
+            sink.Received().OnSpecificationEnd(ElementFixtures.Specification1, Arg.Any<string>(), Arg.Any<Result>());
+            sink.Received().OnContextEnd(ElementFixtures.Context, Arg.Any<string>());
         }
 
         [Test]
@@ -108,18 +108,18 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             var sink = Substitute.For<IExecutionListener>();
             var elements = new ISpecificationElement[]
             {
-                ElementFixtures.BehaviorSpecification,
-                ElementFixtures.SecondBehaviorSpecification
+                ElementFixtures.Behavior1Specification1,
+                ElementFixtures.Behavior1Specification2
             };
 
             var cache = new ElementCache(elements);
             var tracker = new RunTracker(elements);
 
-            var listener = new SpecificationAdapterListener(sink, cache, tracker);
+            var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
             var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
-            var specification1 = new SpecificationInfo(null, null, ElementFixtures.Behavior.TypeName, ElementFixtures.BehaviorSpecification.FieldName);
-            var specification2 = new SpecificationInfo(null, null, ElementFixtures.Behavior.TypeName, ElementFixtures.SecondBehaviorSpecification.FieldName);
+            var specification1 = new SpecificationInfo(null, null, ElementFixtures.Behavior1.TypeName, ElementFixtures.Behavior1Specification1.FieldName);
+            var specification2 = new SpecificationInfo(null, null, ElementFixtures.Behavior1.TypeName, ElementFixtures.Behavior1Specification2.FieldName);
 
             listener.OnContextStart(context);
             listener.OnSpecificationStart(specification1);
@@ -129,13 +129,13 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnContextEnd(context);
 
             sink.Received().OnContextStart(ElementFixtures.Context);
-            sink.Received().OnBehaviorStart(ElementFixtures.Behavior);
-            sink.Received().OnSpecificationStart(ElementFixtures.BehaviorSpecification);
-            sink.Received().OnSpecificationEnd(ElementFixtures.BehaviorSpecification, Arg.Any<Result>());
-            sink.Received().OnSpecificationStart(ElementFixtures.SecondBehaviorSpecification);
-            sink.Received().OnSpecificationEnd(ElementFixtures.SecondBehaviorSpecification, Arg.Any<Result>());
-            sink.Received().OnBehaviorEnd(ElementFixtures.Behavior);
-            sink.Received().OnContextEnd(ElementFixtures.Context);
+            sink.Received().OnBehaviorStart(ElementFixtures.Behavior1);
+            sink.Received().OnSpecificationStart(ElementFixtures.Behavior1Specification1);
+            sink.Received().OnSpecificationEnd(ElementFixtures.Behavior1Specification1, Arg.Any<string>(), Arg.Any<Result>());
+            sink.Received().OnSpecificationStart(ElementFixtures.Behavior1Specification2);
+            sink.Received().OnSpecificationEnd(ElementFixtures.Behavior1Specification2, Arg.Any<string>(), Arg.Any<Result>());
+            sink.Received().OnBehaviorEnd(ElementFixtures.Behavior1, Arg.Any<string>());
+            sink.Received().OnContextEnd(ElementFixtures.Context, Arg.Any<string>());
         }
     }
 }

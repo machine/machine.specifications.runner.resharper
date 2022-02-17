@@ -6,7 +6,7 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters;
 using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.ReSharper.Tasks;
+using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -50,20 +50,17 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Discovery
 
         private IEnumerable<ISpecificationElement> GetDiscoveredElements()
         {
-            var context = new ContextElement("Namespace.Context", string.Empty);
-            var behavior = new BehaviorElement(context, "Namespace.ABehavior", "behaves_like");
-
-            yield return new SpecificationElement(context, "should");
-            yield return new SpecificationElement(context, "should_behave", behavior);
-            yield return new SpecificationElement(context, "should_not_behave", behavior);
+            yield return ElementFixtures.Specification1;
+            yield return ElementFixtures.Behavior1Specification1;
+            yield return ElementFixtures.Behavior1Specification2;
         }
 
         private IEnumerable<RemoteTask> GetReportedTasks()
         {
-            yield return MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
-            yield return MspecSpecificationRemoteTask.ToServer("Namespace.Context", "should", null, null, null, null);
-            yield return MspecBehaviorSpecificationRemoteTask.ToServer("Namespace.Context.behaves_like", "Namespace.Context", "behaves_like", null);
-            yield return MspecSpecificationRemoteTask.ToServer("Namespace.Context", "should_behave", "Namespace.ABehavior", null, null, null);
+            yield return RemoteTaskFixtures.Context;
+            yield return RemoteTaskFixtures.Specification1;
+            yield return RemoteTaskFixtures.Behavior1;
+            yield return RemoteTaskFixtures.Behavior1Specification1;
         }
     }
 }

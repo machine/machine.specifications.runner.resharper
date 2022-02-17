@@ -33,8 +33,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             var cache = new ElementCache(testsToRun);
             var tracker = new RunTracker(testsToRun);
 
-            var listener = new TestExecutionListener(context, token);
-            var adapter = new SpecificationAdapterListener(listener, cache, tracker);
+            var listener = new TestExecutionListener(context, cache, token);
+            var adapter = new ExecutionAdapterRunListener(listener, cache, tracker);
             var loggingListener = new LoggingRunListener(adapter);
 
             var runOptions = RunOptions.Custom.FilterBy(contexts);

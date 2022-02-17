@@ -50,9 +50,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private static MspecRemoteTask FromSpecification(ISpecificationElement specification)
         {
-            var behaviorType = specification.Behavior?.TypeName;
+            if (specification.Behavior != null)
+            {
+                return MspecBehaviorSpecificationRemoteTask.ToServer(
+                    $"{specification.Context.TypeName}.{specification.Behavior.FieldName}",
+                    specification.Context.TypeName,
+                    specification.FieldName,
+                    null);
+            }
 
-            return MspecSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, behaviorType, null, null, null);
+            return MspecSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, null, null, null, null);
         }
     }
 }
