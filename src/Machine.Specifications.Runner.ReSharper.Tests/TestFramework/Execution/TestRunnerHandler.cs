@@ -12,7 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
 
         private readonly IAssemblyResolver resolver;
 
-        private TestAdapterInfo loader;
+        private TestAdapterInfo? loader;
 
         public TestRunnerHandler(IMessageBroker broker, IAssemblyResolver resolver)
         {
@@ -40,7 +40,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
         private ITestExecutor CreateTestExecutor()
         {
             var type = resolver
-                .LoadFrom(loader.Executor.Assembly)
+                .LoadFrom(loader!.Executor.Assembly)
                 .GetType(loader.Executor.TypeName);
 
             return (ITestExecutor) Activator.CreateInstance(type);

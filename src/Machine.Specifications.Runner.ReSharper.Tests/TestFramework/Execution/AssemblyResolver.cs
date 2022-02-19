@@ -11,7 +11,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
     {
         public Type GetType(string fullyQualifiedName)
         {
-            return Type.GetType(fullyQualifiedName);
+            return Type.GetType(fullyQualifiedName)!;
         }
 
         public Assembly LoadFrom(string assemblyFile)

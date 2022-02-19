@@ -13,6 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Source
         [TestCase("SimpleSpec.cs")]
         [TestCase("IgnoredSpec.cs")]
         [TestCase("IgnoredContext.cs")]
+        [TestCase("BehaviorSpecs.cs")]
         public void TestFile(string filename)
         {
             var path = GetTestDataFilePath2(filename);

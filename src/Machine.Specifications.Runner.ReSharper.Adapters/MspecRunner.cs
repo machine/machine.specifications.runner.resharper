@@ -20,7 +20,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             logger.Info("Exploration started");
 
             var depot = new RemoteTaskDepot(Array.Empty<RemoteTask>());
-            var controller = new MspecController(discoveryToken.Token);
+            var controller = new MspecController(request, discoveryToken.Token);
 
             var discoverer = new Discoverer(request, controller, discoverySink, depot, discoveryToken.Token);
             discoverer.Discover();
@@ -38,7 +38,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             logger.Info("Execution started");
 
             var depot = new RemoteTaskDepot(request.Selection);
-            var controller = new MspecController(discoveryToken.Token);
+            var controller = new MspecController(request, discoveryToken.Token);
 
             var discoverer = new Discoverer(request, controller, discoverySink, depot, discoveryToken.Token);
             discoverer.Discover();

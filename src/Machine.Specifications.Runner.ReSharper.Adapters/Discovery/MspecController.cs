@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Xml.Linq;
+using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.Utility;
 
@@ -10,18 +12,22 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 {
     public class MspecController : IMspecController
     {
+        private readonly TestRequest request;
+
         private readonly CancellationToken token;
 
         private readonly object controller;
 
         private readonly MethodInfo invoker;
 
-        public MspecController(CancellationToken token)
+        public MspecController(TestRequest request, CancellationToken token)
         {
+            this.request = request;
             this.token = token;
-            var controllerType = Type.GetType("Machine.Specifications.Controller.Controller, Machine.Specifications");
 
-            invoker = controllerType.GetMethod("DiscoverSpecs", BindingFlags.Instance | BindingFlags.Public);
+            var controllerType = GetControllerType();
+
+            invoker = controllerType!.GetMethod("DiscoverSpecs", BindingFlags.Instance | BindingFlags.Public)!;
             controller = Activator.CreateInstance(controllerType, (Action<string>) Listener);
         }
 
@@ -40,6 +46,23 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
             }
 
             sink.OnDiscoveryCompleted();
+        }
+
+        private Type? GetControllerType()
+        {
+            var type = Type.GetType("Machine.Specifications.Controller.Controller, Machine.Specifications");
+
+            if (type == null)
+            {
+                var path = Path.GetDirectoryName(request.Container.Location);
+                var assemblyPath = Path.Combine(path!, "Machine.Specifications.dll");
+
+                var assembly = Assembly.LoadFile(assemblyPath);
+
+                type = assembly.GetType("Machine.Specifications.Controller.Controller");
+            }
+
+            return type;
         }
 
         private IEnumerable<ISpecificationElement> GetSpecifications(Assembly assembly, string xml)

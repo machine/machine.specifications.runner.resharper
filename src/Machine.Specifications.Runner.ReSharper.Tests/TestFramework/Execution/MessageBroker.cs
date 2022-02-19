@@ -75,7 +75,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
                     var messageType = asyncHandler.GetGenericArguments().First();
                     var method = asyncHandler.GetMethod("Execute", new[] {messageType});
 
-                    messageHandlers[messageType] = new MessageHandler(handler, method);
+                    messageHandlers[messageType] = new MessageHandler(handler, method!);
                 }
             }
         }

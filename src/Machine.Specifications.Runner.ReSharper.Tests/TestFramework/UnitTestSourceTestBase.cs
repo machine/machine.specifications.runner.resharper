@@ -37,7 +37,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
             {
                 var observer = new TestElementObserverOnFile(transaction.Observer);
 
-                fileExplorer.ProcessFile(file, observer, InterruptableReadActivity.Empty);
+                fileExplorer.ProcessFile(file!, observer, InterruptableReadActivity.Empty);
 
                 DumpElements(transaction.Elements, projectFile.Name + ".source");
             }

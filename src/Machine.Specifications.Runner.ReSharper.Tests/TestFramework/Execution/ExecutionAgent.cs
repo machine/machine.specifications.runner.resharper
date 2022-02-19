@@ -30,7 +30,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
 
         public IMessageBroker MessageBroker { get; }
 
-        public object ActivationOptions { get; } = new object();
+        public object ActivationOptions { get; } = new();
 
         public ITestRunnerExecutionContext Context { get; }
 
