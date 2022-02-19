@@ -20,6 +20,15 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Fixtures
                 null,
                 null);
 
+        public static MspecSpecificationRemoteTask Specification2 { get; } =
+            MspecSpecificationRemoteTask.ToServer(
+                ElementFixtures.Context.TypeName,
+                ElementFixtures.Specification2.FieldName,
+                null,
+                null,
+                null,
+                null);
+
         public static MspecSpecificationRemoteTask Behavior1 { get; } =
             MspecSpecificationRemoteTask.ToServer(
                 ElementFixtures.Context.TypeName,
