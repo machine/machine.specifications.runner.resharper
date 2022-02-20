@@ -17,6 +17,7 @@ using JetBrains.ReSharper.UnitTestFramework.Execution.Launch;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.Util;
+using Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
 {
@@ -60,7 +61,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
 
                 launch.Run().Wait(lifetime);
 
-                WriteResults(elements, output);
+                WriteResults(output);
             });
         }
 
@@ -87,11 +88,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
             }
         }
 
-        private void WriteResults(IUnitTestElement[] elements, TextWriter output)
+        private void WriteResults(TextWriter output)
         {
+            var sink = Solution.GetComponent<IDynamicTestSink>();
             var results = Solution.GetComponent<IUnitTestResultManager>();
 
-            foreach (var element in elements)
+            foreach (var element in sink.GetUnitTestElements())
             {
                 var result = results.GetResult(element);
 
@@ -111,7 +113,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
                 var source = FileSystemPath.Parse(assembly);
                 var target = project.Location.Directory.Combine(source.Name);
 
-                if (source.ExistsFile)
+                if (source.ExistsFile && !target.ExistsFile)
                 {
                     source.CopyFile(target.ToNativeFileSystemPath(), true);
                 }

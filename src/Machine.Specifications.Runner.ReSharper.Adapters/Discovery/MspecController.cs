@@ -71,14 +71,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
             var cache = new DiscoveryCache();
 
-            foreach (var contextElement in document.Elements("contextinfo"))
+            foreach (var contextElement in document.Descendants("contextinfo"))
             {
                 token.ThrowIfCancellationRequested();
 
                 var context = ContextInfo.Parse(contextElement.ToString())
                     .ToElement();
 
-                foreach (var specificationElement in contextElement.Elements("specifications/specificationinfo"))
+                foreach (var specificationElement in contextElement.Descendants("specificationinfo"))
                 {
                     token.ThrowIfCancellationRequested();
 

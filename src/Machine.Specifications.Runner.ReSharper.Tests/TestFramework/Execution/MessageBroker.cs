@@ -13,7 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
     {
         private readonly TestRunnerHandler testRunnerHandler;
 
-        private readonly Dictionary<Type, MessageHandler> messageHandlers = new Dictionary<Type, MessageHandler>();
+        private readonly Dictionary<Type, MessageHandler> messageHandlers = new();
 
         public MessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers)
         {

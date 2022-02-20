@@ -41,11 +41,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
 
         private static MspecRemoteTask FromBehavior(IBehaviorElement behavior)
         {
-            return MspecBehaviorSpecificationRemoteTask.ToServer(
-                $"{behavior.Context.TypeName}.{behavior.FieldName}",
-                behavior.Context.TypeName,
-                behavior.FieldName,
-                null);
+            return MspecSpecificationRemoteTask.ToServer(behavior.Context.TypeName, behavior.FieldName, behavior.TypeName, null, null, null);
         }
 
         private static MspecRemoteTask FromSpecification(ISpecificationElement specification)

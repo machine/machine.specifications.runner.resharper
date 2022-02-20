@@ -4,6 +4,7 @@ using JetBrains.Application.Components;
 using JetBrains.Lifetimes;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 using JetBrains.Util;
 
@@ -47,6 +48,23 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
 
             await MessageBroker.Initialize(new RemoteAgentInitializationRequest(loader)).ConfigureAwait(false);
             await MessageBroker.RunTests(new TestRunRequest(container, tasks)).ConfigureAwait(false);
+
+            ReportUnitTestElements(taskDepot);
+        }
+
+        private void ReportUnitTestElements(ITestRunnerRemoteTaskDepot depot)
+        {
+            var sink = Context.Container.GetComponent<IDynamicTestSink>();
+
+            sink.Reset();
+
+            using (UT.ReadLock())
+            {
+                foreach (var element in depot.Values)
+                {
+                    sink.AddUnitTestElement(element);
+                }
+            }
         }
     }
 }

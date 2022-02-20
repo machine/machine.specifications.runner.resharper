@@ -1,6 +1,6 @@
 ﻿using Machine.Specifications;
 
-namespace Exploration
+namespace Runner.FailingBehaviors
 {
     public interface IVehicle
     {
