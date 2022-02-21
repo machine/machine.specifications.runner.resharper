@@ -18,6 +18,6 @@
 
         void OnSpecificationEnd(TestSpecificationInfo specificationInfo, TestRunResult runResult);
 
-        void OnFatalError(TestError error);
+        void OnFatalError(TestError? error);
     }
 }

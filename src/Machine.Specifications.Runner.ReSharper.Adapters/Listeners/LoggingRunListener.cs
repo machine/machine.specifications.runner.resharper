@@ -69,9 +69,9 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
             logger.Catch(() => listener.OnSpecificationEnd(specificationInfo, runResult));
         }
 
-        public void OnFatalError(TestError error)
+        public void OnFatalError(TestError? error)
         {
-            logger.Trace($"OnFatalError: {error.FullTypeName}");
+            logger.Trace($"OnFatalError: {error?.FullTypeName}");
 
             logger.Catch(() => listener.OnFatalError(error));
         }

@@ -137,7 +137,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             }
         }
 
-        public void OnFatalError(TestError error)
+        public void OnFatalError(TestError? error)
         {
             listener.OnFatalError(error);
         }

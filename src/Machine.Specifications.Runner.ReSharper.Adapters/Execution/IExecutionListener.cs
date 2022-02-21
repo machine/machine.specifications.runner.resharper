@@ -25,6 +25,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, TestRunResult runResult);
 
-        void OnFatalError(TestError error);
+        void OnFatalError(TestError? error);
     }
 }
