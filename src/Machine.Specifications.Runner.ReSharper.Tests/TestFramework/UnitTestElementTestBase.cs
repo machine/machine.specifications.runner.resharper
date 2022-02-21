@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Reflection;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
@@ -13,6 +15,22 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
     [TestFixture]
     public abstract class UnitTestElementTestBase
     {
+        [SetUp]
+        public void SetUp()
+        {
+            var factoryMethod = typeof(Logger).GetProperty(nameof(Logger.Factory), BindingFlags.Static | BindingFlags.Public);
+
+            if (factoryMethod != null)
+            {
+                var factory = factoryMethod.GetValue(null);
+
+                if (factory == null)
+                {
+                    factoryMethod.SetValue(null, new LoggerFactory());
+                }
+            }
+        }
+
         protected void WithDiscovery(Action action)
         {
             var project = Substitute.For<IProject>();

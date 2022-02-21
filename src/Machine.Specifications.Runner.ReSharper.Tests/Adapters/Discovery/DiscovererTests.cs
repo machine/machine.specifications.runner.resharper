@@ -7,13 +7,14 @@ using Machine.Specifications.Runner.ReSharper.Adapters;
 using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
+using Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 using NSubstitute;
 using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Discovery
 {
     [TestFixture]
-    public class DiscovererTests
+    public class DiscovererTests : UnitTestElementTestBase
     {
         [Test]
         public void UnreportedBehaviorsAreAddedToDepot()
