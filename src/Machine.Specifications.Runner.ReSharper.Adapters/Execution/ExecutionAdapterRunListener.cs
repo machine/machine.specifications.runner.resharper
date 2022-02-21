@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.Utility;
+using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
-    public class ExecutionAdapterRunListener : ISpecificationRunListener
+    public class ExecutionAdapterRunListener : IRunListener
     {
         private readonly IExecutionListener listener;
 
@@ -24,12 +24,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             this.tracker = tracker;
         }
 
-        public void OnAssemblyStart(AssemblyInfo assemblyInfo)
+        public void OnAssemblyStart(TestAssemblyInfo assemblyInfo)
         {
             listener.OnAssemblyStart(assemblyInfo.Location);
         }
 
-        public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
+        public void OnAssemblyEnd(TestAssemblyInfo assemblyInfo)
         {
             listener.OnAssemblyEnd(assemblyInfo.Location);
         }
@@ -44,25 +44,25 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             listener.OnRunEnd();
         }
 
-        public void OnContextStart(ContextInfo contextInfo)
+        public void OnContextStart(TestContextInfo contextInfo)
         {
-            var context = tracker.StartContext(contextInfo.TypeName);
+            var element = tracker.StartContext(contextInfo.TypeName);
 
-            currentContext = context;
+            currentContext = element;
 
-            if (context != null)
+            if (element != null)
             {
-                listener.OnContextStart(context);
+                listener.OnContextStart(element);
             }
         }
 
-        public void OnContextEnd(ContextInfo contextInfo)
+        public void OnContextEnd(TestContextInfo contextInfo)
         {
-            var context = tracker.FinishContext(contextInfo.TypeName);
+            var element = tracker.FinishContext(contextInfo.TypeName);
 
-            if (context != null)
+            if (element != null)
             {
-                var runningBehaviors = cache.GetBehaviors(context)
+                var runningBehaviors = cache.GetBehaviors(element)
                     .Where(x => behaviors.Contains(x));
 
                 foreach (var behavior in runningBehaviors)
@@ -70,13 +70,13 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
                     listener.OnBehaviorEnd(behavior, contextInfo.CapturedOutput);
                 }
 
-                listener.OnContextEnd(context, contextInfo.CapturedOutput);
+                listener.OnContextEnd(element, contextInfo.CapturedOutput);
             }
 
             currentContext = null;
         }
 
-        public void OnSpecificationStart(SpecificationInfo specificationInfo)
+        public void OnSpecificationStart(TestSpecificationInfo specificationInfo)
         {
             var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
 
@@ -84,32 +84,32 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             {
                 var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-                var specification = tracker.StartSpecification(key);
+                var element = tracker.StartSpecification(key);
 
-                if (specification?.Behavior != null && behaviors.Add(specification.Behavior))
+                if (element?.Behavior != null && behaviors.Add(element.Behavior))
                 {
-                    listener.OnBehaviorStart(specification.Behavior);
+                    listener.OnBehaviorStart(element.Behavior);
                 }
 
-                if (specification != null)
+                if (element != null)
                 {
-                    listener.OnSpecificationStart(specification);
+                    listener.OnSpecificationStart(element);
                 }
             }
             else
             {
                 var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-                var specification = tracker.StartSpecification(key);
+                var element = tracker.StartSpecification(key);
 
-                if (specification != null)
+                if (element != null)
                 {
-                    listener.OnSpecificationStart(specification);
+                    listener.OnSpecificationStart(element);
                 }
             }
         }
 
-        public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
+        public void OnSpecificationEnd(TestSpecificationInfo specificationInfo, TestRunResult runResult)
         {
             var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
 
@@ -117,29 +117,29 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             {
                 var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-                var specification = tracker.FinishSpecification(key);
+                var element = tracker.FinishSpecification(key);
 
-                if (specification != null)
+                if (element != null)
                 {
-                    listener.OnSpecificationEnd(specification, specificationInfo.CapturedOutput, result);
+                    listener.OnSpecificationEnd(element, specificationInfo.CapturedOutput, runResult);
                 }
             }
             else
             {
                 var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-                var specification = tracker.FinishSpecification(key);
+                var element = tracker.FinishSpecification(key);
 
-                if (specification != null)
+                if (element != null)
                 {
-                    listener.OnSpecificationEnd(specification, specificationInfo.CapturedOutput, result);
+                    listener.OnSpecificationEnd(element, specificationInfo.CapturedOutput, runResult);
                 }
             }
         }
 
-        public void OnFatalError(ExceptionResult exceptionResult)
+        public void OnFatalError(TestError error)
         {
-            listener.OnFatalError(exceptionResult);
+            listener.OnFatalError(error);
         }
     }
 }

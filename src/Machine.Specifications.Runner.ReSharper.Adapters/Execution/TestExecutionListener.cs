@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
+using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.Utility;
+using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
@@ -23,12 +24,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         private readonly HashSet<ISpecificationElement> failed = new();
 
+        private readonly ManualResetEvent waitEvent = new(false);
+
         public TestExecutionListener(RunContext runContext, ElementCache cache, CancellationToken token)
         {
             this.runContext = runContext;
             this.cache = cache;
             this.token = token;
         }
+
+        public WaitHandle Finished => waitEvent;
 
         public void OnAssemblyStart(string assemblyLocation)
         {
@@ -50,6 +55,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
         public void OnRunEnd()
         {
             logger.Trace("OnRunEnd");
+
+            waitEvent.Set();
         }
 
         public void OnContextStart(IContextElement context)
@@ -136,7 +143,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             runContext.GetTask(specification).Starting();
         }
 
-        public void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, Result result)
+        public void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, TestRunResult runResult)
         {
             logger.Trace($"OnSpecificationEnd: {MspecReSharperId.Self(specification)}");
 
@@ -149,33 +156,33 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             task.Output(capturedOutput);
 
-            if (result.Status == Status.Failing)
+            if (runResult.Status == TestStatus.Failing)
             {
                 failed.Add(specification);
 
-                task.Failed(result.Exception.GetExceptions(), result.Exception.GetExceptionMessage());
+                task.Failed(runResult.Exception?.Exceptions ?? Array.Empty<ExceptionInfo>(), runResult.Exception?.ExceptionMessage ?? string.Empty);
                 task.Finished();
             }
-            else if (result.Status == Status.Passing)
+            else if (runResult.Status == TestStatus.Passing)
             {
                 passed.Add(specification);
 
                 task.Passed();
                 task.Finished();
             }
-            else if (result.Status == Status.NotImplemented)
+            else if (runResult.Status == TestStatus.NotImplemented)
             {
                 task.Skipped("Not implemented");
             }
-            else if (result.Status == Status.Ignored)
+            else if (runResult.Status == TestStatus.Ignored)
             {
                 task.Skipped();
             }
         }
 
-        public void OnFatalError(ExceptionResult exceptionResult)
+        public void OnFatalError(TestError error)
         {
-            logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
+            logger.Trace($"OnFatalError: {error.FullTypeName}");
 
             if (token.IsCancellationRequested)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
@@ -6,9 +7,9 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
-    public static class ExceptionResultExtensions
+    internal static class ExceptionResultExtensions
     {
-        public static IEnumerable<ExceptionResult> Flatten(this ExceptionResult result)
+        private static IEnumerable<ExceptionResult> Flatten(this ExceptionResult result)
         {
             var exception = result;
 
@@ -23,15 +24,25 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             }
         }
 
-        public static ExceptionInfo[] GetExceptions(this ExceptionResult result)
+        public static ExceptionInfo[] GetExceptions(this ExceptionResult? result)
         {
+            if (result == null)
+            {
+                return Array.Empty<ExceptionInfo>();
+            }
+
             return result.Flatten()
                 .Select(x => new ExceptionInfo(x.FullTypeName, x.Message, x.StackTrace))
                 .ToArray();
         }
 
-        public static string GetExceptionMessage(this ExceptionResult result)
+        public static string GetExceptionMessage(this ExceptionResult? result)
         {
+            if (result == null)
+            {
+                return string.Empty;
+            }
+
             var exception = result.Flatten().FirstOrDefault();
 
             return exception != null

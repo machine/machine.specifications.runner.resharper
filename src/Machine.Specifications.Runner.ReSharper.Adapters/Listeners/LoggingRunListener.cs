@@ -1,32 +1,26 @@
-﻿using System.Threading;
-using JetBrains.ReSharper.TestRunner.Abstractions;
-using Machine.Specifications.Runner.Utility;
+﻿using JetBrains.ReSharper.TestRunner.Abstractions;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
 {
-    public class LoggingRunListener : ISpecificationRunListener
+    public class LoggingRunListener : IRunListener
     {
-        private readonly ISpecificationRunListener listener;
+        private readonly IRunListener listener;
 
         private readonly ILogger logger = Logger.GetLogger<LoggingRunListener>();
 
-        private readonly ManualResetEvent waitEvent = new(false);
-
-        public LoggingRunListener(ISpecificationRunListener listener)
+        public LoggingRunListener(IRunListener listener)
         {
             this.listener = listener;
         }
 
-        public WaitHandle Finished => waitEvent;
-
-        public void OnAssemblyStart(AssemblyInfo assemblyInfo)
+        public void OnAssemblyStart(TestAssemblyInfo assemblyInfo)
         {
             logger.Trace($"OnAssemblyStart: {assemblyInfo.Location}");
 
             logger.Catch(() => listener.OnAssemblyStart(assemblyInfo));
         }
 
-        public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
+        public void OnAssemblyEnd(TestAssemblyInfo assemblyInfo)
         {
             logger.Trace($"OnAssemblyEnd: {assemblyInfo.Location}");
 
@@ -45,43 +39,41 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             logger.Trace("OnRunEnd:");
 
             logger.Catch(() => listener.OnRunEnd());
-
-            waitEvent.Set();
         }
 
-        public void OnContextStart(ContextInfo contextInfo)
+        public void OnContextStart(TestContextInfo contextInfo)
         {
             logger.Trace($"OnContextStart: {contextInfo.TypeName}");
 
             logger.Catch(() => listener.OnContextStart(contextInfo));
         }
 
-        public void OnContextEnd(ContextInfo contextInfo)
+        public void OnContextEnd(TestContextInfo contextInfo)
         {
             logger.Trace($"OnContextEnd: {contextInfo.TypeName}");
 
             logger.Catch(() => listener.OnContextEnd(contextInfo));
         }
 
-        public void OnSpecificationStart(SpecificationInfo specificationInfo)
+        public void OnSpecificationStart(TestSpecificationInfo specificationInfo)
         {
             logger.Trace($"OnSpecificationStart: {specificationInfo.ContainingType}.{specificationInfo.FieldName}");
 
             logger.Catch(() => listener.OnSpecificationStart(specificationInfo));
         }
 
-        public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
+        public void OnSpecificationEnd(TestSpecificationInfo specificationInfo, TestRunResult runResult)
         {
             logger.Trace($"OnSpecificationEnd: {specificationInfo.ContainingType}.{specificationInfo.FieldName}");
 
-            logger.Catch(() => listener.OnSpecificationEnd(specificationInfo, result));
+            logger.Catch(() => listener.OnSpecificationEnd(specificationInfo, runResult));
         }
 
-        public void OnFatalError(ExceptionResult exceptionResult)
+        public void OnFatalError(TestError error)
         {
-            logger.Trace($"OnFatalError: {exceptionResult.FullTypeName}");
+            logger.Trace($"OnFatalError: {error.FullTypeName}");
 
-            logger.Catch(() => listener.OnFatalError(exceptionResult));
+            logger.Catch(() => listener.OnFatalError(error));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.Utility;
+using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 {
@@ -23,8 +23,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         void OnSpecificationStart(ISpecificationElement specification);
 
-        void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, Result result);
+        void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, TestRunResult runResult);
 
-        void OnFatalError(ExceptionResult exceptionResult);
+        void OnFatalError(TestError error);
     }
 }

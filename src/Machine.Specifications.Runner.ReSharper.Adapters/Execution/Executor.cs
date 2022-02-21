@@ -2,6 +2,7 @@
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
@@ -36,13 +37,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             var listener = new TestExecutionListener(context, cache, token);
             var adapter = new ExecutionAdapterRunListener(listener, cache, tracker);
             var loggingListener = new LoggingRunListener(adapter);
+            var machineAdapter = new AdapterListener(loggingListener);
 
             var runOptions = RunOptions.Custom.FilterBy(contexts);
 
-            var runner = new AppDomainRunner(loggingListener, runOptions);
+            var runner = new AppDomainRunner(machineAdapter, runOptions);
             runner.RunAssembly(new AssemblyPath(request.Container.Location));
 
-            loggingListener.Finished.WaitOne();
+            listener.Finished.WaitOne();
         }
     }
 }

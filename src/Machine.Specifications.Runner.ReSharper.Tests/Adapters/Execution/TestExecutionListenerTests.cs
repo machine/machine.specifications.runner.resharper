@@ -5,10 +5,11 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
+using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
-using Machine.Specifications.Runner.Utility;
 using NSubstitute;
 using NUnit.Framework;
+using TestResult = JetBrains.ReSharper.TestRunner.Abstractions.Objects.TestResult;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 {
@@ -56,7 +57,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 
             listener.OnContextStart(ElementFixtures.Context);
             listener.OnSpecificationStart(ElementFixtures.Specification1);
-            listener.OnSpecificationEnd(ElementFixtures.Specification1, string.Empty, Result.Pass());
+            listener.OnSpecificationEnd(ElementFixtures.Specification1, string.Empty, new TestRunResult(TestStatus.Passing));
             listener.OnContextEnd(ElementFixtures.Context, string.Empty);
 
             sink.Received(1).TestStarting(RemoteTaskFixtures.Context);
@@ -87,7 +88,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnContextStart(ElementFixtures.Context);
             listener.OnBehaviorStart(ElementFixtures.Behavior1);
             listener.OnSpecificationStart(ElementFixtures.Behavior1Specification1);
-            listener.OnSpecificationEnd(ElementFixtures.Behavior1Specification1, string.Empty, Result.Pass());
+            listener.OnSpecificationEnd(ElementFixtures.Behavior1Specification1, string.Empty, new TestRunResult(TestStatus.Passing));
             listener.OnBehaviorEnd(ElementFixtures.Behavior1, string.Empty);
             listener.OnContextEnd(ElementFixtures.Context, string.Empty);
 
@@ -121,9 +122,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 
             listener.OnContextStart(ElementFixtures.Context);
             listener.OnSpecificationStart(ElementFixtures.Specification1);
-            listener.OnSpecificationEnd(ElementFixtures.Specification1, string.Empty, Result.Pass());
+            listener.OnSpecificationEnd(ElementFixtures.Specification1, string.Empty, new TestRunResult(TestStatus.Passing));
             listener.OnSpecificationStart(ElementFixtures.Specification2);
-            listener.OnSpecificationEnd(ElementFixtures.Specification2, string.Empty, Result.Failure(new Exception()));
+            listener.OnSpecificationEnd(ElementFixtures.Specification2, string.Empty, new TestRunResult(TestStatus.Failing));
             listener.OnContextEnd(ElementFixtures.Context, string.Empty);
 
             sink.Received(1).TestFinished(RemoteTaskFixtures.Specification1, Arg.Any<string>(), TestResult.Success);
@@ -155,9 +156,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnContextStart(ElementFixtures.Context);
             listener.OnBehaviorStart(ElementFixtures.Behavior1);
             listener.OnSpecificationStart(ElementFixtures.Behavior1Specification1);
-            listener.OnSpecificationEnd(ElementFixtures.Behavior1Specification1, string.Empty, Result.Pass());
+            listener.OnSpecificationEnd(ElementFixtures.Behavior1Specification1, string.Empty, new TestRunResult(TestStatus.Passing));
             listener.OnSpecificationStart(ElementFixtures.Behavior1Specification2);
-            listener.OnSpecificationEnd(ElementFixtures.Behavior1Specification2, string.Empty, Result.Failure(new Exception()));
+            listener.OnSpecificationEnd(ElementFixtures.Behavior1Specification2, string.Empty, new TestRunResult(TestStatus.Failing));
             listener.OnBehaviorEnd(ElementFixtures.Behavior1, string.Empty);
             listener.OnContextEnd(ElementFixtures.Context, string.Empty);
 

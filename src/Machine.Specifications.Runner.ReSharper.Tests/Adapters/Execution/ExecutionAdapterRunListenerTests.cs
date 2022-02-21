@@ -1,8 +1,8 @@
 ﻿using System;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
+using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
-using Machine.Specifications.Runner.Utility;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -38,7 +38,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 
             var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
-            var assembly = new AssemblyInfo("Assembly", path);
+            var assembly = new TestAssemblyInfo(path);
 
             listener.OnAssemblyStart(assembly);
             listener.OnAssemblyEnd(assembly);
@@ -63,7 +63,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 
             var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
-            var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
+            var context = new TestContextInfo(ElementFixtures.Context.TypeName, string.Empty);
 
             listener.OnContextStart(context);
             listener.OnContextEnd(context);
@@ -88,17 +88,17 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 
             var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
-            var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
-            var specification = new SpecificationInfo(null, null, ElementFixtures.Context.TypeName, ElementFixtures.Specification1.FieldName);
+            var context = new TestContextInfo(ElementFixtures.Context.TypeName, string.Empty);
+            var specification = new TestSpecificationInfo(ElementFixtures.Context.TypeName, ElementFixtures.Specification1.FieldName, string.Empty);
 
             listener.OnContextStart(context);
             listener.OnSpecificationStart(specification);
-            listener.OnSpecificationEnd(specification, Result.Pass());
+            listener.OnSpecificationEnd(specification, new TestRunResult(TestStatus.Passing));
             listener.OnContextEnd(context);
 
             sink.Received().OnContextStart(ElementFixtures.Context);
             sink.Received().OnSpecificationStart(ElementFixtures.Specification1);
-            sink.Received().OnSpecificationEnd(ElementFixtures.Specification1, Arg.Any<string>(), Arg.Any<Result>());
+            sink.Received().OnSpecificationEnd(ElementFixtures.Specification1, Arg.Any<string>(), Arg.Any<TestRunResult>());
             sink.Received().OnContextEnd(ElementFixtures.Context, Arg.Any<string>());
         }
 
@@ -117,23 +117,23 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 
             var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
-            var context = new ContextInfo(null, null, ElementFixtures.Context.TypeName, null, null);
-            var specification1 = new SpecificationInfo(null, null, ElementFixtures.Behavior1.TypeName, ElementFixtures.Behavior1Specification1.FieldName);
-            var specification2 = new SpecificationInfo(null, null, ElementFixtures.Behavior1.TypeName, ElementFixtures.Behavior1Specification2.FieldName);
+            var context = new TestContextInfo(ElementFixtures.Context.TypeName, string.Empty);
+            var specification1 = new TestSpecificationInfo(ElementFixtures.Behavior1.TypeName, ElementFixtures.Behavior1Specification1.FieldName, string.Empty);
+            var specification2 = new TestSpecificationInfo(ElementFixtures.Behavior1.TypeName, ElementFixtures.Behavior1Specification2.FieldName, string.Empty);
 
             listener.OnContextStart(context);
             listener.OnSpecificationStart(specification1);
-            listener.OnSpecificationEnd(specification1, Result.Pass());
+            listener.OnSpecificationEnd(specification1, new TestRunResult(TestStatus.Passing));
             listener.OnSpecificationStart(specification2);
-            listener.OnSpecificationEnd(specification2, Result.Pass());
+            listener.OnSpecificationEnd(specification2, new TestRunResult(TestStatus.Passing));
             listener.OnContextEnd(context);
 
             sink.Received().OnContextStart(ElementFixtures.Context);
             sink.Received().OnBehaviorStart(ElementFixtures.Behavior1);
             sink.Received().OnSpecificationStart(ElementFixtures.Behavior1Specification1);
-            sink.Received().OnSpecificationEnd(ElementFixtures.Behavior1Specification1, Arg.Any<string>(), Arg.Any<Result>());
+            sink.Received().OnSpecificationEnd(ElementFixtures.Behavior1Specification1, Arg.Any<string>(), Arg.Any<TestRunResult>());
             sink.Received().OnSpecificationStart(ElementFixtures.Behavior1Specification2);
-            sink.Received().OnSpecificationEnd(ElementFixtures.Behavior1Specification2, Arg.Any<string>(), Arg.Any<Result>());
+            sink.Received().OnSpecificationEnd(ElementFixtures.Behavior1Specification2, Arg.Any<string>(), Arg.Any<TestRunResult>());
             sink.Received().OnBehaviorEnd(ElementFixtures.Behavior1, Arg.Any<string>());
             sink.Received().OnContextEnd(ElementFixtures.Context, Arg.Any<string>());
         }

@@ -30,7 +30,6 @@
     <SdkVersion>2021.3.0</SdkVersion>
     <WaveVersionBase>$(SdkVersion.Substring(2,2))$(SdkVersion.Substring(5,1))</WaveVersionBase>
     <WaveVersion>$(WaveVersionBase).0.0</WaveVersion>
-    <RootSuffix>ReSharper</RootSuffix>
   </PropertyGroup>
 
   <ItemGroup>
