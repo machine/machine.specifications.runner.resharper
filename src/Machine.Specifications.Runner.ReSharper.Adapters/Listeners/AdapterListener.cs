@@ -6,14 +6,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
     {
         private readonly IRunListener listener;
 
-        public AdapterListener(IRunListener listener)
+        private readonly string assemblyPath;
+
+        public AdapterListener(IRunListener listener, string assemblyPath)
         {
             this.listener = listener;
+            this.assemblyPath = assemblyPath;
         }
 
         public void OnAssemblyStart(AssemblyInfo assemblyInfo)
         {
-            listener.OnAssemblyStart(assemblyInfo.ToTestAssembly());
+            listener.OnAssemblyStart(new TestAssemblyInfo(assemblyPath));
         }
 
         public void OnAssemblyEnd(AssemblyInfo assemblyInfo)

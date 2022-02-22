@@ -25,6 +25,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void Execute()
         {
+            var assembly = request.Container.Location;
+
             var testsToRun = context.GetTestsToRun().ToArray();
 
             var contexts = testsToRun
@@ -37,7 +39,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             var listener = new TestExecutionListener(context, cache, token);
             var adapter = new ExecutionAdapterRunListener(listener, cache, tracker);
             var loggingListener = new LoggingRunListener(adapter);
-            var machineAdapter = new AdapterListener(loggingListener);
+            var machineAdapter = new AdapterListener(loggingListener, assembly);
 
             var runOptions = RunOptions.Custom.FilterBy(contexts);
 

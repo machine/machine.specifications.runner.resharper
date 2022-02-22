@@ -34,7 +34,17 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void OnAssemblyStart(string assemblyLocation)
         {
-            Environment.CurrentDirectory = Path.GetDirectoryName(assemblyLocation);
+            if (string.IsNullOrEmpty(assemblyLocation))
+            {
+                return;
+            }
+
+            var path = Path.GetDirectoryName(assemblyLocation);
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                Environment.CurrentDirectory = path;
+            }
         }
 
         public void OnAssemblyEnd(string assemblyLocation)
