@@ -27,7 +27,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
             var controllerType = GetControllerType();
 
-            invoker = controllerType!.GetMethod("DiscoverSpecs", BindingFlags.Instance | BindingFlags.Public)!;
+            invoker = controllerType.GetMethod("DiscoverSpecs", BindingFlags.Instance | BindingFlags.Public)!;
             controller = Activator.CreateInstance(controllerType, (Action<string>) Listener);
         }
 
@@ -48,7 +48,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
             sink.OnDiscoveryCompleted();
         }
 
-        private Type? GetControllerType()
+        private Type GetControllerType()
         {
             var type = Type.GetType("Machine.Specifications.Controller.Controller, Machine.Specifications");
 
@@ -57,9 +57,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
                 var path = Path.GetDirectoryName(request.Container.Location);
                 var assemblyPath = Path.Combine(path!, "Machine.Specifications.dll");
 
-                var assembly = Assembly.LoadFile(assemblyPath);
+                var assembly = Assembly.LoadFrom(assemblyPath);
 
                 type = assembly.GetType("Machine.Specifications.Controller.Controller");
+            }
+
+            if (type == null)
+            {
+                throw new InvalidOperationException("Cannot find 'Machine.Specifications.dll' controller type");
             }
 
             return type;
