@@ -125,7 +125,7 @@ namespace Machine.Specifications.Runner.ReSharper
                     context,
                     field.ShortName,
                     null,
-                    field.GetIgnoreReason());
+                    field.GetIgnoreReason() ?? context.IgnoreReason);
 
                 OnUnitTestElement(specification, declaration);
             }

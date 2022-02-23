@@ -79,7 +79,7 @@ namespace Machine.Specifications.Runner.ReSharper
                 contextElement,
                 field.ShortName,
                 null,
-                field.GetIgnoreReason());
+                field.GetIgnoreReason() ?? contextElement.IgnoreReason);
 
             observer.OnUnitTestElement(specificationElement);
         }
@@ -92,7 +92,7 @@ namespace Machine.Specifications.Runner.ReSharper
             var specificationElement = factory.GetOrCreateSpecification(
                 contextElement,
                 field.ShortName,
-                behaviorType.FullyQualifiedName,
+                behaviorType?.FullyQualifiedName,
                 field.GetIgnoreReason());
 
             observer.OnUnitTestElement(specificationElement);

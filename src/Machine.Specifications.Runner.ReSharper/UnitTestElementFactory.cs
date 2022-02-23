@@ -32,7 +32,7 @@ namespace Machine.Specifications.Runner.ReSharper
             string? behaviorType,
             string? ignoreReason)
         {
-            var specification = new MspecSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason ?? context.IgnoreReason);
+            var specification = new MspecSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason);
 
             return (MspecSpecificationTestElement) elements.Intern(specification);
         }

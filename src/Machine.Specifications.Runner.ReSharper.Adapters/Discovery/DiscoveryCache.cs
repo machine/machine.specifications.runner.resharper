@@ -39,7 +39,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
 
             if (!behaviors.TryGetValue(key, out var behavior))
             {
-                var ignoreReason = GetIgnoreReason(context.TypeName, behaviorField.Name);
+                // MSpec behaviors don't seem to inherit an 'ignored' attribute from the context
+                var ignoreReason = GetIgnoreReason(context.TypeName, behaviorField.Name, false);
 
                 behavior = behaviors[key] = new BehaviorElement(context, specification.ContainingType, behaviorField.Name, ignoreReason);
             }
@@ -63,7 +64,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
             return reason;
         }
 
-        public string? GetIgnoreReason(string typeName, string fieldName)
+        public string? GetIgnoreReason(string typeName, string fieldName, bool inherit)
         {
             var key = $"{typeName}.{fieldName}";
 
@@ -76,7 +77,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
                     ? null
                     : GetIgnoreReason(field);
 
-                if (string.IsNullOrEmpty(reason))
+                if (string.IsNullOrEmpty(reason) && inherit)
                 {
                     reason = GetIgnoreReason(typeName);
                 }

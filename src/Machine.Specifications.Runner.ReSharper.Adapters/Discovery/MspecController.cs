@@ -96,8 +96,8 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
                         : null;
 
                     var specificationIgnore = behavior != null
-                        ? cache.GetIgnoreReason(behavior.TypeName, specification.FieldName) ?? behavior.IgnoreReason
-                        : cache.GetIgnoreReason(context.TypeName, specification.FieldName);
+                        ? cache.GetIgnoreReason(behavior.TypeName, specification.FieldName, false) ?? behavior.IgnoreReason
+                        : cache.GetIgnoreReason(context.TypeName, specification.FieldName, true);
 
                     yield return SpecificationInfo.Parse(specificationElement.ToString())
                         .ToElement(context, specificationIgnore, behavior);

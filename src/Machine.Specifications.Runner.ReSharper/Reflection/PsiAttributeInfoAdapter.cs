@@ -36,7 +36,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
                 .Concat(arrayItems)
                 .Select(x => x.ConstantValue.Value)
                 .Where(x => x != null)
-                .Select(x => x.ToString());
+                .Select(x => x!.ToString());
 
             return typeItems.Concat(stringItems);
         }

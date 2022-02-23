@@ -79,6 +79,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             var task = runContext.GetTask(context);
             var tests = cache.GetSpecifications(context).ToArray();
+            var behaviors = cache.GetBehaviors(context).ToArray();
 
             var testsPassed = tests.All(x => passed.Contains(x));
             var testsFailed = tests.Any(x => failed.Contains(x));
@@ -90,7 +91,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             task.Output(capturedOutput);
 
-            if (string.IsNullOrEmpty(context.IgnoreReason))
+            var ignoreReason = !behaviors.Any() || behaviors.Any(x => string.IsNullOrEmpty(x.IgnoreReason))
+                ? null
+                : context.IgnoreReason;
+
+            if (string.IsNullOrEmpty(ignoreReason))
             {
                 task.Finished(testsFailed);
             }
