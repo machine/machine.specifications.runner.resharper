@@ -1,25 +1,10 @@
 ﻿using System;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
-using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecReSharperId : IEquatable<MspecReSharperId>
     {
-        public MspecReSharperId(ContextInfo context)
-        {
-            Id = context.TypeName;
-        }
-
-        public MspecReSharperId(ContextInfo context, SpecificationInfo specification, string? behavior = null)
-        {
-            var isBehavior = context.TypeName != specification.ContainingType;
-
-            Id = isBehavior
-                ? $"{context.TypeName}.{behavior}.{specification.FieldName}"
-                : $"{context.TypeName}.{specification.FieldName}";
-        }
-
         public MspecReSharperId(IContextElement context)
         {
             Id = context.TypeName;
@@ -57,16 +42,6 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public override string ToString()
         {
             return $"ReSharperId({Id})";
-        }
-
-        public static string Self(ContextInfo context)
-        {
-            return new MspecReSharperId(context).Id;
-        }
-
-        public static string Self(ContextInfo context, SpecificationInfo specification, string? behavior = null)
-        {
-            return new MspecReSharperId(context, specification, behavior).Id;
         }
 
         public static string Self(IContextElement context)

@@ -9,7 +9,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Elements
         [Test]
         public void SetsCorrectId()
         {
-            var context = new ContextElement("Namespace.ContextType", "subject");
+            var context = new ContextElement("Namespace.ContextType", "subject", null);
 
             Assert.That(context.Id, Is.EqualTo("Namespace.ContextType"));
         }

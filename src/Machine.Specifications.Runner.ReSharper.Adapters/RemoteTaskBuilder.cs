@@ -1,7 +1,6 @@
 ﻿using System;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
-using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
@@ -18,30 +17,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
             };
         }
 
-        public static MspecRemoteTask GetRemoteTask(ContextInfo context)
-        {
-            return MspecContextRemoteTask.ToServer(context.TypeName, context.Concern, null, null);
-        }
-
-        public static MspecRemoteTask GetRemoteTask(ContextInfo context, SpecificationInfo specification)
-        {
-            var isBehavior = context.TypeName != specification.ContainingType;
-
-            var behaviorType = isBehavior
-                ? context.TypeName
-                : null;
-
-            return MspecSpecificationRemoteTask.ToServer(specification.ContainingType, specification.FieldName, behaviorType, null, null, null);
-        }
-
         private static MspecRemoteTask FromContext(IContextElement context)
         {
-            return MspecContextRemoteTask.ToServer(MspecReSharperId.Self(context), context.Subject, null, null);
+            return MspecContextRemoteTask.ToServer(MspecReSharperId.Self(context), context.Subject, null, context.IgnoreReason);
         }
 
         private static MspecRemoteTask FromBehavior(IBehaviorElement behavior)
         {
-            return MspecSpecificationRemoteTask.ToServer(behavior.Context.TypeName, behavior.FieldName, behavior.TypeName, null, null, null);
+            return MspecSpecificationRemoteTask.ToServer(behavior.Context.TypeName, behavior.FieldName, behavior.TypeName, null, null, behavior.IgnoreReason);
         }
 
         private static MspecRemoteTask FromSpecification(ISpecificationElement specification)
@@ -52,10 +35,10 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
                     $"{specification.Context.TypeName}.{specification.Behavior.FieldName}",
                     specification.Context.TypeName,
                     specification.FieldName,
-                    null);
+                    specification.IgnoreReason);
             }
 
-            return MspecSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, null, null, null, null);
+            return MspecSpecificationRemoteTask.ToServer(specification.Context.TypeName, specification.FieldName, null, null, null, specification.IgnoreReason);
         }
     }
 }

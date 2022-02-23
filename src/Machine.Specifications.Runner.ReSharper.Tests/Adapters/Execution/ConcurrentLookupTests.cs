@@ -11,8 +11,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
         {
             var lookup = new ConcurrentLookup<ContextElement>();
 
-            lookup.Add(new ContextElement("Type", "Subject"));
-            lookup.Add(new ContextElement("Type", "SubjectS"));
+            lookup.Add(new ContextElement("Type", "Subject", null));
+            lookup.Add(new ContextElement("Type", "SubjectS", null));
         }
 
         [Test]
@@ -20,8 +20,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
         {
             var lookup = new ConcurrentLookup<ContextElement>();
 
-            lookup.Add(new ContextElement("Type", "Subject"));
-            lookup.Add(new ContextElement("Type", "SubjectS"));
+            lookup.Add(new ContextElement("Type", "Subject", null));
+            lookup.Add(new ContextElement("Type", "SubjectS", null));
 
             Assert.NotNull(lookup.Take("Type"));
             Assert.NotNull(lookup.Take("Type"));
@@ -32,8 +32,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
         {
             var lookup = new ConcurrentLookup<ContextElement>();
 
-            lookup.Add(new ContextElement("Type", "Subject"));
-            lookup.Add(new ContextElement("Type", "SubjectS"));
+            lookup.Add(new ContextElement("Type", "Subject", null));
+            lookup.Add(new ContextElement("Type", "SubjectS", null));
 
             Assert.NotNull(lookup.Take("Type"));
             Assert.NotNull(lookup.Take("Type"));

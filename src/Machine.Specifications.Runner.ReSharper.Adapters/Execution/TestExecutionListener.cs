@@ -89,7 +89,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             }
 
             task.Output(capturedOutput);
-            task.Finished(testsFailed);
+
+            if (string.IsNullOrEmpty(context.IgnoreReason))
+            {
+                task.Finished(testsFailed);
+            }
+            else
+            {
+                task.Skipped(context.IgnoreReason);
+            }
         }
 
         public void OnBehaviorStart(IBehaviorElement behavior)
@@ -121,7 +129,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
             }
 
             task.Output(capturedOutput);
-            task.Finished(testsFailed);
+
+            if (string.IsNullOrEmpty(behavior.IgnoreReason))
+            {
+                task.Finished(testsFailed);
+            }
+            else
+            {
+                task.Skipped(behavior.IgnoreReason);
+            }
         }
 
         public void OnSpecificationStart(ISpecificationElement specification)

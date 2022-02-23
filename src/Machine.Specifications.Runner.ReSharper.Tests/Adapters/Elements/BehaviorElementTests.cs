@@ -13,7 +13,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Elements
             var context = Substitute.For<IContextElement>();
             context.TypeName.Returns("Namespace.ContextType");
 
-            var element = new BehaviorElement(context, "Namespace.BehaviorType", "a_vehicle_that_is_started");
+            var element = new BehaviorElement(context, "Namespace.BehaviorType", "a_vehicle_that_is_started", null);
 
             Assert.That(element.Id, Is.EqualTo("Namespace.ContextType.a_vehicle_that_is_started"));
         }
@@ -24,7 +24,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Elements
             var context = Substitute.For<IContextElement>();
             context.TypeName.Returns("Namespace.ContextType");
 
-            var element = new BehaviorElement(context, "Namespace.BehaviorType", "a_vehicle_that_is_started");
+            var element = new BehaviorElement(context, "Namespace.BehaviorType", "a_vehicle_that_is_started", null);
 
             Assert.That(element.AggregateId, Is.EqualTo("Namespace.ContextType.Namespace.BehaviorType"));
         }

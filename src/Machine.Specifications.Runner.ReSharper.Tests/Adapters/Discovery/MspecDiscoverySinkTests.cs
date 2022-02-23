@@ -12,7 +12,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Discovery
         [Test]
         public async Task AddsSingleContext()
         {
-            var context = new ContextElement("Namespace.ContextType", "subject");
+            var context = new ContextElement("Namespace.ContextType", "subject", null);
 
             var specification1 = new SpecificationElement(context, "should_be");
             var specification2 = new SpecificationElement(context, "should_not_be");
@@ -33,12 +33,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Discovery
         [Test]
         public async Task AddsSingleBehavior()
         {
-            var context = new ContextElement("Namespace.ContextType", "subject");
+            var context = new ContextElement("Namespace.ContextType", "subject", null);
 
-            var behavior = new BehaviorElement(context, "Namespace.ABehavior", "a_vehicle_that_is_started");
+            var behavior = new BehaviorElement(context, "Namespace.ABehavior", "a_vehicle_that_is_started", null);
 
-            var specification1 = new SpecificationElement(context, "should_be", behavior);
-            var specification2 = new SpecificationElement(context, "should_not_be", behavior);
+            var specification1 = new SpecificationElement(context, "should_be", null, behavior);
+            var specification2 = new SpecificationElement(context, "should_not_be", null, behavior);
 
             var sink = new MspecDiscoverySink(CancellationToken.None);
             sink.OnSpecification(specification1);

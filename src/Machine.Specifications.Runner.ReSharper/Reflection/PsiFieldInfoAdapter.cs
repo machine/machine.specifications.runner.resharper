@@ -14,7 +14,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
             this.field = field;
         }
 
-        public string? DeclaringType => field.GetContainingType()?.GetClrName().FullName;
+        public string DeclaringType => field.GetContainingType()!.GetClrName().FullName;
 
         public string ShortName => field.ShortName;
 

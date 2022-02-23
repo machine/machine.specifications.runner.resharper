@@ -5,5 +5,7 @@
         string Id { get; }
 
         string AggregateId { get; }
+
+        string? IgnoreReason { get; }
     }
 }

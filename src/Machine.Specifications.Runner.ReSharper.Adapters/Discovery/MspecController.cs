@@ -74,14 +74,16 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
         {
             var document = XDocument.Parse(xml);
 
-            var cache = new DiscoveryCache();
+            var cache = new DiscoveryCache(assembly);
 
             foreach (var contextElement in document.Descendants("contextinfo"))
             {
                 token.ThrowIfCancellationRequested();
 
-                var context = ContextInfo.Parse(contextElement.ToString())
-                    .ToElement();
+                var contextInfo = ContextInfo.Parse(contextElement.ToString());
+                var contextIgnore = cache.GetIgnoreReason(contextInfo.TypeName);
+
+                var context = contextInfo.ToElement(contextIgnore);
 
                 foreach (var specificationElement in contextElement.Descendants("specificationinfo"))
                 {
@@ -90,11 +92,15 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
                     var specification = SpecificationInfo.Parse(specificationElement.ToString());
 
                     var behavior = specification.IsBehavior(context.TypeName)
-                        ? cache.GetOrAddBehavior(assembly, context, specification)
+                        ? cache.GetOrAddBehavior(context, specification)
                         : null;
 
+                    var specificationIgnore = behavior != null
+                        ? cache.GetIgnoreReason(behavior.TypeName, specification.FieldName) ?? behavior.IgnoreReason
+                        : cache.GetIgnoreReason(context.TypeName, specification.FieldName);
+
                     yield return SpecificationInfo.Parse(specificationElement.ToString())
-                        .ToElement(context, behavior);
+                        .ToElement(context, specificationIgnore, behavior);
                 }
             }
         }

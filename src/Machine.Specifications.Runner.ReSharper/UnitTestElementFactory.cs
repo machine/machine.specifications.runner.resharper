@@ -32,7 +32,7 @@ namespace Machine.Specifications.Runner.ReSharper
             string? behaviorType,
             string? ignoreReason)
         {
-            var specification = new MspecSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason);
+            var specification = new MspecSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason ?? context.IgnoreReason);
 
             return (MspecSpecificationTestElement) elements.Intern(specification);
         }
@@ -42,7 +42,7 @@ namespace Machine.Specifications.Runner.ReSharper
             string fieldName,
             string? ignoreReason)
         {
-            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, ignoreReason);
+            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, ignoreReason ?? parent.IgnoreReason);
 
             return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
         }

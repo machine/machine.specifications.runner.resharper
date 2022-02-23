@@ -27,7 +27,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Elements
             var behavior = Substitute.For<IBehaviorElement>();
             behavior.FieldName.Returns("behaves_like");
 
-            var specification = new SpecificationElement(context, "should_be", behavior);
+            var specification = new SpecificationElement(context, "should_be", null, behavior);
 
             Assert.That(specification.Id, Is.EqualTo("Namespace.ContextType.behaves_like.should_be"));
         }
