@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
@@ -14,8 +13,6 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class MspecPsiFileExplorer : IRecursiveElementProcessor
     {
-        private readonly SearchDomainFactory searchDomainFactory;
-
         private readonly IUnitTestElementObserverOnFile observer;
 
         private readonly Func<bool> interrupted;
@@ -24,9 +21,8 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private readonly Dictionary<ClrTypeName, MspecContextTestElement> recentContexts = new();
 
-        public MspecPsiFileExplorer(SearchDomainFactory searchDomainFactory, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
+        public MspecPsiFileExplorer(IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
         {
-            this.searchDomainFactory = searchDomainFactory;
             this.observer = observer;
             this.interrupted = interrupted;
         }
@@ -65,7 +61,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
             if (declaredElement is IClass type)
             {
-                ProcessType(type.AsTypeInfo(), declaredElement, declaration);
+                ProcessType(type.AsTypeInfo(), declaration);
             }
             else if (declaredElement is IField field)
             {
@@ -77,7 +73,7 @@ namespace Machine.Specifications.Runner.ReSharper
         {
         }
 
-        private void ProcessType(ITypeInfo type, IDeclaredElement element, IDeclaration declaration)
+        private void ProcessType(ITypeInfo type, IDeclaration declaration)
         {
             if (type.IsContext())
             {
