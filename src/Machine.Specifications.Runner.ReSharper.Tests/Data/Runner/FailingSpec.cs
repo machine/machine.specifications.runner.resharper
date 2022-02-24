@@ -1,6 +1,6 @@
 ﻿using Machine.Specifications;
 
-namespace Exploration
+namespace Runner.FailingSimple
 {
     class SimpleSpec
     {

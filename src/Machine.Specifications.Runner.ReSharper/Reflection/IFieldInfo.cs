@@ -4,7 +4,7 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
 {
     public interface IFieldInfo
     {
-        string? DeclaringType { get; }
+        string DeclaringType { get; }
 
         string ShortName { get; }
 

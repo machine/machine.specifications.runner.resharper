@@ -26,32 +26,23 @@ namespace Machine.Specifications.Runner.ReSharper
             return (MspecContextTestElement) elements.Intern(context);
         }
 
-        public MspecBehaviorTestElement GetOrCreateBehavior(
+        public MspecSpecificationTestElement GetOrCreateSpecification(
             MspecContextTestElement context,
             string fieldName,
+            string? behaviorType,
             string? ignoreReason)
         {
-            var behavior = new MspecBehaviorTestElement(context, fieldName, null, ignoreReason);
+            var specification = new MspecSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason);
 
-            return (MspecBehaviorTestElement) elements.Intern(behavior);
-        }
-
-        public MspecContextSpecificationTestElement GetOrCreateContextSpecification(
-            MspecContextTestElement context,
-            string fieldName,
-            string? ignoreReason)
-        {
-            var specification = new MspecContextSpecificationTestElement(context, fieldName, null, ignoreReason);
-
-            return (MspecContextSpecificationTestElement) elements.Intern(specification);
+            return (MspecSpecificationTestElement) elements.Intern(specification);
         }
 
         public MspecBehaviorSpecificationTestElement GetOrCreateBehaviorSpecification(
-            MspecBehaviorTestElement behavior,
+            MspecSpecificationTestElement parent,
             string fieldName,
             string? ignoreReason)
         {
-            var specification = new MspecBehaviorSpecificationTestElement(behavior, fieldName, ignoreReason);
+            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, ignoreReason ?? parent.IgnoreReason);
 
             return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
         }

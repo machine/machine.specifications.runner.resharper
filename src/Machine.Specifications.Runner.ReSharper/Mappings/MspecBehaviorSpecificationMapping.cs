@@ -20,45 +20,29 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             var task = MspecBehaviorSpecificationRemoteTask.ToClient(
                 element.NaturalId.TestId,
                 element.IgnoreReason,
-                context.RunAllChildren(element),
                 context.IsRunExplicitly(element));
 
-            task.ContextTypeName = element.Behavior!.Context.TypeName.FullName;
-            task.SpecificationFieldName = element.FieldName;
-            task.BehaviorFieldName = element.Behavior.FieldName;
+            task.ContextTypeName = element.Specification.Context.TypeName.FullName;
+            task.FieldName = element.FieldName;
+            task.ParentId = $"{element.Specification.Context.TypeName.FullName}.{element.Specification.FieldName}";
 
             return task;
         }
 
         protected override MspecBehaviorSpecificationTestElement? ToElement(MspecBehaviorSpecificationRemoteTask task, ITestRunnerDiscoveryContext context, IUnitTestElementObserver observer)
         {
-            if (task.ContextTypeName == null)
+            if (task.ParentId == null)
             {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': ContextTypeName is missing");
+                context.Logger.Warn($"Cannot create element for MspecBehaviorSpecificationTestElement '{task.TestId}': ParentId is missing");
 
                 return null;
             }
 
-            if (task.BehaviorFieldName == null)
+            var specificationElement = observer.GetElementById<MspecSpecificationTestElement>(task.ParentId);
+
+            if (specificationElement == null)
             {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': BehaviorFieldName is missing");
-
-                return null;
-            }
-
-            var contextElement = observer.GetElementById<MspecContextTestElement>(task.ContextTypeName);
-            var behavior = observer.GetElementById<MspecBehaviorTestElement>($"{task.ContextTypeName}::{task.BehaviorFieldName}");
-
-            if (contextElement == null)
-            {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': Context is missing");
-
-                return null;
-            }
-
-            if (behavior == null)
-            {
-                context.Logger.Warn("Cannot create element for BehaviorSpecificationElement '" + task.TestId + "': Behavior is missing");
+                context.Logger.Warn("Cannot create element for MspecBehaviorSpecificationTestElement '" + task.TestId + "': Specification is missing");
 
                 return null;
             }
@@ -66,9 +50,9 @@ namespace Machine.Specifications.Runner.ReSharper.Mappings
             var factory = GetFactory(context);
 
             return factory.GetOrCreateBehaviorSpecification(
-                behavior,
-                task.SpecificationFieldName!,
-                null);
+                specificationElement,
+                task.FieldName!,
+                task.IgnoreReason);
         }
     }
 }

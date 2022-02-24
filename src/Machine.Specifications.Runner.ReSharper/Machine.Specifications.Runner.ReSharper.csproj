@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <Version>0.1.0</Version>
-    <TargetFrameworks>net461</TargetFrameworks>
+    <TargetFramework>net461</TargetFramework>
     <PackageId>Machine.Specifications.Runner.Resharper9</PackageId>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>NU5128,NU5100</NoWarn>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
 
     <StartAction>Program</StartAction>
     <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>

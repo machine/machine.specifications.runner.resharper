@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Application.Progress;
 using JetBrains.Metadata.Reader.Impl;
-using JetBrains.ReSharper.Feature.Services.Navigation.Requests;
-using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
@@ -17,8 +13,6 @@ namespace Machine.Specifications.Runner.ReSharper
 {
     public class MspecPsiFileExplorer : IRecursiveElementProcessor
     {
-        private readonly SearchDomainFactory searchDomainFactory;
-
         private readonly IUnitTestElementObserverOnFile observer;
 
         private readonly Func<bool> interrupted;
@@ -27,9 +21,8 @@ namespace Machine.Specifications.Runner.ReSharper
 
         private readonly Dictionary<ClrTypeName, MspecContextTestElement> recentContexts = new();
 
-        public MspecPsiFileExplorer(SearchDomainFactory searchDomainFactory, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
+        public MspecPsiFileExplorer(IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
         {
-            this.searchDomainFactory = searchDomainFactory;
             this.observer = observer;
             this.interrupted = interrupted;
         }
@@ -68,7 +61,7 @@ namespace Machine.Specifications.Runner.ReSharper
 
             if (declaredElement is IClass type)
             {
-                ProcessType(type.AsTypeInfo(), declaredElement, declaration);
+                ProcessType(type.AsTypeInfo(), declaration);
             }
             else if (declaredElement is IField field)
             {
@@ -80,15 +73,11 @@ namespace Machine.Specifications.Runner.ReSharper
         {
         }
 
-        private void ProcessType(ITypeInfo type, IDeclaredElement element, IDeclaration declaration)
+        private void ProcessType(ITypeInfo type, IDeclaration declaration)
         {
             if (type.IsContext())
             {
                 ProcessContext(type, declaration, true);
-            }
-            else if (type.IsBehaviorContainer())
-            {
-                ProcessBehaviorContainer(element);
             }
         }
 
@@ -110,40 +99,6 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        private void ProcessBehaviorContainer(IDeclaredElement element)
-        {
-            var solution = element.GetSolution();
-
-            var finder = solution.GetPsiServices().Finder;
-            var searchDomain = searchDomainFactory.CreateSearchDomain(solution, false);
-            var consumer = new SearchResultsConsumer();
-            var progress = NullProgressIndicator.Create();
-
-            finder.Find(new[] {element}, searchDomain, consumer, SearchPattern.FIND_USAGES, progress);
-
-            var contexts = consumer.GetOccurrences()
-                .OfType<ReferenceOccurrence>()
-                .Select(x => x.GetTypeElement()?.GetValidDeclaredElement())
-                .OfType<IClass>()
-                .Where(x => x.IsContext());
-
-            foreach (var context in contexts)
-            {
-                var type = context.AsTypeInfo();
-                var declaration = context.GetDeclarations().FirstOrDefault();
-
-                if (declaration != null)
-                {
-                    ProcessContext(type, declaration, false);
-
-                    foreach (var field in type.GetFields())
-                    {
-                        ProcessField(field);
-                    }
-                }
-            }
-        }
-
         private void ProcessField(IFieldInfo field, IDeclaration? declaration = null)
         {
             if (field.IsSpecification())
@@ -162,10 +117,11 @@ namespace Machine.Specifications.Runner.ReSharper
 
             if (recentContexts.TryGetValue(containingType, out var context))
             {
-                var specification = factory.GetOrCreateContextSpecification(
+                var specification = factory.GetOrCreateSpecification(
                     context,
                     field.ShortName,
-                    field.GetIgnoreReason());
+                    null,
+                    field.GetIgnoreReason() ?? context.IgnoreReason);
 
                 OnUnitTestElement(specification, declaration);
             }
@@ -176,30 +132,15 @@ namespace Machine.Specifications.Runner.ReSharper
             var behaviorType = field.FieldType.GetGenericArguments().FirstOrDefault();
             var containingType = new ClrTypeName(field.DeclaringType);
 
-            if (recentContexts.TryGetValue(containingType, out var context))
+            if (recentContexts.TryGetValue(containingType, out var context) && behaviorType != null && behaviorType.IsBehaviorContainer())
             {
-                var behavior = factory.GetOrCreateBehavior(
+                var specification = factory.GetOrCreateSpecification(
                     context,
                     field.ShortName,
+                    behaviorType.FullyQualifiedName,
                     field.GetIgnoreReason());
 
-                OnUnitTestElement(behavior, declaration);
-
-                if (behaviorType != null && behaviorType.IsBehaviorContainer())
-                {
-                    var specFields = behaviorType.GetFields()
-                        .Where(x => x.IsSpecification());
-
-                    foreach (var specField in specFields)
-                    {
-                        var specification = factory.GetOrCreateBehaviorSpecification(
-                            behavior,
-                            specField.ShortName,
-                            specField.GetIgnoreReason());
-
-                        OnUnitTestElement(specification, declaration);
-                    }
-                }
+                OnUnitTestElement(specification, declaration);
             }
         }
 

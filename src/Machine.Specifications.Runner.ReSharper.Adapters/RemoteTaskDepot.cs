@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
@@ -9,13 +10,23 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
     {
         private readonly Dictionary<string, MspecRemoteTask> tasksByReSharperId = new();
 
-        private readonly HashSet<string> contexts = new();
+        private readonly List<ISpecificationElement> testsToRun = new();
 
         public RemoteTaskDepot(RemoteTask[] tasks)
         {
             foreach (var task in tasks.OfType<MspecRemoteTask>())
             {
-                Add(task);
+                tasksByReSharperId[task.TestId] = task;
+            }
+        }
+
+        public MspecRemoteTask? this[IMspecElement element]
+        {
+            get
+            {
+                tasksByReSharperId.TryGetValue(MspecReSharperId.Self(element), out var value);
+
+                return value;
             }
         }
 
@@ -32,38 +43,19 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public void Add(MspecRemoteTask task)
         {
             tasksByReSharperId[task.TestId] = task;
+        }
 
-            switch (task)
+        public void Bind(IMspecElement element, MspecRemoteTask task)
+        {
+            if (tasksByReSharperId.ContainsKey(task.TestId) && element is ISpecificationElement specification)
             {
-                case MspecContextRemoteTask context:
-                    AddContext(context.ContextTypeName);
-                    break;
-
-                case MspecBehaviorRemoteTask behavior:
-                    AddContext(behavior.ContextTypeName);
-                    break;
-
-                case MspecContextSpecificationRemoteTask specification:
-                    AddContext(specification.ContextTypeName);
-                    break;
-
-                case MspecBehaviorSpecificationRemoteTask behaviorSpecification:
-                    AddContext(behaviorSpecification.ContextTypeName);
-                    break;
+                testsToRun.Add(specification);
             }
         }
 
-        public IEnumerable<string> GetContextNames()
+        public IEnumerable<ISpecificationElement> GetTestsToRun()
         {
-            return contexts;
-        }
-
-        private void AddContext(string? contextName)
-        {
-            if (!string.IsNullOrEmpty(contextName))
-            {
-                contexts.Add(contextName!);
-            }
+            return testsToRun;
         }
     }
 }

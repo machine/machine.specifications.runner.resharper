@@ -37,12 +37,10 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
         public static bool IsBehavior(this IFieldInfo field)
         {
             var type = field.FieldType;
-
-            var arguments = type.GetGenericArguments()
-                .SelectMany(x => x.GetCustomAttributes(FullNames.BehaviorsAttribute, false));
+            var behaviorType = type.GetGenericArguments().FirstOrDefault();
 
             return type.GetCustomAttributes(FullNames.BehaviorDelegateAttribute, false).Any() &&
-                   arguments.Any();
+                   behaviorType?.GetFields().Any(x => x.IsSpecification()) == true;
         }
 
         public static string? GetIgnoreReason(this ITypeInfo type)
