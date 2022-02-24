@@ -1,4 +1,4 @@
-﻿Machine.Specifications::697F5F53-AEB2-4284-AA79-90E7368C55E6::Exploration.SimpleSpec
+﻿Machine.Specifications::697F5F53-AEB2-4284-AA79-90E7368C55E6::Runner.FailingSimple.SimpleSpec
   Own: Failed Propagated: Failed
-Machine.Specifications::697F5F53-AEB2-4284-AA79-90E7368C55E6::Exploration.SimpleSpec::should_be_true
+Machine.Specifications::697F5F53-AEB2-4284-AA79-90E7368C55E6::Runner.FailingSimple.SimpleSpec.should_be_true
   Own: Failed Propagated: None

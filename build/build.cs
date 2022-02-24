@@ -11,6 +11,7 @@ using GlobExpressions;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
+var configuration = "Release";
 var version = GetGitVersion();
 var waveVersion = GetWaveVersion();
 var notes = GetReleaseNotes();
@@ -18,7 +19,7 @@ var apiKey = Environment.GetEnvironmentVariable("JETBRAINS_API_KEY");
 
 Target("clean", () =>
 {
-    Run("dotnet", "clean");
+    Run("dotnet", $"clean --configuration {configuration}");
 
     if (Directory.Exists("artifacts"))
     {
@@ -35,7 +36,7 @@ Target("build", DependsOn("restore"), () =>
 {
     Run("dotnet", "build " +
                   "--no-restore " +
-                  "--configuration Release " +
+                  $"--configuration {configuration} " +
                   " /p:HostFullIdentifier= " +
                   $"/p:Version={version.SemVer} " +
                   $"/p:AssemblyVersion={version.AssemblySemVer} " +
@@ -45,12 +46,12 @@ Target("build", DependsOn("restore"), () =>
 
 Target("test", DependsOn("build"), () =>
 {
-    Run("dotnet", "test --configuration Release --no-restore --no-build");
+    Run("dotnet", $"test --configuration {configuration} --no-restore --no-build");
 });
 
 Target("package", DependsOn("build", "test"), () =>
 {
-    Run("dotnet", $"pack --configuration Release --no-restore --no-build --output artifacts /p:Version={version.SemVer}");
+    Run("dotnet", $"pack --configuration {configuration} --no-restore --no-build --output artifacts /p:Version={version.SemVer}");
 });
 
 Target("zip", DependsOn("package"), () =>
@@ -166,6 +167,11 @@ string GetWaveVersion()
 {
     var value = GetXmlValue("SdkVersion");
 
+    if (string.IsNullOrEmpty(value))
+    {
+        return string.Empty;
+    }
+
     return $"{value.Substring(2,2)}{value.Substring(5,1)}";
 }
 
@@ -183,7 +189,7 @@ string GetXmlValue(string name)
         var document = XDocument.Load(project);
         var node = document.XPathSelectElement($"/Project/PropertyGroup/{name}");
 
-        if (!string.IsNullOrEmpty(node.Value))
+        if (!string.IsNullOrEmpty(node!.Value))
         {
             return node.Value;
         }
@@ -192,7 +198,7 @@ string GetXmlValue(string name)
     return string.Empty;
 }
 
-public class GitVersion
+class GitVersion
 {
     public string SemVer { get; set; }
 
@@ -205,7 +211,7 @@ public class GitVersion
     public string PreReleaseTag { get; set; }
 }
 
-public class UnixUTF8Encoding : UTF8Encoding
+class UnixUTF8Encoding : UTF8Encoding
 {
     public override byte[] GetBytes(string s)
     {

@@ -1,84 +1,28 @@
 ﻿using System;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
-using Machine.Specifications.Runner.ReSharper.Tasks;
-using Machine.Specifications.Runner.Utility;
+using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters
 {
     public class MspecReSharperId : IEquatable<MspecReSharperId>
     {
-        public MspecReSharperId(ContextInfo context)
+        public MspecReSharperId(IContextElement context)
         {
             Id = context.TypeName;
         }
 
-        public MspecReSharperId(SpecificationInfo specification)
+        public MspecReSharperId(IBehaviorElement behavior)
         {
-            Id = $"{specification.ContainingType}::{specification.FieldName}";
+            Id = $"{behavior.Context.TypeName}.{behavior.FieldName}";
         }
 
-        public MspecReSharperId(ContextInfo context, SpecificationInfo behaviorSpecification)
+        public MspecReSharperId(ISpecificationElement specification)
         {
-            Id = $"{context.TypeName}::{behaviorSpecification.FieldName}";
-        }
-
-        public MspecReSharperId(MspecContextRemoteTask context)
-        {
-            Id = context.ContextTypeName;
-        }
-
-        public MspecReSharperId(MspecContextSpecificationRemoteTask specification)
-        {
-            Id = $"{specification.ContextTypeName}::{specification.SpecificationFieldName}";
-        }
-
-        public MspecReSharperId(MspecBehaviorRemoteTask behavior)
-        {
-            Id = $"{behavior.ContextTypeName}::{behavior.BehaviorFieldName}";
-        }
-
-        public MspecReSharperId(MspecBehaviorSpecificationRemoteTask specification)
-        {
-            Id = $"{specification.ContextTypeName}.{specification.SpecificationFieldName}";
+            Id = specification.Behavior != null
+                ? $"{specification.Context.TypeName}.{specification.Behavior.FieldName}.{specification.FieldName}"
+                : $"{specification.Context.TypeName}.{specification.FieldName}";
         }
 
         public string Id { get; }
-
-        public static string Self(ContextInfo context)
-        {
-            return new MspecReSharperId(context).Id;
-        }
-
-        public static string Self(SpecificationInfo specification)
-        {
-            return new MspecReSharperId(specification).Id;
-        }
-
-        public static string Self(ContextInfo context, SpecificationInfo behaviorSpecification)
-        {
-            return new MspecReSharperId(context, behaviorSpecification).Id;
-        }
-
-        public static MspecReSharperId Create(RemoteTask task)
-        {
-            switch (task)
-            {
-                case MspecContextRemoteTask context:
-                    return new MspecReSharperId(context);
-
-                case MspecContextSpecificationRemoteTask specification:
-                    return new MspecReSharperId(specification);
-
-                case MspecBehaviorRemoteTask behavior:
-                    return new MspecReSharperId(behavior);
-
-                case MspecBehaviorSpecificationRemoteTask specification:
-                    return new MspecReSharperId(specification);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(task));
-            }
-        }
 
         public bool Equals(MspecReSharperId? other)
         {
@@ -93,6 +37,54 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"ReSharperId({Id})";
+        }
+
+        public static string Self(IContextElement context)
+        {
+            return new MspecReSharperId(context).Id;
+        }
+
+        public static string Self(IBehaviorElement behavior)
+        {
+            return new MspecReSharperId(behavior).Id;
+        }
+
+        public static string Self(ISpecificationElement specification)
+        {
+            return new MspecReSharperId(specification).Id;
+        }
+
+        public static string Self(IMspecElement element)
+        {
+            return Create(element).Id;
+        }
+
+        public static MspecReSharperId Create(IMspecElement element)
+        {
+            return element switch
+            {
+                IContextElement context => new MspecReSharperId(context),
+                ISpecificationElement specification => new MspecReSharperId(specification),
+                IBehaviorElement behavior => new MspecReSharperId(behavior),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
+        }
+
+        public static string? Parent(IMspecElement element)
+        {
+            return element switch
+            {
+                IContextElement => null,
+                IBehaviorElement behavior => Self(behavior.Context),
+                ISpecificationElement {Behavior: not null} specification => Self(specification.Behavior),
+                ISpecificationElement {Behavior: null} specification => Self(specification.Context),
+                _ => throw new ArgumentOutOfRangeException(nameof(element))
+            };
         }
     }
 }

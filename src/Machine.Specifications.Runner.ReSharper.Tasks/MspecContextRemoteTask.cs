@@ -5,12 +5,12 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
     [Serializable]
     public class MspecContextRemoteTask : MspecRemoteTask
     {
-        public MspecContextRemoteTask(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
+        private MspecContextRemoteTask(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
             : base(testId, ignoreReason, runAllChildren, runExplicitly)
         {
         }
 
-        public MspecContextRemoteTask(string typeName, string? subject, string[]? tags, string? ignoreReason)
+        private MspecContextRemoteTask(string typeName, string? subject, string[]? tags, string? ignoreReason)
             : base(typeName, ignoreReason)
         {
             Subject = subject;

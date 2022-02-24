@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using JetBrains.ReSharper.TestFramework;
+using Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 using NUnit.Framework;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
@@ -13,6 +14,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Runner
         [ExcludeMsCorLib]
         [TestCase("SimpleSpec.cs")]
         [TestCase("FailingSpec.cs")]
+        [TestCase("PassingBehavior.cs")]
+        [TestCase("FailingBehavior.cs")]
         public void TestFile(string filename)
         {
             var path = GetTestDataFilePath2(filename);

@@ -5,33 +5,33 @@ namespace Machine.Specifications.Runner.ReSharper.Tasks
     [Serializable]
     public class MspecBehaviorSpecificationRemoteTask : MspecRemoteTask
     {
-        public MspecBehaviorSpecificationRemoteTask(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
-            : base(testId, ignoreReason, runAllChildren, runExplicitly)
+        private MspecBehaviorSpecificationRemoteTask(string testId, string? ignoreReason, bool runExplicitly)
+            : base(testId, ignoreReason, true, runExplicitly)
         {
         }
 
-        public MspecBehaviorSpecificationRemoteTask(string contextTypeName, string behaviorFieldName, string specificationFieldName, string? ignoreReason)
-            : base($"{contextTypeName}::{specificationFieldName}", ignoreReason)
+        private MspecBehaviorSpecificationRemoteTask(string parentId, string contextTypeName, string fieldName, string? ignoreReason)
+            : base($"{parentId}.{fieldName}", ignoreReason)
         {
+            ParentId = parentId;
             ContextTypeName = contextTypeName;
-            BehaviorFieldName = behaviorFieldName;
-            SpecificationFieldName = specificationFieldName;
+            FieldName = fieldName;
         }
+
+        public string? ParentId { get; set; }
 
         public string? ContextTypeName { get; set; }
 
-        public string? BehaviorFieldName { get; set; }
+        public string? FieldName { get; set; }
 
-        public string? SpecificationFieldName { get; set; }
-
-        public static MspecBehaviorSpecificationRemoteTask ToClient(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
+        public static MspecBehaviorSpecificationRemoteTask ToClient(string testId, string? ignoreReason, bool runExplicitly)
         {
-            return new(testId, ignoreReason, runAllChildren, runExplicitly);
+            return new(testId, ignoreReason, runExplicitly);
         }
 
-        public static MspecBehaviorSpecificationRemoteTask ToServer(string contextTypeName, string behaviorFieldName, string specificationFieldName, string? ignoreReason)
+        public static MspecBehaviorSpecificationRemoteTask ToServer(string parentId, string contextTypeName, string fieldName, string? ignoreReason)
         {
-            return new(contextTypeName, behaviorFieldName, specificationFieldName, ignoreReason);
+            return new(parentId, contextTypeName, fieldName, ignoreReason);
         }
     }
 }
