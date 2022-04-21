@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Version>0.1.0</Version>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <PackageId>Machine.Specifications.Runner.Resharper9</PackageId>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
