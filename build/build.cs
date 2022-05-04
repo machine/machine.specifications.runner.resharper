@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using GlobExpressions;
@@ -12,7 +13,7 @@ using static Bullseye.Targets;
 using static SimpleExec.Command;
 
 var configuration = "Release";
-var version = GetGitVersion();
+var version = await GetGitVersion();
 var waveVersion = GetWaveVersion();
 var notes = GetReleaseNotes();
 var apiKey = Environment.GetEnvironmentVariable("JETBRAINS_API_KEY");
@@ -152,13 +153,13 @@ Target("publish", DependsOn("publish-nuget", "publish-zip"));
 
 Target("default", DependsOn("zip"));
 
-RunTargetsAndExit(args);
+await RunTargetsAndExitAsync(args);
 
-GitVersion GetGitVersion()
+async Task<GitVersion> GetGitVersion()
 {
     Run("dotnet", "tool restore");
 
-    var value = Read("dotnet", "dotnet-gitversion");
+    var (value, _) = await ReadAsync("dotnet", "dotnet-gitversion");
 
     return JsonSerializer.Deserialize<GitVersion>(value);
 }
