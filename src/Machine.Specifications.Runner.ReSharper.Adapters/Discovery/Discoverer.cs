@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
@@ -69,6 +70,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
             catch (OperationCanceledException)
             {
                 logger.Info("Discovery was aborted");
+            }
+            catch (TargetInvocationException ex) when(ex.InnerException != null)
+            {
+                throw new MspecDiscoveryException(ex.InnerException.Message, ex.InnerException.StackTrace);
+            }
+            catch (Exception ex) when (ex.GetType().FullName.StartsWith("Machine.Specifications"))
+            {
+                throw new MspecDiscoveryException(ex.Message, ex.StackTrace);
             }
 
             logger.Info("Discovery completed");
