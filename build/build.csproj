@@ -9,7 +9,7 @@
     <PackageReference Include="Bullseye" Version="4.0.0" />
     <PackageReference Include="Glob" Version="1.1.9" />
     <PackageReference Include="SimpleExec" Version="10.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.3" />
+    <PackageReference Include="System.Text.Json" Version="6.0.4" />
   </ItemGroup>
 
 </Project>
