@@ -6,41 +6,27 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
+using JetBrains.ReSharper.UnitTestFramework.Exploration.Daemon;
 using Machine.Specifications.Runner.ReSharper.Elements;
 using Machine.Specifications.Runner.ReSharper.Reflection;
 
 namespace Machine.Specifications.Runner.ReSharper
 {
-    public class MspecPsiFileExplorer : IRecursiveElementProcessor
+    public class MspecPsiFileExplorer : UnitTestElementRecursivePsiProcessor
     {
         private readonly IUnitTestElementObserverOnFile observer;
-
-        private readonly Func<bool> interrupted;
 
         private readonly UnitTestElementFactory factory = new();
 
         private readonly Dictionary<ClrTypeName, MspecContextTestElement> recentContexts = new();
 
         public MspecPsiFileExplorer(IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
+            : base(interrupted)
         {
             this.observer = observer;
-            this.interrupted = interrupted;
         }
 
-        public bool ProcessingIsFinished
-        {
-            get
-            {
-                if (interrupted())
-                {
-                    throw new OperationCanceledException();
-                }
-
-                return false;
-            }
-        }
-
-        public bool InteriorShouldBeProcessed(ITreeNode element)
+        public override bool InteriorShouldBeProcessed(ITreeNode element)
         {
             if (element is ITypeMemberDeclaration)
             {
@@ -50,7 +36,7 @@ namespace Machine.Specifications.Runner.ReSharper
             return true;
         }
 
-        public void ProcessBeforeInterior(ITreeNode element)
+        public override void ProcessBeforeInterior(ITreeNode element)
         {
             if (element is not IDeclaration declaration)
             {
@@ -69,7 +55,7 @@ namespace Machine.Specifications.Runner.ReSharper
             }
         }
 
-        public void ProcessAfterInterior(ITreeNode element)
+        public override void ProcessAfterInterior(ITreeNode element)
         {
         }
 
