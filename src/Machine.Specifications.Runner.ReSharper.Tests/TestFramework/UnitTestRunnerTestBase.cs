@@ -113,7 +113,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
                 var source = FileSystemPath.Parse(assembly);
                 var target = project.Location.Directory.Combine(source.Name);
 
-                if (source.ExistsFile && !target.ExistsFile)
+                if (source.ExistsFile)
                 {
                     source.CopyFile(target.ToNativeFileSystemPath(), true);
                 }
