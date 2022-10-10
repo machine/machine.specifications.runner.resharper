@@ -19,8 +19,6 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
                 .Where(x => !x.IsBadValue)
                 .ToArray();
 
-            var constantItems = parameters.Where(x => x.IsConstant);
-
             var typeItems = parameters
                 .Where(x => x.IsType)
                 .Select(x => x.TypeValue)
@@ -32,11 +30,12 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection
                 .Where(x => x.IsArray)
                 .SelectMany(x => x.ArrayValue);
 
-            var stringItems = constantItems
+            var stringItems = parameters
+                .Where(x => x.IsConstant)
                 .Concat(arrayItems)
-                .Select(x => x.ConstantValue.Value)
+                .Select(x => x.ConstantValue.AsString())
                 .Where(x => x != null)
-                .Select(x => x!.ToString());
+                .Select(x => x!);
 
             return typeItems.Concat(stringItems);
         }
