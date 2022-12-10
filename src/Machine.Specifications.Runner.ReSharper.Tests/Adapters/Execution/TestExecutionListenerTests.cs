@@ -34,7 +34,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnContextEnd(ElementFixtures.Context, string.Empty);
 
             sink.Received(1).TestStarting(RemoteTaskFixtures.Context);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, Arg.Any<string>(), TestResult.Success);
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
         }
 
         [Test]
@@ -62,8 +62,8 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
 
             sink.Received(1).TestStarting(RemoteTaskFixtures.Context);
             sink.Received(1).TestStarting(RemoteTaskFixtures.Specification1);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Specification1, Arg.Any<string>(), TestResult.Success);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, Arg.Any<string>(), TestResult.Success);
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Specification1, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
         }
 
         [Test]
@@ -95,9 +95,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             sink.Received(1).TestStarting(RemoteTaskFixtures.Context);
             sink.Received(1).TestStarting(RemoteTaskFixtures.Behavior1);
             sink.Received(1).TestStarting(RemoteTaskFixtures.Behavior1Specification1);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1Specification1, Arg.Any<string>(), TestResult.Success);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1, Arg.Any<string>(), TestResult.Success);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, Arg.Any<string>(), TestResult.Success);
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1Specification1, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
         }
 
         [Test]
@@ -127,9 +127,9 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnSpecificationEnd(ElementFixtures.Specification2, string.Empty, new TestRunResult(TestStatus.Failing));
             listener.OnContextEnd(ElementFixtures.Context, string.Empty);
 
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Specification1, Arg.Any<string>(), TestResult.Success);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Specification2, Arg.Any<string>(), TestResult.Failed);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, Arg.Any<string>(), TestResult.Failed);
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Specification1, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Specification2, TestOutcome.Failed, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, TestOutcome.Failed, Arg.Any<string>(), Arg.Any<TimeSpan>());
         }
 
         [Test]
@@ -162,10 +162,10 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             listener.OnBehaviorEnd(ElementFixtures.Behavior1, string.Empty);
             listener.OnContextEnd(ElementFixtures.Context, string.Empty);
 
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1Specification1, Arg.Any<string>(), TestResult.Success);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1Specification2, Arg.Any<string>(), TestResult.Failed);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1, Arg.Any<string>(), TestResult.Failed);
-            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, Arg.Any<string>(), TestResult.Failed);
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1Specification1, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1Specification2, TestOutcome.Failed, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Behavior1, TestOutcome.Failed, Arg.Any<string>(), Arg.Any<TimeSpan>());
+            sink.Received(1).TestFinished(RemoteTaskFixtures.Context, TestOutcome.Failed, Arg.Any<string>(), Arg.Any<TimeSpan>());
         }
     }
 }

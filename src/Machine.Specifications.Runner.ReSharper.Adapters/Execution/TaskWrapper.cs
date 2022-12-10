@@ -18,7 +18,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         private int finished;
 
-        private TestResult result;
+        private TestOutcome result;
 
         private string? message;
 
@@ -58,7 +58,7 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void Skipped(string? reason = null)
         {
-            result = TestResult.Ignored;
+            result = TestOutcome.Ignored;
             message = reason ?? task?.IgnoreReason ?? "Ignored";
 
             Finished();
@@ -66,12 +66,12 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
         public void Passed()
         {
-            result = TestResult.Success;
+            result = TestOutcome.Success;
         }
 
         public void Failed(ExceptionInfo[] exceptions, string exceptionMessage)
         {
-            result = TestResult.Failed;
+            result = TestOutcome.Failed;
             message = exceptionMessage;
 
             if (task != null)
@@ -84,11 +84,11 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
         {
             watch.Stop();
 
-            if (result == TestResult.Inconclusive)
+            if (result == TestOutcome.Inconclusive)
             {
                 result = childTestsFailed
-                    ? TestResult.Failed
-                    : TestResult.Success;
+                    ? TestOutcome.Failed
+                    : TestOutcome.Success;
 
                 message = childTestsFailed
                     ? "One or more child tests failed"
@@ -102,15 +102,14 @@ namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
 
             if (task != null)
             {
-                sink.TestDuration(task, watch.Elapsed);
-                sink.TestFinished(task, message, result);
+                sink.TestFinished(task, result, message, watch.Elapsed);
             }
         }
 
         public void Reset()
         {
             finished = 0;
-            result = TestResult.Inconclusive;
+            result = TestOutcome.Inconclusive;
             message = string.Empty;
         }
     }

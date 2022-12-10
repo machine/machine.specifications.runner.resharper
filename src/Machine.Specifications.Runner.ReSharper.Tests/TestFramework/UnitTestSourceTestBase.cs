@@ -35,7 +35,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
 
             using (var transaction = discoveryManager.BeginTransaction(source))
             {
-                var observer = new TestElementObserverOnFile(transaction.Observer);
+                var observer = new TestElementObserverOnFile(transaction.Observer, file!.GetSourceFile());
 
                 fileExplorer.ProcessFile(file!, observer, InterruptableReadActivity.Empty);
 

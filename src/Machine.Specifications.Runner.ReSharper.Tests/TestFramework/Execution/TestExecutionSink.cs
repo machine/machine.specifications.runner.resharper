@@ -27,18 +27,6 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
             }
         }
 
-        public void TestDuration(RemoteTask task, TimeSpan duration)
-        {
-            try
-            {
-                broker.TestDuration(task, duration).Wait();
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex);
-            }
-        }
-
         public void TestException(RemoteTask task, ExceptionInfo[] exceptions)
         {
             try
@@ -51,11 +39,11 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
             }
         }
 
-        public void TestFinished(RemoteTask task, string message, TestResult result)
+        public void TestFinished(RemoteTask task, TestOutcome outcome, string message, TimeSpan? duration = null)
         {
             try
             {
-                broker.TestFinished(task, message, result).Wait();
+                broker.TestFinished(task, outcome, message, duration).Wait();
             }
             catch (Exception ex)
             {

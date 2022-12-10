@@ -1,4 +1,5 @@
-﻿using JetBrains.ReSharper.TestRunner.Abstractions;
+﻿using System;
+using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 using Machine.Specifications.Runner.ReSharper.Tasks;
@@ -48,7 +49,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
             wrapper.Finished();
             wrapper.Finished();
 
-            sink.Received(1).TestFinished(task, Arg.Any<string>(), TestResult.Success);
+            sink.Received(1).TestFinished(task, TestOutcome.Success, Arg.Any<string>(), Arg.Any<TimeSpan>());
         }
     }
 }

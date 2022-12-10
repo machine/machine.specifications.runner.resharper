@@ -82,7 +82,7 @@ namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
             {
                 metadataExplorer.ProcessArtifact(transaction.Observer, CancellationToken.None).Wait();
 
-                transaction.Commit();
+                transaction.CommitAsync(CancellationToken.None).Wait();
 
                 return transaction.Elements;
             }
