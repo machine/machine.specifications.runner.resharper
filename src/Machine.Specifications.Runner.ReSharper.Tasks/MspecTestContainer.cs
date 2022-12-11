@@ -1,14 +1,13 @@
 ﻿using System;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
-namespace Machine.Specifications.Runner.ReSharper.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Tasks;
+
+[Serializable]
+public class MspecTestContainer : TestContainer
 {
-    [Serializable]
-    public class MspecTestContainer : TestContainer
+    public MspecTestContainer(string location, ShadowCopy shadowCopy)
+        : base(location, shadowCopy)
     {
-        public MspecTestContainer(string location, ShadowCopy shadowCopy)
-            : base(location, shadowCopy)
-        {
-        }
     }
 }

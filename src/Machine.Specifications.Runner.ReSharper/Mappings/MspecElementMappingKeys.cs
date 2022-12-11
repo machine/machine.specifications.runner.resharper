@@ -1,9 +1,8 @@
 ﻿using JetBrains.Util;
 
-namespace Machine.Specifications.Runner.ReSharper.Mappings
+namespace Machine.Specifications.Runner.ReSharper.Mappings;
+
+public static class MspecElementMappingKeys
 {
-    public static class MspecElementMappingKeys
-    {
-        public static readonly Key<UnitTestElementFactory> ElementFactoryKey = new("MspecElementMapping.MspecElementFactory");
-    }
+    public static readonly Key<UnitTestElementFactory> ElementFactoryKey = new("MspecElementMapping.MspecElementFactory");
 }

@@ -1,12 +1,11 @@
 ﻿using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
+
+internal static class ContextInfoExtensions
 {
-    internal static class ContextInfoExtensions
+    public static TestContextInfo ToTestContext(this ContextInfo context)
     {
-        public static TestContextInfo ToTestContext(this ContextInfo context)
-        {
-            return new TestContextInfo(context.TypeName, context.CapturedOutput);
-        }
+        return new TestContextInfo(context.TypeName, context.CapturedOutput);
     }
 }

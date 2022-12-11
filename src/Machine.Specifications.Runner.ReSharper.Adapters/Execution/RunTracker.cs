@@ -1,61 +1,60 @@
 ﻿using System.Linq;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
+
+public class RunTracker
 {
-    public class RunTracker
+    private readonly ConcurrentLookup<IContextElement> pendingContexts = new();
+
+    private readonly ConcurrentLookup<IContextElement> runningContexts = new();
+
+    private readonly ConcurrentLookup<ISpecificationElement> pendingSpecifications = new();
+
+    private readonly ConcurrentLookup<ISpecificationElement> runningSpecifications = new();
+
+    public RunTracker(ISpecificationElement[] specifications)
     {
-        private readonly ConcurrentLookup<IContextElement> pendingContexts = new();
+        var contexts = specifications
+            .Select(x => x.Context)
+            .Distinct();
 
-        private readonly ConcurrentLookup<IContextElement> runningContexts = new();
-
-        private readonly ConcurrentLookup<ISpecificationElement> pendingSpecifications = new();
-
-        private readonly ConcurrentLookup<ISpecificationElement> runningSpecifications = new();
-
-        public RunTracker(ISpecificationElement[] specifications)
+        foreach (var context in contexts)
         {
-            var contexts = specifications
-                .Select(x => x.Context)
-                .Distinct();
-
-            foreach (var context in contexts)
-            {
-                pendingContexts.Add(context);
-            }
-
-            foreach (var specification in specifications)
-            {
-                pendingSpecifications.Add(specification);
-            }
+            pendingContexts.Add(context);
         }
 
-        public IContextElement? StartContext(string id)
+        foreach (var specification in specifications)
         {
-            var element = pendingContexts.Take(id);
-
-            runningContexts.Add(element);
-
-            return element;
+            pendingSpecifications.Add(specification);
         }
+    }
 
-        public ISpecificationElement? StartSpecification(string id)
-        {
-            var element = pendingSpecifications.Take(id);
+    public IContextElement? StartContext(string id)
+    {
+        var element = pendingContexts.Take(id);
 
-            runningSpecifications.Add(element);
+        runningContexts.Add(element);
 
-            return element;
-        }
+        return element;
+    }
 
-        public IContextElement? FinishContext(string id)
-        {
-            return runningContexts.Take(id);
-        }
+    public ISpecificationElement? StartSpecification(string id)
+    {
+        var element = pendingSpecifications.Take(id);
 
-        public ISpecificationElement? FinishSpecification(string id)
-        {
-            return runningSpecifications.Take(id);
-        }
+        runningSpecifications.Add(element);
+
+        return element;
+    }
+
+    public IContextElement? FinishContext(string id)
+    {
+        return runningContexts.Take(id);
+    }
+
+    public ISpecificationElement? FinishSpecification(string id)
+    {
+        return runningSpecifications.Take(id);
     }
 }

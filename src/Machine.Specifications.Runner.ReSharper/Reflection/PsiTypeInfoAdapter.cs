@@ -3,67 +3,66 @@ using System.Linq;
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ReSharper.Psi;
 
-namespace Machine.Specifications.Runner.ReSharper.Reflection
+namespace Machine.Specifications.Runner.ReSharper.Reflection;
+
+public class PsiTypeInfoAdapter : ITypeInfo
 {
-    public class PsiTypeInfoAdapter : ITypeInfo
+    private readonly ITypeElement type;
+
+    private readonly IDeclaredType? declaredType;
+
+    public PsiTypeInfoAdapter(ITypeElement type, IDeclaredType? declaredType = null)
     {
-        private readonly ITypeElement type;
+        this.type = type;
+        this.declaredType = declaredType;
+    }
 
-        private readonly IDeclaredType? declaredType;
+    public string FullyQualifiedName => type.GetClrName().FullName;
 
-        public PsiTypeInfoAdapter(ITypeElement type, IDeclaredType? declaredType = null)
+    public bool IsAbstract => type is IModifiersOwner {IsAbstract: true};
+
+    public ITypeInfo? GetContainingType()
+    {
+        return type.GetContainingType()?.AsTypeInfo();
+    }
+
+    public IEnumerable<IFieldInfo> GetFields()
+    {
+        if (type is not IClass classType)
         {
-            this.type = type;
-            this.declaredType = declaredType;
+            return Enumerable.Empty<IFieldInfo>();
         }
 
-        public string FullyQualifiedName => type.GetClrName().FullName;
+        return classType.Fields
+            .Where(x => !x.IsStatic)
+            .Select(x => x.AsFieldInfo());
+    }
 
-        public bool IsAbstract => type is IModifiersOwner {IsAbstract: true};
+    public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
+    {
+        return type.GetAttributeInstances(new ClrTypeName(typeName), inherit)
+            .Select(x => x.AsAttributeInfo());
+    }
 
-        public ITypeInfo? GetContainingType()
+    public IEnumerable<ITypeInfo> GetGenericArguments()
+    {
+        if (declaredType != null)
         {
-            return type.GetContainingType()?.AsTypeInfo();
+            var substitution = declaredType.GetSubstitution();
+
+            return substitution.Domain
+                .Select(x => substitution.Apply(x).GetScalarType())
+                .Where(x => x != null)
+                .Select(x => x?.GetTypeElement())
+                .OfType<IClass>()
+                .Select(x => x.AsTypeInfo());
         }
 
-        public IEnumerable<IFieldInfo> GetFields()
+        if (type is ITypeParametersOwner owner)
         {
-            if (type is not IClass classType)
-            {
-                return Enumerable.Empty<IFieldInfo>();
-            }
-
-            return classType.Fields
-                .Where(x => !x.IsStatic)
-                .Select(x => x.AsFieldInfo());
+            return owner.TypeParameters.Select(x => x.AsTypeInfo());
         }
 
-        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
-        {
-            return type.GetAttributeInstances(new ClrTypeName(typeName), inherit)
-                .Select(x => x.AsAttributeInfo());
-        }
-
-        public IEnumerable<ITypeInfo> GetGenericArguments()
-        {
-            if (declaredType != null)
-            {
-                var substitution = declaredType.GetSubstitution();
-
-                return substitution.Domain
-                    .Select(x => substitution.Apply(x).GetScalarType())
-                    .Where(x => x != null)
-                    .Select(x => x?.GetTypeElement())
-                    .OfType<IClass>()
-                    .Select(x => x.AsTypeInfo());
-            }
-
-            if (type is ITypeParametersOwner owner)
-            {
-                return owner.TypeParameters.Select(x => x.AsTypeInfo());
-            }
-
-            return Enumerable.Empty<ITypeInfo>();
-        }
+        return Enumerable.Empty<ITypeInfo>();
     }
 }

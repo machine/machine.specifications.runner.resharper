@@ -1,12 +1,11 @@
 ﻿using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
+
+internal static class SpecificationInfoExtensions
 {
-    internal static class SpecificationInfoExtensions
+    public static TestSpecificationInfo ToTestSpecification(this SpecificationInfo specification)
     {
-        public static TestSpecificationInfo ToTestSpecification(this SpecificationInfo specification)
-        {
-            return new TestSpecificationInfo(specification.ContainingType, specification.FieldName, specification.CapturedOutput);
-        }
+        return new TestSpecificationInfo(specification.ContainingType, specification.FieldName, specification.CapturedOutput);
     }
 }

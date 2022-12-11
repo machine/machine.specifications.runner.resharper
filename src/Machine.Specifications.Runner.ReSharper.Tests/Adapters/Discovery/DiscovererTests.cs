@@ -11,57 +11,56 @@ using Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Discovery
+namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Discovery;
+
+[TestFixture]
+public class DiscovererTests : UnitTestElementTestBase
 {
-    [TestFixture]
-    public class DiscovererTests : UnitTestElementTestBase
+    [Test]
+    public void UnreportedBehaviorsAreAddedToDepot()
     {
-        [Test]
-        public void UnreportedBehaviorsAreAddedToDepot()
+        var container = new TestContainer("assembly.dll", ShadowCopy.None);
+        var request = new TestDiscoveryRequest(container);
+
+        var controller = Substitute.For<IMspecController>();
+        var sink = Substitute.For<ITestDiscoverySink>();
+        var depot = new RemoteTaskDepot(GetReportedTasks().ToArray());
+        var discoverer = new Discoverer(request, controller, sink, depot, CancellationToken.None);
+
+        var elements = GetDiscoveredElements().ToArray();
+
+        controller.Find(Arg.Do<IMspecDiscoverySink>(x => PopulateSink(x, elements)), Arg.Any<string>());
+
+        discoverer.Discover();
+
+        foreach (var element in elements)
         {
-            var container = new TestContainer("assembly.dll", ShadowCopy.None);
-            var request = new TestDiscoveryRequest(container);
+            Assert.NotNull(depot[element]);
+        }
+    }
 
-            var controller = Substitute.For<IMspecController>();
-            var sink = Substitute.For<ITestDiscoverySink>();
-            var depot = new RemoteTaskDepot(GetReportedTasks().ToArray());
-            var discoverer = new Discoverer(request, controller, sink, depot, CancellationToken.None);
-
-            var elements = GetDiscoveredElements().ToArray();
-
-            controller.Find(Arg.Do<IMspecDiscoverySink>(x => PopulateSink(x, elements)), Arg.Any<string>());
-
-            discoverer.Discover();
-
-            foreach (var element in elements)
-            {
-                Assert.NotNull(depot[element]);
-            }
+    private void PopulateSink(IMspecDiscoverySink sink, ISpecificationElement[] elements)
+    {
+        foreach (var element in elements)
+        {
+            sink.OnSpecification(element);
         }
 
-        private void PopulateSink(IMspecDiscoverySink sink, ISpecificationElement[] elements)
-        {
-            foreach (var element in elements)
-            {
-                sink.OnSpecification(element);
-            }
+        sink.OnDiscoveryCompleted();
+    }
 
-            sink.OnDiscoveryCompleted();
-        }
+    private IEnumerable<ISpecificationElement> GetDiscoveredElements()
+    {
+        yield return ElementFixtures.Specification1;
+        yield return ElementFixtures.Behavior1Specification1;
+        yield return ElementFixtures.Behavior1Specification2;
+    }
 
-        private IEnumerable<ISpecificationElement> GetDiscoveredElements()
-        {
-            yield return ElementFixtures.Specification1;
-            yield return ElementFixtures.Behavior1Specification1;
-            yield return ElementFixtures.Behavior1Specification2;
-        }
-
-        private IEnumerable<RemoteTask> GetReportedTasks()
-        {
-            yield return RemoteTaskFixtures.Context;
-            yield return RemoteTaskFixtures.Specification1;
-            yield return RemoteTaskFixtures.Behavior1;
-            yield return RemoteTaskFixtures.Behavior1Specification1;
-        }
+    private IEnumerable<RemoteTask> GetReportedTasks()
+    {
+        yield return RemoteTaskFixtures.Context;
+        yield return RemoteTaskFixtures.Specification1;
+        yield return RemoteTaskFixtures.Behavior1;
+        yield return RemoteTaskFixtures.Behavior1Specification1;
     }
 }

@@ -4,47 +4,46 @@ using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 using Machine.Specifications.Runner.ReSharper.Elements;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper;
+
+public class UnitTestElementFactory
 {
-    public class UnitTestElementFactory
+    private readonly JetHashSet<IUnitTestElement> elements = new(UnitTestElement.Comparer.ByNaturalId);
+
+    public MspecContextTestElement GetOrCreateContext(
+        IClrTypeName typeName,
+        string? subject,
+        string[]? tags,
+        string? ignoreReason)
     {
-        private readonly JetHashSet<IUnitTestElement> elements = new(UnitTestElement.Comparer.ByNaturalId);
+        var context = new MspecContextTestElement(typeName, subject, ignoreReason);
 
-        public MspecContextTestElement GetOrCreateContext(
-            IClrTypeName typeName,
-            string? subject,
-            string[]? tags,
-            string? ignoreReason)
+        if (tags != null)
         {
-            var context = new MspecContextTestElement(typeName, subject, ignoreReason);
-
-            if (tags != null)
-            {
-                context.OwnCategories = tags.Select(x => new UnitTestElementCategory(x)).ToJetHashSet();
-            }
-
-            return (MspecContextTestElement) elements.Intern(context);
+            context.OwnCategories = tags.Select(x => new UnitTestElementCategory(x)).ToJetHashSet();
         }
 
-        public MspecSpecificationTestElement GetOrCreateSpecification(
-            MspecContextTestElement context,
-            string fieldName,
-            string? behaviorType,
-            string? ignoreReason)
-        {
-            var specification = new MspecSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason);
+        return (MspecContextTestElement) elements.Intern(context);
+    }
 
-            return (MspecSpecificationTestElement) elements.Intern(specification);
-        }
+    public MspecSpecificationTestElement GetOrCreateSpecification(
+        MspecContextTestElement context,
+        string fieldName,
+        string? behaviorType,
+        string? ignoreReason)
+    {
+        var specification = new MspecSpecificationTestElement(context, fieldName, behaviorType, null, ignoreReason);
 
-        public MspecBehaviorSpecificationTestElement GetOrCreateBehaviorSpecification(
-            MspecSpecificationTestElement parent,
-            string fieldName,
-            string? ignoreReason)
-        {
-            var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, ignoreReason ?? parent.IgnoreReason);
+        return (MspecSpecificationTestElement) elements.Intern(specification);
+    }
 
-            return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
-        }
+    public MspecBehaviorSpecificationTestElement GetOrCreateBehaviorSpecification(
+        MspecSpecificationTestElement parent,
+        string fieldName,
+        string? ignoreReason)
+    {
+        var specification = new MspecBehaviorSpecificationTestElement(parent, fieldName, ignoreReason ?? parent.IgnoreReason);
+
+        return (MspecBehaviorSpecificationTestElement) elements.Intern(specification);
     }
 }

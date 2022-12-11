@@ -3,143 +3,142 @@ using System.Linq;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
+
+public class ExecutionAdapterRunListener : IRunListener
 {
-    public class ExecutionAdapterRunListener : IRunListener
+    private readonly IExecutionListener listener;
+
+    private readonly ElementCache cache;
+
+    private readonly RunTracker tracker;
+
+    private readonly HashSet<IMspecElement> behaviors = new();
+
+    private IContextElement? currentContext;
+
+    public ExecutionAdapterRunListener(IExecutionListener listener, ElementCache cache, RunTracker tracker)
     {
-        private readonly IExecutionListener listener;
+        this.listener = listener;
+        this.cache = cache;
+        this.tracker = tracker;
+    }
 
-        private readonly ElementCache cache;
+    public void OnAssemblyStart(TestAssemblyInfo assemblyInfo)
+    {
+        listener.OnAssemblyStart(assemblyInfo.Location);
+    }
 
-        private readonly RunTracker tracker;
+    public void OnAssemblyEnd(TestAssemblyInfo assemblyInfo)
+    {
+        listener.OnAssemblyEnd(assemblyInfo.Location);
+    }
 
-        private readonly HashSet<IMspecElement> behaviors = new();
+    public void OnRunStart()
+    {
+        listener.OnRunStart();
+    }
 
-        private IContextElement? currentContext;
+    public void OnRunEnd()
+    {
+        listener.OnRunEnd();
+    }
 
-        public ExecutionAdapterRunListener(IExecutionListener listener, ElementCache cache, RunTracker tracker)
+    public void OnContextStart(TestContextInfo contextInfo)
+    {
+        var element = tracker.StartContext(contextInfo.TypeName);
+
+        currentContext = element;
+
+        if (element != null)
         {
-            this.listener = listener;
-            this.cache = cache;
-            this.tracker = tracker;
+            listener.OnContextStart(element);
+        }
+    }
+
+    public void OnContextEnd(TestContextInfo contextInfo)
+    {
+        var element = tracker.FinishContext(contextInfo.TypeName);
+
+        if (element != null)
+        {
+            var runningBehaviors = cache.GetBehaviors(element)
+                .Where(x => behaviors.Contains(x));
+
+            foreach (var behavior in runningBehaviors)
+            {
+                listener.OnBehaviorEnd(behavior, contextInfo.CapturedOutput);
+            }
+
+            listener.OnContextEnd(element, contextInfo.CapturedOutput);
         }
 
-        public void OnAssemblyStart(TestAssemblyInfo assemblyInfo)
-        {
-            listener.OnAssemblyStart(assemblyInfo.Location);
-        }
+        currentContext = null;
+    }
 
-        public void OnAssemblyEnd(TestAssemblyInfo assemblyInfo)
-        {
-            listener.OnAssemblyEnd(assemblyInfo.Location);
-        }
+    public void OnSpecificationStart(TestSpecificationInfo specificationInfo)
+    {
+        var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
 
-        public void OnRunStart()
+        if (isBehavior)
         {
-            listener.OnRunStart();
-        }
+            var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-        public void OnRunEnd()
-        {
-            listener.OnRunEnd();
-        }
+            var element = tracker.StartSpecification(key);
 
-        public void OnContextStart(TestContextInfo contextInfo)
-        {
-            var element = tracker.StartContext(contextInfo.TypeName);
-
-            currentContext = element;
+            if (element?.Behavior != null && behaviors.Add(element.Behavior))
+            {
+                listener.OnBehaviorStart(element.Behavior);
+            }
 
             if (element != null)
             {
-                listener.OnContextStart(element);
+                listener.OnSpecificationStart(element);
             }
         }
-
-        public void OnContextEnd(TestContextInfo contextInfo)
+        else
         {
-            var element = tracker.FinishContext(contextInfo.TypeName);
+            var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
+
+            var element = tracker.StartSpecification(key);
 
             if (element != null)
             {
-                var runningBehaviors = cache.GetBehaviors(element)
-                    .Where(x => behaviors.Contains(x));
-
-                foreach (var behavior in runningBehaviors)
-                {
-                    listener.OnBehaviorEnd(behavior, contextInfo.CapturedOutput);
-                }
-
-                listener.OnContextEnd(element, contextInfo.CapturedOutput);
+                listener.OnSpecificationStart(element);
             }
-
-            currentContext = null;
         }
+    }
 
-        public void OnSpecificationStart(TestSpecificationInfo specificationInfo)
+    public void OnSpecificationEnd(TestSpecificationInfo specificationInfo, TestRunResult runResult)
+    {
+        var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
+
+        if (isBehavior)
         {
-            var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
+            var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-            if (isBehavior)
+            var element = tracker.FinishSpecification(key);
+
+            if (element != null)
             {
-                var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
-
-                var element = tracker.StartSpecification(key);
-
-                if (element?.Behavior != null && behaviors.Add(element.Behavior))
-                {
-                    listener.OnBehaviorStart(element.Behavior);
-                }
-
-                if (element != null)
-                {
-                    listener.OnSpecificationStart(element);
-                }
-            }
-            else
-            {
-                var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
-
-                var element = tracker.StartSpecification(key);
-
-                if (element != null)
-                {
-                    listener.OnSpecificationStart(element);
-                }
+                listener.OnSpecificationEnd(element, specificationInfo.CapturedOutput, runResult);
             }
         }
-
-        public void OnSpecificationEnd(TestSpecificationInfo specificationInfo, TestRunResult runResult)
+        else
         {
-            var isBehavior = cache.IsBehavior(specificationInfo.ContainingType);
+            var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
 
-            if (isBehavior)
+            var element = tracker.FinishSpecification(key);
+
+            if (element != null)
             {
-                var key = $"{currentContext?.TypeName}.{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
-
-                var element = tracker.FinishSpecification(key);
-
-                if (element != null)
-                {
-                    listener.OnSpecificationEnd(element, specificationInfo.CapturedOutput, runResult);
-                }
-            }
-            else
-            {
-                var key = $"{specificationInfo.ContainingType}.{specificationInfo.FieldName}";
-
-                var element = tracker.FinishSpecification(key);
-
-                if (element != null)
-                {
-                    listener.OnSpecificationEnd(element, specificationInfo.CapturedOutput, runResult);
-                }
+                listener.OnSpecificationEnd(element, specificationInfo.CapturedOutput, runResult);
             }
         }
+    }
 
-        public void OnFatalError(TestError? error)
-        {
-            listener.OnFatalError(error);
-        }
+    public void OnFatalError(TestError? error)
+    {
+        listener.OnFatalError(error);
     }
 }

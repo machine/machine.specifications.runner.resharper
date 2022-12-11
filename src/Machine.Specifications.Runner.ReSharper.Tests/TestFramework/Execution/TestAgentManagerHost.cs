@@ -4,16 +4,15 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
 using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 using Machine.Specifications.Runner.ReSharper.Runner;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
-{
-    [SolutionComponent]
-    public class TestAgentManagerHost : IAgentManagerHost, IHideImplementation<AgentManagerHost>
-    {
-        public TestAgentManagerHost(IAssemblyResolver assemblyResolver)
-        {
-            AgentManager = new AgentManager(assemblyResolver);
-        }
+namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-        public ITestRunnerAgentManager AgentManager { get; }
+[SolutionComponent]
+public class TestAgentManagerHost : IAgentManagerHost, IHideImplementation<AgentManagerHost>
+{
+    public TestAgentManagerHost(IAssemblyResolver assemblyResolver)
+    {
+        AgentManager = new AgentManager(assemblyResolver);
     }
+
+    public ITestRunnerAgentManager AgentManager { get; }
 }

@@ -1,12 +1,11 @@
 ﻿using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper;
+
+public static class TypeInfoFactory
 {
-    public static class TypeInfoFactory
+    public static TypeInfo Create(string typeName, string assemblyLocation)
     {
-        public static TypeInfo Create(string typeName, string assemblyLocation)
-        {
-            return new TypeInfo(typeName, assemblyLocation);
-        }
+        return new TypeInfo(typeName, assemblyLocation);
     }
 }

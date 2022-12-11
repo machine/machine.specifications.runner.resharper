@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Machine.Specifications.Runner.ReSharper.Reflection
+namespace Machine.Specifications.Runner.ReSharper.Reflection;
+
+public interface IAttributeInfo
 {
-    public interface IAttributeInfo
-    {
-        IEnumerable<string> GetParameters();
-    }
+    IEnumerable<string> GetParameters();
 }

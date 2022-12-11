@@ -8,34 +8,33 @@ using JetBrains.ReSharper.UnitTestFramework.Session;
 using JetBrains.Util;
 using Machine.Specifications.Runner.ReSharper.Elements;
 
-namespace Machine.Specifications.Runner.ReSharper.Rules
+namespace Machine.Specifications.Runner.ReSharper.Rules;
+
+[UnitTestElementsTransformationRule(Priority = 90)]
+public class EnsureAncestorsAddedToExecutedElementsRule : IUnitTestElementsTransformationRule
 {
-    [UnitTestElementsTransformationRule(Priority = 90)]
-    public class EnsureAncestorsAddedToExecutedElementsRule : IUnitTestElementsTransformationRule
+    public IUnitTestElementCriterion Apply(
+        IUnitTestElementCriterion criterion,
+        IUnitTestSession session,
+        IHostProvider hostProvider)
     {
-        public IUnitTestElementCriterion Apply(
-            IUnitTestElementCriterion criterion,
-            IUnitTestSession session,
-            IHostProvider hostProvider)
-        {
-            return criterion;
-        }
+        return criterion;
+    }
 
-        public void Apply(ISet<IUnitTestElement> elements, IUnitTestSession session, IHostProvider hostProvider)
-        {
-            var ancestors = new HashSet<IUnitTestElement>();
+    public void Apply(ISet<IUnitTestElement> elements, IUnitTestSession session, IHostProvider hostProvider)
+    {
+        var ancestors = new HashSet<IUnitTestElement>();
 
-            foreach (var element in elements.OfType<IMspecTestElement>())
+        foreach (var element in elements.OfType<IMspecTestElement>())
+        {
+            var parent = element.Parent;
+
+            while (parent != null && ancestors.Add(parent))
             {
-                var parent = element.Parent;
-
-                while (parent != null && ancestors.Add(parent))
-                {
-                    parent = parent.Parent;
-                }
+                parent = parent.Parent;
             }
-
-            elements.AddRange(ancestors);
         }
+
+        elements.AddRange(ancestors);
     }
 }

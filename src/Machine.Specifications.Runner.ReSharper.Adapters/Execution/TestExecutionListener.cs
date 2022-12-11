@@ -7,191 +7,190 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
+
+public class TestExecutionListener : IExecutionListener
 {
-    public class TestExecutionListener : IExecutionListener
+    private readonly RunContext runContext;
+
+    private readonly ElementCache cache;
+
+    private readonly CancellationToken token;
+
+    private readonly HashSet<ISpecificationElement> passed = new();
+
+    private readonly HashSet<ISpecificationElement> failed = new();
+
+    private readonly ManualResetEvent waitEvent = new(false);
+
+    public TestExecutionListener(RunContext runContext, ElementCache cache, CancellationToken token)
     {
-        private readonly RunContext runContext;
+        this.runContext = runContext;
+        this.cache = cache;
+        this.token = token;
+    }
 
-        private readonly ElementCache cache;
+    public WaitHandle Finished => waitEvent;
 
-        private readonly CancellationToken token;
-
-        private readonly HashSet<ISpecificationElement> passed = new();
-
-        private readonly HashSet<ISpecificationElement> failed = new();
-
-        private readonly ManualResetEvent waitEvent = new(false);
-
-        public TestExecutionListener(RunContext runContext, ElementCache cache, CancellationToken token)
+    public void OnAssemblyStart(string assemblyLocation)
+    {
+        if (string.IsNullOrEmpty(assemblyLocation))
         {
-            this.runContext = runContext;
-            this.cache = cache;
-            this.token = token;
+            return;
         }
 
-        public WaitHandle Finished => waitEvent;
+        var path = Path.GetDirectoryName(assemblyLocation);
 
-        public void OnAssemblyStart(string assemblyLocation)
+        if (!string.IsNullOrEmpty(path))
         {
-            if (string.IsNullOrEmpty(assemblyLocation))
-            {
-                return;
-            }
+            Environment.CurrentDirectory = path;
+        }
+    }
 
-            var path = Path.GetDirectoryName(assemblyLocation);
+    public void OnAssemblyEnd(string assemblyLocation)
+    {
+    }
 
-            if (!string.IsNullOrEmpty(path))
-            {
-                Environment.CurrentDirectory = path;
-            }
+    public void OnRunStart()
+    {
+    }
+
+    public void OnRunEnd()
+    {
+        waitEvent.Set();
+    }
+
+    public void OnContextStart(IContextElement context)
+    {
+        if (token.IsCancellationRequested)
+        {
+            return;
         }
 
-        public void OnAssemblyEnd(string assemblyLocation)
+        runContext.GetTask(context).Starting();
+    }
+
+    public void OnContextEnd(IContextElement context, string capturedOutput)
+    {
+        if (token.IsCancellationRequested)
         {
+            return;
         }
 
-        public void OnRunStart()
+        var task = runContext.GetTask(context);
+        var tests = cache.GetSpecifications(context).ToArray();
+        var behaviors = cache.GetBehaviors(context).ToArray();
+
+        var testsPassed = tests.All(x => passed.Contains(x));
+        var testsFailed = tests.Any(x => failed.Contains(x));
+
+        if (testsPassed)
         {
+            task.Passed();
         }
 
-        public void OnRunEnd()
+        task.Output(capturedOutput);
+
+        var ignoreReason = !behaviors.Any() || behaviors.Any(x => string.IsNullOrEmpty(x.IgnoreReason))
+            ? null
+            : context.IgnoreReason;
+
+        if (string.IsNullOrEmpty(ignoreReason))
         {
-            waitEvent.Set();
+            task.Finished(testsFailed);
+        }
+        else
+        {
+            task.Skipped(context.IgnoreReason);
+        }
+    }
+
+    public void OnBehaviorStart(IBehaviorElement behavior)
+    {
+        if (token.IsCancellationRequested)
+        {
+            return;
         }
 
-        public void OnContextStart(IContextElement context)
-        {
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
+        runContext.GetTask(behavior).Starting();
+    }
 
-            runContext.GetTask(context).Starting();
+    public void OnBehaviorEnd(IBehaviorElement behavior, string capturedOutput)
+    {
+        if (token.IsCancellationRequested)
+        {
+            return;
         }
 
-        public void OnContextEnd(IContextElement context, string capturedOutput)
+        var task = runContext.GetTask(behavior);
+        var tests = cache.GetSpecifications(behavior).ToArray();
+
+        var testsPassed = tests.All(x => passed.Contains(x));
+        var testsFailed = tests.Any(x => failed.Contains(x));
+
+        if (testsPassed)
         {
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
-
-            var task = runContext.GetTask(context);
-            var tests = cache.GetSpecifications(context).ToArray();
-            var behaviors = cache.GetBehaviors(context).ToArray();
-
-            var testsPassed = tests.All(x => passed.Contains(x));
-            var testsFailed = tests.Any(x => failed.Contains(x));
-
-            if (testsPassed)
-            {
-                task.Passed();
-            }
-
-            task.Output(capturedOutput);
-
-            var ignoreReason = !behaviors.Any() || behaviors.Any(x => string.IsNullOrEmpty(x.IgnoreReason))
-                ? null
-                : context.IgnoreReason;
-
-            if (string.IsNullOrEmpty(ignoreReason))
-            {
-                task.Finished(testsFailed);
-            }
-            else
-            {
-                task.Skipped(context.IgnoreReason);
-            }
+            task.Passed();
         }
 
-        public void OnBehaviorStart(IBehaviorElement behavior)
-        {
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
+        task.Output(capturedOutput);
 
-            runContext.GetTask(behavior).Starting();
+        if (string.IsNullOrEmpty(behavior.IgnoreReason))
+        {
+            task.Finished(testsFailed);
+        }
+        else
+        {
+            task.Skipped(behavior.IgnoreReason);
+        }
+    }
+
+    public void OnSpecificationStart(ISpecificationElement specification)
+    {
+        if (token.IsCancellationRequested)
+        {
+            return;
         }
 
-        public void OnBehaviorEnd(IBehaviorElement behavior, string capturedOutput)
+        runContext.GetTask(specification).Starting();
+    }
+
+    public void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, TestRunResult runResult)
+    {
+        if (token.IsCancellationRequested)
         {
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
-
-            var task = runContext.GetTask(behavior);
-            var tests = cache.GetSpecifications(behavior).ToArray();
-
-            var testsPassed = tests.All(x => passed.Contains(x));
-            var testsFailed = tests.Any(x => failed.Contains(x));
-
-            if (testsPassed)
-            {
-                task.Passed();
-            }
-
-            task.Output(capturedOutput);
-
-            if (string.IsNullOrEmpty(behavior.IgnoreReason))
-            {
-                task.Finished(testsFailed);
-            }
-            else
-            {
-                task.Skipped(behavior.IgnoreReason);
-            }
+            return;
         }
 
-        public void OnSpecificationStart(ISpecificationElement specification)
+        var task = runContext.GetTask(specification);
+
+        task.Output(capturedOutput);
+
+        if (runResult.Status == TestStatus.Failing)
         {
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
+            failed.Add(specification);
 
-            runContext.GetTask(specification).Starting();
+            task.Failed(runResult.Exception?.Exceptions ?? Array.Empty<ExceptionInfo>(), runResult.Exception?.ExceptionMessage ?? string.Empty);
+            task.Finished();
         }
-
-        public void OnSpecificationEnd(ISpecificationElement specification, string capturedOutput, TestRunResult runResult)
+        else if (runResult.Status == TestStatus.Passing)
         {
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
+            passed.Add(specification);
 
-            var task = runContext.GetTask(specification);
-
-            task.Output(capturedOutput);
-
-            if (runResult.Status == TestStatus.Failing)
-            {
-                failed.Add(specification);
-
-                task.Failed(runResult.Exception?.Exceptions ?? Array.Empty<ExceptionInfo>(), runResult.Exception?.ExceptionMessage ?? string.Empty);
-                task.Finished();
-            }
-            else if (runResult.Status == TestStatus.Passing)
-            {
-                passed.Add(specification);
-
-                task.Passed();
-                task.Finished();
-            }
-            else if (runResult.Status == TestStatus.NotImplemented)
-            {
-                task.Skipped("Not implemented");
-            }
-            else if (runResult.Status == TestStatus.Ignored)
-            {
-                task.Skipped();
-            }
+            task.Passed();
+            task.Finished();
         }
-
-        public void OnFatalError(TestError? error)
+        else if (runResult.Status == TestStatus.NotImplemented)
         {
+            task.Skipped("Not implemented");
         }
+        else if (runResult.Status == TestStatus.Ignored)
+        {
+            task.Skipped();
+        }
+    }
+
+    public void OnFatalError(TestError? error)
+    {
     }
 }

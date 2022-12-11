@@ -2,10 +2,9 @@
 using JetBrains.ReSharper.TestFramework;
 using JetBrains.TestFramework.Application.Zones;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests
+namespace Machine.Specifications.Runner.ReSharper.Tests;
+
+[ZoneDefinition]
+public interface IMspecTestZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>
 {
-    [ZoneDefinition]
-    public interface IMspecTestZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>
-    {
-    }
 }
