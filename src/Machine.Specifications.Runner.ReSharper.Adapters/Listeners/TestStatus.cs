@@ -1,10 +1,9 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
+
+public enum TestStatus
 {
-    public enum TestStatus
-    {
-        Failing,
-        Passing,
-        NotImplemented,
-        Ignored,
-    }
+    Failing,
+    Passing,
+    NotImplemented,
+    Ignored,
 }

@@ -7,90 +7,89 @@ using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
+namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
+
+public class MessageBroker : IMessageBroker
 {
-    public class MessageBroker : IMessageBroker
+    private readonly TestRunnerHandler testRunnerHandler;
+
+    private readonly Dictionary<Type, MessageHandler> messageHandlers = new();
+
+    public MessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers)
     {
-        private readonly TestRunnerHandler testRunnerHandler;
+        testRunnerHandler = new TestRunnerHandler(this, resolver);
 
-        private readonly Dictionary<Type, MessageHandler> messageHandlers = new();
+        InitializeMessageHandlers(handlers);
+    }
 
-        public MessageBroker(IAssemblyResolver resolver, IMessageHandlerMarker[] handlers)
+    public async Task SendMessage(IMessage message)
+    {
+        switch (message)
         {
-            testRunnerHandler = new TestRunnerHandler(this, resolver);
+            case RemoteAgentInitializationRequest initialization:
+                testRunnerHandler.Execute(initialization);
+                break;
 
-            InitializeMessageHandlers(handlers);
+            case TestRunRequest testRun:
+                await testRunnerHandler.Execute(testRun).ConfigureAwait(false);
+                break;
+
+            default:
+                await HandleMessage(message).ConfigureAwait(false);
+                break;
         }
+    }
 
-        public async Task SendMessage(IMessage message)
+    public Task<TResult> SendMessage<TResult>(IMessage<TResult> message)
+        where TResult : IAutoRegisterInProtocol
+    {
+        throw new NotSupportedException();
+    }
+
+    private Task HandleMessage(IMessage message)
+    {
+        if (!messageHandlers.TryGetValue(message.GetType(), out var handler))
         {
-            switch (message)
-            {
-                case RemoteAgentInitializationRequest initialization:
-                    testRunnerHandler.Execute(initialization);
-                    break;
-
-                case TestRunRequest testRun:
-                    await testRunnerHandler.Execute(testRun).ConfigureAwait(false);
-                    break;
-
-                default:
-                    await HandleMessage(message).ConfigureAwait(false);
-                    break;
-            }
-        }
-
-        public Task<TResult> SendMessage<TResult>(IMessage<TResult> message)
-            where TResult : IAutoRegisterInProtocol
-        {
-            throw new NotSupportedException();
-        }
-
-        private Task HandleMessage(IMessage message)
-        {
-            if (!messageHandlers.TryGetValue(message.GetType(), out var handler))
-            {
-                return Task.CompletedTask;
-            }
-
-            if (handler.Method.Invoke(handler.Handler, new object[] {message}) is Task task)
-            {
-                return task;
-            }
-
             return Task.CompletedTask;
         }
 
-        private void InitializeMessageHandlers(IMessageHandlerMarker[] handlers)
+        if (handler.Method.Invoke(handler.Handler, new object[] {message}) is Task task)
         {
-            foreach (var handler in handlers)
-            {
-                var asyncHandlers = handler.GetType()
-                    .GetInterfaces()
-                    .Where(x => x.IsGenericType)
-                    .Where(x => x.GetGenericTypeDefinition() == typeof(IAsyncMessageHandler<>));
-
-                foreach (var asyncHandler in asyncHandlers)
-                {
-                    var messageType = asyncHandler.GetGenericArguments().First();
-                    var method = asyncHandler.GetMethod("Execute", new[] {messageType});
-
-                    messageHandlers[messageType] = new MessageHandler(handler, method!);
-                }
-            }
+            return task;
         }
 
-        private class MessageHandler
+        return Task.CompletedTask;
+    }
+
+    private void InitializeMessageHandlers(IMessageHandlerMarker[] handlers)
+    {
+        foreach (var handler in handlers)
         {
-            public MessageHandler(IMessageHandlerMarker handler, MethodInfo method)
+            var asyncHandlers = handler.GetType()
+                .GetInterfaces()
+                .Where(x => x.IsGenericType)
+                .Where(x => x.GetGenericTypeDefinition() == typeof(IAsyncMessageHandler<>));
+
+            foreach (var asyncHandler in asyncHandlers)
             {
-                Handler = handler;
-                Method = method;
+                var messageType = asyncHandler.GetGenericArguments().First();
+                var method = asyncHandler.GetMethod("Execute", new[] {messageType});
+
+                messageHandlers[messageType] = new MessageHandler(handler, method!);
             }
-
-            public IMessageHandlerMarker Handler { get; }
-
-            public MethodInfo Method { get; }
         }
+    }
+
+    private class MessageHandler
+    {
+        public MessageHandler(IMessageHandlerMarker handler, MethodInfo method)
+        {
+            Handler = handler;
+            Method = method;
+        }
+
+        public IMessageHandlerMarker Handler { get; }
+
+        public MethodInfo Method { get; }
     }
 }

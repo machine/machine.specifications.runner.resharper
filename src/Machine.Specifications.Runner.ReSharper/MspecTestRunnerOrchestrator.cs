@@ -8,47 +8,46 @@ using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner.Extensions;
 using JetBrains.Util;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper;
+
+[SolutionComponent]
+public class MspecTestRunnerOrchestrator : ITestRunnerAdapter
 {
-    [SolutionComponent]
-    public class MspecTestRunnerOrchestrator : ITestRunnerAdapter
+    private const string Namespace = "Machine.Specifications.Runner.ReSharper";
+
+    private static readonly FileSystemPath Root = Assembly.GetExecutingAssembly().GetPath().Directory;
+
+    public Assembly InProcessAdapterAssembly => typeof (MspecTestContainer).Assembly;
+
+    public int Priority => 10;
+
+    public TestAdapterLoader GetTestAdapterLoader(ITestRunnerContext context)
     {
-        private const string Namespace = "Machine.Specifications.Runner.ReSharper";
+        var framework = context.RuntimeEnvironment.TargetFrameworkId.IsNetCoreSdk()
+            ? "netstandard20"
+            : "net461";
 
-        private static readonly FileSystemPath Root = Assembly.GetExecutingAssembly().GetPath().Directory;
+        var adapters = Root.Combine($"{Namespace}.Adapters.{framework}.dll");
+        var tasks = Root.Combine($"{Namespace}.Tasks.{framework}.dll");
 
-        public Assembly InProcessAdapterAssembly => typeof (MspecTestContainer).Assembly;
+        var type = TypeInfoFactory.Create($"{Namespace}.Adapters.MspecRunner", adapters.FullPath);
 
-        public int Priority => 10;
-
-        public TestAdapterLoader GetTestAdapterLoader(ITestRunnerContext context)
+        return new TestAdapterInfo(type, type)
         {
-            var framework = context.RuntimeEnvironment.TargetFrameworkId.IsNetCoreSdk()
-                ? "netstandard20"
-                : "net461";
-
-            var adapters = Root.Combine($"{Namespace}.Adapters.{framework}.dll");
-            var tasks = Root.Combine($"{Namespace}.Tasks.{framework}.dll");
-
-            var type = TypeInfoFactory.Create($"{Namespace}.Adapters.MspecRunner", adapters.FullPath);
-
-            return new TestAdapterInfo(type, type)
+            AdditionalAssemblies = new[]
             {
-                AdditionalAssemblies = new[]
-                {
-                    tasks.FullPath
-                }
-            };
-        }
+                tasks.FullPath
+            }
+        };
+    }
 
-        public TestContainer GetTestContainer(ITestRunnerContext context)
-        {
-            return new MspecTestContainer(context.GetOutputPath().FullPath, context.Settings.TestRunner.ToShadowCopy());
-        }
+    public TestContainer GetTestContainer(ITestRunnerContext context)
+    {
+        return new MspecTestContainer(context.GetOutputPath().FullPath, context.Settings.TestRunner.ToShadowCopy());
+    }
 
-        public IEnumerable<IMessageHandlerMarker> GetMessageHandlers(ITestRunnerContext context)
-        {
-            yield break;
-        }
+    public IEnumerable<IMessageHandlerMarker> GetMessageHandlers(ITestRunnerContext context)
+    {
+        yield break;
     }
 }

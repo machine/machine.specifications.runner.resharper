@@ -1,61 +1,60 @@
 ﻿using System;
 using JetBrains.Util;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
+namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
+
+public class EmptyPreparedProcess : IPreparedProcess
 {
-    public class EmptyPreparedProcess : IPreparedProcess
+    public int ProcessId => 0;
+
+    public int ExitCode => 0;
+
+    public IntPtr Handle => IntPtr.Zero;
+
+    public string ProcessName => string.Empty;
+
+    public string ProcessArgs => string.Empty;
+
+    public string Output => string.Empty;
+
+    public bool IsRunning => false;
+
+    public DateTime? StartTime { get; } = DateTime.Now;
+
+    public DateTime? ExitTime { get; } = DateTime.Now;
+
+    public event ExitProcessHandler Exited
     {
-        public int ProcessId => 0;
+        add { }
+        remove { }
+    }
 
-        public int ExitCode => 0;
+    public event LineReadHandler OutputLineRead
+    {
+        add { }
+        remove { }
+    }
 
-        public IntPtr Handle => IntPtr.Zero;
+    public event LineReadHandler ErrorLineRead
+    {
+        add { }
+        remove { }
+    }
 
-        public string ProcessName => string.Empty;
+    public void Dispose()
+    {
+    }
 
-        public string ProcessArgs => string.Empty;
+    public void Start()
+    {
+    }
 
-        public string Output => string.Empty;
+    public bool WaitForExit(TimeSpan? timeout = null)
+    {
+        return true;
+    }
 
-        public bool IsRunning => false;
-
-        public DateTime? StartTime { get; } = DateTime.Now;
-
-        public DateTime? ExitTime { get; } = DateTime.Now;
-
-        public event ExitProcessHandler Exited
-        {
-            add { }
-            remove { }
-        }
-
-        public event LineReadHandler OutputLineRead
-        {
-            add { }
-            remove { }
-        }
-
-        public event LineReadHandler ErrorLineRead
-        {
-            add { }
-            remove { }
-        }
-
-        public void Dispose()
-        {
-        }
-
-        public void Start()
-        {
-        }
-
-        public bool WaitForExit(TimeSpan? timeout = null)
-        {
-            return true;
-        }
-
-        public void Kill()
-        {
-        }
+    public void Kill()
+    {
     }
 }

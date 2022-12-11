@@ -1,15 +1,14 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
+
+public class TestRunResult
 {
-    public class TestRunResult
+    public TestRunResult(TestStatus status, TestError? exception = null)
     {
-        public TestRunResult(TestStatus status, TestError? exception = null)
-        {
-            Status = status;
-            Exception = exception;
-        }
-
-        public TestStatus Status { get; }
-
-        public TestError? Exception { get; }
+        Status = status;
+        Exception = exception;
     }
+
+    public TestStatus Status { get; }
+
+    public TestError? Exception { get; }
 }

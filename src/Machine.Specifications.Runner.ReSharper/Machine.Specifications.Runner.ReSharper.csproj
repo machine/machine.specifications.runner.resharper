@@ -19,7 +19,7 @@
     <Authors>Machine</Authors>
     <Owners>Machine</Owners>
     <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
-    <PackageReleaseNotes>Adds support for R# and Rider 2022.2</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds support for R# and Rider 2022.3</PackageReleaseNotes>
     <PackageIcon>Machine.png</PackageIcon>
     <PackageIconUrl>http://github.com/machine/machine.specifications.runner.resharper/raw/master/images/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/machine/machine.specifications.runner.resharper</RepositoryUrl>
@@ -28,13 +28,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SdkVersion>2022.2.0</SdkVersion>
+    <SdkVersion>2022.3.0</SdkVersion>
     <WaveVersionBase>$(SdkVersion.Substring(2,2))$(SdkVersion.Substring(5,1))</WaveVersionBase>
     <WaveVersion>$(WaveVersionBase).0.0</WaveVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2022.2.4" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2022.3.0" PrivateAssets="All" />
     <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="All" />
     <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
   </ItemGroup>

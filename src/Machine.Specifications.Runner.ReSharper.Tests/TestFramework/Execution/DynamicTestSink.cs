@@ -2,26 +2,25 @@
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
+namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
+
+[SolutionComponent]
+public class DynamicTestSink : IDynamicTestSink
 {
-    [SolutionComponent]
-    public class DynamicTestSink : IDynamicTestSink
+    private readonly Dictionary<string, IUnitTestElement> elements = new();
+
+    public void Reset()
     {
-        private readonly Dictionary<string, IUnitTestElement> elements = new();
+        elements.Clear();
+    }
 
-        public void Reset()
-        {
-            elements.Clear();
-        }
+    public void AddUnitTestElement(IUnitTestElement element)
+    {
+        elements[element.NaturalId.TestId] = element;
+    }
 
-        public void AddUnitTestElement(IUnitTestElement element)
-        {
-            elements[element.NaturalId.TestId] = element;
-        }
-
-        public IEnumerable<IUnitTestElement> GetUnitTestElements()
-        {
-            return elements.Values;
-        }
+    public IEnumerable<IUnitTestElement> GetUnitTestElements()
+    {
+        return elements.Values;
     }
 }

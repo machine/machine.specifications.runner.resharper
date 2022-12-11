@@ -6,44 +6,43 @@ using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution
+namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution;
+
+[TestFixture]
+public class RunContextTests
 {
-    [TestFixture]
-    public class RunContextTests
+    [Test]
+    public void TaskIsNotReportedToSink()
     {
-        [Test]
-        public void TaskIsNotReportedToSink()
+        var sink = Substitute.For<ITestExecutionSink>();
+
+        var depot = new RemoteTaskDepot(new RemoteTask[]
         {
-            var sink = Substitute.For<ITestExecutionSink>();
+            RemoteTaskFixtures.Context,
+            RemoteTaskFixtures.Behavior1,
+            RemoteTaskFixtures.Specification1,
+            RemoteTaskFixtures.Behavior1Specification1
+        });
 
-            var depot = new RemoteTaskDepot(new RemoteTask[]
-            {
-                RemoteTaskFixtures.Context,
-                RemoteTaskFixtures.Behavior1,
-                RemoteTaskFixtures.Specification1,
-                RemoteTaskFixtures.Behavior1Specification1
-            });
+        var context = new RunContext(depot, sink);
 
-            var context = new RunContext(depot, sink);
+        Assert.That(context.GetTask(ElementFixtures.Specification1), Is.Not.Null);
+        sink.DidNotReceive().DynamicTestDiscovered(Arg.Any<RemoteTask>());
+    }
 
-            Assert.That(context.GetTask(ElementFixtures.Specification1), Is.Not.Null);
-            sink.DidNotReceive().DynamicTestDiscovered(Arg.Any<RemoteTask>());
-        }
+    [Test]
+    public void TaskNotInDepotIsReportedToSink()
+    {
+        var sink = Substitute.For<ITestExecutionSink>();
 
-        [Test]
-        public void TaskNotInDepotIsReportedToSink()
+        var depot = new RemoteTaskDepot(new RemoteTask[]
         {
-            var sink = Substitute.For<ITestExecutionSink>();
+            RemoteTaskFixtures.Context
+        });
 
-            var depot = new RemoteTaskDepot(new RemoteTask[]
-            {
-                RemoteTaskFixtures.Context
-            });
+        var context = new RunContext(depot, sink);
 
-            var context = new RunContext(depot, sink);
-
-            Assert.That(context.GetTask(ElementFixtures.Specification1), Is.Not.Null);
-            sink.Received().DynamicTestDiscovered(Arg.Any<RemoteTask>());
-        }
+        Assert.That(context.GetTask(ElementFixtures.Specification1), Is.Not.Null);
+        sink.Received().DynamicTestDiscovered(Arg.Any<RemoteTask>());
     }
 }

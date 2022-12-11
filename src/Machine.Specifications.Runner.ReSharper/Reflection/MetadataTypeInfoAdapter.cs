@@ -2,74 +2,73 @@
 using System.Linq;
 using JetBrains.Metadata.Reader.API;
 
-namespace Machine.Specifications.Runner.ReSharper.Reflection
+namespace Machine.Specifications.Runner.ReSharper.Reflection;
+
+public class MetadataTypeInfoAdapter : ITypeInfo
 {
-    public class MetadataTypeInfoAdapter : ITypeInfo
+    private readonly IMetadataTypeInfo type;
+
+    private readonly IMetadataClassType? classType;
+
+    public MetadataTypeInfoAdapter(IMetadataTypeInfo type, IMetadataClassType? classType = null)
     {
-        private readonly IMetadataTypeInfo type;
+        this.type = type;
+        this.classType = classType;
+    }
 
-        private readonly IMetadataClassType? classType;
+    public string FullyQualifiedName => type.FullyQualifiedName;
 
-        public MetadataTypeInfoAdapter(IMetadataTypeInfo type, IMetadataClassType? classType = null)
+    public bool IsAbstract => type.IsAbstract;
+
+    public ITypeInfo? GetContainingType()
+    {
+        return type.DeclaringType?.AsTypeInfo();
+    }
+
+    public IEnumerable<IFieldInfo> GetFields()
+    {
+        return type.GetFields()
+            .Where(x => !x.IsStatic)
+            .Select(x => x.AsFieldInfo());
+    }
+
+    public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
+    {
+        var attributes = type.GetCustomAttributes(typeName)
+            .Select(x => x.AsAttributeInfo());
+
+        if (!inherit)
         {
-            this.type = type;
-            this.classType = classType;
+            return attributes;
         }
 
-        public string FullyQualifiedName => type.FullyQualifiedName;
+        var baseAttributes = GetBaseTypes()
+            .SelectMany(x => x.GetCustomAttributes(typeName, false));
 
-        public bool IsAbstract => type.IsAbstract;
+        return attributes.Concat(baseAttributes);
+    }
 
-        public ITypeInfo? GetContainingType()
+    public IEnumerable<ITypeInfo> GetGenericArguments()
+    {
+        if (classType == null)
         {
-            return type.DeclaringType?.AsTypeInfo();
+            return type.TypeParameters.Select(_ => UnknownTypeInfoAdapter.Default);
         }
 
-        public IEnumerable<IFieldInfo> GetFields()
+        return classType.Arguments
+            .OfType<IMetadataClassType>()
+            .Select(x => x.Type.AsTypeInfo());
+    }
+
+    private IEnumerable<ITypeInfo> GetBaseTypes()
+    {
+        var current = type;
+
+        while (current.Base != null)
         {
-            return type.GetFields()
-                .Where(x => !x.IsStatic)
-                .Select(x => x.AsFieldInfo());
-        }
+            yield return current.Base.Type.AsTypeInfo();
 
-        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
-        {
-            var attributes = type.GetCustomAttributes(typeName)
-                .Select(x => x.AsAttributeInfo());
-
-            if (!inherit)
-            {
-                return attributes;
-            }
-
-            var baseAttributes = GetBaseTypes()
-                .SelectMany(x => x.GetCustomAttributes(typeName, false));
-
-            return attributes.Concat(baseAttributes);
-        }
-
-        public IEnumerable<ITypeInfo> GetGenericArguments()
-        {
-            if (classType == null)
-            {
-                return type.TypeParameters.Select(_ => UnknownTypeInfoAdapter.Default);
-            }
-
-            return classType.Arguments
-                .OfType<IMetadataClassType>()
-                .Select(x => x.Type.AsTypeInfo());
-        }
-
-        private IEnumerable<ITypeInfo> GetBaseTypes()
-        {
-            var current = type;
-
-            while (current.Base != null)
-            {
-                yield return current.Base.Type.AsTypeInfo();
-
-                current = current.Base.Type;
-            }
+            current = current.Base.Type;
         }
     }
 }

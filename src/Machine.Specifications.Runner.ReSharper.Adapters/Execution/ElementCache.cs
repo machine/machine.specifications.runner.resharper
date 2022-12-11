@@ -2,59 +2,58 @@
 using System.Linq;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
+
+public class ElementCache
 {
-    public class ElementCache
+    private readonly HashSet<string> behaviorTypes;
+
+    private readonly ILookup<IContextElement, IBehaviorElement> behaviorsByContext;
+
+    private readonly ILookup<IContextElement, ISpecificationElement> specificationsByContext;
+
+    private readonly ILookup<IBehaviorElement, ISpecificationElement> specificationsByBehavior;
+
+    public ElementCache(ISpecificationElement[] specifications)
     {
-        private readonly HashSet<string> behaviorTypes;
+        var types = specifications
+            .Where(x => x.Behavior != null)
+            .Select(x => x.Behavior!.TypeName)
+            .Distinct();
 
-        private readonly ILookup<IContextElement, IBehaviorElement> behaviorsByContext;
+        behaviorTypes = new HashSet<string>(types);
 
-        private readonly ILookup<IContextElement, ISpecificationElement> specificationsByContext;
+        behaviorsByContext = specifications
+            .Where(x => x.Behavior != null)
+            .Select(x => x.Behavior!)
+            .Distinct()
+            .ToLookup(x => x!.Context);
 
-        private readonly ILookup<IBehaviorElement, ISpecificationElement> specificationsByBehavior;
+        specificationsByContext = specifications
+            .ToLookup(x => x.Context);
 
-        public ElementCache(ISpecificationElement[] specifications)
-        {
-            var types = specifications
-                .Where(x => x.Behavior != null)
-                .Select(x => x.Behavior!.TypeName)
-                .Distinct();
+        specificationsByBehavior = specifications
+            .Where(x => x.Behavior != null)
+            .ToLookup(x => x.Behavior!);
+    }
 
-            behaviorTypes = new HashSet<string>(types);
+    public bool IsBehavior(string type)
+    {
+        return behaviorTypes.Contains(type);
+    }
 
-            behaviorsByContext = specifications
-                .Where(x => x.Behavior != null)
-                .Select(x => x.Behavior!)
-                .Distinct()
-                .ToLookup(x => x!.Context);
+    public IEnumerable<IBehaviorElement> GetBehaviors(IContextElement element)
+    {
+        return behaviorsByContext[element];
+    }
 
-            specificationsByContext = specifications
-                .ToLookup(x => x.Context);
+    public IEnumerable<ISpecificationElement> GetSpecifications(IContextElement element)
+    {
+        return specificationsByContext[element];
+    }
 
-            specificationsByBehavior = specifications
-                .Where(x => x.Behavior != null)
-                .ToLookup(x => x.Behavior!);
-        }
-
-        public bool IsBehavior(string type)
-        {
-            return behaviorTypes.Contains(type);
-        }
-
-        public IEnumerable<IBehaviorElement> GetBehaviors(IContextElement element)
-        {
-            return behaviorsByContext[element];
-        }
-
-        public IEnumerable<ISpecificationElement> GetSpecifications(IContextElement element)
-        {
-            return specificationsByContext[element];
-        }
-
-        public IEnumerable<ISpecificationElement> GetSpecifications(IBehaviorElement behavior)
-        {
-            return specificationsByBehavior[behavior];
-        }
+    public IEnumerable<ISpecificationElement> GetSpecifications(IBehaviorElement behavior)
+    {
+        return specificationsByBehavior[behavior];
     }
 }

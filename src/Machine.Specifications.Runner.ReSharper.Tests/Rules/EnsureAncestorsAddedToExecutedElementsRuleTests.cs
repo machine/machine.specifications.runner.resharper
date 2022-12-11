@@ -6,32 +6,31 @@ using Machine.Specifications.Runner.ReSharper.Rules;
 using Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 using NUnit.Framework;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.Rules
+namespace Machine.Specifications.Runner.ReSharper.Tests.Rules;
+
+[TestFixture]
+public class EnsureAncestorsAddedToExecutedElementsRuleTests : UnitTestElementTestBase
 {
-    [TestFixture]
-    public class EnsureAncestorsAddedToExecutedElementsRuleTests : UnitTestElementTestBase
+    [Test]
+    public void UnreportedParentsAreAddedToSet()
     {
-        [Test]
-        public void UnreportedParentsAreAddedToSet()
+        WithDiscovery(() =>
         {
-            WithDiscovery(() =>
+            var context = new MspecContextTestElement(new ClrTypeName("Namespace.Context"), null, null);
+            var behavior = new MspecSpecificationTestElement(context, "behaves_like", "Namespace.ABehavior", null, null);
+            var specification = new MspecBehaviorSpecificationTestElement(behavior, "should", null);
+
+            var elements = new HashSet<IUnitTestElement>
             {
-                var context = new MspecContextTestElement(new ClrTypeName("Namespace.Context"), null, null);
-                var behavior = new MspecSpecificationTestElement(context, "behaves_like", "Namespace.ABehavior", null, null);
-                var specification = new MspecBehaviorSpecificationTestElement(behavior, "should", null);
+                context,
+                specification
+            };
 
-                var elements = new HashSet<IUnitTestElement>
-                {
-                    context,
-                    specification
-                };
+            var rule = new EnsureAncestorsAddedToExecutedElementsRule();
 
-                var rule = new EnsureAncestorsAddedToExecutedElementsRule();
+            rule.Apply(elements, null!, null!);
 
-                rule.Apply(elements, null!, null!);
-
-                CollectionAssert.Contains(elements, behavior);
-            });
-        }
+            CollectionAssert.Contains(elements, behavior);
+        });
     }
 }

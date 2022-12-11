@@ -5,53 +5,52 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters;
+
+public class MspecRunner : LongLivedMarshalByRefObject, ITestDiscoverer, ITestExecutor
 {
-    public class MspecRunner : LongLivedMarshalByRefObject, ITestDiscoverer, ITestExecutor
+    private readonly ILogger logger = Logger.GetLogger<MspecRunner>();
+
+    private readonly CancellationTokenSource discoveryToken = new();
+
+    private readonly CancellationTokenSource executionToken = new();
+
+    public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
     {
-        private readonly ILogger logger = Logger.GetLogger<MspecRunner>();
+        logger.Info("Exploration started");
 
-        private readonly CancellationTokenSource discoveryToken = new();
+        var depot = new RemoteTaskDepot(Array.Empty<RemoteTask>());
+        var controller = new MspecController(request, discoveryToken.Token);
 
-        private readonly CancellationTokenSource executionToken = new();
+        var discoverer = new Discoverer(request, controller, discoverySink, depot, discoveryToken.Token);
+        discoverer.Discover();
 
-        public void DiscoverTests(TestDiscoveryRequest request, ITestDiscoverySink discoverySink)
-        {
-            logger.Info("Exploration started");
+        logger.Info("Exploration completed");
+    }
 
-            var depot = new RemoteTaskDepot(Array.Empty<RemoteTask>());
-            var controller = new MspecController(request, discoveryToken.Token);
+    public void AbortDiscovery()
+    {
+        discoveryToken.Cancel();
+    }
 
-            var discoverer = new Discoverer(request, controller, discoverySink, depot, discoveryToken.Token);
-            discoverer.Discover();
+    public void RunTests(TestRunRequest request, ITestDiscoverySink discoverySink, ITestExecutionSink executionSink)
+    {
+        logger.Info("Execution started");
 
-            logger.Info("Exploration completed");
-        }
+        var depot = new RemoteTaskDepot(request.Selection);
+        var controller = new MspecController(request, discoveryToken.Token);
 
-        public void AbortDiscovery()
-        {
-            discoveryToken.Cancel();
-        }
+        var discoverer = new Discoverer(request, controller, discoverySink, depot, discoveryToken.Token);
+        discoverer.Discover();
 
-        public void RunTests(TestRunRequest request, ITestDiscoverySink discoverySink, ITestExecutionSink executionSink)
-        {
-            logger.Info("Execution started");
+        var executor = new Executor(executionSink, request, depot, executionToken.Token);
+        executor.Execute();
 
-            var depot = new RemoteTaskDepot(request.Selection);
-            var controller = new MspecController(request, discoveryToken.Token);
+        logger.Info("Execution completed");
+    }
 
-            var discoverer = new Discoverer(request, controller, discoverySink, depot, discoveryToken.Token);
-            discoverer.Discover();
-
-            var executor = new Executor(executionSink, request, depot, executionToken.Token);
-            executor.Execute();
-
-            logger.Info("Execution completed");
-        }
-
-        public void AbortRun()
-        {
-            executionToken.Cancel();
-        }
+    public void AbortRun()
+    {
+        executionToken.Cancel();
     }
 }

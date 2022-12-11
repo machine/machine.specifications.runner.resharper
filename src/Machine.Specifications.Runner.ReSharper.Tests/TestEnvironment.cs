@@ -8,10 +8,9 @@ using NUnit.Framework;
 [assembly: TestDataPathBase("Data")]
 #pragma warning restore CS0618
 
-namespace Machine.Specifications.Runner.ReSharper.Tests
+namespace Machine.Specifications.Runner.ReSharper.Tests;
+
+[SetUpFixture]
+public class TestEnvironment : ExtensionTestEnvironmentAssembly<IMspecTestZone>
 {
-    [SetUpFixture]
-    public class TestEnvironment : ExtensionTestEnvironmentAssembly<IMspecTestZone>
-    {
-    }
 }

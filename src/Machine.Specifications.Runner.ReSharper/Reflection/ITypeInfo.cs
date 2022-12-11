@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 
-namespace Machine.Specifications.Runner.ReSharper.Reflection
+namespace Machine.Specifications.Runner.ReSharper.Reflection;
+
+public interface ITypeInfo
 {
-    public interface ITypeInfo
-    {
-        string FullyQualifiedName { get; }
+    string FullyQualifiedName { get; }
 
-        bool IsAbstract { get; }
+    bool IsAbstract { get; }
 
-        ITypeInfo? GetContainingType();
+    ITypeInfo? GetContainingType();
 
-        IEnumerable<IFieldInfo> GetFields();
+    IEnumerable<IFieldInfo> GetFields();
 
-        IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit);
+    IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit);
 
-        IEnumerable<ITypeInfo> GetGenericArguments();
-    }
+    IEnumerable<ITypeInfo> GetGenericArguments();
 }

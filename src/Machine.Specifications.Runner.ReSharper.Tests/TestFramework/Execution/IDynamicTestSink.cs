@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution
+namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
+
+public interface IDynamicTestSink
 {
-    public interface IDynamicTestSink
-    {
-        void Reset();
+    void Reset();
 
-        void AddUnitTestElement(IUnitTestElement element);
+    void AddUnitTestElement(IUnitTestElement element);
 
-        IEnumerable<IUnitTestElement> GetUnitTestElements();
-    }
+    IEnumerable<IUnitTestElement> GetUnitTestElements();
 }

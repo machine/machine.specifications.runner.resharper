@@ -1,34 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Machine.Specifications.Runner.ReSharper.Reflection
+namespace Machine.Specifications.Runner.ReSharper.Reflection;
+
+public class UnknownTypeInfoAdapter : ITypeInfo
 {
-    public class UnknownTypeInfoAdapter : ITypeInfo
+    public static readonly UnknownTypeInfoAdapter Default = new();
+
+    public string FullyQualifiedName => string.Empty;
+
+    public bool IsAbstract => false;
+
+    public ITypeInfo? GetContainingType()
     {
-        public static readonly UnknownTypeInfoAdapter Default = new();
+        return null;
+    }
 
-        public string FullyQualifiedName => string.Empty;
+    public IEnumerable<IFieldInfo> GetFields()
+    {
+        return Enumerable.Empty<IFieldInfo>();
+    }
 
-        public bool IsAbstract => false;
+    public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
+    {
+        return Enumerable.Empty<IAttributeInfo>();
+    }
 
-        public ITypeInfo? GetContainingType()
-        {
-            return null;
-        }
-
-        public IEnumerable<IFieldInfo> GetFields()
-        {
-            return Enumerable.Empty<IFieldInfo>();
-        }
-
-        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
-        {
-            return Enumerable.Empty<IAttributeInfo>();
-        }
-
-        public IEnumerable<ITypeInfo> GetGenericArguments()
-        {
-            return Enumerable.Empty<ITypeInfo>();
-        }
+    public IEnumerable<ITypeInfo> GetGenericArguments()
+    {
+        return Enumerable.Empty<ITypeInfo>();
     }
 }

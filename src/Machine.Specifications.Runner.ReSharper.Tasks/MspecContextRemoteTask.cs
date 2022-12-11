@@ -1,36 +1,35 @@
 ﻿using System;
 
-namespace Machine.Specifications.Runner.ReSharper.Tasks
+namespace Machine.Specifications.Runner.ReSharper.Tasks;
+
+[Serializable]
+public class MspecContextRemoteTask : MspecRemoteTask
 {
-    [Serializable]
-    public class MspecContextRemoteTask : MspecRemoteTask
+    private MspecContextRemoteTask(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
+        : base(testId, ignoreReason, runAllChildren, runExplicitly)
     {
-        private MspecContextRemoteTask(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
-            : base(testId, ignoreReason, runAllChildren, runExplicitly)
-        {
-        }
+    }
 
-        private MspecContextRemoteTask(string typeName, string? subject, string[]? tags, string? ignoreReason)
-            : base(typeName, ignoreReason)
-        {
-            Subject = subject;
-            Tags = tags;
-        }
+    private MspecContextRemoteTask(string typeName, string? subject, string[]? tags, string? ignoreReason)
+        : base(typeName, ignoreReason)
+    {
+        Subject = subject;
+        Tags = tags;
+    }
 
-        public string ContextTypeName => TestId;
+    public string ContextTypeName => TestId;
 
-        public string? Subject { get; set; }
+    public string? Subject { get; set; }
 
-        public string[]? Tags { get; set; }
+    public string[]? Tags { get; set; }
 
-        public static MspecContextRemoteTask ToClient(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
-        {
-            return new(testId, ignoreReason, runAllChildren, runExplicitly);
-        }
+    public static MspecContextRemoteTask ToClient(string testId, string? ignoreReason, bool runAllChildren, bool runExplicitly)
+    {
+        return new(testId, ignoreReason, runAllChildren, runExplicitly);
+    }
 
-        public static MspecContextRemoteTask ToServer(string typeName, string? subject, string[]? tags, string? ignoreReason)
-        {
-            return new(typeName, subject, tags, ignoreReason);
-        }
+    public static MspecContextRemoteTask ToServer(string typeName, string? subject, string[]? tags, string? ignoreReason)
+    {
+        return new(typeName, subject, tags, ignoreReason);
     }
 }

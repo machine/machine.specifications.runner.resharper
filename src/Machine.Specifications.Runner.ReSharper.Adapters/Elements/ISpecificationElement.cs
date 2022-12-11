@@ -1,11 +1,10 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements;
+
+public interface ISpecificationElement : IMspecElement
 {
-    public interface ISpecificationElement : IMspecElement
-    {
-        IContextElement Context { get; }
+    IContextElement Context { get; }
 
-        string FieldName { get; }
+    string FieldName { get; }
 
-        IBehaviorElement? Behavior { get; }
-    }
+    IBehaviorElement? Behavior { get; }
 }

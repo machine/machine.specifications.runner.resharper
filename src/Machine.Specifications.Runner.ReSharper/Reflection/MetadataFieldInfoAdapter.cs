@@ -2,38 +2,37 @@
 using System.Linq;
 using JetBrains.Metadata.Reader.API;
 
-namespace Machine.Specifications.Runner.ReSharper.Reflection
+namespace Machine.Specifications.Runner.ReSharper.Reflection;
+
+public class MetadataFieldInfoAdapter : IFieldInfo
 {
-    public class MetadataFieldInfoAdapter : IFieldInfo
+    private readonly IMetadataField field;
+
+    public MetadataFieldInfoAdapter(IMetadataField field)
     {
-        private readonly IMetadataField field;
+        this.field = field;
+    }
 
-        public MetadataFieldInfoAdapter(IMetadataField field)
+    public string DeclaringType => field.DeclaringType.FullyQualifiedName;
+
+    public string ShortName => field.Name;
+
+    public ITypeInfo FieldType
+    {
+        get
         {
-            this.field = field;
-        }
-
-        public string DeclaringType => field.DeclaringType.FullyQualifiedName;
-
-        public string ShortName => field.Name;
-
-        public ITypeInfo FieldType
-        {
-            get
+            if (field.Type is IMetadataClassType classType)
             {
-                if (field.Type is IMetadataClassType classType)
-                {
-                    return classType.Type.AsTypeInfo(classType);
-                }
-
-                return UnknownTypeInfoAdapter.Default;
+                return classType.Type.AsTypeInfo(classType);
             }
-        }
 
-        public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
-        {
-            return field.GetCustomAttributes(typeName)
-                .Select(x => x.AsAttributeInfo());
+            return UnknownTypeInfoAdapter.Default;
         }
+    }
+
+    public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
+    {
+        return field.GetCustomAttributes(typeName)
+            .Select(x => x.AsAttributeInfo());
     }
 }

@@ -3,42 +3,41 @@ using System.Linq;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.Metadata.Reader.Impl;
 
-namespace Machine.Specifications.Runner.ReSharper.Reflection
+namespace Machine.Specifications.Runner.ReSharper.Reflection;
+
+public class MetadataAttributeInfoAdapter : IAttributeInfo
 {
-    public class MetadataAttributeInfoAdapter : IAttributeInfo
+    private readonly IMetadataCustomAttribute attribute;
+
+    public MetadataAttributeInfoAdapter(IMetadataCustomAttribute attribute)
     {
-        private readonly IMetadataCustomAttribute attribute;
+        this.attribute = attribute;
+    }
 
-        public MetadataAttributeInfoAdapter(IMetadataCustomAttribute attribute)
-        {
-            this.attribute = attribute;
-        }
+    public IEnumerable<string> GetParameters()
+    {
+        var arguments = attribute.ConstructorArguments
+            .Where(x => !x.IsBadValue())
+            .ToArray();
 
-        public IEnumerable<string> GetParameters()
-        {
-            var arguments = attribute.ConstructorArguments
-                .Where(x => !x.IsBadValue())
-                .ToArray();
+        var types = arguments
+            .Select(x => x.Value)
+            .OfType<IMetadataClassType>()
+            .Select(x => new ClrTypeName(x.Type.FullyQualifiedName))
+            .Select(x => x.ShortName);
 
-            var types = arguments
-                .Select(x => x.Value)
-                .OfType<IMetadataClassType>()
-                .Select(x => new ClrTypeName(x.Type.FullyQualifiedName))
-                .Select(x => x.ShortName);
+        var values = arguments
+            .Select(x => x.Value)
+            .OfType<string>();
 
-            var values = arguments
-                .Select(x => x.Value)
-                .OfType<string>();
+        var arrayValues = arguments
+            .Where(x => x.ValuesArray != null)
+            .SelectMany(x => x.ValuesArray)
+            .Select(x => x.Value)
+            .OfType<string>();
 
-            var arrayValues = arguments
-                .Where(x => x.ValuesArray != null)
-                .SelectMany(x => x.ValuesArray)
-                .Select(x => x.Value)
-                .OfType<string>();
-
-            return types
-                .Concat(values)
-                .Concat(arrayValues);
-        }
+        return types
+            .Concat(values)
+            .Concat(arrayValues);
     }
 }

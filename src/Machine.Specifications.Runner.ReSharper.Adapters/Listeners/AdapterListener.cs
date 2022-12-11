@@ -1,62 +1,61 @@
 ﻿using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
+
+internal class AdapterListener : ISpecificationRunListener
 {
-    internal class AdapterListener : ISpecificationRunListener
+    private readonly IRunListener listener;
+
+    private readonly string assemblyPath;
+
+    public AdapterListener(IRunListener listener, string assemblyPath)
     {
-        private readonly IRunListener listener;
+        this.listener = listener;
+        this.assemblyPath = assemblyPath;
+    }
 
-        private readonly string assemblyPath;
+    public void OnAssemblyStart(AssemblyInfo assemblyInfo)
+    {
+        listener.OnAssemblyStart(new TestAssemblyInfo(assemblyPath));
+    }
 
-        public AdapterListener(IRunListener listener, string assemblyPath)
-        {
-            this.listener = listener;
-            this.assemblyPath = assemblyPath;
-        }
+    public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
+    {
+        listener.OnAssemblyEnd(assemblyInfo.ToTestAssembly());
+    }
 
-        public void OnAssemblyStart(AssemblyInfo assemblyInfo)
-        {
-            listener.OnAssemblyStart(new TestAssemblyInfo(assemblyPath));
-        }
+    public void OnRunStart()
+    {
+        listener.OnRunStart();
+    }
 
-        public void OnAssemblyEnd(AssemblyInfo assemblyInfo)
-        {
-            listener.OnAssemblyEnd(assemblyInfo.ToTestAssembly());
-        }
+    public void OnRunEnd()
+    {
+        listener.OnRunEnd();
+    }
 
-        public void OnRunStart()
-        {
-            listener.OnRunStart();
-        }
+    public void OnContextStart(ContextInfo contextInfo)
+    {
+        listener.OnContextStart(contextInfo.ToTestContext());
+    }
 
-        public void OnRunEnd()
-        {
-            listener.OnRunEnd();
-        }
+    public void OnContextEnd(ContextInfo contextInfo)
+    {
+        listener.OnContextEnd(contextInfo.ToTestContext());
+    }
 
-        public void OnContextStart(ContextInfo contextInfo)
-        {
-            listener.OnContextStart(contextInfo.ToTestContext());
-        }
+    public void OnSpecificationStart(SpecificationInfo specificationInfo)
+    {
+        listener.OnSpecificationStart(specificationInfo.ToTestSpecification());
+    }
 
-        public void OnContextEnd(ContextInfo contextInfo)
-        {
-            listener.OnContextEnd(contextInfo.ToTestContext());
-        }
+    public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
+    {
+        listener.OnSpecificationEnd(specificationInfo.ToTestSpecification(), result.ToTestResult());
+    }
 
-        public void OnSpecificationStart(SpecificationInfo specificationInfo)
-        {
-            listener.OnSpecificationStart(specificationInfo.ToTestSpecification());
-        }
-
-        public void OnSpecificationEnd(SpecificationInfo specificationInfo, Result result)
-        {
-            listener.OnSpecificationEnd(specificationInfo.ToTestSpecification(), result.ToTestResult());
-        }
-
-        public void OnFatalError(ExceptionResult exceptionResult)
-        {
-            listener.OnFatalError(exceptionResult.ToTestError());
-        }
+    public void OnFatalError(ExceptionResult exceptionResult)
+    {
+        listener.OnFatalError(exceptionResult.ToTestError());
     }
 }

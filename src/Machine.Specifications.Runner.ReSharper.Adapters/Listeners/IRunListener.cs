@@ -1,23 +1,22 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
+
+public interface IRunListener
 {
-    public interface IRunListener
-    {
-        void OnAssemblyStart(TestAssemblyInfo assemblyInfo);
+    void OnAssemblyStart(TestAssemblyInfo assemblyInfo);
 
-        void OnAssemblyEnd(TestAssemblyInfo assemblyInfo);
+    void OnAssemblyEnd(TestAssemblyInfo assemblyInfo);
 
-        void OnRunStart();
+    void OnRunStart();
 
-        void OnRunEnd();
+    void OnRunEnd();
 
-        void OnContextStart(TestContextInfo contextInfo);
+    void OnContextStart(TestContextInfo contextInfo);
 
-        void OnContextEnd(TestContextInfo contextInfo);
+    void OnContextEnd(TestContextInfo contextInfo);
 
-        void OnSpecificationStart(TestSpecificationInfo specificationInfo);
+    void OnSpecificationStart(TestSpecificationInfo specificationInfo);
 
-        void OnSpecificationEnd(TestSpecificationInfo specificationInfo, TestRunResult runResult);
+    void OnSpecificationEnd(TestSpecificationInfo specificationInfo, TestRunResult runResult);
 
-        void OnFatalError(TestError? error);
-    }
+    void OnFatalError(TestError? error);
 }

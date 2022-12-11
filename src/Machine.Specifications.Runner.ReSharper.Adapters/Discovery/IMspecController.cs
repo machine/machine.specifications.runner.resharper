@@ -1,7 +1,6 @@
-﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
+﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
+
+public interface IMspecController
 {
-    public interface IMspecController
-    {
-        void Find(IMspecDiscoverySink sink, string assemblyPath);
-    }
+    void Find(IMspecDiscoverySink sink, string assemblyPath);
 }

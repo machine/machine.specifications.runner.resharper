@@ -6,33 +6,32 @@ using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.ReSharper.UnitTestFramework.Exploration.Daemon;
 
-namespace Machine.Specifications.Runner.ReSharper
+namespace Machine.Specifications.Runner.ReSharper;
+
+[SolutionComponent]
+public class MspecTestExplorerFromFile : IUnitTestExplorerFromFile
 {
-    [SolutionComponent]
-    public class MspecTestExplorerFromFile : IUnitTestExplorerFromFile
+    public MspecTestExplorerFromFile(MspecTestProvider provider)
     {
-        public MspecTestExplorerFromFile(MspecTestProvider provider)
+        Provider = provider;
+    }
+
+    public IUnitTestProvider Provider { get; }
+
+    public void ProcessFile(IFile psiFile, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
+    {
+        if (!IsProjectFile(psiFile))
         {
-            Provider = provider;
+            return;
         }
 
-        public IUnitTestProvider Provider { get; }
+        var explorer = new MspecPsiFileExplorer(observer, interrupted);
 
-        public void ProcessFile(IFile psiFile, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
-        {
-            if (!IsProjectFile(psiFile))
-            {
-                return;
-            }
+        psiFile.ProcessDescendants(explorer);
+    }
 
-            var explorer = new MspecPsiFileExplorer(observer, interrupted);
-
-            psiFile.ProcessDescendants(explorer);
-        }
-
-        private static bool IsProjectFile(IFile psiFile)
-        {
-            return psiFile.GetSourceFile().ToProjectFile() != null;
-        }
+    private static bool IsProjectFile(IFile psiFile)
+    {
+        return psiFile.GetSourceFile().ToProjectFile() != null;
     }
 }

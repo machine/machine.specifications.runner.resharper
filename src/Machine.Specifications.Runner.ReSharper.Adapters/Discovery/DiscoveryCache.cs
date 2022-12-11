@@ -5,165 +5,164 @@ using System.Reflection;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
+
+public class DiscoveryCache
 {
-    public class DiscoveryCache
+    private readonly Assembly assembly;
+
+    private readonly Dictionary<string, Type?> types = new();
+
+    private readonly Dictionary<string, FieldInfo?> fields = new();
+
+    private readonly Dictionary<string, FieldInfo?> behaviorFieldsByType = new();
+
+    private readonly Dictionary<string, string?> ignoreReasons = new();
+
+    private readonly Dictionary<string, IBehaviorElement> behaviors = new();
+
+    public DiscoveryCache(Assembly assembly)
     {
-        private readonly Assembly assembly;
+        this.assembly = assembly;
+    }
 
-        private readonly Dictionary<string, Type?> types = new();
+    public IBehaviorElement? GetOrAddBehavior(IContextElement context, SpecificationInfo specification)
+    {
+        var behaviorField = GetOrAddBehaviorFieldByType(context.TypeName, specification.ContainingType);
 
-        private readonly Dictionary<string, FieldInfo?> fields = new();
-
-        private readonly Dictionary<string, FieldInfo?> behaviorFieldsByType = new();
-
-        private readonly Dictionary<string, string?> ignoreReasons = new();
-
-        private readonly Dictionary<string, IBehaviorElement> behaviors = new();
-
-        public DiscoveryCache(Assembly assembly)
+        if (behaviorField == null)
         {
-            this.assembly = assembly;
+            return null;
         }
 
-        public IBehaviorElement? GetOrAddBehavior(IContextElement context, SpecificationInfo specification)
+        var key = $"{context.TypeName}.{behaviorField.Name}";
+
+        if (!behaviors.TryGetValue(key, out var behavior))
         {
-            var behaviorField = GetOrAddBehaviorFieldByType(context.TypeName, specification.ContainingType);
+            // MSpec behaviors don't seem to inherit an 'ignored' attribute from the context
+            var ignoreReason = GetIgnoreReason(context.TypeName, behaviorField.Name, false);
 
-            if (behaviorField == null)
-            {
-                return null;
-            }
-
-            var key = $"{context.TypeName}.{behaviorField.Name}";
-
-            if (!behaviors.TryGetValue(key, out var behavior))
-            {
-                // MSpec behaviors don't seem to inherit an 'ignored' attribute from the context
-                var ignoreReason = GetIgnoreReason(context.TypeName, behaviorField.Name, false);
-
-                behavior = behaviors[key] = new BehaviorElement(context, specification.ContainingType, behaviorField.Name, ignoreReason);
-            }
-
-            return behavior;
+            behavior = behaviors[key] = new BehaviorElement(context, specification.ContainingType, behaviorField.Name, ignoreReason);
         }
 
-        public string? GetIgnoreReason(string typeName)
+        return behavior;
+    }
+
+    public string? GetIgnoreReason(string typeName)
+    {
+        if (!ignoreReasons.TryGetValue(typeName, out var reason))
         {
-            if (!ignoreReasons.TryGetValue(typeName, out var reason))
-            {
-                var type = GetOrAddType(typeName);
+            var type = GetOrAddType(typeName);
 
-                reason = type == null
-                    ? null
-                    : GetIgnoreReason(type);
+            reason = type == null
+                ? null
+                : GetIgnoreReason(type);
 
-                ignoreReasons[typeName] = reason;
-            }
-
-            return reason;
+            ignoreReasons[typeName] = reason;
         }
 
-        public string? GetIgnoreReason(string typeName, string fieldName, bool inherit)
+        return reason;
+    }
+
+    public string? GetIgnoreReason(string typeName, string fieldName, bool inherit)
+    {
+        var key = $"{typeName}.{fieldName}";
+
+        if (!ignoreReasons.TryGetValue(key, out var reason))
         {
-            var key = $"{typeName}.{fieldName}";
+            var type = GetOrAddType(typeName);
+            var field = GetOrAddField(type, fieldName);
 
-            if (!ignoreReasons.TryGetValue(key, out var reason))
+            reason = field == null
+                ? null
+                : GetIgnoreReason(field);
+
+            if (string.IsNullOrEmpty(reason) && inherit)
             {
-                var type = GetOrAddType(typeName);
-                var field = GetOrAddField(type, fieldName);
-
-                reason = field == null
-                    ? null
-                    : GetIgnoreReason(field);
-
-                if (string.IsNullOrEmpty(reason) && inherit)
-                {
-                    reason = GetIgnoreReason(typeName);
-                }
-
-                ignoreReasons[key] = reason;
+                reason = GetIgnoreReason(typeName);
             }
 
-            return reason;
+            ignoreReasons[key] = reason;
         }
 
-        private FieldInfo? GetOrAddBehaviorFieldByType(string contextTypeName, string behaviorType)
-        {
-            var key = $"{contextTypeName}.{behaviorType}";
+        return reason;
+    }
 
-            if (!behaviorFieldsByType.TryGetValue(key, out var field))
+    private FieldInfo? GetOrAddBehaviorFieldByType(string contextTypeName, string behaviorType)
+    {
+        var key = $"{contextTypeName}.{behaviorType}";
+
+        if (!behaviorFieldsByType.TryGetValue(key, out var field))
+        {
+            var type = GetOrAddType(contextTypeName);
+
+            field = GetBehaviorField(type, x => x.FieldType.GenericTypeArguments.First().FullName == behaviorType);
+
+            behaviorFieldsByType[key] = field;
+
+            if (field != null)
             {
-                var type = GetOrAddType(contextTypeName);
-
-                field = GetBehaviorField(type, x => x.FieldType.GenericTypeArguments.First().FullName == behaviorType);
-
-                behaviorFieldsByType[key] = field;
-
-                if (field != null)
-                {
-                    fields[$"{contextTypeName}.{field.Name}"] = field;
-                }
+                fields[$"{contextTypeName}.{field.Name}"] = field;
             }
-
-            return field;
         }
 
-        private string? GetIgnoreReason(MemberInfo member)
+        return field;
+    }
+
+    private string? GetIgnoreReason(MemberInfo member)
+    {
+        var attribute = member.GetCustomAttributesData()
+            .FirstOrDefault(x => x.AttributeType.FullName == FullNames.IgnoreAttribute);
+
+        var attributeValue = attribute?.ConstructorArguments.FirstOrDefault();
+
+        return attributeValue?.Value as string;
+    }
+
+    private Type? GetOrAddType(string typeName)
+    {
+        if (!types.TryGetValue(typeName, out var type))
         {
-            var attribute = member.GetCustomAttributesData()
-                .FirstOrDefault(x => x.AttributeType.FullName == FullNames.IgnoreAttribute);
-
-            var attributeValue = attribute?.ConstructorArguments.FirstOrDefault();
-
-            return attributeValue?.Value as string;
+            type = types[typeName] = assembly.GetType(typeName);
         }
 
-        private Type? GetOrAddType(string typeName)
-        {
-            if (!types.TryGetValue(typeName, out var type))
-            {
-                type = types[typeName] = assembly.GetType(typeName);
-            }
+        return type;
+    }
 
-            return type;
+    private FieldInfo? GetOrAddField(Type? type, string fieldName, Func<FieldInfo, bool>? predicate = null)
+    {
+        if (type == null)
+        {
+            return null;
         }
 
-        private FieldInfo? GetOrAddField(Type? type, string fieldName, Func<FieldInfo, bool>? predicate = null)
+        var key = $"{type.FullName}.{fieldName}";
+
+        if (!fields.TryGetValue(key, out var field))
         {
-            if (type == null)
-            {
-                return null;
-            }
-
-            var key = $"{type.FullName}.{fieldName}";
-
-            if (!fields.TryGetValue(key, out var field))
-            {
-                field = type
-                    .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(x => x.Name == fieldName)
-                    .FirstOrDefault(predicate ?? (_ => true));
-
-                fields[key] = field;
-            }
-
-            return field;
-        }
-
-        private FieldInfo? GetBehaviorField(Type? type, Func<FieldInfo, bool> predicate)
-        {
-            return type?
+            field = type
                 .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(IsBehavesLikeField)
-                .FirstOrDefault(predicate);
+                .Where(x => x.Name == fieldName)
+                .FirstOrDefault(predicate ?? (_ => true));
+
+            fields[key] = field;
         }
 
-        private bool IsBehavesLikeField(FieldInfo field)
-        {
-            return field.FieldType.IsGenericType &&
-                   field.FieldType.GetCustomAttributes(false)
-                       .Any(x => x.GetType().FullName == FullNames.BehaviorDelegateAttribute);
-        }
+        return field;
+    }
+
+    private FieldInfo? GetBehaviorField(Type? type, Func<FieldInfo, bool> predicate)
+    {
+        return type?
+            .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Where(IsBehavesLikeField)
+            .FirstOrDefault(predicate);
+    }
+
+    private bool IsBehavesLikeField(FieldInfo field)
+    {
+        return field.FieldType.IsGenericType &&
+               field.FieldType.GetCustomAttributes(false)
+                   .Any(x => x.GetType().FullName == FullNames.BehaviorDelegateAttribute);
     }
 }

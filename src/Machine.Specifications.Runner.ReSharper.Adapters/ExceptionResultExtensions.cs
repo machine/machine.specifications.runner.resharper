@@ -5,49 +5,48 @@ using System.Reflection;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.Utility;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters
+namespace Machine.Specifications.Runner.ReSharper.Adapters;
+
+internal static class ExceptionResultExtensions
 {
-    internal static class ExceptionResultExtensions
+    private static IEnumerable<ExceptionResult> Flatten(this ExceptionResult result)
     {
-        private static IEnumerable<ExceptionResult> Flatten(this ExceptionResult result)
+        var exception = result;
+
+        if (exception.FullTypeName == typeof(TargetInvocationException).FullName && exception.InnerExceptionResult != null)
         {
-            var exception = result;
-
-            if (exception.FullTypeName == typeof(TargetInvocationException).FullName && exception.InnerExceptionResult != null)
-            {
-                exception = exception.InnerExceptionResult;
-            }
-
-            for (var current = exception; current != null; current = current.InnerExceptionResult)
-            {
-                yield return current;
-            }
+            exception = exception.InnerExceptionResult;
         }
 
-        public static ExceptionInfo[] GetExceptions(this ExceptionResult? result)
+        for (var current = exception; current != null; current = current.InnerExceptionResult)
         {
-            if (result == null)
-            {
-                return Array.Empty<ExceptionInfo>();
-            }
+            yield return current;
+        }
+    }
 
-            return result.Flatten()
-                .Select(x => new ExceptionInfo(x.FullTypeName, x.Message, x.StackTrace))
-                .ToArray();
+    public static ExceptionInfo[] GetExceptions(this ExceptionResult? result)
+    {
+        if (result == null)
+        {
+            return Array.Empty<ExceptionInfo>();
         }
 
-        public static string GetExceptionMessage(this ExceptionResult? result)
+        return result.Flatten()
+            .Select(x => new ExceptionInfo(x.FullTypeName, x.Message, x.StackTrace))
+            .ToArray();
+    }
+
+    public static string GetExceptionMessage(this ExceptionResult? result)
+    {
+        if (result == null)
         {
-            if (result == null)
-            {
-                return string.Empty;
-            }
-
-            var exception = result.Flatten().FirstOrDefault();
-
-            return exception != null
-                ? $"{exception.FullTypeName}: {exception.Message}"
-                : string.Empty;
+            return string.Empty;
         }
+
+        var exception = result.Flatten().FirstOrDefault();
+
+        return exception != null
+            ? $"{exception.FullTypeName}: {exception.Message}"
+            : string.Empty;
     }
 }

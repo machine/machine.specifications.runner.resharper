@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,105 +20,112 @@ using JetBrains.ReSharper.UnitTestFramework.Exploration.Artifacts;
 using JetBrains.Util;
 using Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
+namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
+
+[EnsureUnitTestRepositoryIsEmpty]
+public abstract class UnitTestRunnerTestBase : BaseTestWithSingleProject
 {
-    [EnsureUnitTestRepositoryIsEmpty]
-    public abstract class UnitTestRunnerTestBase : BaseTestWithSingleProject
+    public override void SetUp()
     {
-        public override void SetUp()
+        var factoryMethod = typeof(Logger).GetProperty(nameof(Logger.Factory), BindingFlags.Static | BindingFlags.Public);
+
+        if (factoryMethod != null)
         {
-            var factoryMethod = typeof(Logger).GetProperty(nameof(Logger.Factory), BindingFlags.Static | BindingFlags.Public);
+            var factory = factoryMethod.GetValue(null);
 
-            if (factoryMethod != null)
+            if (factory == null)
             {
-                var factory = factoryMethod.GetValue(null);
-
-                if (factory == null)
-                {
-                    factoryMethod.SetValue(null, new LoggerFactory());
-                }
+                factoryMethod.SetValue(null, new LoggerFactory());
             }
         }
+    }
 
-        protected override void DoTest(Lifetime lifetime, IProject testProject)
+    protected override void DoTest(Lifetime lifetime, IProject testProject)
+    {
+        var facade = Solution.GetComponent<IUnitTestingFacade>();
+
+        var projectFile = testProject.GetSubItems().First();
+
+        CopyFrameworkLibrary(projectFile);
+
+        ExecuteWithGold(projectFile.Location.FullPath, output =>
         {
-            var facade = Solution.GetComponent<IUnitTestingFacade>();
+            var elements = GetUnitTestElements(testProject).ToArray();
 
-            var projectFile = testProject.GetSubItems().First();
+            var session = facade.SessionRepository.CreateSession(SolutionCriterion.Instance);
+            facade.SessionManager.OpenSession(session);
 
-            CopyFrameworkLibrary(projectFile);
+            var launch = facade.LaunchManager.CreateLaunch(
+                session,
+                new UnitTestElements(SolutionCriterion.Instance, elements),
+                GetHostProvider());
 
-            ExecuteWithGold(projectFile.Location.FullPath, output =>
-            {
-                var elements = GetUnitTestElements(testProject).ToArray();
+            launch.Run().Wait(lifetime);
 
-                var session = facade.SessionRepository.CreateSession(SolutionCriterion.Instance);
-                facade.SessionManager.OpenSession(session);
+            WriteResults(output);
+        });
+    }
 
-                var launch = facade.LaunchManager.CreateLaunch(
-                    session,
-                    new UnitTestElements(SolutionCriterion.Instance, elements),
-                    UnitTestHost.Instance.GetProvider("Process"));
+    private ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject)
+    {
+        var provider = UT.Facade.ProviderCache.GetProviderByProviderId(MspecTestProvider.Id);
 
-                launch.Run().Wait(lifetime);
+        var source = new UnitTestElementSource(UnitTestElementOrigin.Source,
+            new ExplorationTarget(
+                testProject,
+                GetTargetFrameworkId(),
+                provider));
 
-                WriteResults(output);
-            });
+        var discoveryManager = Solution.GetComponent<IUnitTestDiscoveryManager>();
+        var metadataExplorer = Solution.GetComponent<MspecTestExplorerFromArtifacts>();
+
+        using var transaction = discoveryManager.BeginTransaction(source);
+
+        metadataExplorer.ProcessArtifact(transaction.Observer, CancellationToken.None).Wait();
+
+        transaction.CommitAsync(CancellationToken.None).Wait();
+
+        return transaction.Elements;
+    }
+
+    private void WriteResults(TextWriter output)
+    {
+        var sink = Solution.GetComponent<IDynamicTestSink>();
+        var results = Solution.GetComponent<IUnitTestResultManager>();
+
+        foreach (var element in sink.GetUnitTestElements())
+        {
+            var result = results.GetResult(element);
+
+            output.WriteLine($"{element.NaturalId.ProviderId}::{element.NaturalId.ProjectId}::{element.NaturalId.TestId}");
+            output.Write("  ");
+            output.WriteLine(result.ToString());
         }
+    }
 
-        private ICollection<IUnitTestElement> GetUnitTestElements(IProject testProject)
+    private void CopyFrameworkLibrary(IProjectItem project)
+    {
+        var assemblies = GetReferencedAssemblies(GetTargetFrameworkId())
+            .Where(Path.IsPathRooted);
+
+        foreach (var assembly in assemblies)
         {
-            var provider = UT.Facade.ProviderCache.GetProviderByProviderId(MspecTestProvider.Id);
+            var source = FileSystemPath.Parse(assembly);
+            var target = project.Location.Directory.Combine(source.Name);
 
-            var source = new UnitTestElementSource(UnitTestElementOrigin.Source,
-                new ExplorationTarget(
-                    testProject,
-                    GetTargetFrameworkId(),
-                    provider));
-
-            var discoveryManager = Solution.GetComponent<IUnitTestDiscoveryManager>();
-            var metadataExplorer = Solution.GetComponent<MspecTestExplorerFromArtifacts>();
-
-            using (var transaction = discoveryManager.BeginTransaction(source))
+            if (source.ExistsFile && !target.ExistsFile)
             {
-                metadataExplorer.ProcessArtifact(transaction.Observer, CancellationToken.None).Wait();
-
-                transaction.Commit();
-
-                return transaction.Elements;
+                source.CopyFile(target.ToNativeFileSystemPath(), true);
             }
         }
+    }
 
-        private void WriteResults(TextWriter output)
-        {
-            var sink = Solution.GetComponent<IDynamicTestSink>();
-            var results = Solution.GetComponent<IUnitTestResultManager>();
+    private IHostProvider GetHostProvider()
+    {
+        var name = Debugger.IsAttached
+            ? "Debug"
+            : "Run";
 
-            foreach (var element in sink.GetUnitTestElements())
-            {
-                var result = results.GetResult(element);
-
-                output.WriteLine($"{element.NaturalId.ProviderId}::{element.NaturalId.ProjectId}::{element.NaturalId.TestId}");
-                output.Write("  ");
-                output.WriteLine(result.ToString());
-            }
-        }
-
-        private void CopyFrameworkLibrary(IProjectItem project)
-        {
-            var assemblies = GetReferencedAssemblies(GetTargetFrameworkId())
-                .Where(Path.IsPathRooted);
-
-            foreach (var assembly in assemblies)
-            {
-                var source = FileSystemPath.Parse(assembly);
-                var target = project.Location.Directory.Combine(source.Name);
-
-                if (source.ExistsFile && !target.ExistsFile)
-                {
-                    source.CopyFile(target.ToNativeFileSystemPath(), true);
-                }
-            }
-        }
+        return UnitTestHost.Instance.GetProvider(name);
     }
 }

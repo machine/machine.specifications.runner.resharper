@@ -1,32 +1,36 @@
-﻿using JetBrains.ReSharper.UnitTestFramework.Elements;
+﻿using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
 
-namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework
+namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
+
+public class TestElementObserverOnFile : IUnitTestElementObserverOnFile 
 {
-    public class TestElementObserverOnFile : IUnitTestElementObserverOnFile 
+    private readonly IUnitTestElementObserver inner;
+
+    public TestElementObserverOnFile(IUnitTestElementObserver inner, IPsiSourceFile? sourceFile)
     {
-        private readonly IUnitTestElementObserver inner;
+        this.inner = inner;
 
-        public TestElementObserverOnFile(IUnitTestElementObserver inner)
-        {
-            this.inner = inner;
-        }
+        PsiSourceFile = sourceFile;
+    }
 
-        public IUnitTestElementSource Source => inner.Source;
+    public IUnitTestElementSource Source => inner.Source;
 
-        public T GetElementById<T>(string testId)
-        {
-            return inner.GetElementById<T>(testId);
-        }
+    public IPsiSourceFile? PsiSourceFile { get; }
 
-        public void OnUnitTestElement(IUnitTestElement element)
-        {
-            inner.OnUnitTestElement(element);
-        }
+    public T GetElementById<T>(string testId)
+    {
+        return inner.GetElementById<T>(testId);
+    }
 
-        public void OnUnitTestElementDisposition(IUnitTestLikeElement element, TextRange navigationRange, TextRange containingRange)
-        {
-        }
+    public void OnUnitTestElement(IUnitTestElement element)
+    {
+        inner.OnUnitTestElement(element);
+    }
+
+    public void OnUnitTestElementDisposition(IUnitTestLikeElement element, TextRange navigationRange, TextRange containingRange)
+    {
     }
 }

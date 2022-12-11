@@ -8,96 +8,95 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Tasks;
 
-namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery
+namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
+
+public class Discoverer
 {
-    public class Discoverer
+    private readonly TestRequest request;
+
+    private readonly IMspecController controller;
+
+    private readonly ITestDiscoverySink sink;
+
+    private readonly RemoteTaskDepot depot;
+
+    private readonly CancellationToken token;
+
+    private readonly ILogger logger = Logger.GetLogger<Discoverer>();
+
+    public Discoverer(TestRequest request, IMspecController controller, ITestDiscoverySink sink, RemoteTaskDepot depot, CancellationToken token)
     {
-        private readonly TestRequest request;
+        this.request = request;
+        this.controller = controller;
+        this.sink = sink;
+        this.depot = depot;
+        this.token = token;
+    }
 
-        private readonly IMspecController controller;
+    public void Discover()
+    {
+        logger.Info($"Discovering tests from {request.Container.Location}");
 
-        private readonly ITestDiscoverySink sink;
+        var source = new List<RemoteTask>();
 
-        private readonly RemoteTaskDepot depot;
-
-        private readonly CancellationToken token;
-
-        private readonly ILogger logger = Logger.GetLogger<Discoverer>();
-
-        public Discoverer(TestRequest request, IMspecController controller, ITestDiscoverySink sink, RemoteTaskDepot depot, CancellationToken token)
+        try
         {
-            this.request = request;
-            this.controller = controller;
-            this.sink = sink;
-            this.depot = depot;
-            this.token = token;
-        }
+            var discoverySink = new MspecDiscoverySink(token);
 
-        public void Discover()
-        {
-            logger.Info($"Discovering tests from {request.Container.Location}");
+            controller.Find(discoverySink, request.Container.Location);
 
-            var source = new List<RemoteTask>();
-
-            try
+            foreach (var element in discoverySink.Elements.Result)
             {
-                var discoverySink = new MspecDiscoverySink(token);
+                var task = GetRemoteTask(element);
+                var parent = GetParent(element);
 
-                controller.Find(discoverySink, request.Container.Location);
+                source.Add(task);
 
-                foreach (var element in discoverySink.Elements.Result)
+                if (parent != null && depot[element] == null && depot[parent] != null && depot[parent]!.RunAllChildren)
                 {
-                    var task = GetRemoteTask(element);
-                    var parent = GetParent(element);
-
-                    source.Add(task);
-
-                    if (parent != null && depot[element] == null && depot[parent] != null && depot[parent]!.RunAllChildren)
-                    {
-                        depot.Add(task);
-                    }
-
-                    depot.Bind(element, task);
+                    depot.Add(task);
                 }
 
-                if (source.Any())
-                {
-                    logger.Debug($"Sending {source.Count} discovery results to server");
-
-                    sink.TestsDiscovered(source.ToArray());
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                logger.Info("Discovery was aborted");
-            }
-            catch (TargetInvocationException ex) when(ex.InnerException != null)
-            {
-                throw new MspecDiscoveryException(ex.InnerException.Message, ex.InnerException.StackTrace);
-            }
-            catch (Exception ex) when (ex.GetType().FullName.StartsWith("Machine.Specifications"))
-            {
-                throw new MspecDiscoveryException(ex.Message, ex.StackTrace);
+                depot.Bind(element, task);
             }
 
-            logger.Info("Discovery completed");
+            if (source.Any())
+            {
+                logger.Debug($"Sending {source.Count} discovery results to server");
+
+                sink.TestsDiscovered(source.ToArray());
+            }
         }
-
-        private MspecRemoteTask GetRemoteTask(IMspecElement element)
+        catch (OperationCanceledException)
         {
-            return RemoteTaskBuilder.GetRemoteTask(element);
+            logger.Info("Discovery was aborted");
+        }
+        catch (TargetInvocationException ex) when(ex.InnerException != null)
+        {
+            throw new MspecDiscoveryException(ex.InnerException.Message, ex.InnerException.StackTrace);
+        }
+        catch (Exception ex) when (ex.GetType().FullName.StartsWith("Machine.Specifications"))
+        {
+            throw new MspecDiscoveryException(ex.Message, ex.StackTrace);
         }
 
-        private IMspecElement? GetParent(IMspecElement element)
+        logger.Info("Discovery completed");
+    }
+
+    private MspecRemoteTask GetRemoteTask(IMspecElement element)
+    {
+        return RemoteTaskBuilder.GetRemoteTask(element);
+    }
+
+    private IMspecElement? GetParent(IMspecElement element)
+    {
+        return element switch
         {
-            return element switch
-            {
-                IContextElement => null,
-                IBehaviorElement behavior => behavior.Context,
-                ISpecificationElement {Behavior: null} specification => specification.Context,
-                ISpecificationElement {Behavior: not null} specification => specification.Behavior,
-                _ => throw new ArgumentOutOfRangeException(nameof(element))
-            };
-        }
+            IContextElement => null,
+            IBehaviorElement behavior => behavior.Context,
+            ISpecificationElement {Behavior: null} specification => specification.Context,
+            ISpecificationElement {Behavior: not null} specification => specification.Behavior,
+            _ => throw new ArgumentOutOfRangeException(nameof(element))
+        };
     }
 }
