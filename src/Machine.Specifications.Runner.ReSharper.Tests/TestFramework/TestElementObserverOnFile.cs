@@ -20,9 +20,9 @@ public class TestElementObserverOnFile : IUnitTestElementObserverOnFile
 
     public IPsiSourceFile? PsiSourceFile { get; }
 
-    public T GetElementById<T>(string testId)
+    public T GetElementById<T>(string testId, string? salt = null)
     {
-        return inner.GetElementById<T>(testId);
+        return inner.GetElementById<T>(testId,  salt);
     }
 
     public void OnUnitTestElement(IUnitTestElement element)
