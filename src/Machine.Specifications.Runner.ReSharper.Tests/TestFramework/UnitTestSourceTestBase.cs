@@ -37,7 +37,7 @@ public abstract class UnitTestSourceTestBase : UnitTestElementDiscoveryTestBase
 
         var observer = new TestElementObserverOnFile(transaction.Observer, file!.GetSourceFile());
 
-        fileExplorer.ProcessFile(file, observer, InterruptableReadActivity.Empty);
+        fileExplorer.ProcessFile(file, observer, () => false);
 
         DumpElements(transaction.Elements, projectFile.Name + ".source");
     }

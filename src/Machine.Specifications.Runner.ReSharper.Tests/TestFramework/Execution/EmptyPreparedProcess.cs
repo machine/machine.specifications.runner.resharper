@@ -1,9 +1,10 @@
 ﻿using System;
 using JetBrains.Util;
+using JetBrains.Util.Processes;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-public class EmptyPreparedProcess : IPreparedProcess
+public class EmptyPreparedProcess : IPreparedProcessWithCachedOutput
 {
     public int ProcessId => 0;
 
