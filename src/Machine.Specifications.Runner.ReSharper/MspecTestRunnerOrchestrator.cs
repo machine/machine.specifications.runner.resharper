@@ -23,7 +23,7 @@ public class MspecTestRunnerOrchestrator : ITestRunnerAdapter
 
     public TestAdapterLoader GetTestAdapterLoader(ITestRunnerContext context)
     {
-        var framework = context.RuntimeEnvironment.TargetFrameworkId.IsNetCoreSdk()
+        var framework = context.RuntimeDescriptor.TargetFrameworkId.IsNetCoreSdk()
             ? "netstandard20"
             : "net461";
 

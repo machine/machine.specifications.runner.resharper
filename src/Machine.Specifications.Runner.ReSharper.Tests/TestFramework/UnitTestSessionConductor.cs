@@ -3,7 +3,6 @@ using JetBrains.Application.UI.Actions.ActionManager;
 using JetBrains.Application.UI.ActionSystem.ActionBar;
 using JetBrains.Application.UI.Components;
 using JetBrains.Application.UI.Components.Theming;
-using JetBrains.Application.UI.ToolWindowManagement;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi.Caches;
@@ -23,6 +22,7 @@ using JetBrains.ReSharper.UnitTestFramework.Persistence;
 using JetBrains.ReSharper.UnitTestFramework.UI.ViewModels.TreeModel.Nodes;
 using System.Collections.Generic;
 using JetBrains.Application.Components;
+using System.Threading.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 
@@ -41,16 +41,15 @@ public class UnitTestSessionConductor : UnitTestSessionConductorBase, IHideImple
         IActionManager actionManager,
         IActionBarManager actionBarManager,
         IPersistentIndexManager persistentIndexManager,
-        ToolWindowManager toolWindowManager,
         IUnitTestSessionRepository sessionRepository,
         IEnumerable<IUnitTestSessionManagerPreviewPanelFactory> previewPanelFactories,
         ILogger logger)
-        : base(serializer, lifetime, solution, theming, application, settings, actionManager, actionBarManager, persistentIndexManager, toolWindowManager, sessionRepository, logger)
+        : base(serializer, lifetime, solution, theming, application, settings, actionManager, actionBarManager, persistentIndexManager, sessionRepository, logger)
     {
         this.previewPanelFactories = previewPanelFactories;
     }
 
-    public override IUnitTestSessionTreeViewModel OpenSession(IUnitTestSession session, bool activate = true)
+    public override Task<IUnitTestSessionTreeViewModel> OpenSession(IUnitTestSession session, bool activate = true)
     {
         EnsureSessionsAreOpened();
 
@@ -61,11 +60,12 @@ public class UnitTestSessionConductor : UnitTestSessionConductorBase, IHideImple
             ActiveSession.Value = viewModel;
         }
 
-        return viewModel;
+        return Task.FromResult(viewModel);
     }
 
-    public override void CloseSession(IUnitTestSession session)
+    public override Task CloseSession(IUnitTestSession session)
     {
+        return Task.CompletedTask;
     }
 
     private IUnitTestSessionTreeViewModel CreateViewModel(IUnitTestSession session)

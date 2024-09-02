@@ -6,7 +6,8 @@ using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
-using JetBrains.Util;
+using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner.Activation;
+using JetBrains.Util.Processes;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
@@ -27,13 +28,17 @@ public class ExecutionAgent : ITestRunnerExecutionAgent
 
     public Lifetime Lifetime { get; } = Lifetime.Eternal;
 
-    public IPreparedProcess Process { get; } = new EmptyPreparedProcess();
+    public IPreparedProcessWithCachedOutput Process { get; } = new EmptyPreparedProcess();
 
     public IMessageBroker MessageBroker { get; }
 
     public object ActivationOptions { get; } = new();
 
     public ITestRunnerExecutionContext Context { get; }
+
+    public IRemoteAgentSerializers Serializers { get; }
+
+    public ITestRunnerMessageHandlerRegistry MessageHandlers { get; }
 
     public async Task RunTests(CancellationToken cancelCt, CancellationToken abortCt)
     {
@@ -65,5 +70,9 @@ public class ExecutionAgent : ITestRunnerExecutionAgent
                 sink.AddUnitTestElement(element);
             }
         }
+    }
+
+    public void Dispose()
+    {
     }
 }
