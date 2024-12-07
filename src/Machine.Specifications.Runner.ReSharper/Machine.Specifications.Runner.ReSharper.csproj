@@ -34,9 +34,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Lifetimes" Version="2024.3.0" />
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2024.3.0" PrivateAssets="All" />
-    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2024.3.0" PrivateAssets="all" />
+    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
   </ItemGroup>
 
