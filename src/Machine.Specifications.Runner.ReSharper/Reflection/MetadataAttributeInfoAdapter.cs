@@ -5,15 +5,8 @@ using JetBrains.Metadata.Reader.Impl;
 
 namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
-public class MetadataAttributeInfoAdapter : IAttributeInfo
+public class MetadataAttributeInfoAdapter(IMetadataCustomAttribute attribute) : IAttributeInfo
 {
-    private readonly IMetadataCustomAttribute attribute;
-
-    public MetadataAttributeInfoAdapter(IMetadataCustomAttribute attribute)
-    {
-        this.attribute = attribute;
-    }
-
     public IEnumerable<string> GetParameters()
     {
         var arguments = attribute.ConstructorArguments

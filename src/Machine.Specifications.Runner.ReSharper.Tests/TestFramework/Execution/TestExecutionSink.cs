@@ -4,16 +4,9 @@ using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-public class TestExecutionSink : ITestExecutionSink
+public class TestExecutionSink(IMessageBroker broker) : ITestExecutionSink
 {
-    private readonly IMessageBroker broker;
-
     private readonly ILogger logger = Logger.GetLogger<TestExecutionSink>();
-
-    public TestExecutionSink(IMessageBroker broker)
-    {
-        this.broker = broker;
-    }
 
     public void TestStarting(RemoteTask task)
     {

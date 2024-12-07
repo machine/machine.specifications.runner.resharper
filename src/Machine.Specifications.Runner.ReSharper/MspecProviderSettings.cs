@@ -14,17 +14,12 @@ public class MspecProviderSettings
     public DiscoveryMethod TestDiscoveryFromArtifactsMethod;
 
     [ShellComponent]
-    public class Reader : ICachedSettingsReader<MspecProviderSettings>
+    public class Reader(ISettingsStore settingsStore, ISettingsOptimization settingsOptimization)
+        : ICachedSettingsReader<MspecProviderSettings>
     {
-        public Reader(ISettingsStore settingsStore, ISettingsOptimization settingsOptimization)
-        {
-            SettingsOptimization = settingsOptimization;
-            KeyExposed = settingsStore.Schema.GetKey<MspecProviderSettings>();
-        }
+        public ISettingsOptimization SettingsOptimization { get; } = settingsOptimization;
 
-        public ISettingsOptimization SettingsOptimization { get; }
-
-        public SettingsKey KeyExposed { get; }
+        public SettingsKey KeyExposed { get; } = settingsStore.Schema.GetKey<MspecProviderSettings>();
 
         public MspecProviderSettings ReadData(Lifetime lifetime, IContextBoundSettingsStore store)
         {

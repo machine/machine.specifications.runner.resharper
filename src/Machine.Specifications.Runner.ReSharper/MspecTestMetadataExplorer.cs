@@ -8,16 +8,9 @@ using Machine.Specifications.Runner.ReSharper.Reflection;
 
 namespace Machine.Specifications.Runner.ReSharper;
 
-public class MspecTestMetadataExplorer
+public class MspecTestMetadataExplorer(IUnitTestElementObserver observer)
 {
-    private readonly IUnitTestElementObserver observer;
-
     private readonly UnitTestElementFactory factory = new();
-
-    public MspecTestMetadataExplorer(IUnitTestElementObserver observer)
-    {
-        this.observer = observer;
-    }
 
     public void ExploreAssembly(IMetadataAssembly assembly, CancellationToken token)
     {

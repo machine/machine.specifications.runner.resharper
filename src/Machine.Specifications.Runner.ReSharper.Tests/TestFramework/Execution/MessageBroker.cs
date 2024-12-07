@@ -53,7 +53,7 @@ public class MessageBroker : IMessageBroker
             return Task.CompletedTask;
         }
 
-        if (handler.Method.Invoke(handler.Handler, new object[] {message}) is Task task)
+        if (handler.Method.Invoke(handler.Handler, [message]) is Task task)
         {
             return task;
         }
@@ -73,23 +73,17 @@ public class MessageBroker : IMessageBroker
             foreach (var asyncHandler in asyncHandlers)
             {
                 var messageType = asyncHandler.GetGenericArguments().First();
-                var method = asyncHandler.GetMethod("Execute", new[] {messageType});
+                var method = asyncHandler.GetMethod("Execute", [messageType]);
 
                 messageHandlers[messageType] = new MessageHandler(handler, method!);
             }
         }
     }
 
-    private class MessageHandler
+    private class MessageHandler(IMessageHandlerMarker handler, MethodInfo method)
     {
-        public MessageHandler(IMessageHandlerMarker handler, MethodInfo method)
-        {
-            Handler = handler;
-            Method = method;
-        }
+        public IMessageHandlerMarker Handler { get; } = handler;
 
-        public IMessageHandlerMarker Handler { get; }
-
-        public MethodInfo Method { get; }
+        public MethodInfo Method { get; } = method;
     }
 }

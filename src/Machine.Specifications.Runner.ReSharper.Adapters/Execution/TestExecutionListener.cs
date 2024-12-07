@@ -9,26 +9,16 @@ using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 
-public class TestExecutionListener : IExecutionListener
+public class TestExecutionListener(RunContext runContext, ElementCache cache, CancellationToken token)
+    : IExecutionListener
 {
-    private readonly RunContext runContext;
+    private readonly CancellationToken token = token;
 
-    private readonly ElementCache cache;
+    private readonly HashSet<ISpecificationElement> passed = [];
 
-    private readonly CancellationToken token;
-
-    private readonly HashSet<ISpecificationElement> passed = new();
-
-    private readonly HashSet<ISpecificationElement> failed = new();
+    private readonly HashSet<ISpecificationElement> failed = [];
 
     private readonly ManualResetEvent waitEvent = new(false);
-
-    public TestExecutionListener(RunContext runContext, ElementCache cache, CancellationToken token)
-    {
-        this.runContext = runContext;
-        this.cache = cache;
-        this.token = token;
-    }
 
     public WaitHandle Finished => waitEvent;
 

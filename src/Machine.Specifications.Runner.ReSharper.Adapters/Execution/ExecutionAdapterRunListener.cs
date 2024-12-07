@@ -5,24 +5,12 @@ using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 
-public class ExecutionAdapterRunListener : IRunListener
+public class ExecutionAdapterRunListener(IExecutionListener listener, ElementCache cache, RunTracker tracker)
+    : IRunListener
 {
-    private readonly IExecutionListener listener;
-
-    private readonly ElementCache cache;
-
-    private readonly RunTracker tracker;
-
     private readonly HashSet<IMspecElement> behaviors = new();
 
     private IContextElement? currentContext;
-
-    public ExecutionAdapterRunListener(IExecutionListener listener, ElementCache cache, RunTracker tracker)
-    {
-        this.listener = listener;
-        this.cache = cache;
-        this.tracker = tracker;
-    }
 
     public void OnAssemblyStart(TestAssemblyInfo assemblyInfo)
     {

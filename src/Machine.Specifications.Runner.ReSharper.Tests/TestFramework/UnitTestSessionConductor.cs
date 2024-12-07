@@ -23,32 +23,26 @@ using JetBrains.ReSharper.UnitTestFramework.UI.ViewModels.TreeModel.Nodes;
 using System.Collections.Generic;
 using JetBrains.Application.Components;
 using System.Threading.Tasks;
+using JetBrains.Application.Parts;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 
-[SolutionComponent]
-public class UnitTestSessionConductor : UnitTestSessionConductorBase, IHideImplementation<DefaultNoopUnitTestSessionConductor>
+[SolutionComponent(Instantiation.ContainerAsyncPrimaryThread)]
+public class UnitTestSessionConductor(
+    UnitTestingSerializer serializer,
+    Lifetime lifetime,
+    ISolution solution,
+    ITheming theming,
+    IUIApplication application,
+    IUnitTestingSettings settings,
+    IActionManager actionManager,
+    IActionBarManager actionBarManager,
+    IPersistentIndexManager persistentIndexManager,
+    IUnitTestSessionRepository sessionRepository,
+    IEnumerable<IUnitTestSessionManagerPreviewPanelFactory> previewPanelFactories,
+    ILogger logger)
+    : UnitTestSessionConductorBase(serializer, lifetime, solution, theming, application, settings, actionManager, actionBarManager, persistentIndexManager, sessionRepository, logger), IHideImplementation<DefaultNoopUnitTestSessionConductor>
 {
-    private readonly IEnumerable<IUnitTestSessionManagerPreviewPanelFactory> previewPanelFactories;
-
-    public UnitTestSessionConductor(
-        UnitTestingSerializer serializer,
-        Lifetime lifetime,
-        ISolution solution,
-        ITheming theming,
-        IUIApplication application,
-        IUnitTestingSettings settings,
-        IActionManager actionManager,
-        IActionBarManager actionBarManager,
-        IPersistentIndexManager persistentIndexManager,
-        IUnitTestSessionRepository sessionRepository,
-        IEnumerable<IUnitTestSessionManagerPreviewPanelFactory> previewPanelFactories,
-        ILogger logger)
-        : base(serializer, lifetime, solution, theming, application, settings, actionManager, actionBarManager, persistentIndexManager, sessionRepository, logger)
-    {
-        this.previewPanelFactories = previewPanelFactories;
-    }
-
     public override Task<IUnitTestSessionTreeViewModel> OpenSession(IUnitTestSession session, bool activate = true)
     {
         EnsureSessionsAreOpened();

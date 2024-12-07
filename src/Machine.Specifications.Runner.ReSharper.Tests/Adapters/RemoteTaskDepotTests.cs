@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters;
 using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
 using NUnit.Framework;
@@ -12,10 +11,9 @@ public class RemoteTaskDepotTests
     [Test]
     public void CanGetContextByElement()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context
-        });
+        ]);
 
         Assert.NotNull(depot[ElementFixtures.Context]);
     }
@@ -23,11 +21,10 @@ public class RemoteTaskDepotTests
     [Test]
     public void CanGetSpecificationByElement()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Specification1
-        });
+        ]);
 
         Assert.NotNull(depot[ElementFixtures.Specification1]);
     }
@@ -35,11 +32,10 @@ public class RemoteTaskDepotTests
     [Test]
     public void CanGetBehaviorByElement()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Behavior1
-        });
+        ]);
 
         Assert.NotNull(depot[ElementFixtures.Behavior1]);
     }
@@ -47,12 +43,11 @@ public class RemoteTaskDepotTests
     [Test]
     public void CanGetBehaviorSpecificationByElement()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Behavior1,
             RemoteTaskFixtures.Behavior1Specification1
-        });
+        ]);
 
         Assert.NotNull(depot[ElementFixtures.Behavior1Specification1]);
     }
@@ -60,13 +55,12 @@ public class RemoteTaskDepotTests
     [Test]
     public void CanGetBehaviorWhenThereIsSpecificationWithSameName()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Behavior1,
             RemoteTaskFixtures.Specification1,
             RemoteTaskFixtures.Behavior1Specification1
-        });
+        ]);
 
         Assert.NotNull(depot[ElementFixtures.Specification1]);
     }
@@ -74,13 +68,12 @@ public class RemoteTaskDepotTests
     [Test]
     public void BoundElementsAreRunnable()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Behavior1,
             RemoteTaskFixtures.Specification1,
             RemoteTaskFixtures.Behavior1Specification1
-        });
+        ]);
 
         depot.Bind(ElementFixtures.Context, RemoteTaskFixtures.Context);
         depot.Bind(ElementFixtures.Behavior1, RemoteTaskFixtures.Behavior1);

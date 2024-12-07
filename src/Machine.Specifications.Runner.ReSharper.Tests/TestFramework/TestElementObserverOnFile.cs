@@ -5,20 +5,12 @@ using JetBrains.Util;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework;
 
-public class TestElementObserverOnFile : IUnitTestElementObserverOnFile 
+public class TestElementObserverOnFile(IUnitTestElementObserver inner, IPsiSourceFile sourceFile)
+    : IUnitTestElementObserverOnFile
 {
-    private readonly IUnitTestElementObserver inner;
-
-    public TestElementObserverOnFile(IUnitTestElementObserver inner, IPsiSourceFile? sourceFile)
-    {
-        this.inner = inner;
-
-        PsiSourceFile = sourceFile;
-    }
-
     public IUnitTestElementSource Source => inner.Source;
 
-    public IPsiSourceFile? PsiSourceFile { get; }
+    public IPsiSourceFile PsiSourceFile { get; } = sourceFile;
 
     public T GetElementById<T>(string testId, string? salt = null)
     {

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Application.Parts;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.Elements;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-[SolutionComponent]
+[SolutionComponent(Instantiation.ContainerAsyncPrimaryThread)]
 public class DynamicTestSink : IDynamicTestSink
 {
     private readonly Dictionary<string, IUnitTestElement> elements = new();

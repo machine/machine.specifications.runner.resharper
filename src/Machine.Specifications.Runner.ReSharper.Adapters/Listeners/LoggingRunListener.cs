@@ -2,16 +2,9 @@
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
-public class LoggingRunListener : IRunListener
+public class LoggingRunListener(IRunListener listener) : IRunListener
 {
-    private readonly IRunListener listener;
-
     private readonly ILogger logger = Logger.GetLogger<LoggingRunListener>();
-
-    public LoggingRunListener(IRunListener listener)
-    {
-        this.listener = listener;
-    }
 
     public void OnAssemblyStart(TestAssemblyInfo assemblyInfo)
     {
@@ -31,14 +24,14 @@ public class LoggingRunListener : IRunListener
     {
         logger.Trace("OnRunStart:");
 
-        logger.Catch(() => listener.OnRunStart());
+        logger.Catch(listener.OnRunStart);
     }
 
     public void OnRunEnd()
     {
         logger.Trace("OnRunEnd:");
 
-        logger.Catch(() => listener.OnRunEnd());
+        logger.Catch(listener.OnRunEnd);
     }
 
     public void OnContextStart(TestContextInfo contextInfo)

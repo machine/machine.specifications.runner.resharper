@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Reflection;
+using JetBrains.Application.Parts;
 using JetBrains.DataFlow;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.TestRunner.Abstractions.Isolation;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-[SolutionComponent]
+[SolutionComponent(Instantiation.ContainerAsyncPrimaryThread)]
 public class AssemblyResolver : IAssemblyResolver
 {
     public Type GetType(string fullyQualifiedName)

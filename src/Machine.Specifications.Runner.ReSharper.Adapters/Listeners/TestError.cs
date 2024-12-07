@@ -2,18 +2,11 @@
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
-public class TestError
+public class TestError(string fullTypeName, ExceptionInfo[] exceptions, string exceptionMessage)
 {
-    public TestError(string fullTypeName, ExceptionInfo[] exceptions, string exceptionMessage)
-    {
-        FullTypeName = fullTypeName;
-        Exceptions = exceptions;
-        ExceptionMessage = exceptionMessage;
-    }
+    public string FullTypeName { get; } = fullTypeName;
 
-    public string FullTypeName { get; }
+    public ExceptionInfo[] Exceptions { get; } = exceptions;
 
-    public ExceptionInfo[] Exceptions { get; }
-
-    public string ExceptionMessage { get; }
+    public string ExceptionMessage { get; } = exceptionMessage;
 }

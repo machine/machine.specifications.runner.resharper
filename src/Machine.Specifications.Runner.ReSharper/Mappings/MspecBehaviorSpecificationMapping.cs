@@ -1,4 +1,5 @@
-﻿using JetBrains.ProjectModel;
+﻿using JetBrains.Application.Parts;
+using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 using JetBrains.ReSharper.UnitTestFramework.Exploration;
 using JetBrains.Util;
@@ -7,14 +8,10 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Mappings;
 
-[SolutionComponent]
-public class MspecBehaviorSpecificationMapping : MspecElementMapping<MspecBehaviorSpecificationTestElement, MspecBehaviorSpecificationRemoteTask>
+[SolutionComponent(Instantiation.DemandAnyThreadUnsafe)]
+public class MspecBehaviorSpecificationMapping(MspecServiceProvider services)
+    : MspecElementMapping<MspecBehaviorSpecificationTestElement, MspecBehaviorSpecificationRemoteTask>(services)
 {
-    public MspecBehaviorSpecificationMapping(MspecServiceProvider services)
-        : base(services)
-    {
-    }
-
     protected override MspecBehaviorSpecificationRemoteTask ToRemoteTask(MspecBehaviorSpecificationTestElement element, ITestRunnerExecutionContext context)
     {
         var task = MspecBehaviorSpecificationRemoteTask.ToClient(

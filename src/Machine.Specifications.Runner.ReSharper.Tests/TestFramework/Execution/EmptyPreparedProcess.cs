@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using JetBrains.Util;
 using JetBrains.Util.Processes;
 
@@ -9,8 +11,6 @@ public class EmptyPreparedProcess : IPreparedProcessWithCachedOutput
     public int ProcessId => 0;
 
     public int ExitCode => 0;
-
-    public IntPtr Handle => IntPtr.Zero;
 
     public string ProcessName => string.Empty;
 
@@ -46,8 +46,9 @@ public class EmptyPreparedProcess : IPreparedProcessWithCachedOutput
     {
     }
 
-    public void Start()
+    public Task Start(CancellationToken ct)
     {
+        throw new NotImplementedException();
     }
 
     public bool WaitForExit(TimeSpan? timeout = null)

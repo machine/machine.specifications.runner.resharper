@@ -11,14 +11,9 @@ using JetBrains.Util.Processes;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-public class ExecutionAgent : ITestRunnerExecutionAgent
+public class ExecutionAgent(ITestRunnerExecutionContext context, IMessageBroker messageBroker)
+    : ITestRunnerExecutionAgent
 {
-    public ExecutionAgent(ITestRunnerExecutionContext context, IMessageBroker messageBroker)
-    {
-        Context = context;
-        MessageBroker = messageBroker;
-    }
-
     public Task<int> Shutdown()
     {
         return Task.FromResult(0);
@@ -30,13 +25,11 @@ public class ExecutionAgent : ITestRunnerExecutionAgent
 
     public IPreparedProcessWithCachedOutput Process { get; } = new EmptyPreparedProcess();
 
-    public IMessageBroker MessageBroker { get; }
+    public IMessageBroker MessageBroker { get; } = messageBroker;
 
-    public object ActivationOptions { get; } = new();
+    public ITestRunnerExecutionContext Context { get; } = context;
 
-    public ITestRunnerExecutionContext Context { get; }
-
-    public IRemoteAgentSerializers Serializers { get; }
+    public IRemoteAgentSerializers? Serializers { get; }
 
     public ITestRunnerMessageHandlerRegistry MessageHandlers { get; }
 

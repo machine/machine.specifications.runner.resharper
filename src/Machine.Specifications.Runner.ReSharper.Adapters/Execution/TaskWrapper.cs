@@ -6,12 +6,8 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 
-public class TaskWrapper
+public class TaskWrapper(MspecRemoteTask? task, ITestExecutionSink sink)
 {
-    private readonly MspecRemoteTask? task;
-
-    private readonly ITestExecutionSink sink;
-
     private readonly Stopwatch watch = new();
         
     private int started;
@@ -21,12 +17,6 @@ public class TaskWrapper
     private TestOutcome result;
 
     private string? message;
-
-    public TaskWrapper(MspecRemoteTask? task, ITestExecutionSink sink)
-    {
-        this.task = task;
-        this.sink = sink;
-    }
 
     public void Starting()
     {

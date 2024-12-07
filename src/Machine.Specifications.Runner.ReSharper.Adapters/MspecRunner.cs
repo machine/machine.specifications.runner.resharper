@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using JetBrains.ReSharper.TestRunner.Abstractions;
 using JetBrains.ReSharper.TestRunner.Abstractions.Objects;
 using Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
@@ -19,7 +18,7 @@ public class MspecRunner : LongLivedMarshalByRefObject, ITestDiscoverer, ITestEx
     {
         logger.Info("Exploration started");
 
-        var depot = new RemoteTaskDepot(Array.Empty<RemoteTask>());
+        var depot = new RemoteTaskDepot([]);
         var controller = new MspecController(request, discoveryToken.Token);
 
         var discoverer = new Discoverer(request, controller, discoverySink, depot, discoveryToken.Token);

@@ -5,16 +5,9 @@ using JetBrains.ReSharper.Psi;
 
 namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
-public class PsiFieldInfoAdapter : IFieldInfo
+public class PsiFieldInfoAdapter(IField field) : IFieldInfo
 {
-    private readonly IField field;
-
-    public PsiFieldInfoAdapter(IField field)
-    {
-        this.field = field;
-    }
-
-    public string DeclaringType => field.GetContainingType()!.GetClrName().FullName;
+    public string DeclaringType => field.ContainingType!.GetClrName().FullName;
 
     public string ShortName => field.ShortName;
 

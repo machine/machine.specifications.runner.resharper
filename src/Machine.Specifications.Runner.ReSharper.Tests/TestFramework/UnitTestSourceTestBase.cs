@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using JetBrains.Application.Threading;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
@@ -35,7 +34,7 @@ public abstract class UnitTestSourceTestBase : UnitTestElementDiscoveryTestBase
 
         using var transaction = discoveryManager.BeginTransaction(source);
 
-        var observer = new TestElementObserverOnFile(transaction.Observer, file!.GetSourceFile());
+        var observer = new TestElementObserverOnFile(transaction.Observer, file!.GetSourceFile()!);
 
         fileExplorer.ProcessFile(file, observer, () => false);
 

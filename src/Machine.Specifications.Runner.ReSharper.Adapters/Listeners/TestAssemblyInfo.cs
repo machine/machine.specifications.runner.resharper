@@ -1,11 +1,6 @@
 ﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
-public class TestAssemblyInfo
+public class TestAssemblyInfo(string location)
 {
-    public TestAssemblyInfo(string location)
-    {
-        Location = location;
-    }
-
-    public string Location { get; }
+    public string Location { get; } = location;
 }

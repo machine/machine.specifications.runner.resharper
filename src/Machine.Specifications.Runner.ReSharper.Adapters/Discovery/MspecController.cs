@@ -36,7 +36,7 @@ public class MspecController : IMspecController
         var assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
         var assembly = Assembly.Load(assemblyName);
 
-        var results = (string) invoker.Invoke(controller, new object[] {assembly});
+        var results = (string) invoker.Invoke(controller, [assembly]);
 
         var specifications = GetSpecifications(assembly, results);
 

@@ -8,15 +8,8 @@ using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.TestFramework.Execution;
 
-public class AgentManager : ITestRunnerAgentManager
+public class AgentManager(IAssemblyResolver resolver) : ITestRunnerAgentManager
 {
-    private readonly IAssemblyResolver resolver;
-
-    public AgentManager(IAssemblyResolver resolver)
-    {
-        this.resolver = resolver;
-    }
-
     public Task<ITestRunnerExecutionAgent> GetExecutionAgent(ITestRunnerExecutionContext context, CancellationToken ct)
     {
         var handlers = context.Container.GetComponents<IProvideTestRunnerAgentMessageHandlers>()

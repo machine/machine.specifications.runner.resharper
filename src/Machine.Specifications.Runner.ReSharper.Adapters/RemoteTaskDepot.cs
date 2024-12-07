@@ -10,7 +10,7 @@ public class RemoteTaskDepot
 {
     private readonly Dictionary<string, MspecRemoteTask> tasksByReSharperId = new();
 
-    private readonly List<ISpecificationElement> testsToRun = new();
+    private readonly List<ISpecificationElement> testsToRun = [];
 
     public RemoteTaskDepot(RemoteTask[] tasks)
     {

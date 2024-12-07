@@ -4,18 +4,9 @@ using JetBrains.Metadata.Reader.API;
 
 namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
-public class MetadataTypeInfoAdapter : ITypeInfo
+public class MetadataTypeInfoAdapter(IMetadataTypeInfo type, IMetadataClassType? classType = null)
+    : ITypeInfo
 {
-    private readonly IMetadataTypeInfo type;
-
-    private readonly IMetadataClassType? classType;
-
-    public MetadataTypeInfoAdapter(IMetadataTypeInfo type, IMetadataClassType? classType = null)
-    {
-        this.type = type;
-        this.classType = classType;
-    }
-
     public string FullyQualifiedName => type.FullyQualifiedName;
 
     public bool IsAbstract => type.IsAbstract;

@@ -28,7 +28,7 @@ internal static class ExceptionResultExtensions
     {
         if (result == null)
         {
-            return Array.Empty<ExceptionInfo>();
+            return [];
         }
 
         return result.Flatten()

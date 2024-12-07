@@ -4,15 +4,8 @@ using JetBrains.ReSharper.Psi;
 
 namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
-public class PsiAttributeInfoAdapter : IAttributeInfo
+public class PsiAttributeInfoAdapter(IAttributeInstance attribute) : IAttributeInfo
 {
-    private readonly IAttributeInstance attribute;
-
-    public PsiAttributeInfoAdapter(IAttributeInstance attribute)
-    {
-        this.attribute = attribute;
-    }
-
     public IEnumerable<string> GetParameters()
     {
         var parameters = attribute.PositionParameters()

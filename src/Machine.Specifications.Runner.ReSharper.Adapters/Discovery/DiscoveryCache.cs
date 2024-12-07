@@ -7,10 +7,8 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 
-public class DiscoveryCache
+public class DiscoveryCache(Assembly assembly)
 {
-    private readonly Assembly assembly;
-
     private readonly Dictionary<string, Type?> types = new();
 
     private readonly Dictionary<string, FieldInfo?> fields = new();
@@ -20,11 +18,6 @@ public class DiscoveryCache
     private readonly Dictionary<string, string?> ignoreReasons = new();
 
     private readonly Dictionary<string, IBehaviorElement> behaviors = new();
-
-    public DiscoveryCache(Assembly assembly)
-    {
-        this.assembly = assembly;
-    }
 
     public IBehaviorElement? GetOrAddBehavior(IContextElement context, SpecificationInfo specification)
     {

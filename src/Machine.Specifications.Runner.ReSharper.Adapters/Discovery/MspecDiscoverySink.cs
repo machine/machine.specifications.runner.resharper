@@ -5,10 +5,8 @@ using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Discovery;
 
-public class MspecDiscoverySink : IMspecDiscoverySink
+public class MspecDiscoverySink(CancellationToken token) : IMspecDiscoverySink
 {
-    private readonly CancellationToken token;
-
     private readonly TaskCompletionSource<IMspecElement[]> source = new();
 
     private readonly List<IMspecElement> elements = new();
@@ -20,11 +18,6 @@ public class MspecDiscoverySink : IMspecDiscoverySink
     private readonly HashSet<ISpecificationElement> handledSpecifications = new();
 
     public Task<IMspecElement[]> Elements => source.Task;
-
-    public MspecDiscoverySink(CancellationToken token)
-    {
-        this.token = token;
-    }
 
     public void OnSpecification(ISpecificationElement specification)
     {
