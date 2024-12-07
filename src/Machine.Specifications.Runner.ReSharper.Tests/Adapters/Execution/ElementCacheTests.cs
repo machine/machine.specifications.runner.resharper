@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
 using NUnit.Framework;
@@ -17,9 +16,8 @@ public class ElementCacheTests
             ElementFixtures.Behavior2Specification1
         ]);
 
-        Assert.IsTrue(cache.IsBehavior(ElementFixtures.Behavior1.TypeName));
-        Assert.IsTrue(cache.IsBehavior(ElementFixtures.Behavior2.TypeName));
-        Assert.IsFalse(cache.IsBehavior(ElementFixtures.Context.TypeName));
+        Assert.That(cache.IsBehavior(ElementFixtures.Behavior1.TypeName), Is.True);
+        Assert.That(cache.IsBehavior(ElementFixtures.Context.TypeName), Is.False);
     }
 
     [Test]

@@ -11,6 +11,6 @@ public class MspecContextRemoteTaskTests
     {
         var task = MspecContextRemoteTask.ToServer("Namespace.Context", null, null, null);
 
-        Assert.AreEqual("Namespace.Context", task.TestId);
+        Assert.That(task.TestId, Is.EqualTo("Namespace.Context"));
     }
 }

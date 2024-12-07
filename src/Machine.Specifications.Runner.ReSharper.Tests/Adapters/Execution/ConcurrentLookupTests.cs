@@ -23,8 +23,8 @@ public class ConcurrentLookupTests
         lookup.Add(new ContextElement("Type", "Subject", null));
         lookup.Add(new ContextElement("Type", "SubjectS", null));
 
-        Assert.NotNull(lookup.Take("Type"));
-        Assert.NotNull(lookup.Take("Type"));
+        Assert.That(lookup.Take("Type"), Is.Not.Null);
+        Assert.That(lookup.Take("Type"), Is.Not.Null);
     }
 
     [Test]
@@ -35,8 +35,8 @@ public class ConcurrentLookupTests
         lookup.Add(new ContextElement("Type", "Subject", null));
         lookup.Add(new ContextElement("Type", "SubjectS", null));
 
-        Assert.NotNull(lookup.Take("Type"));
-        Assert.NotNull(lookup.Take("Type"));
-        Assert.Null(lookup.Take("Type"));
+        Assert.That(lookup.Take("Type"), Is.Not.Null);
+        Assert.That(lookup.Take("Type"), Is.Not.Null);
+        Assert.That(lookup.Take("Type"), Is.Null);
     }
 }

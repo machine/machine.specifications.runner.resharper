@@ -15,7 +15,7 @@ public class RemoteTaskDepotTests
             RemoteTaskFixtures.Context
         ]);
 
-        Assert.NotNull(depot[ElementFixtures.Context]);
+        Assert.That(depot[ElementFixtures.Context], Is.Not.Null);
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class RemoteTaskDepotTests
             RemoteTaskFixtures.Specification1
         ]);
 
-        Assert.NotNull(depot[ElementFixtures.Specification1]);
+        Assert.That(depot[ElementFixtures.Specification1], Is.Not.Null);
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class RemoteTaskDepotTests
             RemoteTaskFixtures.Behavior1
         ]);
 
-        Assert.NotNull(depot[ElementFixtures.Behavior1]);
+        Assert.That(depot[ElementFixtures.Behavior1], Is.Not.Null);
     }
 
     [Test]
@@ -49,7 +49,7 @@ public class RemoteTaskDepotTests
             RemoteTaskFixtures.Behavior1Specification1
         ]);
 
-        Assert.NotNull(depot[ElementFixtures.Behavior1Specification1]);
+        Assert.That(depot[ElementFixtures.Behavior1Specification1], Is.Not.Null);
     }
 
     [Test]
@@ -62,7 +62,7 @@ public class RemoteTaskDepotTests
             RemoteTaskFixtures.Behavior1Specification1
         ]);
 
-        Assert.NotNull(depot[ElementFixtures.Specification1]);
+        Assert.That(depot[ElementFixtures.Specification1], Is.Not.Null);
     }
 
     [Test]
@@ -82,7 +82,7 @@ public class RemoteTaskDepotTests
 
         var selected = depot.GetTestsToRun().ToArray();
 
-        CollectionAssert.Contains(selected, ElementFixtures.Specification1);
-        CollectionAssert.Contains(selected, ElementFixtures.Behavior1Specification1);
+        Assert.That(selected, Has.Member(ElementFixtures.Specification1));
+        Assert.That(selected, Has.Member(ElementFixtures.Behavior1Specification1));
     }
 }
