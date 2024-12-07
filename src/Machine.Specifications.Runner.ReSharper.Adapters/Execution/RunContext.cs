@@ -6,21 +6,11 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 
-public class RunContext
+public class RunContext(RemoteTaskDepot depot, ITestExecutionSink sink)
 {
-    private readonly RemoteTaskDepot depot;
-
-    private readonly ITestExecutionSink sink;
-
     private readonly ConcurrentDictionary<IMspecElement, TaskWrapper> tasks = new();
 
     private readonly ConcurrentDictionary<string, TaskWrapper> tasksById = new();
-
-    public RunContext(RemoteTaskDepot depot, ITestExecutionSink sink)
-    {
-        this.depot = depot;
-        this.sink = sink;
-    }
 
     public IEnumerable<ISpecificationElement> GetTestsToRun()
     {

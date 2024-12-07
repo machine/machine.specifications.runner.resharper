@@ -12,19 +12,12 @@ using Machine.Specifications.Runner.ReSharper.Reflection;
 
 namespace Machine.Specifications.Runner.ReSharper;
 
-public class MspecPsiFileExplorer : UnitTestElementRecursivePsiProcessor
+public class MspecPsiFileExplorer(IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
+    : UnitTestElementRecursivePsiProcessor(interrupted)
 {
-    private readonly IUnitTestElementObserverOnFile observer;
-
     private readonly UnitTestElementFactory factory = new();
 
     private readonly Dictionary<ClrTypeName, MspecContextTestElement> recentContexts = new();
-
-    public MspecPsiFileExplorer(IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
-        : base(interrupted)
-    {
-        this.observer = observer;
-    }
 
     public override bool InteriorShouldBeProcessed(ITreeNode element)
     {

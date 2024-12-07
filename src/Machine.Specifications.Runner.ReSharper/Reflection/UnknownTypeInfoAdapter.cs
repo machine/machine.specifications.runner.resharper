@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
@@ -18,16 +17,16 @@ public class UnknownTypeInfoAdapter : ITypeInfo
 
     public IEnumerable<IFieldInfo> GetFields()
     {
-        return Enumerable.Empty<IFieldInfo>();
+        return [];
     }
 
     public IEnumerable<IAttributeInfo> GetCustomAttributes(string typeName, bool inherit)
     {
-        return Enumerable.Empty<IAttributeInfo>();
+        return [];
     }
 
     public IEnumerable<ITypeInfo> GetGenericArguments()
     {
-        return Enumerable.Empty<ITypeInfo>();
+        return [];
     }
 }

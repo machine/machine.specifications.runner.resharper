@@ -1,26 +1,17 @@
 ﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 
-public class BehaviorElement : IBehaviorElement
+public class BehaviorElement(IContextElement context, string typeName, string fieldName, string? ignoreReason)
+    : IBehaviorElement
 {
-    public BehaviorElement(IContextElement context, string typeName, string fieldName, string? ignoreReason)
-    {
-        Id = $"{context.TypeName}.{fieldName}";
-        AggregateId = $"{context.TypeName}.{typeName}";
-        Context = context;
-        TypeName = typeName;
-        FieldName = fieldName;
-        IgnoreReason = ignoreReason;
-    }
+    public string Id { get; } = $"{context.TypeName}.{fieldName}";
 
-    public string Id { get; }
+    public string AggregateId { get; } = $"{context.TypeName}.{typeName}";
 
-    public string AggregateId { get; }
+    public string? IgnoreReason { get; } = ignoreReason;
 
-    public string? IgnoreReason { get; }
+    public IContextElement Context { get; } = context;
 
-    public IContextElement Context { get; }
+    public string TypeName { get; } = typeName;
 
-    public string TypeName { get; }
-
-    public string FieldName { get; }
+    public string FieldName { get; } = fieldName;
 }

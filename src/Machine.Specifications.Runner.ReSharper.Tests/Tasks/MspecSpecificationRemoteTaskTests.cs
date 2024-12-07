@@ -11,7 +11,7 @@ public class MspecSpecificationRemoteTaskTests
     {
         var task = MspecSpecificationRemoteTask.ToServer("Namespace.Context", "should", null, null, null, null);
 
-        Assert.AreEqual("Namespace.Context.should", task.TestId);
+        Assert.That(task.TestId, Is.EqualTo("Namespace.Context.should"));
     }
 
     [Test]
@@ -19,6 +19,6 @@ public class MspecSpecificationRemoteTaskTests
     {
         var task = MspecSpecificationRemoteTask.ToServer("Namespace.Context", "behaves_like", "Namespace.ABehavior", null, null, null);
 
-        Assert.AreEqual("Namespace.Context.behaves_like", task.TestId);
+        Assert.That(task.TestId, Is.EqualTo("Namespace.Context.behaves_like"));
     }
 }

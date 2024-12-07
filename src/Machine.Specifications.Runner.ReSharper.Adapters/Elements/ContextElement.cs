@@ -1,22 +1,14 @@
 ﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 
-public class ContextElement : IContextElement
+public class ContextElement(string typeName, string subject, string? ignoreReason) : IContextElement
 {
-    public ContextElement(string typeName, string subject, string? ignoreReason)
-    {
-        Id = typeName;
-        TypeName = typeName;
-        Subject = subject;
-        IgnoreReason = ignoreReason;
-    }
-
-    public string Id { get; }
+    public string Id { get; } = typeName;
 
     public string AggregateId => Id;
 
-    public string? IgnoreReason { get; }
+    public string? IgnoreReason { get; } = ignoreReason;
 
-    public string TypeName { get; }
+    public string TypeName { get; } = typeName;
 
-    public string Subject { get; }
+    public string Subject { get; } = subject;
 }

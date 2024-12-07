@@ -1,14 +1,8 @@
 ﻿namespace Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 
-public class TestContextInfo
+public class TestContextInfo(string typeName, string capturedOutput)
 {
-    public TestContextInfo(string typeName, string capturedOutput)
-    {
-        TypeName = typeName;
-        CapturedOutput = capturedOutput;
-    }
+    public string TypeName { get; } = typeName;
 
-    public string TypeName { get; }
-
-    public string CapturedOutput { get; }
+    public string CapturedOutput { get; } = capturedOutput;
 }

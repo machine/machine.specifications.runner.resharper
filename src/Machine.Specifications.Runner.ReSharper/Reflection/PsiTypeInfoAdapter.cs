@@ -5,18 +5,8 @@ using JetBrains.ReSharper.Psi;
 
 namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
-public class PsiTypeInfoAdapter : ITypeInfo
+public class PsiTypeInfoAdapter(ITypeElement type, IDeclaredType? declaredType = null) : ITypeInfo
 {
-    private readonly ITypeElement type;
-
-    private readonly IDeclaredType? declaredType;
-
-    public PsiTypeInfoAdapter(ITypeElement type, IDeclaredType? declaredType = null)
-    {
-        this.type = type;
-        this.declaredType = declaredType;
-    }
-
     public string FullyQualifiedName => type.GetClrName().FullName;
 
     public bool IsAbstract => type is IModifiersOwner {IsAbstract: true};

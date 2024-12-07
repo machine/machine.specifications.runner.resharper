@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Machine.Specifications.Runner.ReSharper.Adapters.Elements;
 using Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
 using NUnit.Framework;
@@ -11,28 +10,25 @@ public class ElementCacheTests
     [Test]
     public void CanGetBehaviorType()
     {
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        var cache = new ElementCache([
             ElementFixtures.Specification1,
             ElementFixtures.Behavior1Specification1,
             ElementFixtures.Behavior2Specification1
-        });
+        ]);
 
-        Assert.IsTrue(cache.IsBehavior(ElementFixtures.Behavior1.TypeName));
-        Assert.IsTrue(cache.IsBehavior(ElementFixtures.Behavior2.TypeName));
-        Assert.IsFalse(cache.IsBehavior(ElementFixtures.Context.TypeName));
+        Assert.That(cache.IsBehavior(ElementFixtures.Behavior1.TypeName), Is.True);
+        Assert.That(cache.IsBehavior(ElementFixtures.Context.TypeName), Is.False);
     }
 
     [Test]
     public void CanGetBehaviors()
     {
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        var cache = new ElementCache([
             ElementFixtures.Specification1,
             ElementFixtures.Behavior1Specification1,
             ElementFixtures.Behavior1Specification2,
-            ElementFixtures.Behavior2Specification1,
-        });
+            ElementFixtures.Behavior2Specification1
+        ]);
 
         var behaviors = cache.GetBehaviors(ElementFixtures.Context).ToArray();
 
@@ -44,13 +40,12 @@ public class ElementCacheTests
     [Test]
     public void CanGetSpecificationsByContext()
     {
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        var cache = new ElementCache([
             ElementFixtures.Specification1,
             ElementFixtures.Behavior1Specification1,
             ElementFixtures.Behavior1Specification2,
-            ElementFixtures.Behavior2Specification1,
-        });
+            ElementFixtures.Behavior2Specification1
+        ]);
 
         var specifications = cache.GetSpecifications(ElementFixtures.Context).ToArray();
 
@@ -64,13 +59,12 @@ public class ElementCacheTests
     [Test]
     public void CanGetSpecificationsByBehavior()
     {
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        var cache = new ElementCache([
             ElementFixtures.Specification1,
             ElementFixtures.Behavior1Specification1,
             ElementFixtures.Behavior1Specification2,
             ElementFixtures.Behavior2Specification1
-        });
+        ]);
 
         var specifications1 = cache.GetSpecifications(ElementFixtures.Behavior1).ToArray();
         var specifications2 = cache.GetSpecifications(ElementFixtures.Behavior2).ToArray();

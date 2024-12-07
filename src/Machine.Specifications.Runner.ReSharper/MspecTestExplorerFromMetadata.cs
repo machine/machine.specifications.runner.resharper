@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using JetBrains.Application.Parts;
 using JetBrains.Metadata.Reader.API;
 using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.Assemblies.AssemblyToAssemblyResolvers;
@@ -12,21 +13,16 @@ using JetBrains.Util.Dotnet.TargetFrameworkIds;
 
 namespace Machine.Specifications.Runner.ReSharper;
 
-[SolutionComponent]
-public class MspecTestExplorerFromMetadata : UnitTestExplorerFrom.Metadata
+[SolutionComponent(Instantiation.ContainerAsyncPrimaryThread)]
+public class MspecTestExplorerFromMetadata(
+    MspecTestProvider provider,
+    AssemblyToAssemblyReferencesResolveManager resolveManager,
+    ResolveContextManager resolveContextManager,
+    NuGetInstalledPackageChecker installedPackageChecker,
+    ILogger logger)
+    : UnitTestExplorerFrom.Metadata(provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
 {
-    private readonly ILogger logger;
-
-    public MspecTestExplorerFromMetadata(
-        MspecTestProvider provider,
-        AssemblyToAssemblyReferencesResolveManager resolveManager,
-        ResolveContextManager resolveContextManager,
-        NuGetInstalledPackageChecker installedPackageChecker,
-        ILogger logger)
-        : base(provider, resolveManager, resolveContextManager, installedPackageChecker, logger)
-    {
-        this.logger = logger;
-    }
+    private readonly ILogger logger = logger;
 
     protected override IEnumerable<string> GetRequiredNuGetDependencies(IProject project, TargetFrameworkId targetFrameworkId)
     {

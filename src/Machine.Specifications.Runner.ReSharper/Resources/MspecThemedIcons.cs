@@ -67,10 +67,10 @@ public static class MspecThemedIcons
 
         public override CompiledIconCsIdOwner.ThemedIconThemeImage[] GetThemeImages()
         {
-            return new CompiledIconCsIdOwner.ThemedIconThemeImage[]
-            {
+            return
+            [
                 new("Default", Load)
-            };
+            ];
         }
     }
 }

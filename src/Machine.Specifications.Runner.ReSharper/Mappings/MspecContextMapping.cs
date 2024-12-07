@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Application.Parts;
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.UnitTestFramework.Execution.TestRunner;
@@ -9,14 +10,10 @@ using Machine.Specifications.Runner.ReSharper.Tasks;
 
 namespace Machine.Specifications.Runner.ReSharper.Mappings;
 
-[SolutionComponent]
-public class MspecContextMapping : MspecElementMapping<MspecContextTestElement, MspecContextRemoteTask>
+[SolutionComponent(Instantiation.DemandAnyThreadUnsafe)]
+public class MspecContextMapping(MspecServiceProvider services)
+    : MspecElementMapping<MspecContextTestElement, MspecContextRemoteTask>(services)
 {
-    public MspecContextMapping(MspecServiceProvider services)
-        : base(services)
-    {
-    }
-
     protected override MspecContextRemoteTask ToRemoteTask(MspecContextTestElement element, ITestRunnerExecutionContext context)
     {
         var task = MspecContextRemoteTask.ToClient(

@@ -21,7 +21,7 @@ public class ElementCache
             .Select(x => x.Behavior!.TypeName)
             .Distinct();
 
-        behaviorTypes = new HashSet<string>(types);
+        behaviorTypes = [..types];
 
         behaviorsByContext = specifications
             .Where(x => x.Behavior != null)

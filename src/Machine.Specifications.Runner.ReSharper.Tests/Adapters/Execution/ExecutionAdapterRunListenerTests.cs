@@ -15,8 +15,8 @@ public class ExecutionAdapterRunListenerTests
     public void CanNotifyRun()
     {
         var sink = Substitute.For<IExecutionListener>();
-        var cache = new ElementCache(Array.Empty<ISpecificationElement>());
-        var tracker = new RunTracker(Array.Empty<ISpecificationElement>());
+        var cache = new ElementCache([]);
+        var tracker = new RunTracker([]);
 
         var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 
@@ -33,8 +33,8 @@ public class ExecutionAdapterRunListenerTests
         const string path = "path/to/assembly.dll";
 
         var sink = Substitute.For<IExecutionListener>();
-        var cache = new ElementCache(Array.Empty<ISpecificationElement>());
-        var tracker = new RunTracker(Array.Empty<ISpecificationElement>());
+        var cache = new ElementCache([]);
+        var tracker = new RunTracker([]);
 
         var listener = new ExecutionAdapterRunListener(sink, cache, tracker);
 

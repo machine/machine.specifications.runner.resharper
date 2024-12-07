@@ -9,7 +9,6 @@ using Machine.Specifications.Runner.ReSharper.Adapters.Listeners;
 using Machine.Specifications.Runner.ReSharper.Tests.Fixtures;
 using NSubstitute;
 using NUnit.Framework;
-using TestResult = JetBrains.ReSharper.TestRunner.Abstractions.Objects.TestResult;
 
 namespace Machine.Specifications.Runner.ReSharper.Tests.Adapters.Execution;
 
@@ -19,11 +18,10 @@ public class TestExecutionListenerTests
     [Test]
     public void CanStartAndEndContext()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context
-        });
-        var cache = new ElementCache(Array.Empty<ISpecificationElement>());
+        ]);
+        var cache = new ElementCache([]);
 
         var sink = Substitute.For<ITestExecutionSink>();
         var context = new RunContext(depot, sink);
@@ -40,15 +38,13 @@ public class TestExecutionListenerTests
     [Test]
     public void CanStartAndEndSpecification()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Specification1
-        });
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        ]);
+        var cache = new ElementCache([
             ElementFixtures.Specification1
-        });
+        ]);
 
         var sink = Substitute.For<ITestExecutionSink>();
         var context = new RunContext(depot, sink);
@@ -69,16 +65,14 @@ public class TestExecutionListenerTests
     [Test]
     public void CanStartAndEndBehaviorSpecification()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Behavior1,
             RemoteTaskFixtures.Behavior1Specification1
-        });
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        ]);
+        var cache = new ElementCache([
             ElementFixtures.Behavior1Specification1
-        });
+        ]);
 
         var sink = Substitute.For<ITestExecutionSink>();
         var context = new RunContext(depot, sink);
@@ -103,17 +97,15 @@ public class TestExecutionListenerTests
     [Test]
     public void FailingSpecificationCausesContextToFail()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Specification1,
             RemoteTaskFixtures.Specification2
-        });
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        ]);
+        var cache = new ElementCache([
             ElementFixtures.Specification1,
             ElementFixtures.Specification2
-        });
+        ]);
 
         var sink = Substitute.For<ITestExecutionSink>();
         var context = new RunContext(depot, sink);
@@ -135,18 +127,16 @@ public class TestExecutionListenerTests
     [Test]
     public void FailingBehaviorSpecificationCausesContextAndBehaviorToFail()
     {
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Behavior1,
             RemoteTaskFixtures.Behavior1Specification1,
             RemoteTaskFixtures.Behavior1Specification2
-        });
-        var cache = new ElementCache(new ISpecificationElement[]
-        {
+        ]);
+        var cache = new ElementCache([
             ElementFixtures.Behavior1Specification1,
             ElementFixtures.Behavior1Specification2
-        });
+        ]);
 
         var sink = Substitute.For<ITestExecutionSink>();
         var context = new RunContext(depot, sink);

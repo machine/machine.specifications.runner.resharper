@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Application.Parts;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
@@ -8,15 +9,10 @@ using JetBrains.ReSharper.UnitTestFramework.Exploration.Daemon;
 
 namespace Machine.Specifications.Runner.ReSharper;
 
-[SolutionComponent]
-public class MspecTestExplorerFromFile : IUnitTestExplorerFromFile
+[SolutionComponent(Instantiation.DemandAnyThreadUnsafe)]
+public class MspecTestExplorerFromFile(MspecTestProvider provider) : IUnitTestExplorerFromFile
 {
-    public MspecTestExplorerFromFile(MspecTestProvider provider)
-    {
-        Provider = provider;
-    }
-
-    public IUnitTestProvider Provider { get; }
+    public IUnitTestProvider Provider { get; } = provider;
 
     public void ProcessFile(IFile psiFile, IUnitTestElementObserverOnFile observer, Func<bool> interrupted)
     {

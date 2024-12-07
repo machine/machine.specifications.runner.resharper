@@ -4,15 +4,8 @@ using JetBrains.Metadata.Reader.API;
 
 namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
-public class MetadataFieldInfoAdapter : IFieldInfo
+public class MetadataFieldInfoAdapter(IMetadataField field) : IFieldInfo
 {
-    private readonly IMetadataField field;
-
-    public MetadataFieldInfoAdapter(IMetadataField field)
-    {
-        this.field = field;
-    }
-
     public string DeclaringType => field.DeclaringType.FullyQualifiedName;
 
     public string ShortName => field.Name;

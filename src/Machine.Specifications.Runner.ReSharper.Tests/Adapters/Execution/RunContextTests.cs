@@ -16,13 +16,12 @@ public class RunContextTests
     {
         var sink = Substitute.For<ITestExecutionSink>();
 
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context,
             RemoteTaskFixtures.Behavior1,
             RemoteTaskFixtures.Specification1,
             RemoteTaskFixtures.Behavior1Specification1
-        });
+        ]);
 
         var context = new RunContext(depot, sink);
 
@@ -35,10 +34,9 @@ public class RunContextTests
     {
         var sink = Substitute.For<ITestExecutionSink>();
 
-        var depot = new RemoteTaskDepot(new RemoteTask[]
-        {
+        var depot = new RemoteTaskDepot([
             RemoteTaskFixtures.Context
-        });
+        ]);
 
         var context = new RunContext(depot, sink);
 

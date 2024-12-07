@@ -29,7 +29,7 @@ public class MspecReSharperId : IEquatable<MspecReSharperId>
         return other != null && Id == other.Id;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return Equals(obj as MspecReSharperId);
     }

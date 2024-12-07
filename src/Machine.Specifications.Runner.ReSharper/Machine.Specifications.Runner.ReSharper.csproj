@@ -9,17 +9,21 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>NU5128,NU5100</NoWarn>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
 
+  <PropertyGroup>
     <StartAction>Program</StartAction>
     <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
     <StartArguments>/RootSuffix ReSharper /ReSharper.Internal</StartArguments>
+  </PropertyGroup>
 
+  <PropertyGroup>
     <Title>Machine.Specifications for ReSharper</Title>
     <Description>A ReSharper runner for the Context/Specification framework Machine.Specifications</Description>
     <Authors>Machine</Authors>
     <Owners>Machine</Owners>
     <PackageTags>test;unit;testing;context;specification;bdd;tdd;mspec;runner;resharper</PackageTags>
-    <PackageReleaseNotes>Adds support for R# and Rider 2024.2</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds support for R# and Rider 2024.3</PackageReleaseNotes>
     <PackageIcon>Machine.png</PackageIcon>
     <PackageIconUrl>http://github.com/machine/machine.specifications.runner.resharper/raw/master/images/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/machine/machine.specifications.runner.resharper</RepositoryUrl>
@@ -28,14 +32,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SdkVersion>2024.2.0</SdkVersion>
+    <SdkVersion>2024.3.0</SdkVersion>
     <WaveVersionBase>$(SdkVersion.Substring(2,2))$(SdkVersion.Substring(5,1))</WaveVersionBase>
     <WaveVersion>$(WaveVersionBase).0.0</WaveVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2024.2.3" PrivateAssets="All" />
-    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2024.3.0" PrivateAssets="all" />
+    <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
   </ItemGroup>
 

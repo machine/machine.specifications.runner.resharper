@@ -25,9 +25,9 @@ public class MspecDiscoverySinkTests
         var results = await sink.Elements;
 
         Assert.That(results.Length, Is.EqualTo(3));
-        CollectionAssert.Contains(results, context);
-        CollectionAssert.Contains(results, specification1);
-        CollectionAssert.Contains(results, specification2);
+        Assert.That(results, Has.Member(context));
+        Assert.That(results, Has.Member(specification1));
+        Assert.That(results, Has.Member(specification2));
     }
 
     [Test]
@@ -48,9 +48,9 @@ public class MspecDiscoverySinkTests
         var results = await sink.Elements;
 
         Assert.That(results.Length, Is.EqualTo(4));
-        CollectionAssert.Contains(results, context);
-        CollectionAssert.Contains(results, behavior);
-        CollectionAssert.Contains(results, specification1);
-        CollectionAssert.Contains(results, specification2);
+        Assert.That(results, Has.Member(context));
+        Assert.That(results, Has.Member(behavior));
+        Assert.That(results, Has.Member(specification1));
+        Assert.That(results, Has.Member(specification2));
     }
 }

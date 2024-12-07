@@ -5,16 +5,12 @@ using JetBrains.ReSharper.UnitTestFramework.Exploration;
 
 namespace Machine.Specifications.Runner.ReSharper.Mappings;
 
-public abstract class MspecElementMapping<TElement, TTask> : IUnitTestElementToRemoteTaskMapping<TElement>, IRemoteTaskToUnitTestElementMapping<TTask>
+public abstract class MspecElementMapping<TElement, TTask>(MspecServiceProvider services)
+    : IUnitTestElementToRemoteTaskMapping<TElement>, IRemoteTaskToUnitTestElementMapping<TTask>
     where TElement : IUnitTestElement
     where TTask : RemoteTask
 {
-    protected MspecElementMapping(MspecServiceProvider services)
-    {
-        Services = services;
-    }
-
-    protected MspecServiceProvider Services { get; }
+    protected MspecServiceProvider Services { get; } = services;
 
     protected abstract TTask ToRemoteTask(TElement element, ITestRunnerExecutionContext context);
 

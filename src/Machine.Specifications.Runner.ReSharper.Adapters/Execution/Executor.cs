@@ -7,21 +7,13 @@ using Machine.Specifications.Runner.Utility;
 
 namespace Machine.Specifications.Runner.ReSharper.Adapters.Execution;
 
-public class Executor
+public class Executor(
+    ITestExecutionSink executionSink,
+    TestRunRequest request,
+    RemoteTaskDepot depot,
+    CancellationToken token)
 {
-    private readonly TestRunRequest request;
-
-    private readonly CancellationToken token;
-
-    private readonly RunContext context;
-
-    public Executor(ITestExecutionSink executionSink, TestRunRequest request, RemoteTaskDepot depot, CancellationToken token)
-    {
-        this.request = request;
-        this.token = token;
-
-        context = new RunContext(depot, executionSink);
-    }
+    private readonly RunContext context = new(depot, executionSink);
 
     public void Execute()
     {
