@@ -24,7 +24,6 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts.zip
           path: |
             artifacts/*.nupkg
             artifacts/*.zip
