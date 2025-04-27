@@ -32,13 +32,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SdkVersion>2024.3.0</SdkVersion>
+    <SdkVersion>2025.1.0</SdkVersion>
     <WaveVersionBase>$(SdkVersion.Substring(2,2))$(SdkVersion.Substring(5,1))</WaveVersionBase>
     <WaveVersion>$(WaveVersionBase).0.0</WaveVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2024.3.0" PrivateAssets="all" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2025.1.0" PrivateAssets="all" />
     <PackageReference Include="Machine.Specifications.Runner.Utility" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Wave" Version="[$(WaveVersion)]" />
   </ItemGroup>
