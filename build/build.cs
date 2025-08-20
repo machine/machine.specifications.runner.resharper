@@ -28,12 +28,12 @@ Target("clean", () =>
     }
 });
 
-Target("restore", DependsOn("clean"), () =>
+Target("restore", dependsOn: ["clean"], () =>
 {
     Run("dotnet", "restore");
 });
 
-Target("build", DependsOn("restore"), () =>
+Target("build", dependsOn: ["restore"], () =>
 {
     Run("dotnet", "build " +
                   "--no-restore " +
@@ -45,17 +45,17 @@ Target("build", DependsOn("restore"), () =>
                   $"--property InformationalVersion={version.InformationalVersion}");
 });
 
-Target("test", DependsOn("build"), () =>
+Target("test", dependsOn: ["build"], () =>
 {
     Run("dotnet", $"test --configuration {configuration} --no-restore --no-build");
 });
 
-Target("package", DependsOn("build", "test"), () =>
+Target("package", dependsOn: ["build", "test"], () =>
 {
     Run("dotnet", $"pack --configuration {configuration} --no-restore --no-build --output artifacts --property Version={version.SemVer}");
 });
 
-Target("zip", DependsOn("package"), () =>
+Target("zip", dependsOn: ["package"], () =>
 {
     var artifactPath = Path.Combine("artifacts", "machine-specifications");
     var dotnetPath = Path.Combine(artifactPath, "dotnet");
@@ -97,7 +97,7 @@ Target("zip", DependsOn("package"), () =>
     Console.WriteLine($"Created {zipPath}");
 });
 
-Target("publish-nuget", DependsOn("package"), () =>
+Target("publish-nuget", dependsOn: ["package"], () =>
 {
     var githubToken = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
 
@@ -117,7 +117,7 @@ Target("publish-nuget", DependsOn("package"), () =>
     }
 });
 
-Target("publish-zip", DependsOn("zip"), () =>
+Target("publish-zip", dependsOn: ["zip"], () =>
 {
     using var client = new HttpClient();
 
@@ -149,9 +149,9 @@ Target("publish-zip", DependsOn("zip"), () =>
     }
 });
 
-Target("publish", DependsOn("publish-nuget", "publish-zip"));
+Target("publish", dependsOn: ["publish-nuget", "publish-zip"]);
 
-Target("default", DependsOn("zip"));
+Target("default", dependsOn: ["zip"]);
 
 await RunTargetsAndExitAsync(args);
 
