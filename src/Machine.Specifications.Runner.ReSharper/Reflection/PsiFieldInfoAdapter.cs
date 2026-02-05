@@ -7,15 +7,15 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
 public class PsiFieldInfoAdapter(IField field) : IFieldInfo
 {
-    public string DeclaringType => field.ContainingType!.GetClrName().FullName;
+    public string DeclaringType => @field.ContainingType!.GetClrName().FullName;
 
-    public string ShortName => field.ShortName;
+    public string ShortName => @field.ShortName;
 
     public ITypeInfo FieldType
     {
         get
         {
-            if (field.Type is IDeclaredType {IsResolved: true} type)
+            if (@field.Type is IDeclaredType {IsResolved: true} type)
             {
                 return type.GetTypeElement()!.AsTypeInfo(type);
             }
