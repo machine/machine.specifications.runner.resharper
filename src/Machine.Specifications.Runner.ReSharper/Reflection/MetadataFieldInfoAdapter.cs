@@ -6,15 +6,15 @@ namespace Machine.Specifications.Runner.ReSharper.Reflection;
 
 public class MetadataFieldInfoAdapter(IMetadataField field) : IFieldInfo
 {
-    public string DeclaringType => field.DeclaringType.FullyQualifiedName;
+    public string DeclaringType => @field.DeclaringType.FullyQualifiedName;
 
-    public string ShortName => field.Name;
+    public string ShortName => @field.Name;
 
     public ITypeInfo FieldType
     {
         get
         {
-            if (field.Type is IMetadataClassType classType)
+            if (@field.Type is IMetadataClassType classType)
             {
                 return classType.Type.AsTypeInfo(classType);
             }
