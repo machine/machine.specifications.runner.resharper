@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ProjectModel;
@@ -63,7 +63,7 @@ public class MspecBehaviorSpecificationTestElement : ClrUnitTestElement.Row, ITe
                 true);
 
             return behaviorType?
-                .EnumerateMembers<IField>(FieldName, behaviorType.CaseSensitiveName)
+                .EnumerateOwnMembersWithName<IField>(FieldName, behaviorType.CaseSensitiveName)
                 .FirstOrDefault();
         }
     }

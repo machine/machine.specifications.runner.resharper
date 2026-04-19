@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Util;
@@ -49,7 +49,7 @@ public class MspecSpecificationTestElement : ClrUnitTestElement.FromMethod<Mspec
     protected override IDeclaredElement? GetTypeMember(ITypeElement declaredType)
     {
         return declaredType
-            .EnumerateMembers<IField>(FieldName, declaredType.CaseSensitiveName)
+            .EnumerateOwnMembersWithName<IField>(FieldName, declaredType.CaseSensitiveName)
             .FirstOrDefault();
     }
 }
